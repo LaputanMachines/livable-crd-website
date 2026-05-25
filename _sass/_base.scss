@@ -1,0 +1,68 @@
+@use "variables" as *;
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  font-size: 18px;
+  scroll-behavior: smooth;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: $font-sans;
+  color: $color-text;
+  line-height: 1.65;
+  background-color: $color-bg;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 20% -10%, rgba(13, 148, 136, 0.12), transparent),
+    radial-gradient(ellipse 60% 40% at 90% 10%, rgba(249, 115, 22, 0.08), transparent);
+  background-attachment: fixed;
+}
+
+h1, h2, h3, h4 {
+  font-family: $font-display;
+  line-height: 1.2;
+  margin-top: 0;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+h1 { font-size: clamp(2rem, 5vw, 2.75rem); }
+h2 {
+  font-size: clamp(1.4rem, 3vw, 1.75rem);
+  margin-bottom: 0.75rem;
+}
+
+.section-title { display: block; width: 100%; }
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 3rem;
+  height: 4px;
+  margin-top: 0.5rem;
+  border-radius: 2px;
+  background: linear-gradient(90deg, $color-accent, $color-warm);
+}
+
+h3 { font-size: 1.2rem; }
+p { margin: 0 0 1rem; }
+
+a {
+  color: $color-accent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: color $transition-fast;
+  &:hover { color: $color-accent-dark; }
+}
+
+img { max-width: 100%; height: auto; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); border: 0;
+}

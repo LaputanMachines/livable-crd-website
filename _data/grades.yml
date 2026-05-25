@@ -1,0 +1,20 @@
+- letter: A
+  label: Excellent
+  description: >-
+    Strong alignment with coalition standards across the topics we evaluate.
+    Positions consistently support a more livable, inclusive Capital Region.
+- letter: B
+  label: Good
+  description: >-
+    Mostly meets coalition standards. Some gaps remain, but the candidate generally
+    supports progress on the questionnaire topics.
+- letter: C
+  label: Mixed
+  description: >-
+    Minimally meets standards or has significant inconsistencies. Some positive
+    positions, but notable shortcomings in one or more topic areas.
+- letter: F
+  label: Poor
+  description: >-
+    Fails to meet coalition standards. Positions would stall or roll back progress
+    on livability across the region.

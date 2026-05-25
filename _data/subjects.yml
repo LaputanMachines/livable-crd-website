@@ -1,0 +1,72 @@
+# Questionnaire topics (matches coalition form)
+- id: general
+  name: All categories / General
+  icon: "📋"
+  accent: "#64748b"
+  description: >-
+    Cross-cutting questions that apply across topics or address overall vision for
+    livability in the Capital Region.
+
+- id: transit
+  name: Transit
+  icon: "🚌"
+  accent: "#2563eb"
+  description: >-
+    Public transit service, funding, and integration so more people can get around
+    without driving for every trip.
+
+- id: housing
+  name: Housing
+  icon: "🏠"
+  accent: "#0d9488"
+  description: >-
+    Affordable and diverse homes, gentle density, tenant protections, and land-use
+    choices that help people of all incomes live here.
+
+- id: arts
+  name: Arts
+  icon: "🎭"
+  accent: "#a855f7"
+  description: >-
+    Creative spaces, cultural programming, and municipal support for arts and
+    culture in everyday community life.
+
+- id: climate
+  name: Climate
+  icon: "🌍"
+  accent: "#16a34a"
+  description: >-
+    Climate action, emissions reduction, resilience, and aligning growth with a
+    sustainable future.
+
+- id: rolling-cycling
+  name: Rolling & cycling
+  icon: "🚴"
+  accent: "#0891b2"
+  description: >-
+    Safe bike lanes, rolling infrastructure, and policies that make cycling and
+    wheeled mobility practical for more residents.
+
+- id: walking
+  name: Walking
+  icon: "🚶"
+  accent: "#ca8a04"
+  description: >-
+    Walkable neighbourhoods, sidewalks, crossings, and street design that put
+    people first on foot.
+
+- id: youth-students
+  name: Youth / students
+  icon: "🎓"
+  accent: "#ec4899"
+  description: >-
+    Schools, youth services, student housing, and decisions that affect young
+    people staying and thriving in the region.
+
+- id: healthcare-access
+  name: Healthcare access
+  icon: "🏥"
+  accent: "#dc2626"
+  description: >-
+    Access to clinics, mental health supports, and municipal actions that help
+    residents get timely care close to home.

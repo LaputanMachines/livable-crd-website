@@ -1,0 +1,11 @@
+{% assign g = include.grade | default: '' | strip %}
+{% if g == '' or g == 'null' or g == 'PENDING' or g == '—' %}
+<span class="grade grade--pending" aria-label="Grade pending">—</span>
+{% else %}
+{% assign g_upper = g | upcase %}
+{% assign grade_class = g_upper | downcase | replace: '+', '' | replace: ' ', '-' %}
+{% if g_upper == 'C-' or g_upper == 'C−' %}
+  {% assign grade_class = 'c-minus' %}
+{% endif %}
+<span class="grade grade-{{ grade_class }}" aria-label="Grade {{ g_upper }}">{{ g_upper }}</span>
+{% endif %}

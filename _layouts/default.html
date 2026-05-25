@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en-CA">
+<head>
+  {% include head.html %}
+  <title>{% if page.title %}{{ page.title }} | {% endif %}{{ site.title }}</title>
+</head>
+<body class="{% if page.url == '/' %}page-home{% else %}page-inner{% endif %}">
+  {% include header.html %}
+  <main>{{ content }}</main>
+  {% include footer.html %}
+</body>
+</html>

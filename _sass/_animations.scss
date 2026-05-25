@@ -1,0 +1,37 @@
+@use "variables" as *;
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(12px, -18px) scale(1.05); }
+  66% { transform: translate(-8px, 10px) scale(0.95); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-in > * {
+  animation: fadeUp 0.75s $transition-med backwards;
+}
+
+.animate-in > *:nth-child(1) { animation-delay: 0.1s; }
+.animate-in > *:nth-child(2) { animation-delay: 0.17s; }
+.animate-in > *:nth-child(3) { animation-delay: 0.24s; }
+.animate-in > *:nth-child(4) { animation-delay: 0.31s; }
+.animate-in > *:nth-child(5) { animation-delay: 0.38s; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  html { scroll-behavior: auto; }
+}

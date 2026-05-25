@@ -1,0 +1,24 @@
+title: Livable CRD
+description: >-
+  A coalition scorecard for Capital Regional District municipal election
+  candidates on transit, housing, arts, climate, and related livability topics.
+url: "https://livablecrd.ca"
+baseurl: ""
+email: vp@bettertransityyj.ca
+
+markdown: kramdown
+permalink: pretty
+
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - vendor
+  - .github
+
+sass:
+  style: compressed
