@@ -1,8 +1,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{% comment %}
+  Use relative_url for assets so CSS loads on the same protocol as the page.
+  (absolute_url broke styling when visiting http:// before HTTPS redirect.)
+{% endcomment %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="{{ '/assets/css/main.css' | absolute_url }}">
-<link rel="icon" href="{{ '/assets/images/logo-placeholder.svg' | absolute_url }}" type="image/svg+xml">
+<link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+<link rel="icon" href="{{ '/assets/images/logo-placeholder.svg' | relative_url }}" type="image/svg+xml">
 {% seo %}
