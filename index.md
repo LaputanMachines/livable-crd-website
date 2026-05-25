@@ -73,7 +73,7 @@ title: Home
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers nine topics, from transit and housing to arts, climate, walking, cycling, youth, healthcare, and general livability. Each candidate receives an overall
+      The questionnaire covers nine topics, from transit and housing to climate, arts, walking, cycling, youth, healthcare, and general livability. Each candidate receives an overall
       letter grade; detailed responses are organized by area so voters can compare
       positions at a glance.
     </p>

@@ -23,14 +23,6 @@
     Affordable and diverse homes, gentle density, tenant protections, and land-use
     choices that help people of all incomes live here.
 
-- id: arts
-  name: Arts
-  icon: "🎭"
-  accent: "#a855f7"
-  description: >-
-    Creative spaces, cultural programming, and municipal support for arts and
-    culture in everyday community life.
-
 - id: climate
   name: Climate
   icon: "🌍"
@@ -38,6 +30,14 @@
   description: >-
     Climate action, emissions reduction, resilience, and aligning growth with a
     sustainable future.
+
+- id: arts
+  name: Arts
+  icon: "🎭"
+  accent: "#a855f7"
+  description: >-
+    Creative spaces, cultural programming, and municipal support for arts and
+    culture in everyday community life.
 
 - id: rolling-cycling
   name: Rolling & cycling
