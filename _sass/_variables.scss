@@ -1,21 +1,28 @@
-$color-bg: #f0f4f8;
-$color-bg-warm: #fff8f0;
+// Direction 1: The Voter Guide
+$color-bg: #fafaf8;
+$color-bg-warm: #f5f3ef;
 $color-surface: #ffffff;
-$color-text: #0f172a;
-$color-muted: #475569;
-$color-accent: #0d9488;
-$color-accent-dark: #0f766e;
-$color-accent-alt: #2563eb;
-$color-warm: #f97316;
-$color-warm-dark: #ea580c;
-$color-border: #cbd5e1;
-$color-hero: #ccfbf1;
-$font-sans: "Source Sans 3", system-ui, -apple-system, sans-serif;
-$font-display: "Fraunces", Georgia, "Times New Roman", serif;
-$radius: 12px;
-$radius-lg: 20px;
-$shadow: 0 4px 24px rgba(15, 23, 42, 0.08);
-$shadow-hover: 0 12px 40px rgba(15, 23, 42, 0.14);
+$color-text: #111111;
+$color-muted: #4a4a4a;
+$color-accent: #c41e3a;
+$color-accent-dark: #9a1830;
+$color-accent-alt: #1a3a5c;
+$color-warm: #b8860b;
+$color-warm-dark: #8b6914;
+$color-border: #111111;
+$color-hero: #1a3a5c;
+
+$grade-a: #1b7a3d;
+$grade-b: #2d6a9f;
+$grade-c: #b8860b;
+$grade-f: #c41e3a;
+
+$font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+$font-display: "Barlow Condensed", system-ui, sans-serif;
+$radius: 4px;
+$radius-lg: 4px;
+$shadow: none;
+$shadow-hover: none;
 $max-width: 1100px;
-$transition-fast: 0.2s ease;
-$transition-med: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+$transition-fast: 0.15s ease;
+$transition-med: 0.25s ease;

@@ -4,11 +4,6 @@ title: Home
 ---
 
 <section class="hero hero--home">
-  <div class="hero-bg" aria-hidden="true">
-    <span class="hero-blob hero-blob--1"></span>
-    <span class="hero-blob hero-blob--2"></span>
-    <span class="hero-blob hero-blob--3"></span>
-  </div>
   <div class="hero-inner animate-in">
     <p class="badge">Launching ahead of municipal elections</p>
     <h1>A candidate scorecard for livable communities in the Capital Region</h1>
@@ -21,8 +16,15 @@ title: Home
     <div class="btn-group">
       <a class="btn btn-primary" href="{{ '/methodology/' | relative_url }}">How we grade</a>
       <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
-      <a class="btn btn-secondary" href="{{ '/contact/' | relative_url }}">Get in touch</a>
     </div>
+  </div>
+  <div class="grade-strip" aria-label="Grading scale">
+    {% for grade in site.data.grades %}
+    <div class="grade-strip__item">
+      <span class="grade-strip__letter grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>
+      <span class="grade-strip__label">{{ grade.label }}</span>
+    </div>
+    {% endfor %}
   </div>
 </section>
 
@@ -64,7 +66,7 @@ title: Home
     </ul>
     <p style="margin-top:1.5rem;">
       Interested in joining the coalition or supporting this work?
-      <a href="{{ '/contact/' | relative_url }}">Contact us</a>.
+      <a href="{{ '/about/#contact' | relative_url }}">Contact us</a>.
     </p>
   </div>
 </section>

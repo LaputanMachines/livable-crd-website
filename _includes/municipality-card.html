@@ -1,17 +1,17 @@
 {% assign muni = include.municipality %}
-<article class="card">
-  <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;">
+<article class="card card--scoreboard">
+  <div class="card-body">
     <h3>{{ muni.name }}</h3>
-    {% include grade-badge.html grade=muni.grade %}
-  </div>
-  <p class="meta">
     {% if muni.status == 'coming_soon' %}
-    <span class="badge badge--soon">Coming soon</span>
+    <p class="meta"><span class="badge badge--soon">Coming soon</span></p>
     {% endif %}
-  </p>
-  {% if muni.summary %}
-  <p>{{ muni.summary }}</p>
-  {% else %}
-  <p>Candidate responses and ratings will be published here ahead of the election.</p>
-  {% endif %}
+    <p>
+      {% if muni.summary %}
+      {{ muni.summary }}
+      {% else %}
+      Candidate responses and ratings will be published here ahead of the election.
+      {% endif %}
+    </p>
+  </div>
+  {% include grade-badge.html grade=muni.grade %}
 </article>

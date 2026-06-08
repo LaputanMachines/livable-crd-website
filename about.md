@@ -34,7 +34,7 @@ permalink: /about/
   <li>Candidate profiles with full responses and letter grades</li>
 </ul>
 
-<h2>Contact</h2>
+<h2 id="contact">Contact</h2>
 <p>
   Questions, corrections, or coalition inquiries:
   <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
