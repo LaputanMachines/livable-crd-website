@@ -5,6 +5,7 @@ description: >-
 url: "https://livablecrd.ca"
 baseurl: ""
 email: vp@bettertransityyj.ca
+donate_url: "https://actionnetwork.org/fundraising/support-livable-crd/"
 
 markdown: kramdown
 permalink: pretty

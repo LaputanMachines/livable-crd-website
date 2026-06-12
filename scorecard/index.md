@@ -10,7 +10,7 @@ permalink: /scorecard/
   </div>
 </div>
 
-<div class="container">
+<div class="container page-content">
   <p>
     Ratings and questionnaire responses for candidates in 16 participating municipalities across the Capital Regional District. Content is being prepared ahead of the election.
   </p>
@@ -28,7 +28,7 @@ permalink: /scorecard/
     {% endfor %}
   </div>
 
-  <p style="margin-top:2rem;">
+  <p class="content-follow-up">
     See <a href="{{ '/methodology/' | relative_url }}">methodology</a> for how grades are calculated.
   </p>
 </div>

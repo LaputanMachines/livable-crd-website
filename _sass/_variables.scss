@@ -7,10 +7,13 @@ $color-muted: #4a4a4a;
 $color-accent: #c41e3a;
 $color-accent-dark: #9a1830;
 $color-accent-alt: #1a3a5c;
-$color-warm: #b8860b;
-$color-warm-dark: #8b6914;
+$color-accent-alt-dark: #122a45;
+$color-warm: #d4a017;
+$color-warm-dark: #a67c00;
 $color-border: #111111;
 $color-hero: #1a3a5c;
+$border-weight: 3px;
+$border-weight-heavy: 4px;
 
 $grade-a: #1b7a3d;
 $grade-b: #2d6a9f;
@@ -26,3 +29,12 @@ $shadow-hover: none;
 $max-width: 1100px;
 $transition-fast: 0.15s ease;
 $transition-med: 0.25s ease;
+
+// Spacing scale (1rem = 18px base)
+$space-gutter: 1.25rem;
+$space-xs: 0.5rem;
+$space-sm: 1rem;
+$space-md: 1.5rem;
+$space-lg: 2rem;
+$space-xl: 2.5rem;
+$space-hero-y: 3rem;
