@@ -1,0 +1,34 @@
+{% comment %}
+  One candidate card for the scorecard grid.
+  Params:
+    include.candidate     a candidate object from _data/candidates.yml
+    include.municipality  the matching municipality object (for its display name)
+  data-* attributes drive client-side search (by name) and filter (by municipality).
+{% endcomment %}
+{% assign c = include.candidate %}
+{% assign muni = include.municipality %}
+<article class="candidate-card" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}">
+  <header class="candidate-card__head">
+    <div class="candidate-card__id">
+      <span class="candidate-card__muni">{{ muni.name }}</span>
+      <h3 class="candidate-card__name">{{ c.name }}</h3>
+      <p class="candidate-card__meta">
+        {% if c.office %}{{ c.office }}{% endif %}
+        {% if c.incumbent == true %}<span class="cand-tag cand-tag--incumbent">Incumbent</span>{% elsif c.incumbent == false %}<span class="cand-tag cand-tag--new">New</span>{% endif %}
+      </p>
+    </div>
+    <div class="candidate-card__overall">
+      {% include grade-badge.html grade=c.grade %}
+      <span class="candidate-card__overall-label">Overall</span>
+    </div>
+  </header>
+  <dl class="candidate-card__scores">
+    {% for subject in site.data.subjects %}
+    {% assign cell = c.scores[subject.id] %}
+    <div class="candidate-card__score">
+      <dt title="{{ subject.name }}">{{ subject.short | default: subject.name }}</dt>
+      <dd>{% include grade-badge.html grade=cell %}</dd>
+    </div>
+    {% endfor %}
+  </dl>
+</article>

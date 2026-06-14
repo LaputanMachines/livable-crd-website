@@ -1,1 +1,197 @@
-[]
+# Confirmed municipal election candidates, grouped by municipality.
+#
+# Source: coalition candidate-tracking sheet. This file includes ONLY candidates
+# whose status is confirmed ("Yes Confirmed") as running. Suspected, declined,
+# and unconfirmed entries are intentionally omitted until confirmed.
+#
+# Subjective tracking notes (political "vibe", commentary, character assessments)
+# are intentionally NOT published here — the scorecard evaluates positions, not
+# people. Only factual public-record fields are stored.
+#
+# Fields:
+#   name         Candidate's name as listed.
+#   municipality Slug matching _data/municipalities.yml.
+#   office       Office sought, or null if not yet specified in the source.
+#   incumbent    true = incumbent, false = challenger, null = unspecified.
+#   grade        Overall letter grade (A/B/C/F). null = pending.
+#   scores       Optional map of per-topic letter grades, keyed by the topic ids
+#                in _data/subjects.yml. Any topic left out renders as pending ("—").
+#
+# Grades are pending until candidates are surveyed (see methodology). To publish a
+# candidate's results, set `grade` and add a `scores` map, e.g.:
+#
+#   - name: Example Candidate
+#     municipality: victoria
+#     office: Councillor
+#     incumbent: false
+#     grade: B
+#     scores:
+#       general: B
+#       transit: A
+#       housing: B
+#       climate: A
+#       arts: C
+#       rolling-cycling: B
+#       walking: A
+#       youth-students: C
+#       healthcare-access: B
+
+# --- Saanich ---
+- name: Rishi Sharma
+  municipality: saanich
+  office: Mayor
+  incumbent: false
+  grade: null
+
+- name: Karen Harper
+  municipality: saanich
+  office: Mayor
+  incumbent: true
+  grade: null
+
+- name: Colin Plant
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Teale Phelps Banderoff
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Nathalie Chambers
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Harjas Singh Popli
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+  grade: null
+
+- name: Alex Cook
+  municipality: saanich
+  office: null
+  incumbent: false
+  grade: null
+
+- name: Lorne DeLarge
+  municipality: saanich
+  office: null
+  incumbent: false
+  grade: null
+
+- name: Matt McGeachie
+  municipality: saanich
+  office: null
+  incumbent: false
+  grade: null
+
+- name: Graham Wright
+  municipality: saanich
+  office: null
+  incumbent: false
+  grade: null
+
+# --- Victoria ---
+- name: Marianne Alto
+  municipality: victoria
+  office: Mayor
+  incumbent: true
+  grade: null
+
+- name: Dave Thompson
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Jeremy Caradonna
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Krista Laughton
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Matt Dell
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Jack Sandor
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+  grade: null
+
+- name: Isabella Lee
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+  grade: null
+
+- name: Susan Kim
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Karen Rothe
+  municipality: victoria
+  office: Councillor
+  incumbent: null
+  grade: null
+
+# --- Esquimalt ---
+- name: Duncan Cavens
+  municipality: esquimalt
+  office: Mayor
+  incumbent: true
+  grade: null
+
+# --- Langford ---
+- name: Scott Goodmanson
+  municipality: langford
+  office: Mayor
+  incumbent: true
+  grade: null
+
+- name: Kimberly Guiry
+  municipality: langford
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Colby Harder
+  municipality: langford
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Keith Yacucha
+  municipality: langford
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Mary Wagner
+  municipality: langford
+  office: Councillor
+  incumbent: true
+  grade: null
+
+- name: Bryson Hill
+  municipality: langford
+  office: null
+  incumbent: null
+  grade: null

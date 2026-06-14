@@ -14,9 +14,9 @@ title: Home
       that shape daily life here.
     </p>
     <div class="btn-group">
-      <a class="btn btn-primary" href="{{ '/methodology/' | relative_url }}">How we grade</a>
+      <a class="btn btn-primary" href="{{ '/scorecard/' | relative_url }}#methodology">How we grade</a>
       <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
-      <a class="btn btn-donate" href="{{ site.donate_url }}" target="_blank" rel="noopener noreferrer">Support us</a>
+      <a class="btn btn-donate" href="{{ '/donate/' | relative_url }}">Support us</a>
     </div>
   </div>
   <div class="grade-strip" aria-label="Grading scale">
@@ -44,9 +44,6 @@ title: Home
       Once candidates are surveyed, ratings will be published by municipality ahead
       of election day.
     </p>
-    <div class="status-banner">
-      <p><strong>Scorecard in development.</strong> Municipality and candidate pages are coming soon.</p>
-    </div>
   </div>
 </section>
 
@@ -67,7 +64,7 @@ title: Home
     </ul>
     <p class="content-follow-up">
       Interested in joining the coalition or supporting this work?
-      <a href="{{ site.donate_url }}" target="_blank" rel="noopener noreferrer">Donate</a>
+      <a href="{{ '/donate/' | relative_url }}">Donate</a>
       or <a href="{{ '/about/#contact' | relative_url }}">contact us</a>.
     </p>
   </div>

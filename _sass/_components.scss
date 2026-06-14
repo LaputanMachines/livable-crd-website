@@ -248,6 +248,290 @@ tr:hover td { background: $color-bg-warm; }
   -webkit-overflow-scrolling: touch;
 }
 
+.scorecard-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm $space-md;
+  align-items: center;
+  margin-top: $space-md;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+}
+
+.scorecard-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+
+  .grade {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 0.95rem;
+  }
+}
+
+.cand-tag {
+  display: inline-block;
+  font-size: 0.66rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.05rem 0.4rem;
+  border: 2px solid currentColor;
+  margin-left: 0.4rem;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.cand-tag--incumbent { color: $color-accent-alt; }
+.cand-tag--new { color: $color-warm-dark; }
+
+// Search + municipality filter bar.
+.scorecard-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-sm $space-md;
+  margin: $space-md 0 $space-sm;
+}
+
+.scorecard-search {
+  flex: 1 1 240px;
+  min-width: 0;
+  padding: 0.7rem 0.9rem;
+  font-family: $font-sans;
+  font-size: 0.95rem;
+  color: $color-text;
+  background: $color-surface;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+
+  &::placeholder { color: $color-muted; }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.scorecard-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+}
+
+.filter-pill {
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  padding: 0.45rem 0.9rem;
+  color: $color-text;
+  background: $color-surface;
+  border: 2px solid $color-text;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: background $transition-fast, color $transition-fast;
+
+  &:hover { background: $color-bg-warm; }
+
+  &.is-active {
+    color: #fff;
+    background: $color-accent-alt;
+    border-color: $color-accent-alt;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
+.scorecard-count {
+  font-size: 0.85rem;
+  color: $color-muted;
+  margin: 0 0 $space-md;
+}
+
+.candidate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+  gap: $space-md;
+  margin-top: $space-sm;
+}
+
+.candidate-empty {
+  border: $border-weight dashed $color-muted;
+  background: $color-bg-warm;
+  padding: $space-md $space-gutter;
+  text-align: center;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $color-text;
+}
+
+.candidate-card {
+  display: flex;
+  flex-direction: column;
+  background: $color-surface;
+  border: $border-weight solid $color-text;
+}
+
+.candidate-card[hidden] { display: none; }
+
+.candidate-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-sm;
+  padding: $space-sm $space-gutter;
+  border-bottom: 2px solid $color-text;
+}
+
+.candidate-card__id { min-width: 0; }
+
+.candidate-card__muni {
+  display: block;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.72rem;
+  color: $color-accent;
+  margin-bottom: 0.15rem;
+}
+
+.candidate-card__name {
+  margin: 0;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.candidate-card__meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: $color-muted;
+}
+
+.candidate-card__overall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  flex-shrink: 0;
+
+  .grade { width: 2.6rem; height: 2.6rem; font-size: 1.35rem; }
+}
+
+.candidate-card__overall-label {
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.62rem;
+  color: $color-muted;
+}
+
+.candidate-card__scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 0;
+}
+
+.candidate-card__score {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-xs;
+  padding: 0.4rem $space-gutter;
+  border-top: 1px solid rgba(17, 17, 17, 0.12);
+
+  &:nth-child(odd) { border-right: 1px solid rgba(17, 17, 17, 0.12); }
+  &:last-child:nth-child(odd) { border-right: none; }
+
+  dt {
+    font-family: $font-display;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    font-size: 0.74rem;
+    color: $color-muted;
+  }
+
+  dd { margin: 0; }
+
+  .grade { width: 1.9rem; height: 1.9rem; font-size: 0.95rem; }
+}
+
+.scorecard-cta {
+  margin-top: $space-xl;
+
+  h2 { margin-bottom: $space-xs; }
+}
+
+// Collapsed methodology panel at the bottom of the scorecard.
+.methodology {
+  margin-top: $space-xl;
+  border: $border-weight solid $color-text;
+  background: $color-surface;
+}
+
+.methodology > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+  cursor: pointer;
+  list-style: none;
+  padding: $space-md $space-gutter;
+  font-family: $font-display;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 1.1rem;
+
+  &::-webkit-details-marker { display: none; }
+
+  &::after {
+    content: "+";
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  &:hover { background: $color-bg-warm; }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: -3px;
+  }
+}
+
+.methodology[open] > summary {
+  border-bottom: 2px solid $color-text;
+
+  &::after { content: "\2013"; }
+}
+
+.methodology__body {
+  padding: $space-md $space-gutter $space-lg;
+
+  > :first-child { margin-top: 0; }
+
+  h2 {
+    margin-top: $space-lg;
+    font-size: 1.4rem;
+  }
+}
+
 .callout {
   background: $color-bg-warm;
   border-left: 4px solid $color-accent-alt;

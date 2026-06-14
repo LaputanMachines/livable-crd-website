@@ -1,6 +1,8 @@
 # Questionnaire topics (matches coalition form)
+# `short` is the compact label used in scorecard table column headers.
 - id: general
   name: All categories / General
+  short: General
   icon: general.svg
   accent: "#64748b"
   description: >-
@@ -9,6 +11,7 @@
 
 - id: transit
   name: Transit
+  short: Transit
   icon: transit.svg
   accent: "#2d6a9f"
   description: >-
@@ -17,6 +20,7 @@
 
 - id: housing
   name: Housing
+  short: Housing
   icon: housing.svg
   accent: "#1a3a5c"
   description: >-
@@ -25,6 +29,7 @@
 
 - id: climate
   name: Climate
+  short: Climate
   icon: climate.svg
   accent: "#1b7a3d"
   description: >-
@@ -33,6 +38,7 @@
 
 - id: arts
   name: Arts
+  short: Arts
   icon: arts.svg
   accent: "#6b4c9a"
   description: >-
@@ -41,6 +47,7 @@
 
 - id: rolling-cycling
   name: Rolling & cycling
+  short: Cycling
   icon: rolling-cycling.svg
   accent: "#2d6a9f"
   description: >-
@@ -49,6 +56,7 @@
 
 - id: walking
   name: Walking
+  short: Walking
   icon: walking.svg
   accent: "#b8860b"
   description: >-
@@ -57,6 +65,7 @@
 
 - id: youth-students
   name: Youth / students
+  short: Youth
   icon: youth-students.svg
   accent: "#1a3a5c"
   description: >-
@@ -65,6 +74,7 @@
 
 - id: healthcare-access
   name: Healthcare access
+  short: Health
   icon: healthcare-access.svg
   accent: "#c41e3a"
   description: >-
