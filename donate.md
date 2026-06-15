@@ -2,6 +2,10 @@
 layout: page
 title: Donate
 permalink: /donate/
+description: >-
+  Support Livable CRD's non-partisan candidate scorecard for Capital Regional
+  District municipal elections. Individual contributions only, in line with
+  British Columbia election rules.
 ---
 
 <p>

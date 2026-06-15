@@ -2,6 +2,10 @@
 layout: page
 title: About
 permalink: /about/
+description: >-
+  Livable CRD is a non-partisan voter-education coalition publishing a
+  transparent candidate scorecard for municipal elections in British Columbia's
+  Capital Regional District. We inform voters; we don't endorse candidates.
 ---
 
 <p>

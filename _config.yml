@@ -7,8 +7,29 @@ baseurl: ""
 email: vp@bettertransityyj.ca
 donate_url: "https://actionnetwork.org/fundraising/support-livable-crd/"
 
+# --- SEO (jekyll-seo-tag) ---
+# tagline is appended to the site title on the homepage:
+#   "Livable CRD | Capital Region municipal election candidate scorecard"
+tagline: "Capital Region municipal election candidate scorecard"
+locale: en_CA
+logo: /assets/images/logo.png            # publisher logo in structured data
+
 markdown: kramdown
 permalink: pretty
+
+# jekyll-seo-tag only reads `image` from page front matter (not site-wide), and
+# auto-upgrades the Twitter card to summary_large_image when an image is present.
+# Inject the default social image into every page so og:image/twitter:image emit.
+# Individual pages can override `image` in their own front matter.
+defaults:
+  - scope:
+      path: ""
+    values:
+      image:
+        path: /assets/images/og-image.png
+        width: 1200
+        height: 630
+        alt: "Livable CRD — Capital Region municipal election candidate scorecard"
 
 plugins:
   - jekyll-seo-tag
@@ -20,6 +41,7 @@ exclude:
   - README.md
   - vendor
   - .github
+  - scripts
 
 sass:
   style: compressed

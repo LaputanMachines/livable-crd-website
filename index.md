@@ -1,6 +1,11 @@
 ---
 layout: default
-title: Home
+# No `title` here: jekyll-seo-tag renders the homepage <title> as
+# "Livable CRD | <site.tagline>", which is more descriptive than "Home".
+description: >-
+  Livable CRD is a non-partisan coalition publishing a transparent scorecard
+  that rates Capital Regional District municipal election candidates on transit,
+  housing, climate, arts, walking, cycling, and other livability issues.
 ---
 
 <section class="hero hero--home">

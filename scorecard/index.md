@@ -1,7 +1,11 @@
 ---
 layout: default
-title: Scorecard
+title: Candidate Scorecard
 permalink: /scorecard/
+description: >-
+  Compare where confirmed Capital Regional District municipal election
+  candidates stand on transit, housing, climate, arts, walking, and cycling.
+  Search by name or filter by municipality.
 ---
 
 <div class="page-header">

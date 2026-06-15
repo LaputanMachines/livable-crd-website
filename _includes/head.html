@@ -8,5 +8,24 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
-<link rel="icon" href="{{ '/assets/images/logo-placeholder.svg' | relative_url }}" type="image/svg+xml">
+<link rel="icon" href="{{ '/assets/images/favicon.ico' | relative_url }}" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/favicon-32x32.png' | relative_url }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/images/favicon-16x16.png' | relative_url }}">
+<link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/apple-touch-icon.png' | relative_url }}">
 {% seo %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": {{ site.title | jsonify }},
+  "url": {{ '/' | absolute_url | jsonify }},
+  "logo": {{ '/assets/images/logo.png' | absolute_url | jsonify }},
+  "image": {{ '/assets/images/og-image.png' | absolute_url | jsonify }},
+  "description": {{ site.description | strip_newlines | strip | jsonify }},
+  "email": {{ site.email | jsonify }},
+  "areaServed": {
+    "@type": "AdministrativeArea",
+    "name": "Capital Regional District, British Columbia, Canada"
+  }
+}
+</script>
