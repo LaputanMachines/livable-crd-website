@@ -79,9 +79,8 @@ description: >-
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers nine topics, from transit and housing to climate, arts, walking, cycling, youth, healthcare, and general livability. Each candidate receives an overall
-      letter grade; detailed responses are organized by area so voters can compare
-      positions at a glance.
+      The questionnaire covers nine topics, from transit and housing to climate, arts, walking, cycling, youth, healthcare, and general livability. Each candidate is graded
+      in every area, so voters can compare positions topic by topic at a glance.
     </p>
     <div class="card-grid">
       {% for subject in site.data.subjects %}

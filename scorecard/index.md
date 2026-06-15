@@ -17,9 +17,9 @@ description: >-
 <div class="container page-content">
   <p>
     Confirmed candidates for the upcoming municipal elections across the Capital
-    Regional District. Each candidate receives an overall grade plus a breakdown
-    across the policy areas the coalition evaluates. Search by name or filter by
-    municipality below.
+    Regional District. Each candidate is graded across the policy areas the
+    coalition evaluates. Search by name, filter by municipality, or narrow to
+    candidates who meet a minimum grade in a given topic.
   </p>
 
   <div class="status-banner">
@@ -40,26 +40,90 @@ description: >-
   <div class="scorecard-controls">
     <label for="candidate-search" class="sr-only">Search candidates by name</label>
     <input type="search" id="candidate-search" class="scorecard-search" placeholder="Search candidates by name…" autocomplete="off">
-    <div class="scorecard-filters" role="group" aria-label="Filter by municipality">
-      <button type="button" class="filter-pill is-active" data-muni="all" aria-pressed="true">All</button>
-      {% for muni in site.data.municipalities %}
-        {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
-        {% if mc.size > 0 %}
-        <button type="button" class="filter-pill" data-muni="{{ muni.slug }}" aria-pressed="false">{{ muni.name }} ({{ mc.size }})</button>
-        {% endif %}
-      {% endfor %}
+  </div>
+
+  <div class="scorecard-filterbar">
+    <div class="scorecard-filtergroup">
+      <span class="scorecard-filtergroup__label" id="grade-filter-label">Minimum grade</span>
+      <div class="scorecard-gradefilter">
+        <div class="scorecard-filters" role="group" aria-labelledby="grade-filter-label">
+          <button type="button" class="filter-pill is-active" data-grade="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-pill" data-grade="2" aria-pressed="false">C or better</button>
+          <button type="button" class="filter-pill" data-grade="3" aria-pressed="false">B or better</button>
+          <button type="button" class="filter-pill" data-grade="4" aria-pressed="false">A only</button>
+        </div>
+        <label class="scorecard-topic-label" for="topic-filter">in</label>
+        <select id="topic-filter" class="scorecard-topic-select">
+          <option value="all">any topic</option>
+          {% for subject in site.data.subjects %}
+          <option value="{{ subject.id }}">{{ subject.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="scorecard-filtergroup">
+      <span class="scorecard-filtergroup__label" id="office-filter-label">Office</span>
+      <div class="scorecard-filters" id="office-filters" role="group" aria-labelledby="office-filter-label">
+        <button type="button" class="filter-pill is-active" data-office="all" aria-pressed="true">All</button>
+        <button type="button" class="filter-pill" data-office="mayor" aria-pressed="false">Mayor</button>
+        <button type="button" class="filter-pill" data-office="councillor" aria-pressed="false">Councillor</button>
+      </div>
+    </div>
+
+    <div class="scorecard-filtergroup">
+      <span class="scorecard-filtergroup__label" id="muni-filter-label">Municipality</span>
+      <div class="scorecard-filters" role="group" aria-labelledby="muni-filter-label">
+        <button type="button" class="filter-pill is-active" data-muni="all" aria-pressed="true">All</button>
+        {% for muni in site.data.municipalities %}
+          {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
+          {% if mc.size > 0 %}
+          <button type="button" class="filter-pill" data-muni="{{ muni.slug }}" aria-pressed="false">{{ muni.name }} ({{ mc.size }})</button>
+          {% endif %}
+        {% endfor %}
+      </div>
     </div>
   </div>
 
   <p class="scorecard-count" id="candidate-count" role="status" aria-live="polite"></p>
 
-  <div class="candidate-grid" id="candidate-grid">
-    {% for muni in site.data.municipalities %}
-      {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
-      {% for candidate in mc %}
-        {% include candidate-card.html candidate=candidate municipality=muni %}
+  <div class="table-scroll scorecard-matrix-scroll">
+    <table class="scorecard-matrix" id="candidate-grid">
+      <thead>
+        <tr>
+          <th scope="col" class="scorecard-matrix__name-h">Candidate</th>
+          {% for subject in site.data.subjects %}
+          <th scope="col" class="scorecard-matrix__col" title="{{ subject.name }}">
+            <img class="scorecard-matrix__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="22" height="22" loading="lazy">
+            <span class="scorecard-matrix__th-label" aria-hidden="true">{{ subject.short | default: subject.name }}</span>
+            <span class="sr-only">{{ subject.name }}</span>
+          </th>
+          {% endfor %}
+        </tr>
+      </thead>
+      {% for muni in site.data.municipalities %}
+        {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
+        {% if mc.size > 0 %}
+        <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}">
+          <tr class="scorecard-matrix__group-row">
+            <th scope="colgroup" colspan="10" class="scorecard-matrix__group-head">{{ muni.name }}</th>
+          </tr>
+          {% for c in mc %}
+          <tr class="scorecard-row" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
+            <th scope="row" class="scorecard-matrix__name">
+              <span class="scorecard-matrix__cand">{{ c.name }}</span>
+              {% if c.office %}<span class="scorecard-matrix__meta">{{ c.office }}</span>{% endif %}
+            </th>
+            {% for subject in site.data.subjects %}
+            {% assign cell = c.scores[subject.id] %}
+            <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell %}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% endif %}
       {% endfor %}
-    {% endfor %}
+    </table>
   </div>
 
   <p class="candidate-empty" id="candidate-empty" role="status" hidden>No candidates match your search.</p>
@@ -119,7 +183,7 @@ description: >-
 
       <h2>Questionnaire topics</h2>
       <p>
-        Each candidate receives an overall letter grade. Individual questions are tagged
+        Each candidate is graded in every policy area below. Individual questions are tagged
         with the topic that best applies, including a <strong>general</strong> category
         for cross-cutting items.
       </p>
@@ -150,7 +214,7 @@ description: >-
       </p>
       <ul>
         <li>Points are awarded for positions that advance coalition goals within each topic.</li>
-        <li>Overall grades reflect responses across all topic areas, including general livability questions.</li>
+        <li>Each topic grade reflects the candidate's responses within that area, including general livability questions.</li>
         <li>Points are deducted for positions that would clearly undermine progress on housing, mobility, climate, healthcare access, or other priorities covered in the survey.</li>
       </ul>
 
