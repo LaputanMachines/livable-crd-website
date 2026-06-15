@@ -478,7 +478,16 @@ tr:hover td { background: $color-bg-warm; }
 
 // Candidate name cell (row header). Scoped under .scorecard-matrix so the
 // left alignment beats the base center-aligned th/td rule.
-.scorecard-matrix .scorecard-matrix__name-h { text-align: left; }
+.scorecard-matrix .scorecard-matrix__name-h {
+  text-align: left;
+  padding-left: $space-xs; // align "Candidate" with the names below, off the edge-to-edge viewport edge
+}
+
+// The matrix is edge-to-edge on mobile (negative margins above), so the outer
+// columns hug the viewport. Give the first/last columns matching edge gutters
+// — thead th otherwise only carries 0.2rem horizontal padding.
+.scorecard-matrix th:last-child,
+.scorecard-matrix td:last-child { padding-right: $space-xs; }
 
 .scorecard-matrix .scorecard-matrix__name {
   text-align: left;
@@ -613,6 +622,66 @@ tr:hover td { background: $color-bg-warm; }
     margin-top: $space-lg;
     font-size: 1.4rem;
   }
+}
+
+// Methodology reference lists (letter grades, questionnaire topics). Definition
+// lists rather than tables so long descriptions wrap and everything fits on a
+// phone without horizontal scroll; a two-column grid kicks in once there's room.
+.grade-defs,
+.topic-defs {
+  margin: $space-sm 0 $space-md;
+  border: $border-weight solid $color-text;
+  background: $color-surface;
+}
+
+.grade-def,
+.topic-def {
+  padding: $space-sm $space-gutter;
+  border-bottom: 1px solid rgba(17, 17, 17, 0.18);
+
+  &:last-child { border-bottom: none; }
+
+  dt, dd { margin: 0; } // reset default <dl> indentation
+}
+
+.grade-def__term {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  margin-bottom: 0.35rem;
+}
+
+.grade-def__label,
+.topic-def__name {
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.topic-def__name {
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.grade-def__desc,
+.topic-def__desc {
+  color: $color-muted;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+@media (min-width: 720px) {
+  .grade-def,
+  .topic-def {
+    display: grid;
+    grid-template-columns: 11rem 1fr;
+    gap: $space-md;
+    align-items: baseline;
+  }
+  // chip + label keep their own row inside the left grid column
+  .grade-def__term,
+  .topic-def__name { margin-bottom: 0; }
 }
 
 .callout {

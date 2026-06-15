@@ -155,26 +155,17 @@ description: >-
       </div>
 
       <h2>Letter grades</h2>
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Grade</th>
-              <th scope="col">Label</th>
-              <th scope="col">Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for grade in site.data.grades %}
-            <tr>
-              <td>{% include grade-badge.html grade=grade.letter %}</td>
-              <td><strong>{{ grade.label }}</strong></td>
-              <td>{{ grade.description }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+      <dl class="grade-defs">
+        {% for grade in site.data.grades %}
+        <div class="grade-def">
+          <dt class="grade-def__term">
+            {% include grade-badge.html grade=grade.letter %}
+            <span class="grade-def__label">{{ grade.label }}</span>
+          </dt>
+          <dd class="grade-def__desc">{{ grade.description }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
 
       <p>
         Some ratings may use modifiers (for example, <strong>C−</strong>) when a
@@ -188,24 +179,14 @@ description: >-
         for cross-cutting items.
       </p>
 
-      <div class="table-scroll">
-        <table>
-          <thead>
-            <tr>
-              <th scope="col">Topic</th>
-              <th scope="col">What we look at</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for subject in site.data.subjects %}
-            <tr>
-              <td><strong>{{ subject.name }}</strong></td>
-              <td>{{ subject.description }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+      <dl class="topic-defs">
+        {% for subject in site.data.subjects %}
+        <div class="topic-def">
+          <dt class="topic-def__name">{{ subject.name }}</dt>
+          <dd class="topic-def__desc">{{ subject.description }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
 
       <h2>How grades are assigned</h2>
       <p>
