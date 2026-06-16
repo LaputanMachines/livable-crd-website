@@ -439,6 +439,7 @@ tr:hover td { background: $color-bg-warm; }
   th, td {
     padding: 0.25rem 0.12rem;
     border-bottom: 1px solid rgba(17, 17, 17, 0.12);
+    border-right: 1px solid rgba(17, 17, 17, 0.12); // vertical separators between columns, steadies the eye across the grid
     vertical-align: middle;
     text-align: center;
   }
@@ -447,6 +448,7 @@ tr:hover td { background: $color-bg-warm; }
     background: $color-accent-alt;
     color: #fff;
     border-bottom: 2px solid $color-text;
+    border-right: 1px solid rgba(255, 255, 255, 0.18); // dark separator is invisible on navy — use a faint white one
     padding: 0.4rem 0.2rem;
     font-family: $font-display;
   }
@@ -487,7 +489,10 @@ tr:hover td { background: $color-bg-warm; }
 // columns hug the viewport. Give the first/last columns matching edge gutters
 // — thead th otherwise only carries 0.2rem horizontal padding.
 .scorecard-matrix th:last-child,
-.scorecard-matrix td:last-child { padding-right: $space-xs; }
+.scorecard-matrix td:last-child {
+  padding-right: $space-xs;
+  border-right: none;
+}
 
 .scorecard-matrix .scorecard-matrix__name {
   text-align: left;
