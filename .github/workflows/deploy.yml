@@ -1,0 +1,77 @@
+name: Build and deploy (reusable)
+
+# Reusable build + GitHub Pages deploy. Called by:
+#   - jekyll.yml          (on push to main / manual)
+#   - sync-candidates.yml (after the daily sheet sync commits new data)
+# Kept as a single source of truth so both paths build identically.
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to build. Defaults to the triggering commit; the sync
+          workflow passes "main" so it builds the commit it just pushed.
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
+
+      - uses: actions/configure-pages@v5
+        id: pages
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.3"
+          bundler-cache: false
+
+      - name: Install gems (ensure Linux sass-embedded native build)
+        run: |
+          bundle lock --add-platform x86_64-linux-gnu
+          bundle install
+
+      - name: Build site
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      - name: Verify CSS compiled
+        run: |
+          CSS_FILE="_site/assets/css/main.css"
+          if [ ! -f "$CSS_FILE" ]; then
+            echo "Missing $CSS_FILE"
+            exit 1
+          fi
+          SIZE=$(wc -c < "$CSS_FILE")
+          echo "main.css size: $SIZE bytes"
+          if [ "$SIZE" -lt 1000 ]; then
+            echo "Sass did not compile — output looks like:"
+            head -5 "$CSS_FILE"
+            exit 1
+          fi
+
+      - uses: actions/upload-pages-artifact@v3
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

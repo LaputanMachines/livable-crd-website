@@ -1,0 +1,65 @@
+name: Sync candidates from Google Sheet
+
+# Pulls the coalition candidate-tracking sheet (CSV) daily, regenerates
+# _data/candidates.yml, and — only if it changed — commits to main and redeploys.
+# The bot commit uses GITHUB_TOKEN, which does NOT re-trigger jekyll.yml's
+# `on: push`, so we deploy explicitly via the reusable workflow.
+
+on:
+  schedule:
+    - cron: "17 13 * * *" # daily ~06:17 America/Vancouver (13:17 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit candidates.yml to main
+  pages: write # for the reusable deploy
+  id-token: write # for the reusable deploy
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x" # script is stdlib-only; no pip install needed
+
+      - name: Regenerate candidates.yml from the sheet
+        run: python3 scripts/sync-candidates.py
+        env:
+          CANDIDATES_CSV_URL: ${{ secrets.CANDIDATES_CSV_URL }}
+
+      - name: Detect change
+        id: diff
+        run: |
+          if git diff --quiet -- _data/candidates.yml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No change to candidates.yml."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _data/candidates.yml
+          git commit -m "data: sync confirmed candidates from sheet [skip ci]"
+          git push origin HEAD:main
+
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Build the tip of main (the commit the sync job just pushed), not the
+    # stale SHA this run started on.
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: main

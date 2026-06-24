@@ -6,3 +6,5 @@ vendor/
 .bundle/*
 !.bundle/config
 *.gem
+__pycache__/
+*.pyc

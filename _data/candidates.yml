@@ -1,8 +1,12 @@
 # Confirmed municipal election candidates, grouped by municipality.
 #
-# Source: coalition candidate-tracking sheet. This file includes ONLY candidates
-# whose status is confirmed ("Yes Confirmed") as running. Suspected, declined,
-# and unconfirmed entries are intentionally omitted until confirmed.
+# AUTO-GENERATED — do not edit by hand.
+# Regenerated from the coalition candidate-tracking sheet by
+# scripts/sync-candidates.py (CI: .github/workflows/sync-candidates.yml).
+# Edit the source spreadsheet, not this file — manual changes are overwritten.
+#
+# Includes ONLY candidates whose status is confirmed ("Yes Confirmed") as running.
+# Suspected, declined, and unconfirmed entries are intentionally omitted.
 #
 # Subjective tracking notes (political "vibe", commentary, character assessments)
 # are intentionally NOT published here — the scorecard evaluates positions, not
@@ -11,51 +15,23 @@
 # Fields:
 #   name         Candidate's name as listed.
 #   municipality Slug matching _data/municipalities.yml.
-#   office       Office sought, or null if not yet specified in the source.
+#   office       "Mayor", "Councillor", or null if not specified in the source.
 #   incumbent    true = incumbent, false = challenger, null = unspecified.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
-#                _data/subjects.yml. Any topic left out renders as pending ("—").
-#
-# Grades are pending until candidates are surveyed (see methodology). To publish a
-# candidate's results, add a `scores` map, e.g.:
-#
-#   - name: Example Candidate
-#     municipality: victoria
-#     office: Councillor
-#     incumbent: false
-#     scores:
-#       general: B
-#       transit: A
-#       housing: B
-#       climate: A
-#       arts: C
-#       rolling-cycling: B
-#       walking: A
-#       youth-students: C
-#       healthcare-access: B
+#                _data/subjects.yml. Any topic left blank renders as pending ("—").
 
 # --- Saanich ---
-- name: Rishi Sharma
-  municipality: saanich
-  office: Mayor
-  incumbent: false
-
 - name: Karen Harper
   municipality: saanich
   office: Mayor
   incumbent: true
 
+- name: Rishi Sharma
+  municipality: saanich
+  office: Mayor
+  incumbent: false
+
 - name: Colin Plant
-  municipality: saanich
-  office: Councillor
-  incumbent: true
-
-- name: Teale Phelps Banderoff
-  municipality: saanich
-  office: Councillor
-  incumbent: true
-
-- name: Nathalie Chambers
   municipality: saanich
   office: Councillor
   incumbent: true
@@ -65,7 +41,22 @@
   office: Councillor
   incumbent: false
 
+- name: Nathalie Chambers
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+
+- name: Teale Phelps Banderoff
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+
 - name: Alex Cook
+  municipality: saanich
+  office: null
+  incumbent: false
+
+- name: Graham Wright
   municipality: saanich
   office: null
   incumbent: false
@@ -76,11 +67,6 @@
   incumbent: false
 
 - name: Matt McGeachie
-  municipality: saanich
-  office: null
-  incumbent: false
-
-- name: Graham Wright
   municipality: saanich
   office: null
   incumbent: false
@@ -96,10 +82,25 @@
   office: Councillor
   incumbent: true
 
+- name: Isabella Lee
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
+- name: Jack Sandor
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
 - name: Jeremy Caradonna
   municipality: victoria
   office: Councillor
   incumbent: true
+
+- name: Karen Rothe
+  municipality: victoria
+  office: Councillor
+  incumbent: null
 
 - name: Krista Laughton
   municipality: victoria
@@ -111,25 +112,20 @@
   office: Councillor
   incumbent: true
 
-- name: Jack Sandor
-  municipality: victoria
-  office: Councillor
-  incumbent: false
-
-- name: Isabella Lee
-  municipality: victoria
-  office: Councillor
-  incumbent: false
-
 - name: Susan Kim
   municipality: victoria
   office: Councillor
   incumbent: true
 
-- name: Karen Rothe
+- name: Wendy Bowkett
   municipality: victoria
   office: Councillor
-  incumbent: null
+  incumbent: false
+
+- name: Owen Haley
+  municipality: victoria
+  office: null
+  incumbent: false
 
 # --- Esquimalt ---
 - name: Duncan Cavens
@@ -143,27 +139,22 @@
   office: Mayor
   incumbent: true
 
-- name: Kimberly Guiry
+- name: Stew Young
+  municipality: langford
+  office: Mayor
+  incumbent: false
+
+- name: Bryson Hill
   municipality: langford
   office: Councillor
   incumbent: true
 
-- name: Colby Harder
+- name: Lisa Foxhall
   municipality: langford
   office: Councillor
-  incumbent: true
-
-- name: Keith Yacucha
-  municipality: langford
-  office: Councillor
-  incumbent: true
+  incumbent: false
 
 - name: Mary Wagner
   municipality: langford
   office: Councillor
   incumbent: true
-
-- name: Bryson Hill
-  municipality: langford
-  office: null
-  incumbent: null
