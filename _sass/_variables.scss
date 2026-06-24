@@ -1,27 +1,40 @@
-// Direction 1: The Voter Guide
-$color-bg: #fafaf8;
-$color-bg-warm: #f5f3ef;
+// Livable CRD brand palette
+// Core brand colours (from the Livable CRD branding guide):
+//   #5C18A4 Livable Purple · #D5ADFF Kwetlal Purple · #220940 Inky Purple
+$livable-purple: #5c18a4;
+$kwetlal-purple: #d5adff;
+$inky-purple:    #220940;
+
+// Neutrals — faint cool/lavender tints so they sit in the purple family.
+$color-bg: #faf9fc;        // page background
+$color-bg-warm: #f3edfb;   // soft lavender surface (alt sections, hovers) — name kept for compatibility
 $color-surface: #ffffff;
-$color-text: #111111;
-$color-muted: #4a4a4a;
-$color-accent: #c41e3a;
-$color-accent-dark: #9a1830;
-$color-accent-alt: #1a3a5c;
-$color-accent-alt-dark: #122a45;
-$color-warm: #d4a017;
-$color-warm-dark: #a67c00;
-$color-border: #111111;
-$color-hero: #1a3a5c;
+$color-text: $inky-purple; // body text + heavy borders read as deep "ink" purple
+$color-muted: #564a66;     // muted aubergine-grey for secondary text
+
+// Accents
+$color-accent: $livable-purple;       // primary brand colour (buttons, links, highlights)
+$color-accent-dark: #46127d;          // darkened Livable Purple for hover states
+$color-accent-alt: $inky-purple;      // deep surfaces: hero, page headers, table headers
+$color-accent-alt-dark: #160529;      // darker still
+$color-warm: $kwetlal-purple;         // light brand accent (the "Donate"/support treatment)
+$color-warm-dark: #bd8df0;            // deeper Kwetlal for hover/borders
+$color-border: $inky-purple;
+$color-hero: $inky-purple;
 $border-weight: 3px;
 $border-weight-heavy: 4px;
 
+// Letter-grade colours stay semantic (green→good … red→poor) so the scorecard
+// remains legible at a glance; they convey data, not brand identity.
 $grade-a: #1b7a3d;
 $grade-b: #2d6a9f;
 $grade-c: #b8860b;
 $grade-f: #c41e3a;
 
-$font-sans: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-$font-display: "Barlow Condensed", system-ui, sans-serif;
+// Lexend is the Livable CRD brand typeface (Google Fonts). Used throughout —
+// uppercase Lexend headings echo the "LIVABLE CRD" logo wordmark.
+$font-sans: "Lexend", system-ui, -apple-system, sans-serif;
+$font-display: "Lexend", system-ui, sans-serif;
 $radius: 4px;
 $radius-lg: 4px;
 $shadow: none;
@@ -30,7 +43,7 @@ $max-width: 1100px;
 $transition-fast: 0.15s ease;
 $transition-med: 0.25s ease;
 
-// Spacing scale (1rem = 18px base)
+// Spacing scale (1rem = 16px base)
 $space-gutter: 1.25rem;
 $space-xs: 0.5rem;
 $space-sm: 1rem;

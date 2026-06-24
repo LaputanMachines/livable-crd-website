@@ -27,8 +27,10 @@ description: >-
 <p>
   Participating organizations collaborate on a shared questionnaire covering topics
   across nine topic areas — from transit and housing to arts, climate, walking, cycling, youth, healthcare, and general livability. Responses are collected from
-  candidates (or documented when candidates decline to respond). Grades are assigned
-  using a published methodology so the process is transparent and reproducible.
+  candidates (or documented when candidates decline to respond). Each participating
+  group submits questions in its area of focus and grades candidates' responses to
+  the questions it submitted, using a published methodology so the process is
+  transparent and reproducible.
 </p>
 
 <h2>What is coming</h2>

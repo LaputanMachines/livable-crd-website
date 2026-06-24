@@ -3,7 +3,9 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 html {
-  font-size: 18px;
+  // Lexend has a larger x-height than the old condensed fonts, so it reads
+  // bigger at the same sizes; 16px (vs the previous 18px) restores the density.
+  font-size: 16px;
   scroll-behavior: smooth;
   min-height: 100%;
 }
@@ -78,11 +80,11 @@ ul, ol {
 }
 
 a {
-  color: $color-accent-alt;
+  color: $color-accent; // Livable Purple — stands apart from the inky body text
   text-decoration-thickness: 2px;
   text-underline-offset: 3px;
   transition: color $transition-fast;
-  &:hover { color: $color-accent; }
+  &:hover { color: $color-accent-dark; }
 }
 
 img { max-width: 100%; height: auto; }

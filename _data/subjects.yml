@@ -4,7 +4,7 @@
   name: All categories / General
   short: General
   icon: general.svg
-  accent: "#64748b"
+  accent: "#5b5169"
   description: >-
     Cross-cutting questions that apply across topics or address overall vision for
     livability in the Capital Region.
@@ -13,7 +13,7 @@
   name: Transit
   short: Transit
   icon: transit.svg
-  accent: "#2d6a9f"
+  accent: "#3730a3"
   description: >-
     Public transit service, funding, and integration so more people can get around
     without driving for every trip.
@@ -22,7 +22,7 @@
   name: Housing
   short: Housing
   icon: housing.svg
-  accent: "#1a3a5c"
+  accent: "#5c18a4"
   description: >-
     Affordable and diverse homes, gentle density, tenant protections, and land-use
     choices that help people of all incomes live here.
@@ -31,7 +31,7 @@
   name: Climate
   short: Climate
   icon: climate.svg
-  accent: "#1b7a3d"
+  accent: "#7e22ce"
   description: >-
     Climate action, emissions reduction, resilience, and aligning growth with a
     sustainable future.
@@ -40,7 +40,7 @@
   name: Arts
   short: Arts
   icon: arts.svg
-  accent: "#6b4c9a"
+  accent: "#a21caf"
   description: >-
     Creative spaces, cultural programming, and municipal support for arts and
     culture in everyday community life.
@@ -49,7 +49,7 @@
   name: Rolling & cycling
   short: Cycling
   icon: rolling-cycling.svg
-  accent: "#2d6a9f"
+  accent: "#4f46e5"
   description: >-
     Safe bike lanes, rolling infrastructure, and policies that make cycling and
     wheeled mobility practical for more residents.
@@ -58,7 +58,7 @@
   name: Walking
   short: Walking
   icon: walking.svg
-  accent: "#b8860b"
+  accent: "#9333ea"
   description: >-
     Walkable neighbourhoods, sidewalks, crossings, and street design that put
     people first on foot.
@@ -67,7 +67,7 @@
   name: Youth / students
   short: Youth
   icon: youth-students.svg
-  accent: "#1a3a5c"
+  accent: "#6d28d9"
   description: >-
     Schools, youth services, student housing, and decisions that affect young
     people staying and thriving in the region.
@@ -76,7 +76,7 @@
   name: Healthcare access
   short: Health
   icon: healthcare-access.svg
-  accent: "#c41e3a"
+  accent: "#be185d"
   description: >-
     Access to clinics, mental health supports, and municipal actions that help
     residents get timely care close to home.

@@ -42,13 +42,13 @@
 
 .btn-donate {
   background: $color-warm;
-  color: #fff !important;
+  color: $color-text !important;
   border-color: $color-warm;
 
   &:hover {
     background: $color-warm-dark;
     border-color: $color-warm-dark;
-    color: #fff !important;
+    color: $color-text !important;
   }
 }
 
@@ -173,9 +173,9 @@
 }
 
 .badge--soon {
-  background: transparent;
-  color: $color-warm-dark;
-  border-color: $color-warm;
+  background: $color-bg-warm;
+  color: $color-accent;
+  border-color: $color-warm-dark;
 }
 
 .grade {

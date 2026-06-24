@@ -54,7 +54,7 @@
   font-size: 1.25rem;
   font-family: $font-display;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: -0.02em;
   transition: color $transition-fast;
 
   &:hover {
@@ -62,8 +62,8 @@
   }
 
   img, svg {
-    width: 40px;
-    height: 40px;
+    height: 36px;
+    width: auto;
     flex-shrink: 0;
   }
 }
@@ -105,7 +105,7 @@
       color: #fff;
       background: $color-accent;
       padding: 0.4rem 0.9rem;
-      border-bottom-color: transparent;
+      border: none; // override the base link's 3px transparent bottom border (which pushed pill text off-centre)
       border-radius: $radius;
 
       &:hover {
@@ -122,15 +122,15 @@
     }
 
     &.nav-highlight-donate {
-      color: #fff;
-      background: $color-accent-alt;
+      color: $color-text;
+      background: $color-warm;
       padding: 0.4rem 0.9rem;
-      border-bottom-color: transparent;
+      border: none; // override the base link's 3px transparent bottom border (which pushed pill text off-centre)
       border-radius: $radius;
 
       &:hover {
-        color: #fff;
-        background: $color-hero;
+        color: $color-text;
+        background: $color-warm-dark;
         border-bottom-color: transparent;
       }
     }
@@ -272,12 +272,18 @@ main {
 
   a {
     color: #fff;
-    &:hover { color: $color-accent; }
+    &:hover { color: $color-warm; } // Kwetlal: stays legible on the inky footer
   }
 
   .footer-inner { max-width: $max-width; margin: 0 auto; }
   p { margin: 0 0 $space-xs; }
   p:last-child { margin-bottom: 0; }
+
+  .footer-credit {
+    margin-top: $space-sm;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+  }
 }
 
 .hero {

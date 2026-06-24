@@ -194,6 +194,7 @@ description: >-
         will publish the full question set and weighting here. In general:
       </p>
       <ul>
+        <li>Each participating group contributes the questions in its area of focus, and that same group grades candidates' responses to the questions it submitted.</li>
         <li>Points are awarded for positions that advance coalition goals within each topic.</li>
         <li>Each topic grade reflects the candidate's responses within that area, including general livability questions.</li>
         <li>Points are deducted for positions that would clearly undermine progress on housing, mobility, climate, healthcare access, or other priorities covered in the survey.</li>
