@@ -30,10 +30,23 @@ defaults:
         width: 1200
         height: 630
         alt: "Livable CRD — Capital Region municipal election candidate scorecard"
+  # Blog posts: dateless URLs under /blog/ and the shared post layout.
+  # This per-collection permalink overrides the global `pretty` style above.
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      permalink: /blog/:title/
+
+# jekyll-feed RSS/Atom feed. Limit the feed to actual blog posts.
+feed:
+  path: /feed.xml
 
 plugins:
   - jekyll-seo-tag
   - jekyll-sitemap
+  - jekyll-feed
 
 exclude:
   - Gemfile

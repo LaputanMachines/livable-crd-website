@@ -206,6 +206,30 @@ description: >-
       </p>
     </div>
   </details>
+
+  <details class="methodology" id="who-grades">
+    <summary>Who writes — and grades — the questions?</summary>
+    <div class="methodology__body">
+      <p>
+        Livable CRD is a <strong>coalition</strong>, and the questionnaire is built
+        collaboratively. Each participating organization contributes the questions in
+        its own area of focus — a transit group writes the transit questions, a housing
+        group writes the housing questions, and so on across the policy areas we evaluate.
+      </p>
+      <p>
+        <strong>The same group that submits a set of questions also grades candidates'
+        responses to those questions.</strong> Each group grades only within its own area
+        of expertise, so no single organization assigns a candidate's full slate of grades
+        alone. This keeps every topic in the hands of the people who understand it best,
+        and keeps the overall scorecard a shared, coalition-wide effort.
+      </p>
+      <p>
+        All grading follows our published <a href="#methodology">methodology</a> so the
+        process stays transparent and reproducible. Candidates will have an opportunity to
+        review their published responses before grades are finalized.
+      </p>
+    </div>
+  </details>
 </div>
 
 <script src="{{ '/assets/js/scorecard.js' | relative_url }}" defer></script>

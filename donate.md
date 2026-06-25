@@ -39,6 +39,11 @@ description: >-
     contributions from individuals. We <strong>cannot accept</strong> donations from
     corporations, unions, or other organizations.
   </li>
+  <li>
+    <strong>No donations from developers.</strong> To protect the independence of
+    our scorecard, we <strong>will not accept</strong> contributions from real
+    estate or property developers, or from anyone giving on their behalf.
+  </li>
 </ul>
 
 <p>

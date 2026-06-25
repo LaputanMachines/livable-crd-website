@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<div class="page-header">
+  <div class="container container--narrow">
+    <p class="post-meta post-meta--header">
+      <a class="post-back" href="{{ '/blog/' | relative_url }}">← Blog</a>
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %-d, %Y" }}</time>
+    </p>
+    <h1>{{ page.title }}</h1>
+  </div>
+</div>
+<article class="container container--narrow page-content post">
+  {{ content }}
+
+  <hr class="post-rule">
+  <p class="content-follow-up">
+    Want updates? <a href="{{ '/feed.xml' | relative_url }}">Subscribe to our RSS feed</a>
+    or <a href="{{ '/blog/' | relative_url }}">read more posts</a>.
+  </p>
+</article>

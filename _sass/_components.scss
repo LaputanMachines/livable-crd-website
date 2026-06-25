@@ -581,6 +581,11 @@ tr:hover td { background: $color-bg-warm; }
   background: $color-surface;
 }
 
+// Consecutive FAQ panels sit close together so they read as one group.
+.methodology + .methodology {
+  margin-top: $space-xs;
+}
+
 .methodology > summary {
   display: flex;
   align-items: center;
@@ -795,4 +800,74 @@ p + .partner-list {
   .card-grid:not(.card-grid--scoreboard) .card {
     border-right: none;
   }
+}
+
+// --- Blog ---------------------------------------------------------------
+.post-meta {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $color-muted;
+  margin-bottom: $space-xs;
+}
+
+// Meta row inside the dark page-header (post layout): lighter text + back link.
+.post-meta--header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-sm;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: $space-sm;
+
+  .post-back {
+    color: #fff;
+    text-decoration: none;
+    &:hover { color: $color-warm; } // Kwetlal accent on the inky header
+  }
+}
+
+.post-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.post-list__item {
+  padding-bottom: $space-lg;
+  margin-bottom: $space-lg;
+  border-bottom: $border-weight solid $color-text;
+
+  &:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}
+
+.post-list__title {
+  font-size: clamp(1.5rem, 3.5vw, 2rem);
+  margin-bottom: $space-xs;
+
+  a {
+    color: $color-text;
+    text-decoration: none;
+    &:hover { color: $color-accent; }
+  }
+}
+
+.post-list__excerpt { color: $color-muted; }
+
+.post-list__more {
+  font-weight: 600;
+  text-decoration: none;
+  &:hover { text-decoration: underline; }
+}
+
+// Divider above the subscribe/footer note on individual posts.
+.post-rule {
+  border: none;
+  border-top: $border-weight solid $color-text;
+  margin: $space-lg 0 $space-md;
 }

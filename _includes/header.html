@@ -16,6 +16,7 @@
           <li><a href="{{ '/' | relative_url }}" {% if current == '/' %}class="active"{% endif %}>Home</a></li>
           <li><a href="{{ '/scorecard/' | relative_url }}" class="nav-highlight{% if current contains '/scorecard' %} active{% endif %}">Scorecard</a></li>
           <li><a href="{{ '/donate/' | relative_url }}" class="nav-highlight-donate{% if current == '/donate/' %} active{% endif %}">Donate</a></li>
+          <li><a href="{{ '/blog/' | relative_url }}" {% if current contains '/blog' %}class="active"{% endif %}>Blog</a></li>
           <li><a href="{{ '/about/' | relative_url }}" {% if current == '/about/' %}class="active"{% endif %}>About</a></li>
         </ul>
       </nav>

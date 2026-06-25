@@ -47,18 +47,29 @@
 .site-logo {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.4rem;
   text-decoration: none;
-  color: $color-text;
   font-weight: 800;
   font-size: 1.25rem;
   font-family: $font-display;
   text-transform: uppercase;
   letter-spacing: -0.02em;
-  transition: color $transition-fast;
 
-  &:hover {
+  // Wordmark in the logo icon's Livable Purple, underlined in the same style as
+  // the nav links (a 3px solid bottom border below the text). The underline uses
+  // the logo's lighter Kwetlal purple, darkening to Livable Purple on hover.
+  span {
     color: $color-accent;
+    // Tight line box so the wordmark centres cleanly against the icon
+    // (otherwise the inherited 1.65 line-height skews it).
+    line-height: 1;
+    padding: 0.35rem 0;
+    border-bottom: 3px solid $color-warm;
+    transition: border-color $transition-fast;
+  }
+
+  &:hover span {
+    border-bottom-color: $color-accent;
   }
 
   img, svg {
