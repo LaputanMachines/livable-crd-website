@@ -1,6 +1,38 @@
-- name: Partner organization (placeholder)
-  note: Coalition member — name to be confirmed.
-- name: Partner organization (placeholder)
-  note: Coalition member — name to be confirmed.
-- name: Partner organization (placeholder)
-  note: Coalition member — name to be confirmed.
+# Coalition partners, shown on the homepage (index.md).
+#
+# Fields:
+#   name      Organization name (required). Rendered as the heading.
+#   note      One-line description (optional).
+#   logo      Logo image (optional). Either a bare filename, in which case the
+#             file must live in assets/images/partners/ (e.g. logo: homes-for-living.png),
+#             or a full site-relative path (e.g. /assets/images/partners/homes-for-living.png).
+#             Both forms work. Omit to fall back to the name heading.
+#   url       Link to the partner's website (optional). When set, a "Visit website"
+#             link is shown below the note (opens in a new tab), e.g. url: https://homesforliving.ca
+#   category  Focus area, shown as a colored pill (optional). Use a topic id from
+#             _data/subjects.yml so the pill picks up that topic's name and accent color:
+#               general, transit, housing, climate, arts,
+#               rolling-cycling, walking, youth-students, healthcare-access
+#             Any other value is shown verbatim with the default accent.
+
+- name: Homes for Living
+  note: Homes for Living is a registered BC Society dedicated to advocating for more—and more affordable—housing in Greater Victoria and across BC.
+  logo: /assets/images/partners/homes-for-living.png
+  url: https://www.homesforliving.ca/
+  category: housing
+- name: Walk On, Victoria
+  note: The CRD's local pedestrian advocacy organization which works to improve walking conditions and encourage walking activity.
+  category: walking
+- name: Better Island Transit
+  note: Activists, subject-matter experts and citizens lobbying for convenient and affordable public transportation on Vancouver Island.
+  logo: /assets/images/partners/better-island-transit.png
+  url: https://betterislandtransit.ca/
+  category: transit
+- name: Better Transit YYJ
+  note: Better Transit YYJ is a grassroots group of residents advocating for better public transit in Greater Victoria.
+  logo: /assets/images/partners/better-transit-yyj.png
+  url: https://bettertransityyj.ca/
+  category: transit
+- name: Victori'us Arts
+  note: An arts advocacy group organizing artists to engage civic leadership and shape a future where Victoria remains prosperous, inclusive, and artist-led.
+  category: arts

@@ -741,6 +741,59 @@ p + .partner-list {
   background: $color-bg-warm;
 }
 
+.partner-list .partner-logo {
+  display: block;
+  max-width: 100%;
+  max-height: 56px;
+  width: auto;
+  height: auto;
+  margin: 0 0 $space-sm;
+  object-fit: contain;
+}
+
+// Category pill — shows the policy area a partner focuses on. Small, filled, with
+// a distinct colour per category (see map below). Free-text/unmapped categories
+// fall back to the default accent.
+.partner-list .org-category { margin: 0 0 $space-xs; }
+
+.partner-list .category-pill {
+  display: inline-block;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: 0.6rem;
+  line-height: 1;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  background: $color-accent-alt;
+  border-radius: $radius;
+}
+
+// One distinct, AA-contrast (white text) colour per category id from _data/subjects.yml.
+// The 8 policy areas each get their own hue family; `general` is a neutral catch-all.
+$category-colors: (
+  general: #475569,           // slate (neutral)
+  transit: #1d4ed8,           // blue
+  housing: #7c3aed,           // violet
+  climate: #166534,           // green
+  arts: #be185d,              // rose
+  rolling-cycling: #0e7490,   // teal
+  walking: #c2410c,           // orange
+  youth-students: #a16207,    // gold
+  healthcare-access: #b91c1c, // red
+);
+@each $cat, $col in $category-colors {
+  .partner-list .category-pill--#{$cat} { background: $col; }
+}
+
+// Explicit "Visit website" link below the note.
+.partner-list .org-link {
+  margin: $space-xs 0 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .partner-list .org-name {
   font-weight: 700;
   margin: 0 0 0.25rem;

@@ -7,6 +7,12 @@ baseurl: ""
 email: hello@livablecrd.ca
 donate_url: "https://actionnetwork.org/fundraising/support-livable-crd/"
 
+# Feature flags
+# Render coalition partner logos on the homepage. Disabled for now; the logo
+# files and `logo:` entries in _data/partners.yml are kept — flip to true to
+# re-enable. (Changing this requires restarting `jekyll serve`.)
+partner_logos: false
+
 # --- SEO (jekyll-seo-tag) ---
 # tagline is appended to the site title on the homepage:
 #   "Livable CRD | Capital Region municipal election candidate scorecard"

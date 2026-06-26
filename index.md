@@ -62,8 +62,18 @@ description: >-
     <ul class="partner-list">
       {% for partner in site.data.partners %}
       <li>
+        {% if site.partner_logos and partner.logo %}
+        {% if partner.logo contains "/" %}{% assign partner_logo_src = partner.logo %}{% else %}{% assign partner_logo_src = partner.logo | prepend: '/assets/images/partners/' %}{% endif %}
+        <img class="partner-logo" src="{{ partner_logo_src | relative_url }}" alt="{{ partner.name }} logo" loading="lazy">
+        {% endif %}
+        {% if partner.category %}
+        {% assign cat = site.data.subjects | where: "id", partner.category | first %}
+        {% if cat %}{% assign cat_label = cat.name %}{% else %}{% assign cat_label = partner.category %}{% endif %}
+        <p class="org-category"><span class="category-pill category-pill--{{ partner.category | slugify }}">{{ cat_label }}</span></p>
+        {% endif %}
         <p class="org-name">{{ partner.name }}</p>
-        <p class="org-note">{{ partner.note }}</p>
+        {% if partner.note %}<p class="org-note">{{ partner.note }}</p>{% endif %}
+        {% if partner.url %}<p class="org-link"><a href="{{ partner.url }}" target="_blank" rel="noopener">Visit website →</a></p>{% endif %}
       </li>
       {% endfor %}
     </ul>
@@ -87,5 +97,10 @@ description: >-
       {% include topic-card.html subject=subject %}
       {% endfor %}
     </div>
+    <p class="content-follow-up">
+      Curious how candidates earn their letter grades? See
+      <a href="{{ '/scorecard/#methodology' | relative_url }}">how we grade</a>
+      for our methodology and a breakdown of each topic.
+    </p>
   </div>
 </section>
