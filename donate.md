@@ -44,6 +44,11 @@ description: >-
     our scorecard, we <strong>will not accept</strong> contributions from real
     estate or property developers, or from anyone giving on their behalf.
   </li>
+  <li>
+    <strong>No donations from politicians or candidates.</strong> To keep our
+    scorecard non-partisan, we <strong>will not accept</strong> contributions from
+    sitting politicians, declared candidates, or anyone giving on their behalf.
+  </li>
 </ul>
 
 <p>
