@@ -28,6 +28,10 @@
   logo: /assets/images/partners/better-island-transit.png
   url: https://betterislandtransit.ca/
   category: transit
+- name: Family Doctors for Saanich
+  note: Neighbours, parents, students, workers, and seniors from across Saanich who want to help improve access to primary care in our community.
+  url: https://www.familydoctorsforsaanich.ca/
+  category: healthcare
 - name: Better Transit YYJ
   note: Better Transit YYJ is a grassroots group of residents advocating for better public transit in Greater Victoria.
   logo: /assets/images/partners/better-transit-yyj.png
