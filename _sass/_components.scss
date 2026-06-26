@@ -694,6 +694,24 @@ tr:hover td { background: $color-bg-warm; }
   .topic-def__name { margin-bottom: 0; }
 }
 
+// Category FAQ — a collapsible box at the bottom of the scorecard page. Homepage
+// topic cards deep-link to each row via #category-<id> (scorecard.js opens the
+// panel on hash). Styling rides on the shared .methodology accordion.
+// Offset anchored rows below the sticky header when reached via a deep link.
+.topic-def { scroll-margin-top: 5.5rem; }
+
+// Tint each category row's left edge with its topic accent.
+.category-faq .topic-def {
+  border-left: 4px solid var(--card-accent, $color-accent-alt);
+}
+
+// "What this covers" link on each homepage topic card — tinted with the card accent.
+.card-faq-link {
+  font-size: 0.9rem;
+  color: var(--card-accent, $color-accent);
+  &:hover { color: var(--card-accent, $color-accent); }
+}
+
 .callout {
   background: $color-bg-warm;
   border-left: 4px solid $color-accent-alt;

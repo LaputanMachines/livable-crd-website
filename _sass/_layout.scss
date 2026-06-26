@@ -1,6 +1,6 @@
 @use "variables" as *;
 
-@mixin navy-surface-texture {
+@mixin navy-surface-texture($dot-opacity: 0.24) {
   &::before {
     content: "";
     position: absolute;
@@ -8,7 +8,7 @@
     background-image: url("../images/hero-texture.svg");
     background-repeat: repeat;
     background-size: 16px 16px;
-    opacity: 0.14;
+    opacity: $dot-opacity;
     pointer-events: none;
     z-index: 0;
   }
@@ -55,11 +55,11 @@
   text-transform: uppercase;
   letter-spacing: -0.02em;
 
-  // Wordmark in the logo icon's Livable Purple, underlined in the same style as
-  // the nav links (a 3px solid bottom border below the text). The underline uses
-  // the logo's lighter Kwetlal purple, darkening to Livable Purple on hover.
+  // Wordmark in deep Inky Purple (matches the body "ink"), underlined in the same
+  // style as the nav links (a 3px solid bottom border below the text). The underline
+  // uses the logo's lighter Kwetlal purple, darkening to Livable Purple on hover.
   span {
-    color: $color-accent;
+    color: $color-text;
     // Tight line box so the wordmark centres cleanly against the icon
     // (otherwise the inherited 1.65 line-height skews it).
     line-height: 1;
@@ -242,7 +242,7 @@ main {
   background: $color-accent-alt;
   color: #fff;
   border-bottom: $border-weight-heavy solid $color-text;
-  @include navy-surface-texture;
+  @include navy-surface-texture(0.3);
 
   .container {
     position: relative;

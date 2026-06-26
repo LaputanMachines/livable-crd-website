@@ -3,4 +3,5 @@
   <img class="card-icon" src="{{ '/assets/images/icons/' | append: topic.icon | relative_url }}" alt="" width="32" height="32">
   <h3>{{ topic.name }}</h3>
   <p>{{ topic.description }}</p>
+  <a class="card-link card-faq-link" href="{{ '/scorecard/#category-' | append: topic.id | relative_url }}">What this covers <span aria-hidden="true">→</span></a>
 </article>

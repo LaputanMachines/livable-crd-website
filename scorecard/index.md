@@ -23,7 +23,7 @@ description: >-
   </p>
 
   <div class="status-banner">
-    <p><strong>Grading in progress.</strong> Candidates are being surveyed — grades show as “—” until questionnaire responses are published.</p>
+    <p><strong>Questionnaire in progress.</strong> Questions are being crafted, and candidates are being surveyed — grades show as “—” until questionnaire responses are published.</p>
   </div>
 
   <div class="scorecard-legend" aria-label="Grading key">
@@ -174,19 +174,10 @@ description: >-
 
       <h2>Questionnaire topics</h2>
       <p>
-        Each candidate is graded in every policy area below. Individual questions are tagged
-        with the topic that best applies, including a <strong>general</strong> category
-        for cross-cutting items.
+        Each candidate is graded in every policy area, including a <strong>general</strong>
+        category for cross-cutting items. See
+        <a href="#categories">what each category covers</a> for a description of every topic.
       </p>
-
-      <dl class="topic-defs">
-        {% for subject in site.data.subjects %}
-        <div class="topic-def">
-          <dt class="topic-def__name">{{ subject.name }}</dt>
-          <dd class="topic-def__desc">{{ subject.description }}</dd>
-        </div>
-        {% endfor %}
-      </dl>
 
       <h2>How grades are assigned</h2>
       <p>
@@ -228,6 +219,24 @@ description: >-
         process stays transparent and reproducible. Candidates will have an opportunity to
         review their published responses before grades are finalized.
       </p>
+    </div>
+  </details>
+
+  <details class="methodology category-faq" id="categories">
+    <summary>What each category covers</summary>
+    <div class="methodology__body">
+      <p>
+        Every candidate is graded across the policy areas below — the same categories used
+        in the coalition questionnaire. Here's what each one means.
+      </p>
+      <dl class="topic-defs">
+        {% for subject in site.data.subjects %}
+        <div class="topic-def" id="category-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
+          <dt class="topic-def__name">{{ subject.name }}</dt>
+          <dd class="topic-def__desc">{{ subject.description }}</dd>
+        </div>
+        {% endfor %}
+      </dl>
     </div>
   </details>
 </div>
