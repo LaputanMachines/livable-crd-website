@@ -60,10 +60,11 @@
 
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  // Match the partner-card grid so policy-area cards are the same size.
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 0;
   margin-top: $space-md;
-  border: $border-weight-heavy solid $color-text;
+  border: $border-weight solid $color-text;
 }
 
 .card-grid--scoreboard {
@@ -83,9 +84,9 @@
 .card-grid .card:last-child { border-bottom: none; }
 
 .card-grid:not(.card-grid--scoreboard) .card {
+  // Every card carries its own right border (matching .partner-list li); the
+  // container border closes the outer edge regardless of how many fit per row.
   border-right: $border-weight solid $color-text;
-
-  &:nth-child(3n) { border-right: none; }
 }
 
 .card:hover {
@@ -107,15 +108,30 @@
   border-left: 5px solid var(--card-accent, $color-accent-alt);
   position: relative;
   overflow: visible;
+
+  // Match the partner-card treatment: compact uppercase title over a small,
+  // muted body so policy cards read at the same size as .partner-list cards.
+  h3 {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    font-size: 0.9rem;
+    color: $color-muted;
+    margin-bottom: 0;
+  }
 }
 
 .card--topic::before { display: none; }
 
 .card-icon {
   display: block;
-  margin-bottom: $space-sm;
-  width: 2.25rem;
-  height: 2.25rem;
+  margin-bottom: $space-xs;
+  width: 1.5rem;
+  height: 1.5rem;
   color: var(--card-accent, $color-accent-alt);
 }
 
@@ -681,6 +697,28 @@ tr:hover td { background: $color-bg-warm; }
   line-height: 1.5;
 }
 
+// Sample questionnaire question shown beneath each category description.
+.topic-def__example {
+  display: block;
+  margin-top: 0.6rem;
+  color: $color-text;
+  font-style: italic;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.topic-def__example-label {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-family: $font-display;
+  font-style: normal;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.68rem;
+  color: var(--card-accent, $color-accent);
+}
+
 @media (min-width: 720px) {
   .grade-def,
   .topic-def {
@@ -705,9 +743,12 @@ tr:hover td { background: $color-bg-warm; }
   border-left: 4px solid var(--card-accent, $color-accent-alt);
 }
 
-// "What this covers" link on each homepage topic card — tinted with the card accent.
+// "What this covers" link on each homepage topic card — tinted with the card
+// accent, at the same size/weight as the partner cards' "Visit website" link.
 .card-faq-link {
   font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
   color: var(--card-accent, $color-accent);
   &:hover { color: var(--card-accent, $color-accent); }
 }

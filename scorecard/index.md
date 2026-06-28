@@ -3,9 +3,8 @@ layout: default
 title: Candidate Scorecard
 permalink: /scorecard/
 description: >-
-  Compare where confirmed Capital Regional District municipal election
-  candidates stand on transit, housing, climate, arts, walking, and cycling.
-  Search by name or filter by municipality.
+  Compare where Capital Regional District municipal candidates stand on transit,
+  housing, climate, arts, and cycling. Search by name or filter by municipality.
 ---
 
 <div class="page-header">
@@ -233,7 +232,15 @@ description: >-
         {% for subject in site.data.subjects %}
         <div class="topic-def" id="category-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
           <dt class="topic-def__name">{{ subject.name }}</dt>
-          <dd class="topic-def__desc">{{ subject.description }}</dd>
+          <dd class="topic-def__desc">
+            {{ subject.description }}
+            {% if subject.example %}
+            <span class="topic-def__example">
+              <span class="topic-def__example-label">Example question</span>
+              “{{ subject.example }}”
+            </span>
+            {% endif %}
+          </dd>
         </div>
         {% endfor %}
       </dl>

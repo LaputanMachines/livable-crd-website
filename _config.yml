@@ -15,8 +15,9 @@ partner_logos: false
 
 # --- SEO (jekyll-seo-tag) ---
 # tagline is appended to the site title on the homepage:
-#   "Livable CRD | Capital Region municipal election candidate scorecard"
-tagline: "Capital Region municipal election candidate scorecard"
+#   "Livable CRD | Capital Region municipal candidate scorecard"
+# Kept short so the full homepage <title> stays under Google's ~60-char limit.
+tagline: "Capital Region municipal candidate scorecard"
 locale: en_CA
 logo: /assets/images/logo.png            # publisher logo in structured data
 

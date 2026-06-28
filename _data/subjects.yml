@@ -1,5 +1,7 @@
 # Questionnaire topics (matches coalition form)
 # `short` is the compact label used in scorecard table column headers.
+# `example` is a sample question voters might see for that topic — shown in the
+# "What each category covers" FAQ on the scorecard page.
 - id: general
   name: All categories / General
   short: General
@@ -8,6 +10,9 @@
   description: >-
     Cross-cutting questions that apply across topics or address overall vision for
     livability in the Capital Region.
+  example: >-
+    What is your overall vision for a more livable Capital Region, and how would you
+    balance competing priorities?
 
 - id: transit
   name: Transit
@@ -17,6 +22,9 @@
   description: >-
     Public transit service, funding, and integration so more people can get around
     without driving for every trip.
+  example: >-
+    Would you support increasing municipal investment in frequent, all-day transit
+    service?
 
 - id: housing
   name: Housing
@@ -26,6 +34,9 @@
   description: >-
     Affordable and diverse homes, gentle density, tenant protections, and land-use
     choices that help people of all incomes live here.
+  example: >-
+    Will you vote to allow more diverse, affordable housing types in established
+    neighbourhoods?
 
 - id: climate
   name: Climate
@@ -35,6 +46,9 @@
   description: >-
     Climate action, emissions reduction, resilience, and aligning growth with a
     sustainable future.
+  example: >-
+    What concrete steps would you take to cut your municipality's greenhouse gas
+    emissions?
 
 - id: arts
   name: Arts
@@ -44,6 +58,9 @@
   description: >-
     Creative spaces, cultural programming, and municipal support for arts and
     culture in everyday community life.
+  example: >-
+    Would you protect or expand municipal funding for arts spaces and cultural
+    programming?
 
 - id: rolling-cycling
   name: Rolling & cycling
@@ -53,6 +70,9 @@
   description: >-
     Safe bike lanes, rolling infrastructure, and policies that make cycling and
     wheeled mobility practical for more residents.
+  example: >-
+    Do you support building a connected network of protected bike and rolling
+    routes?
 
 - id: walking
   name: Walking
@@ -62,6 +82,9 @@
   description: >-
     Walkable neighbourhoods, sidewalks, crossings, and street design that put
     people first on foot.
+  example: >-
+    Will you prioritize sidewalks, safe crossings, and pedestrian-first street
+    design?
 
 - id: youth-students
   name: Youth / students
@@ -71,6 +94,9 @@
   description: >-
     Schools, youth services, student housing, and decisions that affect young
     people staying and thriving in the region.
+  example: >-
+    How would you expand housing, services, and opportunities for youth and
+    students?
 
 - id: healthcare-access
   name: Healthcare access
@@ -80,3 +106,6 @@
   description: >-
     Access to clinics, mental health supports, and municipal actions that help
     residents get timely care close to home.
+  example: >-
+    What municipal actions would you take to improve residents' access to
+    healthcare?

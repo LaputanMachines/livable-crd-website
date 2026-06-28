@@ -39,39 +39,73 @@ def logo_crop():
     return im.crop(bbox)
 
 
+def draw_pill(draw, cx, y, text, font, pad_x=40, height=66,
+              fill=INDIGO, fg="white"):
+    """Filled, fully-rounded call-to-action button centered on cx."""
+    l, t, r, b = draw.textbbox((0, 0), text, font=font)
+    tw, th = r - l, b - t
+    w = tw + pad_x * 2
+    x0 = cx - w / 2
+    draw.rounded_rectangle([x0, y, x0 + w, y + height],
+                           radius=height / 2, fill=fill)
+    draw.text((cx - tw / 2 - l, y + (height - th) / 2 - t),
+              text, font=font, fill=fg)
+    return height
+
+
 def make_og():
     W, H = 1200, 630
     card = Image.new("RGB", (W, H), BG)
     d = ImageDraw.Draw(card)
+    cx = W // 2
     # top accent bar (brand indigo)
     d.rectangle([0, 0, W, 12], fill=INDIGO)
 
-    # logo, scaled to ~600px wide
+    # logo wordmark, scaled to ~480px wide
     logo = logo_crop()
-    lw = 600
+    lw = 480
     lh = round(logo.height * lw / logo.width)
     logo = logo.resize((lw, lh), Image.LANCZOS)
-    card.paste(logo, ((W - lw) // 2, 90))
 
-    cx = W // 2
-    y = 90 + lh + 50
-    y += center_text(d, cx, y, "Capital Region Candidate Scorecard",
-                     f(FONT_BOLD, 52), INDIGO) + 24
-    center_text(d, cx, y, "See where municipal election candidates stand",
-                f(FONT_REG, 30), MUTED)
+    head_font = f(FONT_BOLD, 50)
+    sub_font = f(FONT_REG, 28)
+    cta_font = f(FONT_BOLD, 30)
+    head_txt = "Capital Region Candidate Scorecard"
+    sub_txt = "See where candidates stand before you vote"
+    cta_txt = "View the scorecard at livablecrd.ca  →"  # explicit CTA
 
-    # grade chips row near bottom
-    chip, gap = 72, 22
+    def text_h(font, txt):
+        l, t, r, b = d.textbbox((0, 0), txt, font=font)
+        return b - t
+
+    # Vertically center the whole stack (logo, heading, subtitle, grade chips, CTA).
+    chip = 64
+    cta_h = 66
+    g_logo, g_head, g_sub, g_chips = 38, 18, 32, 34
+    stack = (lh + g_logo + text_h(head_font, head_txt) + g_head
+             + text_h(sub_font, sub_txt) + g_sub + chip + g_chips + cta_h)
+    y = max(40, (H - stack) // 2)
+
+    card.paste(logo, ((W - lw) // 2, y))
+    y += lh + g_logo
+    y += center_text(d, cx, y, head_txt, head_font, INDIGO) + g_head
+    y += center_text(d, cx, y, sub_txt, sub_font, MUTED) + g_sub
+
+    # grade chips row
+    gap = 20
     total = len(GRADES) * chip + (len(GRADES) - 1) * gap
     x = cx - total // 2
-    cy = H - 130
-    gf = f(FONT_BOLD, 40)
+    gf = f(FONT_BOLD, 36)
     for letter, color in GRADES:
-        d.rounded_rectangle([x, cy, x + chip, cy + chip], radius=14, fill=color)
+        d.rounded_rectangle([x, y, x + chip, y + chip], radius=14, fill=color)
         l, t, r, b = d.textbbox((0, 0), letter, font=gf)
-        d.text((x + (chip - (r - l)) / 2 - l, cy + (chip - (b - t)) / 2 - t),
+        d.text((x + (chip - (r - l)) / 2 - l, y + (chip - (b - t)) / 2 - t),
                letter, font=gf, fill="white")
         x += chip + gap
+    y += chip + g_chips
+
+    # call-to-action button
+    draw_pill(d, cx, y, cta_txt, cta_font, height=cta_h)
 
     out = os.path.join(IMG, "og-image.png")
     card.save(out, optimize=True)
