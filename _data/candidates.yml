@@ -36,12 +36,32 @@
   office: Mayor
   incumbent: true
 
+- name: Alex Cook
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
 - name: Colin Plant
   municipality: saanich
   office: Councillor
   incumbent: true
 
+- name: Graham Wright
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
 - name: Harjas Singh Popli
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Lorne DeLarge
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Matt McGeachie
   municipality: saanich
   office: Councillor
   incumbent: false
@@ -55,26 +75,6 @@
   municipality: saanich
   office: Councillor
   incumbent: true
-
-- name: Alex Cook
-  municipality: saanich
-  office: null
-  incumbent: false
-
-- name: Graham Wright
-  municipality: saanich
-  office: null
-  incumbent: false
-
-- name: Lorne DeLarge
-  municipality: saanich
-  office: null
-  incumbent: false
-
-- name: Matt McGeachie
-  municipality: saanich
-  office: null
-  incumbent: false
 
 # --- Victoria ---
 - name: Marianne Alto
@@ -137,6 +137,17 @@
   municipality: esquimalt
   office: Mayor
   incumbent: true
+
+# --- Oak Bay ---
+- name: Kevin Murdoch
+  municipality: oak-bay
+  office: Mayor
+  incumbent: true
+
+- name: Karin Sweeney
+  municipality: oak-bay
+  office: Councillor
+  incumbent: false
 
 # --- Langford ---
 - name: Scott Goodmanson
