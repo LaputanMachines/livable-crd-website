@@ -56,6 +56,11 @@
   office: Councillor
   incumbent: false
 
+- name: Hollis Hodson
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
 - name: Lorne DeLarge
   municipality: saanich
   office: Councillor
@@ -137,6 +142,11 @@
   municipality: esquimalt
   office: Mayor
   incumbent: true
+
+- name: Tara Todesco
+  municipality: esquimalt
+  office: Councillor
+  incumbent: false
 
 # --- Oak Bay ---
 - name: Kevin Murdoch
