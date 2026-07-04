@@ -81,11 +81,21 @@
   office: Councillor
   incumbent: true
 
+- name: Tia Sibbald
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
 # --- Victoria ---
 - name: Marianne Alto
   municipality: victoria
   office: Mayor
   incumbent: true
+
+- name: Arthur McInnis
+  municipality: victoria
+  office: Councillor
+  incumbent: null
 
 - name: Dave Thompson
   municipality: victoria
@@ -122,6 +132,11 @@
   office: Councillor
   incumbent: true
 
+- name: Melissa Cseszko
+  municipality: victoria
+  office: Councillor
+  incumbent: null
+
 - name: Susan Kim
   municipality: victoria
   office: Councillor
@@ -142,6 +157,11 @@
   municipality: esquimalt
   office: Mayor
   incumbent: true
+
+- name: Rob Johnstone
+  municipality: esquimalt
+  office: Councillor
+  incumbent: false
 
 - name: Tara Todesco
   municipality: esquimalt
