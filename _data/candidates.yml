@@ -36,11 +36,6 @@
   office: Mayor
   incumbent: true
 
-- name: Alex Cook
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
 - name: Colin Plant
   municipality: saanich
   office: Councillor
@@ -61,12 +56,22 @@
   office: Councillor
   incumbent: false
 
+- name: Laurie Lidstone
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
 - name: Lorne DeLarge
   municipality: saanich
   office: Councillor
   incumbent: false
 
 - name: Matt McGeachie
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Nancy Di Castri
   municipality: saanich
   office: Councillor
   incumbent: false
@@ -178,6 +183,11 @@
   municipality: oak-bay
   office: Councillor
   incumbent: false
+
+- name: Will Moore
+  municipality: oak-bay
+  office: Councillor
+  incumbent: null
 
 # --- Langford ---
 - name: Scott Goodmanson
