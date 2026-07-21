@@ -8,7 +8,7 @@ description: >-
 ---
 
 <p>
-  Sign up for occasional updates from <strong>Livable CRD</strong> — scorecard
+  Sign up for occasional updates from <strong>Livable CRD</strong>: scorecard
   releases, candidate news, and ways to get involved ahead of municipal
   elections in the Capital Regional District. We never share your information.
 </p>
@@ -87,6 +87,6 @@ description: >-
 </script>
 
 <p class="signup-disclaimer">
-  We'll only email you project updates and scorecard-related information —
-  nothing else. You can unsubscribe at any time.
+  We'll only email you project updates and scorecard-related information.
+  Nothing else. You can unsubscribe at any time.
 </p>

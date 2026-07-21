@@ -22,7 +22,7 @@ description: >-
   </p>
 
   <div class="status-banner">
-    <p><strong>Questionnaire in progress.</strong> Questions are being crafted, and candidates are being surveyed — grades show as “—” until questionnaire responses are published.</p>
+    <p><strong>Questionnaire in progress.</strong> Questions are being crafted, and candidates are being surveyed. Grades show as “—” until questionnaire responses are published.</p>
   </div>
 
   <div class="scorecard-legend" aria-label="Grading key">
@@ -140,7 +140,7 @@ description: >-
   </div>
 
   <details class="methodology" id="methodology">
-    <summary>How we grade — methodology</summary>
+    <summary>How we grade: methodology</summary>
     <div class="methodology__body">
       <p>
         Livable CRD rates municipal election <strong>candidates</strong> on policy positions
@@ -202,12 +202,12 @@ description: >-
   </details>
 
   <details class="methodology" id="who-grades">
-    <summary>Who writes — and grades — the questions?</summary>
+    <summary>Who writes, and grades, the questions?</summary>
     <div class="methodology__body">
       <p>
         Livable CRD is a <strong>coalition</strong>, and the questionnaire is built
         collaboratively. Each participating organization contributes the questions in
-        its own area of focus — a transit group writes the transit questions, a housing
+        its own area of focus: a transit group writes the transit questions, a housing
         group writes the housing questions, and so on across the policy areas we evaluate.
       </p>
       <p>
@@ -229,7 +229,7 @@ description: >-
     <summary>What each category covers</summary>
     <div class="methodology__body">
       <p>
-        Every candidate is graded across the policy areas below — the same categories used
+        Every candidate is graded across the policy areas below, the same categories used
         in the coalition questionnaire. Here's what each one means.
       </p>
       <dl class="topic-defs">

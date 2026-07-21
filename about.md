@@ -10,7 +10,7 @@ description: >-
 <p>
   <strong>Livable CRD</strong> is a non-partisan voter-education project focused on
   municipal elections in the Capital Regional District of British Columbia. We are
-  not a political party and we do not endorse candidates — we publish information
+  not a political party and we do not endorse candidates. We publish information
   so residents can make informed choices.
 </p>
 
@@ -25,7 +25,7 @@ description: >-
 <h2>How the coalition works</h2>
 <p>
   Participating organizations collaborate on a shared questionnaire covering topics
-  across nine topic areas — from transit and housing to arts, climate, walking, cycling, youth, healthcare, and general livability. Responses are collected from
+  across nine topic areas, from transit and housing to arts, climate, walking, cycling, youth, healthcare, and general livability. Responses are collected from
   candidates (or documented when candidates decline to respond). Each participating
   group submits questions in its area of focus and grades candidates' responses to
   the questions it submitted, using a published methodology so the process is

@@ -15,12 +15,13 @@ description: >-
     <p class="lead">
       <strong>Livable CRD</strong> is a coalition of community groups preparing a
       transparent scorecard for municipal election candidates across the Capital
-      Regional District — so voters can see where candidates stand on the issues
+      Regional District, so voters can see where candidates stand on the issues
       that shape daily life here.
     </p>
     <div class="btn-group">
       <a class="btn btn-primary" href="{{ '/scorecard/' | relative_url }}#methodology">How we grade</a>
       <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
+      <a class="btn btn-secondary" href="{{ '/signup/' | relative_url }}">Join the mailing list</a>
       <a class="btn btn-donate" href="{{ '/donate/' | relative_url }}">Support us</a>
     </div>
   </div>
