@@ -13,209 +13,252 @@
 # people. Only factual public-record fields are stored.
 #
 # Fields:
-#   name         Candidate's name as listed.
+#   name         Candidate's name as listed ("First Last").
+#   display_name Same name rendered "Last, First" for the scorecard, with
+#                surname particles ("de", "van", ...) kept on the last name.
 #   municipality Slug matching _data/municipalities.yml.
 #   office       "Mayor", "Councillor", or null if not specified in the source.
 #   incumbent    true = incumbent, false = challenger, null = unspecified.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
+#
+# Within each municipality, candidates are ordered alphabetically by last name.
 
 # --- Saanich ---
-- name: Karen Harper
+- name: Teale Phelps Banderoff
+  display_name: "Banderoff, Teale Phelps"
   municipality: saanich
-  office: Mayor
+  office: Councillor
   incumbent: true
 
-- name: Rishi Sharma
+- name: Nathalie Chambers
+  display_name: "Chambers, Nathalie"
   municipality: saanich
-  office: Mayor
-  incumbent: false
+  office: Councillor
+  incumbent: true
 
 - name: Zac De Vrites
+  display_name: "De Vrites, Zac"
   municipality: saanich
   office: Mayor
   incumbent: true
 
-- name: Colin Plant
-  municipality: saanich
-  office: Councillor
-  incumbent: true
-
-- name: Graham Wright
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
-- name: Harjas Singh Popli
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
-- name: Hollis Hodson
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
-- name: Laurie Lidstone
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
 - name: Lorne DeLarge
-  municipality: saanich
-  office: Councillor
-  incumbent: false
-
-- name: Matt McGeachie
+  display_name: "DeLarge, Lorne"
   municipality: saanich
   office: Councillor
   incumbent: false
 
 - name: Nancy Di Castri
+  display_name: "Di Castri, Nancy"
   municipality: saanich
   office: Councillor
   incumbent: false
 
-- name: Nathalie Chambers
+- name: Karen Harper
+  display_name: "Harper, Karen"
+  municipality: saanich
+  office: Mayor
+  incumbent: true
+
+- name: Hollis Hodson
+  display_name: "Hodson, Hollis"
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Laurie Lidstone
+  display_name: "Lidstone, Laurie"
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Matt McGeachie
+  display_name: "McGeachie, Matt"
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Colin Plant
+  display_name: "Plant, Colin"
   municipality: saanich
   office: Councillor
   incumbent: true
 
-- name: Teale Phelps Banderoff
+- name: Harjas Singh Popli
+  display_name: "Popli, Harjas Singh"
   municipality: saanich
   office: Councillor
-  incumbent: true
+  incumbent: false
+
+- name: Rishi Sharma
+  display_name: "Sharma, Rishi"
+  municipality: saanich
+  office: Mayor
+  incumbent: false
 
 - name: Tia Sibbald
+  display_name: "Sibbald, Tia"
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Graham Wright
+  display_name: "Wright, Graham"
   municipality: saanich
   office: Councillor
   incumbent: false
 
 # --- Victoria ---
 - name: Marianne Alto
+  display_name: "Alto, Marianne"
   municipality: victoria
   office: Mayor
   incumbent: true
 
-- name: Arthur McInnis
-  municipality: victoria
-  office: Councillor
-  incumbent: null
-
-- name: Dave Thompson
-  municipality: victoria
-  office: Councillor
-  incumbent: true
-
-- name: Isabella Lee
-  municipality: victoria
-  office: Councillor
-  incumbent: false
-
-- name: Jack Sandor
+- name: Wendy Bowkett
+  display_name: "Bowkett, Wendy"
   municipality: victoria
   office: Councillor
   incumbent: false
 
 - name: Jeremy Caradonna
-  municipality: victoria
-  office: Councillor
-  incumbent: true
-
-- name: Karen Rothe
-  municipality: victoria
-  office: Councillor
-  incumbent: null
-
-- name: Krista Laughton
-  municipality: victoria
-  office: Councillor
-  incumbent: true
-
-- name: Matt Dell
+  display_name: "Caradonna, Jeremy"
   municipality: victoria
   office: Councillor
   incumbent: true
 
 - name: Melissa Cseszko
+  display_name: "Cseszko, Melissa"
   municipality: victoria
   office: Councillor
   incumbent: null
 
-- name: Susan Kim
+- name: Matt Dell
+  display_name: "Dell, Matt"
   municipality: victoria
   office: Councillor
   incumbent: true
 
-- name: Wendy Bowkett
-  municipality: victoria
-  office: Councillor
-  incumbent: false
-
 - name: Owen Haley
+  display_name: "Haley, Owen"
   municipality: victoria
   office: null
   incumbent: false
 
+- name: Susan Kim
+  display_name: "Kim, Susan"
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+
+- name: Krista Laughton
+  display_name: "Laughton, Krista"
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+
+- name: Isabella Lee
+  display_name: "Lee, Isabella"
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
+- name: Arthur McInnis
+  display_name: "McInnis, Arthur"
+  municipality: victoria
+  office: Councillor
+  incumbent: null
+
+- name: Karen Rothe
+  display_name: "Rothe, Karen"
+  municipality: victoria
+  office: Councillor
+  incumbent: null
+
+- name: Jack Sandor
+  display_name: "Sandor, Jack"
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
+- name: Dave Thompson
+  display_name: "Thompson, Dave"
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+
 # --- Esquimalt ---
 - name: Duncan Cavens
+  display_name: "Cavens, Duncan"
   municipality: esquimalt
   office: Mayor
   incumbent: true
 
 - name: Rob Johnstone
+  display_name: "Johnstone, Rob"
   municipality: esquimalt
   office: Councillor
   incumbent: false
 
 - name: Tara Todesco
+  display_name: "Todesco, Tara"
   municipality: esquimalt
   office: Councillor
   incumbent: false
 
 # --- Oak Bay ---
+- name: Will Moore
+  display_name: "Moore, Will"
+  municipality: oak-bay
+  office: Councillor
+  incumbent: null
+
 - name: Kevin Murdoch
+  display_name: "Murdoch, Kevin"
   municipality: oak-bay
   office: Mayor
   incumbent: true
 
 - name: Karin Sweeney
+  display_name: "Sweeney, Karin"
   municipality: oak-bay
   office: Councillor
   incumbent: false
-
-- name: Will Moore
-  municipality: oak-bay
-  office: Councillor
-  incumbent: null
 
 # --- Langford ---
-- name: Scott Goodmanson
-  municipality: langford
-  office: Mayor
-  incumbent: true
-
-- name: Stew Young
-  municipality: langford
-  office: Mayor
-  incumbent: false
-
-- name: Bryson Hill
+- name: Lisa Foxhall
+  display_name: "Foxhall, Lisa"
   municipality: langford
   office: Councillor
+  incumbent: false
+
+- name: Scott Goodmanson
+  display_name: "Goodmanson, Scott"
+  municipality: langford
+  office: Mayor
   incumbent: true
 
 - name: Colby Harder
+  display_name: "Harder, Colby"
   municipality: langford
   office: Councillor
   incumbent: true
 
-- name: Lisa Foxhall
+- name: Bryson Hill
+  display_name: "Hill, Bryson"
   municipality: langford
   office: Councillor
-  incumbent: false
+  incumbent: true
 
 - name: Mary Wagner
+  display_name: "Wagner, Mary"
   municipality: langford
   office: Councillor
   incumbent: true
+
+- name: Stew Young
+  display_name: "Young, Stew"
+  municipality: langford
+  office: Mayor
+  incumbent: false

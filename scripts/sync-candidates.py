@@ -62,12 +62,16 @@ HEADER = """\
 # people. Only factual public-record fields are stored.
 #
 # Fields:
-#   name         Candidate's name as listed.
+#   name         Candidate's name as listed ("First Last").
+#   display_name Same name rendered "Last, First" for the scorecard, with
+#                surname particles ("de", "van", ...) kept on the last name.
 #   municipality Slug matching _data/municipalities.yml.
 #   office       "Mayor", "Councillor", or null if not specified in the source.
 #   incumbent    true = incumbent, false = challenger, null = unspecified.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
-#                _data/subjects.yml. Any topic left blank renders as pending ("—")."""
+#                _data/subjects.yml. Any topic left blank renders as pending ("—").
+#
+# Within each municipality, candidates are ordered alphabetically by last name."""
 
 
 def norm(s):
@@ -230,9 +234,46 @@ def office_rank(office):
     return {"Mayor": 0, "Councillor": 1}.get(office, 2)
 
 
+# Surname particles that belong to the last name rather than the given name(s),
+# e.g. "Zac De Vrites" → last name "De Vrites". Matched case-insensitively.
+SURNAME_PARTICLES = {
+    "de", "da", "di", "del", "della", "dela", "dos", "das", "du",
+    "van", "von", "der", "den", "ter", "ten",
+    "la", "le", "el", "al", "bin", "ibn", "st", "st.",
+}
+
+
+def split_name(name):
+    """Split "First Middle Last" into (last, first) for "Last, First" display.
+
+    The last name is the final token, extended leftward to absorb any surname
+    particles ("de", "van", ...). Everything before it is the given name(s).
+    A single-token name yields ("Name", "").
+    """
+    parts = (name or "").split()
+    if len(parts) <= 1:
+        return (parts[0] if parts else ""), ""
+    i = len(parts) - 1
+    # Pull particles into the surname, but never consume the whole given name.
+    while i > 1 and parts[i - 1].strip(".,").lower() in SURNAME_PARTICLES:
+        i -= 1
+    return " ".join(parts[i:]), " ".join(parts[:i])
+
+
+def display_name(name):
+    last, first = split_name(name)
+    return f"{last}, {first}" if first else last
+
+
+def sort_key(rec):
+    last, first = split_name(rec["name"])
+    return (last.casefold(), first.casefold(), office_rank(rec["office"]))
+
+
 def render_record(rec, subject_order):
     lines = [
         f"- name: {scalar(rec['name'])}",
+        f"  display_name: {scalar(display_name(rec['name']))}",
         f"  municipality: {rec['municipality']}",
         f"  office: {rec['office'] if rec['office'] else 'null'}",
         f"  incumbent: {'true' if rec['incumbent'] is True else 'false' if rec['incumbent'] is False else 'null'}",
@@ -254,7 +295,7 @@ def render_yaml(records, ordered_munis, subject_order):
         group = by_slug.get(slug)
         if not group:
             continue
-        group.sort(key=lambda r: (office_rank(r["office"]), r["name"].casefold()))
+        group.sort(key=sort_key)
         parts.append("")
         parts.append(f"# --- {name} ---")
         for i, rec in enumerate(group):
