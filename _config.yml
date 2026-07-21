@@ -7,6 +7,20 @@ baseurl: ""
 email: hello@livablecrd.ca
 donate_url: "https://actionnetwork.org/fundraising/support-livable-crd/"
 
+# Social media accounts. Rendered by _includes/social-links.html (in the footer
+# on every page and at the bottom of each blog post). `platform` selects the
+# icon in that include, so it must be one of: instagram, facebook, bluesky.
+social:
+  - platform: instagram
+    label: Instagram
+    url: "https://www.instagram.com/livablecrd/"
+  - platform: facebook
+    label: "Facebook group"
+    url: "https://www.facebook.com/groups/2457957961344839"
+  - platform: bluesky
+    label: Bluesky
+    url: "https://bsky.app/profile/livablecrd.bsky.social"
+
 # Action Network mailing-list form slug. This is the form NAME as it appears in
 # the Action Network embed code / hosted URL (the part after /form/ in the
 # widget src). Set this to the slug of the form you created, e.g. if the embed

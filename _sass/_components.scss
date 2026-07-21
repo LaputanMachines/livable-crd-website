@@ -1090,3 +1090,82 @@ $category-colors: (
   color: $color-muted;
 }
 
+
+// --- Social media links -----------------------------------------------------
+// Rendered by _includes/social-links.html from the `social:` config list.
+// Two contexts: the site footer (icon-only, --icons) and blog-post bottoms
+// (icon + label, --post). Icons inherit `currentColor`, so link colour drives
+// both text and glyph.
+.social-links {
+  &__heading {
+    margin: 0 0 $space-xs;
+    font-weight: 600;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-sm;
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  &__icon {
+    display: inline-flex;
+    svg { width: 1.5rem; height: 1.5rem; display: block; }
+  }
+
+  // Icon-only variant: hide the text label but keep it for screen readers
+  // (aria-label on the link already names each account).
+  &--icons {
+    .social-links__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+  }
+
+  // Footer: sits on the inky surface, above the copyright line.
+  &--footer {
+    margin: $space-lg 0 $space-sm;
+    .social-links__item {
+      color: #fff;
+      transition: color $transition-fast;
+      &:hover { color: $color-warm; }
+    }
+    .social-links__icon svg { width: 1.65rem; height: 1.65rem; }
+  }
+
+  // Post footer: brand-purple pill buttons under the follow-up note.
+  &--post {
+    margin: $space-md 0 0;
+    .social-links__item {
+      color: #fff;
+      background: $color-accent;
+      border: $border-weight solid $color-accent;
+      border-radius: $radius;
+      padding: 0.5rem 0.9rem;
+      transition: background $transition-fast, border-color $transition-fast;
+      &:hover {
+        background: $color-accent-dark;
+        border-color: $color-accent-dark;
+      }
+    }
+  }
+}
