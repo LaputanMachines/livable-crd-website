@@ -983,3 +983,110 @@ $category-colors: (
   border-top: $border-weight solid $color-text;
   margin: $space-lg 0 $space-md;
 }
+
+// --- Action Network embedded signup form (/signup/) -------------------------
+// The widget injects markup we don't control, so we style by Action Network's
+// own selectors (#can_embed_form, .can_button, etc.). Scoped under .an-embed so
+// these overrides can't leak onto the rest of the site.
+.an-embed {
+  margin: $space-lg 0;
+
+  // Action Network wraps every field in <ul><li>. Our base styles (and AN's own
+  // #can_embed_form rules) put bullets on <li>, showing as stray markers next to
+  // the fields. Scope the reset under #can_embed_form so it out-specifies AN's
+  // ID-based rules; !important guards against inline list-style.
+  #can_embed_form ul,
+  #can_embed_form ol {
+    list-style: none !important;
+    margin: 0;
+    padding: 0;
+  }
+  // Each field is its own <li>; space them out so the form breathes.
+  #can_embed_form li {
+    margin: 0 0 $space-md;
+    list-style: none !important;
+  }
+
+  // Field labels are redundant with the placeholder text, so hide them
+  // visually — but keep them in the DOM for screen readers (don't display:none).
+  #can_embed_form label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  // Breathing room around the submit button and the country selector.
+  #can_embed_form .can_button,
+  #can_embed_form input[type="submit"],
+  #can_embed_form button[type="submit"] {
+    margin-top: $space-sm;
+  }
+
+  // Strip Action Network's default typography/spacing so it inherits ours.
+  #can_embed_form {
+    font-family: $font-sans;
+    color: $color-text;
+
+    h2, h3, h4, .can_form_heading { font-family: $font-display; }
+  }
+
+  // Text inputs, email, textarea, selects.
+  #can_embed_form input[type="text"],
+  #can_embed_form input[type="email"],
+  #can_embed_form input[type="tel"],
+  #can_embed_form textarea,
+  #can_embed_form select {
+    width: 100%;
+    padding: 0.7rem 0.85rem;
+    font-family: $font-sans;
+    font-size: 1rem;
+    color: $color-text;
+    background: $color-surface;
+    border: $border-weight solid $color-text;
+    border-radius: $radius;
+
+    &:focus {
+      outline: none;
+      border-color: $color-accent;
+      box-shadow: 0 0 0 2px rgba($color-accent, 0.25);
+    }
+  }
+
+  // Submit button — reuse the primary button treatment.
+  #can_embed_form .can_button,
+  #can_embed_form input[type="submit"],
+  #can_embed_form button[type="submit"] {
+    display: block;
+    width: 100%;
+    padding: 0.8rem 1.65rem;
+    font-family: $font-sans;
+    font-weight: 700;
+    font-size: 0.92rem;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #fff;
+    background: $color-accent;
+    border: $border-weight solid $color-accent;
+    border-radius: $radius;
+    cursor: pointer;
+    transition: background $transition-fast, border-color $transition-fast;
+
+    &:hover {
+      background: $color-accent-dark;
+      border-color: $color-accent-dark;
+    }
+  }
+}
+
+.signup-disclaimer {
+  margin-top: $space-md;
+  font-size: 0.9rem;
+  color: $color-muted;
+}
+

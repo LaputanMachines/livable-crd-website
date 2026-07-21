@@ -7,6 +7,12 @@ baseurl: ""
 email: hello@livablecrd.ca
 donate_url: "https://actionnetwork.org/fundraising/support-livable-crd/"
 
+# Action Network mailing-list form slug. This is the form NAME as it appears in
+# the Action Network embed code / hosted URL (the part after /form/ in the
+# widget src). Set this to the slug of the form you created, e.g. if the embed
+# src is .../widgets/v5/form/livable-crd-mailing-list?..., use that final token.
+signup_form_slug: "livable-crd-mailing-list"
+
 # Feature flags
 # Render coalition partner logos on the homepage. Disabled for now; the logo
 # files and `logo:` entries in _data/partners.yml are kept — flip to true to
