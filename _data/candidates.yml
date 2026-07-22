@@ -158,8 +158,8 @@
   office: Councillor
   incumbent: true
 
-- name: Isabella Lee
-  display_name: "Lee, Isabella"
+- name: Bella Lee
+  display_name: "Lee, Bella"
   municipality: victoria
   office: Councillor
   incumbent: false
@@ -189,6 +189,12 @@
   incumbent: true
 
 # --- Esquimalt ---
+- name: Meagan Braeme
+  display_name: "Braeme, Meagan"
+  municipality: esquimalt
+  office: Councillor
+  incumbent: true
+
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
   municipality: esquimalt
@@ -200,6 +206,12 @@
   municipality: esquimalt
   office: Councillor
   incumbent: false
+
+- name: Kody Thomson
+  display_name: "Thomson, Kody"
+  municipality: esquimalt
+  office: Councillor
+  incumbent: null
 
 - name: Tara Todesco
   display_name: "Todesco, Tara"
@@ -227,6 +239,12 @@
   incumbent: false
 
 # --- Langford ---
+- name: Jennifer Dunnett
+  display_name: "Dunnett, Jennifer"
+  municipality: langford
+  office: Councillor
+  incumbent: false
+
 - name: Lisa Foxhall
   display_name: "Foxhall, Lisa"
   municipality: langford
@@ -253,6 +271,12 @@
 
 - name: Mary Wagner
   display_name: "Wagner, Mary"
+  municipality: langford
+  office: Councillor
+  incumbent: true
+
+- name: Keith Yacucha
+  display_name: "Yacucha, Keith"
   municipality: langford
   office: Councillor
   incumbent: true
