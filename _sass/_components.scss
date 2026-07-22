@@ -1169,3 +1169,83 @@ $category-colors: (
     }
   }
 }
+
+// --- Brand assets page (/brand/) -------------------------------------------
+// Downloadable logo cards + colour swatches for coalition partners. Bordered,
+// flat treatment matching the rest of the site (heavy ink borders, no shadow).
+.brand-logo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $space-md;
+  margin: $space-md 0 $space-lg;
+}
+
+.brand-logo-card {
+  display: flex;
+  flex-direction: column;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+  overflow: hidden;
+  background: $color-surface;
+}
+
+.brand-logo-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 150px;
+  padding: $space-md;
+  border-bottom: $border-weight solid $color-text;
+
+  img { max-width: 80%; max-height: 110px; height: auto; }
+  .brand-logo-preview__mark { max-width: 60%; max-height: 70px; }
+
+  &--colour { background: $color-surface; }
+  &--dark   { background: $color-bg-warm; }
+  &--light  { background: $inky-purple; }
+}
+
+.brand-logo-meta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md;
+
+  h3 { margin: 0; }
+  p  { margin: 0; color: $color-muted; font-size: 0.92rem; flex-grow: 1; }
+  .btn-group { margin-top: $space-xs; }
+  .btn { padding: 0.5rem 1.1rem; font-size: 0.8rem; }
+}
+
+.brand-swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: $space-md;
+  margin: $space-md 0 $space-lg;
+}
+
+.brand-swatch {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: $space-sm;
+  row-gap: 0.15rem;
+  padding: $space-sm;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+  background: $color-surface;
+
+  .brand-swatch__chip {
+    grid-row: span 2;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: $radius;
+    border: 2px solid $color-text;
+  }
+  .brand-swatch__name { font-weight: 700; }
+  .brand-swatch__hex {
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    color: $color-muted;
+    font-size: 0.9rem;
+  }
+}
