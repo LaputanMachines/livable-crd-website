@@ -148,6 +148,75 @@
   }
 }
 
+// Grouped nav items ("Support", "About", "Contact") with a collapsible submenu.
+// The submenu is a pure-CSS disclosure: revealed on hover and on :focus-within
+// (keyboard) at desktop widths; flattened into the hamburger list on mobile.
+.nav-group {
+  position: relative;
+}
+
+.nav-group-label {
+  // Reset the button chrome so it reads as a nav link, then mirror .site-nav a.
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $color-muted;
+  padding: 0.35rem 0;
+  border-bottom: 3px solid transparent;
+  transition: color $transition-fast, border-color $transition-fast;
+
+  // Caret indicating the item expands.
+  &::after {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform $transition-fast;
+  }
+
+  &:hover {
+    color: $color-text;
+    border-bottom-color: $color-accent-alt;
+  }
+
+  &.active {
+    color: $color-text;
+    border-bottom-color: $color-accent;
+  }
+}
+
+.nav-submenu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  a {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: $color-muted;
+    border-bottom: none;
+
+    &:hover,
+    &.active {
+      color: $color-text;
+      border-bottom: none;
+    }
+  }
+}
+
 .site-nav-wrap {
   display: flex;
   align-items: center;
@@ -289,6 +358,26 @@ main {
   .footer-inner { max-width: $max-width; margin: 0 auto; }
   p { margin: 0 0 $space-xs; }
   p:last-child { margin-bottom: 0; }
+
+  .footer-nav {
+    margin: 0 0 $space-sm;
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem 1.25rem;
+    }
+
+    a {
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.8rem;
+    }
+  }
 
   .footer-credit {
     margin-top: $space-sm;
@@ -513,6 +602,28 @@ main {
       }
     }
   }
+
+  // Flatten grouped items into a single flat hamburger list — no hierarchy.
+  // The group labels ("Support", "About", "Contact") are dropped and their
+  // links surface directly alongside the top-level items.
+  .nav-group-label { display: none; }
+
+  .nav-submenu {
+    position: static;
+    display: block;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+
+    a {
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+  }
 }
 
 @media (min-width: 769px) {
@@ -526,6 +637,59 @@ main {
     background: transparent;
     border: none;
     box-shadow: none;
+  }
+
+  // Desktop dropdown: hidden until the group is hovered or holds focus.
+  // Floats a small gap below the label so its hover underline never touches the
+  // box; an invisible bridge over that gap keeps :hover from dropping mid-move.
+  .nav-submenu {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    min-width: 12rem;
+    background: $color-surface;
+    border: 2px solid $color-text;
+    border-radius: $radius;
+    padding: 0.35rem 0;
+    box-shadow: 0 8px 24px rgba(17, 17, 17, 0.12);
+    z-index: 200;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -12px;
+      left: 0;
+      right: 0;
+      height: 12px;
+    }
+
+    a {
+      display: block;
+      padding: 0.5rem 1rem;
+      white-space: nowrap;
+
+      &:hover {
+        background: $color-accent;
+        color: #fff;
+      }
+
+      &.active {
+        background: $color-accent-dark;
+        color: #fff;
+      }
+    }
+  }
+
+  .nav-group:hover > .nav-submenu,
+  .nav-group:focus-within > .nav-submenu {
+    display: block;
+  }
+
+  // Flip the caret while the group is open.
+  .nav-group:hover > .nav-group-label::after,
+  .nav-group:focus-within > .nav-group-label::after {
+    transform: translateY(1px) rotate(-135deg);
   }
 }
 

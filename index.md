@@ -10,7 +10,7 @@ description: >-
 
 <section class="hero hero--home">
   <div class="hero-inner animate-in">
-    <p class="badge">Launching ahead of municipal elections</p>
+    <p class="badge">Easy, Informed Election Decisions</p>
     <h1>A candidate scorecard for livable communities in the Capital Region</h1>
     <p class="lead">
       <strong>Livable CRD</strong> is a coalition of community groups preparing a
@@ -54,8 +54,7 @@ description: >-
   <div class="container">
     <h2 class="section-title">Coalition partners</h2>
     <p>
-      Livable CRD brings together advocates from across the region. Partner names
-      below are placeholders until the coalition finalizes its public roster.
+      Livable CRD brings together advocates from across the region.
     </p>
     <ul class="partner-list">
       {% for partner in site.data.partners %}
@@ -75,10 +74,13 @@ description: >-
       </li>
       {% endfor %}
     </ul>
+    <p class="partner-list-note">
+      This is a growing coalition. New member organizations are welcome to join.
+    </p>
     <p class="content-follow-up">
       Interested in joining the coalition or supporting this work?
       <a href="{{ '/donate/' | relative_url }}">Donate</a>
-      or <a href="{{ '/about/#contact' | relative_url }}">contact us</a>.
+      or <a href="mailto:{{ site.email }}">contact us</a>.
     </p>
   </div>
 </section>
@@ -87,7 +89,7 @@ description: >-
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers nine topics, from transit and housing to climate, arts, walking, cycling, youth, healthcare, and general livability. Each candidate is graded
+      The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, youth, healthcare, and general livability. Each candidate is graded
       in every area, so voters can compare positions topic by topic at a glance.
     </p>
     <div class="card-grid">

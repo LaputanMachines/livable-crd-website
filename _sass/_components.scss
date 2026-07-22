@@ -784,6 +784,14 @@ p + .partner-list {
   border: $border-weight solid $color-text;
 }
 
+// Growth note under the coalition roster: signals the coalition can still grow.
+.partner-list-note {
+  margin-top: $space-sm;
+  margin-bottom: 0;
+  font-style: italic;
+  color: $color-muted;
+}
+
 .partner-list li {
   background: $color-surface;
   border: none;
@@ -841,6 +849,7 @@ $category-colors: (
   walking: #c2410c,           // orange
   youth-students: #a16207,    // gold
   healthcare-access: #b91c1c, // red
+  reconciliation: #78350f,    // earth brown
 );
 @each $cat, $col in $category-colors {
   .partner-list .category-pill--#{$cat} { background: $col; }

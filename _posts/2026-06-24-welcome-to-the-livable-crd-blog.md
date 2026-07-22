@@ -33,5 +33,5 @@ candidates are surveyed, ratings will be published ahead of election day. We'll
 post milestones here as they land.
 
 Have a question, a correction, or want to get involved?
-[Get in touch](/about/#contact), and if you'd like to follow along, subscribe
+[Get in touch](mailto:hello@livablecrd.ca), and if you'd like to follow along, subscribe
 to our [RSS feed](/feed.xml).

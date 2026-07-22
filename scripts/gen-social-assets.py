@@ -10,7 +10,9 @@ from PIL import Image, ImageDraw, ImageFont, ImageChops
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 IMG = os.path.join(ROOT, "assets", "images")
 
-INDIGO = (46, 27, 93)        # sampled from logo badge (#2e1b5d)
+INDIGO = (46, 27, 93)        # legacy badge colour (#2e1b5d), still used by make_favicons
+INKY = (34, 9, 64)           # Inky Purple #220940 (brand background, site hero)
+KWETLAL = (213, 173, 255)    # Kwetlal Purple #D5ADFF (brand accent)
 BG = (250, 250, 248)         # site $color-bg #fafaf8
 TEXT = (17, 17, 17)          # $color-text
 MUTED = (74, 74, 74)         # $color-muted
@@ -55,19 +57,22 @@ def draw_pill(draw, cx, y, text, font, pad_x=40, height=66,
 
 def make_og():
     W, H = 1200, 630
-    card = Image.new("RGB", (W, H), BG)
+    card = Image.new("RGB", (W, H), INKY)
     d = ImageDraw.Draw(card)
     cx = W // 2
-    # top accent bar (brand indigo)
-    d.rectangle([0, 0, W, 12], fill=INDIGO)
+    # Kwetlal accent bars, top and bottom.
+    d.rectangle([0, 0, W, 10], fill=KWETLAL)
+    d.rectangle([0, H - 20, W, H], fill=KWETLAL)
 
-    # logo wordmark, scaled to ~480px wide
-    logo = logo_crop()
-    lw = 480
-    lh = round(logo.height * lw / logo.width)
+    # Brand logo: the white vertical lockup on the Inky background, scaled by
+    # height. logo-light.png is a transparent-background PNG (white strokes),
+    # so we composite it with its own alpha as the mask.
+    logo = Image.open(os.path.join(IMG, "brand", "logo-light.png")).convert("RGBA")
+    lh = 240
+    lw = round(logo.width * lh / logo.height)
     logo = logo.resize((lw, lh), Image.LANCZOS)
 
-    head_font = f(FONT_BOLD, 50)
+    head_font = f(FONT_BOLD, 46)
     sub_font = f(FONT_REG, 28)
     cta_font = f(FONT_BOLD, 30)
     head_txt = "Capital Region Candidate Scorecard"
@@ -81,17 +86,17 @@ def make_og():
     # Vertically center the whole stack (logo, heading, subtitle, grade chips, CTA).
     chip = 64
     cta_h = 66
-    g_logo, g_head, g_sub, g_chips = 38, 18, 32, 34
+    g_logo, g_head, g_sub, g_chips = 34, 16, 30, 30
     stack = (lh + g_logo + text_h(head_font, head_txt) + g_head
              + text_h(sub_font, sub_txt) + g_sub + chip + g_chips + cta_h)
-    y = max(40, (H - stack) // 2)
+    y = max(30, (H - stack) // 2)
 
-    card.paste(logo, ((W - lw) // 2, y))
+    card.paste(logo, ((W - lw) // 2, y), logo)
     y += lh + g_logo
-    y += center_text(d, cx, y, head_txt, head_font, INDIGO) + g_head
-    y += center_text(d, cx, y, sub_txt, sub_font, MUTED) + g_sub
+    y += center_text(d, cx, y, head_txt, head_font, "white") + g_head
+    y += center_text(d, cx, y, sub_txt, sub_font, KWETLAL) + g_sub
 
-    # grade chips row
+    # grade chips row (letter-grade colours are kept semantic, not rebranded)
     gap = 20
     total = len(GRADES) * chip + (len(GRADES) - 1) * gap
     x = cx - total // 2
@@ -104,8 +109,8 @@ def make_og():
         x += chip + gap
     y += chip + g_chips
 
-    # call-to-action button
-    draw_pill(d, cx, y, cta_txt, cta_font, height=cta_h)
+    # call-to-action button (Kwetlal fill, Inky text)
+    draw_pill(d, cx, y, cta_txt, cta_font, height=cta_h, fill=KWETLAL, fg=INKY)
 
     out = os.path.join(IMG, "og-image.png")
     card.save(out, optimize=True)

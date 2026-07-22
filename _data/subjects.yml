@@ -109,3 +109,16 @@
   example: >-
     What municipal actions would you take to improve residents' access to
     healthcare?
+
+- id: reconciliation
+  name: Reconciliation
+  short: Reconciliation
+  icon: reconciliation.svg
+  accent: "#4c1d95"
+  description: >-
+    Advancing reconciliation with Indigenous peoples through respectful
+    relationships, honouring commitments, and decisions made in partnership with
+    local First Nations.
+  example: >-
+    How would you work in partnership with local First Nations to advance
+    reconciliation in your municipality?

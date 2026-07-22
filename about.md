@@ -25,22 +25,9 @@ description: >-
 <h2>How the coalition works</h2>
 <p>
   Participating organizations collaborate on a shared questionnaire covering topics
-  across nine topic areas, from transit and housing to arts, climate, walking, cycling, youth, healthcare, and general livability. Responses are collected from
+  across ten topic areas, from transit and housing to arts, climate, reconciliation, walking, cycling, youth, healthcare, and general livability. Responses are collected from
   candidates (or documented when candidates decline to respond). Each participating
   group submits questions in its area of focus and grades candidates' responses to
   the questions it submitted, using a published methodology so the process is
   transparent and reproducible.
-</p>
-
-<h2>What is coming</h2>
-<ul>
-  <li>Final questionnaire and methodology</li>
-  <li>Per-municipality pages for each of the 16 participating municipalities</li>
-  <li>Candidate profiles with full responses and letter grades</li>
-</ul>
-
-<h2 id="contact">Contact</h2>
-<p>
-  Questions, corrections, or coalition inquiries:
-  <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
 </p>
