@@ -1270,6 +1270,53 @@ $category-colors: (
   }
 }
 
+// Downloadable promo posters. Same bordered, flat card treatment as the logo
+// grid; the preview shows the full poster on a soft lavender surface.
+.brand-poster-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: $space-md;
+  margin: $space-md 0 $space-lg;
+}
+
+.brand-poster-card {
+  display: flex;
+  flex-direction: column;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+  overflow: hidden;
+  background: $color-surface;
+}
+
+.brand-poster-preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $space-md;
+  background: $color-bg-warm;
+  border-bottom: $border-weight solid $color-text;
+
+  img {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    border: 1px solid rgba($inky-purple, 0.15);
+    border-radius: $radius;
+  }
+}
+
+.brand-poster-meta {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md;
+
+  h3 { margin: 0; }
+  p  { margin: 0; color: $color-muted; font-size: 0.92rem; flex-grow: 1; }
+  .btn-group { margin-top: $space-xs; }
+  .btn { padding: 0.5rem 1.1rem; font-size: 0.8rem; }
+}
+
 // Copy-ready email / social templates for coalition partners. Same bordered,
 // flat treatment as the logo cards and swatches above.
 .brand-templates {

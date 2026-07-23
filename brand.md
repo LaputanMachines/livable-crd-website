@@ -122,6 +122,44 @@ description: >-
   <li><strong>Don't</strong> imply endorsement. Livable CRD is non-partisan and does not endorse candidates.</li>
 </ul>
 
+<h2>Posters</h2>
+<p>
+  Print-ready posters to pin up at events, community boards, cafés, and campus
+  spaces. Each has a QR code that opens the scorecard at
+  <a href="https://livablecrd.ca">livablecrd.ca</a>. Sized for Letter (8.5×11")
+  — the SVG scales cleanly to larger formats; the PNG is a 300&nbsp;dpi print file.
+</p>
+
+<div class="brand-poster-grid">
+  <div class="brand-poster-card">
+    <div class="brand-poster-preview">
+      <img src="{{ '/assets/promo/poster-dark.svg' | relative_url }}" alt="Livable CRD poster, dark variation" loading="lazy">
+    </div>
+    <div class="brand-poster-meta">
+      <h3>Dark</h3>
+      <p>Bold Inky Purple background. High impact on light walls and boards.</p>
+      <div class="btn-group">
+        <a class="btn btn-secondary" href="{{ '/assets/promo/poster-dark.svg' | relative_url }}" download>SVG</a>
+        <a class="btn btn-secondary" href="{{ '/assets/promo/poster-dark.png' | relative_url }}" download>PNG</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="brand-poster-card">
+    <div class="brand-poster-preview">
+      <img src="{{ '/assets/promo/poster-light.svg' | relative_url }}" alt="Livable CRD poster, light variation" loading="lazy">
+    </div>
+    <div class="brand-poster-meta">
+      <h3>Light</h3>
+      <p>Clean light background with full-colour logo and topic icons.</p>
+      <div class="btn-group">
+        <a class="btn btn-secondary" href="{{ '/assets/promo/poster-light.svg' | relative_url }}" download>SVG</a>
+        <a class="btn btn-secondary" href="{{ '/assets/promo/poster-light.png' | relative_url }}" download>PNG</a>
+      </div>
+    </div>
+  </div>
+</div>
+
 <h2>Promotion templates</h2>
 <p>
   Ready-to-use copy for member organizations helping spread the word. Copy a
