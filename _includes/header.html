@@ -20,7 +20,7 @@
           <li><a href="{{ '/' | relative_url }}" {% if current == '/' %}class="active"{% endif %}>Home</a></li>
           <li><a href="{{ '/scorecard/' | relative_url }}" class="nav-highlight{% if current contains '/scorecard' %} active{% endif %}">Scorecard</a></li>
           <li><a href="{{ '/donate/' | relative_url }}" class="nav-highlight-donate{% if current == '/donate/' %} active{% endif %}">Donate</a></li>
-          <li><a href="{{ '/signup/' | relative_url }}" {% if current == '/signup/' %}class="active"{% endif %}>Join</a></li>
+          <li><a href="{{ '/signup/' | relative_url }}" class="nav-highlight-newsletter{% if current == '/signup/' %} active{% endif %}">Join</a></li>
 
           <li class="nav-group">
             <button type="button" class="nav-group-label{% if in_about %} active{% endif %}" aria-haspopup="true">About</button>

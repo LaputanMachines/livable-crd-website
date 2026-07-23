@@ -86,18 +86,6 @@
     Will you prioritize sidewalks, safe crossings, and pedestrian-first street
     design?
 
-- id: youth-students
-  name: Youth / students
-  short: Youth
-  icon: youth-students.svg
-  accent: "#6d28d9"
-  description: >-
-    Schools, youth services, student housing, and decisions that affect young
-    people staying and thriving in the region.
-  example: >-
-    How would you expand housing, services, and opportunities for youth and
-    students?
-
 - id: healthcare-access
   name: Healthcare access
   short: Health

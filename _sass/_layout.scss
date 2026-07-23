@@ -145,6 +145,26 @@
         border-bottom-color: transparent;
       }
     }
+
+    &.nav-highlight-newsletter {
+      color: #fff;
+      background: $color-accent-alt;
+      padding: 0.4rem 0.9rem;
+      border: none; // override the base link's 3px transparent bottom border (which pushed pill text off-centre)
+      border-radius: $radius;
+
+      &:hover {
+        color: #fff;
+        background: $color-accent-alt-dark;
+        border-bottom-color: transparent;
+      }
+
+      &.active {
+        color: #fff;
+        background: $color-accent-alt-dark;
+        border-bottom-color: transparent;
+      }
+    }
   }
 }
 
@@ -452,6 +472,20 @@ main {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
 }
 
+// accent-alt matches the hero background, so give the newsletter button a solid
+// light fill here to keep it a visible, highlighted pill on the dark hero.
+.hero .btn-newsletter {
+  background: #fff;
+  color: $color-accent-alt !important;
+  border-color: #fff;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.85);
+    color: $color-accent-alt !important;
+    border-color: rgba(255, 255, 255, 0.85);
+  }
+}
+
 .grade-strip {
   position: relative;
   z-index: 1;
@@ -599,6 +633,19 @@ main {
 
       &:hover {
         border-color: $color-hero;
+      }
+    }
+
+    &.nav-highlight-newsletter {
+      margin: 0.35rem 0;
+      padding: 0.75rem 1rem;
+      text-align: center;
+      border: 2px solid $color-text;
+      border-radius: $radius;
+
+      &:hover,
+      &.active {
+        border-color: $color-accent-alt;
       }
     }
   }

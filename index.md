@@ -21,7 +21,7 @@ description: >-
     <div class="btn-group">
       <a class="btn btn-primary" href="{{ '/scorecard/' | relative_url }}#methodology">How we grade</a>
       <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
-      <a class="btn btn-secondary" href="{{ '/signup/' | relative_url }}">Join the mailing list</a>
+      <a class="btn btn-newsletter" href="{{ '/signup/' | relative_url }}">Join the mailing list</a>
       <a class="btn btn-donate" href="{{ '/donate/' | relative_url }}">Support us</a>
     </div>
   </div>
@@ -40,7 +40,7 @@ description: >-
     <h2 class="section-title">What we are building</h2>
     <p>
       Municipal councils shape transit, housing, climate, arts, streets safe for
-      walking and cycling, youth opportunity, healthcare access, and more. This
+      walking and cycling, healthcare access, and more. This
       scorecard will survey candidates, publish their responses, and rate their
       positions using a clear letter-grade system across the topics our coalition
       evaluates. Several participating organizations are drafting a shared questionnaire now.
@@ -54,7 +54,7 @@ description: >-
   <div class="container">
     <h2 class="section-title">Coalition partners</h2>
     <p>
-      Livable CRD brings together advocates from across the region.
+      Livable CRD is a joint project between organizers and advocates across the region.
     </p>
     <ul class="partner-list">
       {% for partner in site.data.partners %}
@@ -89,7 +89,7 @@ description: >-
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, youth, healthcare, and general livability. Each candidate is graded
+      The questionnaire covers nine topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, and general livability. Each candidate is graded
       in every area, so voters can compare positions topic by topic at a glance.
     </p>
     <div class="card-grid">

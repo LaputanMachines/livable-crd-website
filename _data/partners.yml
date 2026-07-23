@@ -12,7 +12,7 @@
 #   category  Focus area, shown as a colored pill (optional). Use a topic id from
 #             _data/subjects.yml so the pill picks up that topic's name and accent color:
 #               general, transit, housing, climate, arts,
-#               rolling-cycling, walking, youth-students, healthcare-access
+#               rolling-cycling, walking, healthcare-access
 #             Any other value is shown verbatim with the default accent.
 
 - name: Homes for Living
@@ -44,3 +44,11 @@
 - name: Victori'us Arts
   note: An arts advocacy group organizing artists to engage civic leadership and shape a future where Victoria remains prosperous, inclusive, and artist-led.
   category: arts
+- name: Better Columbia
+  note: Urbanist news and commentary on transit, housing, and city-building across British Columbia.
+  url: https://bettercolumbia.ca/
+  category: transit
+- name: Greater Victoria Acting Together (GVAT)
+  note: A broad-based alliance using community organizing to advocate for systemic change on housing, climate, and other community issues across Greater Victoria.
+  url: https://www.gvat.ca/
+  category: general

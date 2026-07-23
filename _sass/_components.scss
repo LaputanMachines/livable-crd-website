@@ -52,6 +52,18 @@
   }
 }
 
+.btn-newsletter {
+  background: $color-accent-alt;
+  color: #fff !important;
+  border-color: $color-accent-alt;
+
+  &:hover {
+    background: $color-accent-alt-dark;
+    border-color: $color-accent-alt-dark;
+    color: #fff !important;
+  }
+}
+
 .btn-group {
   display: flex;
   flex-wrap: wrap;
@@ -847,7 +859,6 @@ $category-colors: (
   arts: #be185d,              // rose
   rolling-cycling: #0e7490,   // teal
   walking: #c2410c,           // orange
-  youth-students: #a16207,    // gold
   healthcare-access: #b91c1c, // red
   reconciliation: #78350f,    // earth brown
 );

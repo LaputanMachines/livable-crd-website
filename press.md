@@ -49,7 +49,7 @@ description: >-
   candidate scorecard for municipal elections across the Capital Regional
   District of British Columbia. Participating organizations collaborate on a
   shared questionnaire covering transit, housing, arts, climate, walking,
-  cycling, youth, healthcare, and general livability, then grade candidates'
+  cycling, healthcare, and general livability, then grade candidates'
   responses using a published, reproducible methodology. Read more
   <a href="{{ '/about/' | relative_url }}">about the coalition</a>.
 </p>
