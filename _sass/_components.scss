@@ -1258,3 +1258,52 @@ $category-colors: (
     font-size: 0.9rem;
   }
 }
+
+// Copy-ready email / social templates for coalition partners. Same bordered,
+// flat treatment as the logo cards and swatches above.
+.brand-templates {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: $space-md;
+  margin: $space-md 0 $space-lg;
+}
+
+.brand-template-card {
+  display: flex;
+  flex-direction: column;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+  overflow: hidden;
+  background: $color-surface;
+}
+
+.brand-template-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-sm;
+  padding: $space-sm $space-md;
+  background: $color-bg-warm;
+  border-bottom: $border-weight solid $color-text;
+
+  h3 { margin: 0; font-size: 1.05rem; }
+  .btn { padding: 0.4rem 1rem; font-size: 0.8rem; flex-shrink: 0; }
+  .brand-template-copy.is-copied {
+    background: $color-accent;
+    color: #fff;
+    border-color: $color-accent;
+  }
+}
+
+.brand-template-body {
+  margin: 0;
+  padding: $space-md;
+  flex-grow: 1;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  font-family: inherit;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: $color-text;
+}

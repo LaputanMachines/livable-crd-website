@@ -122,7 +122,96 @@ description: >-
   <li><strong>Don't</strong> imply endorsement. Livable CRD is non-partisan and does not endorse candidates.</li>
 </ul>
 
+<h2>Promotion templates</h2>
+<p>
+  Ready-to-use copy for member organizations helping spread the word. Copy a
+  template, then swap in your own organization's name and voice. Please keep the
+  non-partisan framing — Livable CRD informs, it does not endorse.
+</p>
+
+<div class="brand-templates">
+  <div class="brand-template-card">
+    <div class="brand-template-head">
+      <h3>Email / newsletter blurb</h3>
+      <button type="button" class="btn btn-secondary brand-template-copy">Copy</button>
+    </div>
+<pre class="brand-template-body">Subject: Meet Livable CRD — a candidate scorecard for our municipal elections
+
+Friends,
+
+We're proud to support Livable CRD, a non-partisan coalition of Capital Region community groups making local elections easier to navigate.
+
+Livable CRD publishes a candidate scorecard and questionnaire, graded with a clear, published methodology, covering transit, housing, arts, climate, walking, cycling, healthcare, and good governance. It doesn't endorse anyone — it lays out where candidates stand so you can compare them side by side before you vote.
+
+Learn more and subscribe for updates: https://livablecrd.ca
+
+[Your organization]</pre>
+  </div>
+
+  <div class="brand-template-card">
+    <div class="brand-template-head">
+      <h3>Facebook post</h3>
+      <button type="button" class="btn btn-secondary brand-template-copy">Copy</button>
+    </div>
+<pre class="brand-template-body">We've joined Livable CRD — a non-partisan coalition of Capital Region community groups making municipal elections easier to navigate.
+
+Livable CRD publishes a candidate scorecard and questionnaire covering the issues that shape daily life: transit, housing, arts, climate, walking, cycling, healthcare, and good governance. It doesn't tell you how to vote — it does the legwork so you can compare candidates side by side, in plain language, before election day.
+
+Learn more and follow along: https://livablecrd.ca</pre>
+  </div>
+
+  <div class="brand-template-card">
+    <div class="brand-template-head">
+      <h3>Instagram caption</h3>
+      <button type="button" class="btn btn-secondary brand-template-copy">Copy</button>
+    </div>
+<pre class="brand-template-body">Proud to support Livable CRD 🗳️ A non-partisan coalition making Capital Region municipal elections easier to navigate — a candidate scorecard covering transit, housing, climate, healthcare, and more. No endorsements, just clear info before you vote.
+
+🔗 livablecrd.ca
+
+#YYJ #Victoria #CapitalRegion #LocalElections #VoteLocal #Livability</pre>
+  </div>
+
+  <div class="brand-template-card">
+    <div class="brand-template-head">
+      <h3>Short post (Bluesky / X)</h3>
+      <button type="button" class="btn btn-secondary brand-template-copy">Copy</button>
+    </div>
+<pre class="brand-template-body">Proud to support Livable CRD 🗳️ a non-partisan coalition publishing a candidate scorecard for Capital Region municipal elections. See where candidates stand on transit, housing, climate, and more — no endorsements, just the facts. https://livablecrd.ca</pre>
+  </div>
+</div>
+
 <p>
   For anything not covered here, or to request a specific size or format, email
   <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
 </p>
+
+<script>
+  document.querySelectorAll('.brand-template-copy').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var body = btn.closest('.brand-template-card').querySelector('.brand-template-body');
+      if (!body) return;
+      var text = body.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copied!';
+        btn.classList.add('is-copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('is-copied');
+        }, 2000);
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {});
+      } else {
+        var range = document.createRange();
+        range.selectNodeContents(body);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        sel.removeAllRanges();
+      }
+    });
+  });
+</script>
