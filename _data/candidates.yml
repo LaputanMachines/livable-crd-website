@@ -140,6 +140,12 @@
   office: Councillor
   incumbent: true
 
+- name: Martin Girard
+  display_name: "Girard, Martin"
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
 - name: Owen Haley
   display_name: "Haley, Owen"
   municipality: victoria
@@ -237,6 +243,19 @@
   municipality: oak-bay
   office: Councillor
   incumbent: false
+
+# --- Colwood ---
+- name: Harold Bloomenthal
+  display_name: "Bloomenthal, Harold"
+  municipality: colwood
+  office: Councillor
+  incumbent: false
+
+- name: Doug Kobayashi
+  display_name: "Kobayashi, Doug"
+  municipality: colwood
+  office: Mayor
+  incumbent: true
 
 # --- Langford ---
 - name: Jennifer Dunnett
