@@ -35,7 +35,6 @@ SCORE_MAP = [
     ("Arts", "arts"),
     ("Cycling", "rolling-cycling"),
     ("Walking", "walking"),
-    ("Youth", "youth-students"),
     ("Health", "healthcare-access"),
 ]
 
