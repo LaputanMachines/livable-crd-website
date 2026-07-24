@@ -1,6 +1,6 @@
 ---
 title: "Press release: Livable CRD coalition to launch candidate scorecard for Capital Region municipal elections"
-date: 2026-07-22 09:00:00 -0700
+date: 2026-07-23 09:00:00 -0700
 description: >-
   A coalition of Capital Region community groups announces Livable CRD, a
   non-partisan voter-engagement project publishing a candidate scorecard and
@@ -9,7 +9,7 @@ description: >-
 
 **FOR IMMEDIATE RELEASE**
 
-**Victoria, BC, July 22, 2026** — A coalition of community organizations from
+**Victoria, BC, July 23, 2026** — A coalition of community organizations from
 across the Capital Regional District today announced the launch of Livable CRD,
 a non-partisan voter-engagement project. The group will publish a candidate
 scorecard and questionnaire for the region's municipal elections, with the goal
@@ -28,9 +28,9 @@ it's really hard to find out where candidates actually stand on issues," said
 Ray Oakley, a Livable CRD spokesperson. "We are not telling anyone how to vote.
 We are doing the legwork so that every resident can compare candidates side by
 side, in plain language, before election day." Michael Bassili, another
-spokesperson for Livable CRD, added, "it's nearly impossible to figure out who
-to vote for and why, even with all-candidate debates, because there are just so
-many of them. We intend to solve that."
+spokesperson for Livable CRD, added, "It can be nearly impossible to figure out
+who to vote for and why, even with all-candidate forums, because there are just
+so many candidates. We intend to solve that."
 
 ## How the scorecard works
 
@@ -45,9 +45,14 @@ organized by municipality so voters can focus on the races on their own ballot.
 
 Livable CRD brings together advocates from across the region, including Homes
 for Living, Walk On Victoria, Better Island Transit, Climate Justice Victoria,
-Family Doctors for Saanich, Better Transit YYJ, and Victori'us Arts. The
-coalition continues to grow, and prospective member organizations are welcome to
-reach out.
+Family Doctors for Saanich, Better Transit YYJ, Greater Victoria Acting
+Together, and Victori'us Arts. The coalition continues to grow, and prospective
+member organizations are welcome to reach out.
+
+"By collaborating with a wide coalition of community groups and advocates, we
+can craft a questionnaire that broadly surveys candidates ahead of the municipal
+election which should give residents the opportunity to identify candidates who
+resonate with them," adds Michael Bassili.
 
 ## What comes next
 
