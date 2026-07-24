@@ -15,11 +15,6 @@
 #               rolling-cycling, walking, healthcare-access
 #             Any other value is shown verbatim with the default accent.
 
-- name: Homes for Living
-  note: Homes for Living is a registered BC Society dedicated to advocating for more, and more affordable, housing in Greater Victoria and across BC.
-  logo: /assets/images/partners/homes-for-living.png
-  url: https://www.homesforliving.ca/
-  category: housing
 - name: Walk On, Victoria
   note: The CRD's local pedestrian advocacy organization which works to improve walking conditions and encourage walking activity.
   category: walking
@@ -36,6 +31,11 @@
   note: Neighbours, parents, students, workers, and seniors from across Saanich who want to help improve access to primary care in our community.
   url: https://www.familydoctorsforsaanich.ca/
   category: healthcare
+- name: Homes for Living
+  note: Homes for Living is a registered BC Society dedicated to advocating for more, and more affordable, housing in Greater Victoria and across BC.
+  logo: /assets/images/partners/homes-for-living.png
+  url: https://www.homesforliving.ca/
+  category: housing
 - name: Better Transit YYJ
   note: Better Transit YYJ is a grassroots group of residents advocating for better public transit in Greater Victoria.
   logo: /assets/images/partners/better-transit-yyj.png
