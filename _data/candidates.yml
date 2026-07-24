@@ -25,8 +25,8 @@
 # Within each municipality, candidates are ordered alphabetically by last name.
 
 # --- Saanich ---
-- name: Teale Phelps Banderoff
-  display_name: "Banderoff, Teale Phelps"
+- name: Teale Phelps Bondaroff
+  display_name: "Bondaroff, Teale Phelps"
   municipality: saanich
   office: Councillor
   incumbent: true
@@ -37,8 +37,8 @@
   office: Councillor
   incumbent: true
 
-- name: Zac De Vrites
-  display_name: "De Vrites, Zac"
+- name: Zac De Vries
+  display_name: "De Vries, Zac"
   municipality: saanich
   office: Mayor
   incumbent: true
@@ -275,6 +275,12 @@
   municipality: langford
   office: Mayor
   incumbent: true
+
+- name: Brandy Gordon
+  display_name: "Gordon, Brandy"
+  municipality: langford
+  office: Councillor
+  incumbent: false
 
 - name: Colby Harder
   display_name: "Harder, Colby"
