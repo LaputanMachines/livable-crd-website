@@ -83,6 +83,12 @@
   office: Councillor
   standing: challenger
 
+- name: Sasha Izard
+  display_name: "Izard, Sasha"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+
 - name: Laurie Lidstone
   display_name: "Lidstone, Laurie"
   municipality: saanich
