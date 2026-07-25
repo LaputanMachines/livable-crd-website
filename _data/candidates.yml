@@ -31,6 +31,12 @@
   office: Councillor
   incumbent: true
 
+- name: Susan Brice
+  display_name: "Brice, Susan"
+  municipality: saanich
+  office: Councillor
+  incumbent: true
+
 - name: Nathalie Chambers
   display_name: "Chambers, Nathalie"
   municipality: saanich
@@ -63,6 +69,12 @@
 
 - name: Hollis Hodson
   display_name: "Hodson, Hollis"
+  municipality: saanich
+  office: Councillor
+  incumbent: false
+
+- name: Garnett Humenick
+  display_name: "Humenick, Garnett"
   municipality: saanich
   office: Councillor
   incumbent: false
@@ -132,10 +144,22 @@
   display_name: "Cseszko, Melissa"
   municipality: victoria
   office: Councillor
-  incumbent: null
+  incumbent: false
 
 - name: Matt Dell
   display_name: "Dell, Matt"
+  municipality: victoria
+  office: Councillor
+  incumbent: true
+
+- name: Jerry Garcia
+  display_name: "Garcia, Jerry"
+  municipality: victoria
+  office: Councillor
+  incumbent: false
+
+- name: Marg Gardiner
+  display_name: "Gardiner, Marg"
   municipality: victoria
   office: Councillor
   incumbent: true
@@ -149,8 +173,14 @@
 - name: Owen Haley
   display_name: "Haley, Owen"
   municipality: victoria
-  office: null
+  office: Councillor
   incumbent: false
+
+- name: Stephen Hammond
+  display_name: "Hammond, Stephen"
+  municipality: victoria
+  office: Councillor
+  incumbent: true
 
 - name: Susan Kim
   display_name: "Kim, Susan"
@@ -174,13 +204,13 @@
   display_name: "McInnis, Arthur"
   municipality: victoria
   office: Councillor
-  incumbent: null
+  incumbent: false
 
 - name: Karen Rothe
   display_name: "Rothe, Karen"
   municipality: victoria
   office: Councillor
-  incumbent: null
+  incumbent: false
 
 - name: Jack Sandor
   display_name: "Sandor, Jack"
@@ -207,8 +237,26 @@
   office: Mayor
   incumbent: true
 
+- name: Dan Igaz
+  display_name: "Igaz, Dan"
+  municipality: esquimalt
+  office: Councillor
+  incumbent: false
+
 - name: Rob Johnstone
   display_name: "Johnstone, Rob"
+  municipality: esquimalt
+  office: Councillor
+  incumbent: false
+
+- name: Tim Morrison
+  display_name: "Morrison, Tim"
+  municipality: esquimalt
+  office: Councillor
+  incumbent: true
+
+- name: Zachary Mulder
+  display_name: "Mulder, Zachary"
   municipality: esquimalt
   office: Councillor
   incumbent: false
@@ -217,7 +265,7 @@
   display_name: "Thomson, Kody"
   municipality: esquimalt
   office: Councillor
-  incumbent: null
+  incumbent: false
 
 - name: Tara Todesco
   display_name: "Todesco, Tara"
@@ -230,7 +278,7 @@
   display_name: "Moore, Will"
   municipality: oak-bay
   office: Councillor
-  incumbent: null
+  incumbent: false
 
 - name: Kevin Murdoch
   display_name: "Murdoch, Kevin"
@@ -242,6 +290,13 @@
   display_name: "Sweeney, Karin"
   municipality: oak-bay
   office: Councillor
+  incumbent: false
+
+# --- View Royal ---
+- name: Ryan Painter
+  display_name: "Painter, Ryan"
+  municipality: view-royal
+  office: Mayor
   incumbent: false
 
 # --- Colwood ---
@@ -292,7 +347,7 @@
   display_name: "Hill, Bryson"
   municipality: langford
   office: Councillor
-  incumbent: true
+  incumbent: false
 
 - name: Mary Wagner
   display_name: "Wagner, Mary"
@@ -310,4 +365,47 @@
   display_name: "Young, Stew"
   municipality: langford
   office: Mayor
+  incumbent: null
+
+# --- Sooke ---
+- name: Janet Evans
+  display_name: "Evans, Janet"
+  municipality: sooke
+  office: Councillor
+  incumbent: null
+
+- name: Herb Haldane
+  display_name: "Haldane, Herb"
+  municipality: sooke
+  office: Councillor
+  incumbent: true
+
+- name: Elliot Lifton
+  display_name: "Lifton, Elliot"
+  municipality: sooke
+  office: Councillor
+  incumbent: false
+
+- name: Rob Pearce
+  display_name: "Pearce, Rob"
+  municipality: sooke
+  office: Councillor
+  incumbent: false
+
+- name: Kevin Pearson
+  display_name: "Pearson, Kevin"
+  municipality: sooke
+  office: Mayor
+  incumbent: true
+
+- name: Curtis Peterec
+  display_name: "Peterec, Curtis"
+  municipality: sooke
+  office: Councillor
+  incumbent: false
+
+- name: Christine Thomas
+  display_name: "Thomas, Christine"
+  municipality: sooke
+  office: Councillor
   incumbent: false
