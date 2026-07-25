@@ -22,7 +22,7 @@ description: >-
   </p>
 
   <div class="status-banner">
-    <p><strong>Questionnaire in progress.</strong> Questions are being crafted, and candidates are being surveyed. Grades show as “—” until questionnaire responses are published.</p>
+    <p><strong>This list grows as candidates come forward.</strong> Candidates are added once they publicly announce their candidacy. Our volunteers track every announcement across the region as best we can, but mistakes happen — if a candidate is missing or listed incorrectly, <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">email us at {{ site.email }}</a>. More on <a href="#how-candidates-are-added">how candidates get added</a>.</p>
   </div>
 
   <div class="scorecard-legend" aria-label="Grading key">
@@ -94,7 +94,12 @@ description: >-
           {% for subject in site.data.subjects %}
           <th scope="col" class="scorecard-matrix__col" title="{{ subject.name }}">
             <img class="scorecard-matrix__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="22" height="22" loading="lazy">
+            {% if subject.abbr %}
+            <span class="scorecard-matrix__th-label scorecard-matrix__th-label--abbr" aria-hidden="true">{{ subject.abbr }}</span>
+            <span class="scorecard-matrix__th-label scorecard-matrix__th-label--full" aria-hidden="true">{{ subject.short | default: subject.name }}</span>
+            {% else %}
             <span class="scorecard-matrix__th-label" aria-hidden="true">{{ subject.short | default: subject.name }}</span>
+            {% endif %}
             <span class="sr-only">{{ subject.name }}</span>
           </th>
           {% endfor %}
@@ -248,6 +253,39 @@ description: >-
         </div>
         {% endfor %}
       </dl>
+    </div>
+  </details>
+
+  <details class="methodology" id="how-candidates-are-added">
+    <summary>How candidates get added to this scorecard</summary>
+    <div class="methodology__body">
+      <p>
+        Our volunteers maintain a working spreadsheet of everyone running for municipal
+        office across the Capital Regional District. A candidate's entry starts out
+        internal to that sheet, and is marked <strong>confirmed</strong> only once they
+        have <strong>publicly announced their candidacy</strong>. This page is generated
+        from the confirmed entries, so a name appears here after that public announcement
+        — not before.
+      </p>
+      <p>
+        <strong>Every candidate is included in the Livable CRD project.</strong> We do not
+        pick and choose who appears. Once confirmed, every candidate is added to this
+        scorecard and every candidate is sent the coalition questionnaire, regardless of
+        their platform, party affiliation, or whether we expect them to agree with us.
+      </p>
+      <p>
+        If someone is missing, the most likely explanation is simply that we haven't
+        updated their status on our back end yet. Tracking every announcement across
+        thirteen municipalities and three electoral areas is volunteer work, and
+        announcements do not arrive in a tidy list — so gaps happen.
+      </p>
+      <p>
+        We genuinely welcome comments and suggestions from the public. If you know of a
+        candidate we've missed, spot an error in an existing entry, or have a correction
+        of any kind,
+        <a href="mailto:{{ site.email }}?subject=Scorecard%20candidate%20update">email us at {{ site.email }}</a>.
+        Public help is a real part of how this list stays accurate.
+      </p>
     </div>
   </details>
 </div>

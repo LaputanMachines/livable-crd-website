@@ -506,6 +506,10 @@ tr:hover td { background: $color-bg-warm; }
   text-transform: uppercase;
 }
 
+// Topics with an `abbr` render both labels; only one is ever shown. The long
+// form waits for the wide breakpoint so it doesn't stretch its column.
+.scorecard-matrix__th-label--full { display: none; }
+
 // Candidate name cell (row header). Scoped under .scorecard-matrix so the
 // left alignment beats the base center-aligned th/td rule.
 .scorecard-matrix .scorecard-matrix__name-h {
@@ -589,11 +593,18 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
   .scorecard-matrix__col { width: auto; }
   .scorecard-matrix__th-label { display: block; }
+  .scorecard-matrix__th-label--full { display: none; }
   .scorecard-matrix__icon { width: 1.6rem; height: 1.6rem; }
   .scorecard-matrix__cell .grade { width: 1.9rem; height: 1.9rem; font-size: 0.95rem; }
   .scorecard-matrix__name { min-width: 10rem; }
   .scorecard-matrix__cand { font-size: 0.95rem; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
+}
+
+// Enough width for the long-form topic labels: swap `abbr` out for `short`.
+@media (min-width: 1024px) {
+  .scorecard-matrix__th-label--abbr { display: none; }
+  .scorecard-matrix__th-label--full { display: block; }
 }
 
 .scorecard-cta {

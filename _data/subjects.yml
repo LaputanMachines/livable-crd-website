@@ -1,5 +1,8 @@
 # Questionnaire topics (matches coalition form)
 # `short` is the compact label used in scorecard table column headers.
+# `abbr` is an optional even-shorter label swapped in on narrower screens, for
+# topics whose `short` would otherwise stretch its column. Full name is always
+# available via the header tooltip and to screen readers.
 # `example` is a sample question voters might see for that topic — shown in the
 # "What each category covers" FAQ on the scorecard page.
 - id: general
@@ -101,6 +104,7 @@
 - id: reconciliation
   name: Reconciliation
   short: Reconciliation
+  abbr: T&R
   icon: reconciliation.svg
   accent: "#4c1d95"
   description: >-
