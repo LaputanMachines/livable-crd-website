@@ -30,6 +30,10 @@
   var topicSelect = document.getElementById('topic-filter');
   var rows = Array.prototype.slice.call(table.querySelectorAll('.scorecard-row'));
   var groups = Array.prototype.slice.call(table.querySelectorAll('.scorecard-matrix__group'));
+  // Municipalities with no confirmed candidates: heading-only groups that have no
+  // rows to filter, so they are shown or hidden as a whole (see apply()).
+  var emptyGroups = groups.filter(function (g) { return g.hasAttribute('data-empty'); });
+  var candidateGroups = groups.filter(function (g) { return !g.hasAttribute('data-empty'); });
   var muniPills = Array.prototype.slice.call(document.querySelectorAll('[data-muni]'));
   var gradePills = Array.prototype.slice.call(document.querySelectorAll('[data-grade]'));
   // Scoped to the office filter container: rows also carry data-office.
@@ -79,11 +83,27 @@
     });
 
     // Hide a municipality block (and its heading) when none of its rows show.
-    groups.forEach(function (group) {
+    candidateGroups.forEach(function (group) {
       group.hidden = !group.querySelector('.scorecard-row:not([hidden])');
     });
 
-    if (empty) empty.hidden = visible !== 0;
+    // Empty municipalities exist to show the region is fully covered, so they
+    // stay put in the default view. Once the reader narrows by name, grade, or
+    // office they are only noise — nothing in them could ever match — so drop
+    // them. The municipality filter still applies: picking one keeps only it.
+    // Topic is excluded because it does nothing on its own, only alongside grade.
+    var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all';
+    var emptyShown = 0;
+    emptyGroups.forEach(function (group) {
+      var muniOk = activeMuni === 'all' || group.getAttribute('data-municipality') === activeMuni;
+      var show = !narrowed && muniOk;
+      group.hidden = !show;
+      if (show) emptyShown++;
+    });
+
+    // The placeholder inside a shown empty group already says nobody has
+    // announced there, so the page-level "no matches" line would just repeat it.
+    if (empty) empty.hidden = visible !== 0 || emptyShown > 0;
     if (count) {
       count.textContent = visible === total
         ? 'Showing all ' + total + ' candidates'

@@ -569,6 +569,19 @@ tr:hover td { background: $color-bg-warm; }
   border-bottom: 2px solid $color-text;
 }
 
+// Placeholder under a municipality nobody has announced in yet. Quieter than a
+// candidate row — it is an absence, not an entry — and left-aligned to sit under
+// its heading rather than centring across the grade columns.
+.scorecard-matrix .scorecard-matrix__empty-cell {
+  text-align: left;
+  padding: 0.55rem $space-xs;
+  font-size: 0.78rem;
+  font-style: italic;
+  color: $color-muted;
+}
+
+.scorecard-matrix__empty-row:hover td { background: transparent; }
+
 // Grade chips inside the matrix — compact so all columns fit on a phone.
 .scorecard-matrix__cell .grade {
   width: 1.25rem;

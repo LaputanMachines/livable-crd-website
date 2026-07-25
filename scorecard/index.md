@@ -105,13 +105,27 @@ description: >-
           {% endfor %}
         </tr>
       </thead>
+      {% comment %}
+        Every municipality and electoral area gets a heading, including those with
+        no confirmed candidates yet — an absent heading reads as an oversight
+        rather than as "nobody has announced here". Empty groups are marked
+        data-empty so the filter script can hide them once a search or filter
+        narrows the view.
+      {% endcomment %}
       {% for muni in site.data.municipalities %}
         {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
-        {% if mc.size > 0 %}
-        <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}">
+        <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}"{% if mc.size == 0 %} data-empty="true"{% endif %}>
           <tr class="scorecard-matrix__group-row">
             <th scope="colgroup" colspan="10" class="scorecard-matrix__group-head">{{ muni.name }}</th>
           </tr>
+          {% if mc.size == 0 %}
+          <tr class="scorecard-matrix__empty-row">
+            <td colspan="10" class="scorecard-matrix__empty-cell">
+              No candidates have publicly announced here yet. Check back, or
+              <a href="mailto:{{ site.email }}?subject=Candidate%20in%20{{ muni.name | url_encode }}">tell us about one</a>.
+            </td>
+          </tr>
+          {% endif %}
           {% for c in mc %}
           <tr class="scorecard-row" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
             <th scope="row" class="scorecard-matrix__name">
@@ -129,7 +143,6 @@ description: >-
           </tr>
           {% endfor %}
         </tbody>
-        {% endif %}
       {% endfor %}
     </table>
   </div>
