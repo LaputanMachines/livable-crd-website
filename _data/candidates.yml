@@ -18,7 +18,11 @@
 #                surname particles ("de", "van", ...) kept on the last name.
 #   municipality Slug matching _data/municipalities.yml.
 #   office       "Mayor", "Councillor", or null if not specified in the source.
-#   incumbent    true = incumbent, false = challenger, null = unspecified.
+#   standing     Id from _data/standings.yml describing what elected position the
+#                candidate holds or held ("incumbent-councillor",
+#                "ex-incumbent-mayor", "challenger", ...), or null if the sheet
+#                does not say. Role-specific on purpose: a sitting councillor
+#                running for mayor is not the incumbent mayor.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -29,383 +33,383 @@
   display_name: "Bondaroff, Teale Phelps"
   municipality: saanich
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Susan Brice
   display_name: "Brice, Susan"
   municipality: saanich
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Nathalie Chambers
   display_name: "Chambers, Nathalie"
   municipality: saanich
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Zac De Vries
   display_name: "De Vries, Zac"
   municipality: saanich
   office: Mayor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Lorne DeLarge
   display_name: "DeLarge, Lorne"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Nancy Di Castri
   display_name: "Di Castri, Nancy"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Karen Harper
   display_name: "Harper, Karen"
   municipality: saanich
   office: Mayor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Hollis Hodson
   display_name: "Hodson, Hollis"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Garnett Humenick
   display_name: "Humenick, Garnett"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Laurie Lidstone
   display_name: "Lidstone, Laurie"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Matt McGeachie
   display_name: "McGeachie, Matt"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Colin Plant
   display_name: "Plant, Colin"
   municipality: saanich
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Harjas Singh Popli
   display_name: "Popli, Harjas Singh"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Rishi Sharma
   display_name: "Sharma, Rishi"
   municipality: saanich
   office: Mayor
-  incumbent: false
+  standing: challenger
 
 - name: Tia Sibbald
   display_name: "Sibbald, Tia"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Graham Wright
   display_name: "Wright, Graham"
   municipality: saanich
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 # --- Victoria ---
 - name: Marianne Alto
   display_name: "Alto, Marianne"
   municipality: victoria
   office: Mayor
-  incumbent: true
+  standing: incumbent-mayor
 
 - name: Wendy Bowkett
   display_name: "Bowkett, Wendy"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Jeremy Caradonna
   display_name: "Caradonna, Jeremy"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Melissa Cseszko
   display_name: "Cseszko, Melissa"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Matt Dell
   display_name: "Dell, Matt"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Jerry Garcia
   display_name: "Garcia, Jerry"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Marg Gardiner
   display_name: "Gardiner, Marg"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Martin Girard
   display_name: "Girard, Martin"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Owen Haley
   display_name: "Haley, Owen"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Stephen Hammond
   display_name: "Hammond, Stephen"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Susan Kim
   display_name: "Kim, Susan"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Krista Laughton
   display_name: "Laughton, Krista"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Bella Lee
   display_name: "Lee, Bella"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Arthur McInnis
   display_name: "McInnis, Arthur"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Karen Rothe
   display_name: "Rothe, Karen"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Jack Sandor
   display_name: "Sandor, Jack"
   municipality: victoria
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Dave Thompson
   display_name: "Thompson, Dave"
   municipality: victoria
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 # --- Esquimalt ---
 - name: Meagan Braeme
   display_name: "Braeme, Meagan"
   municipality: esquimalt
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
   municipality: esquimalt
   office: Mayor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Dan Igaz
   display_name: "Igaz, Dan"
   municipality: esquimalt
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Rob Johnstone
   display_name: "Johnstone, Rob"
   municipality: esquimalt
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Tim Morrison
   display_name: "Morrison, Tim"
   municipality: esquimalt
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Zachary Mulder
   display_name: "Mulder, Zachary"
   municipality: esquimalt
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Kody Thomson
   display_name: "Thomson, Kody"
   municipality: esquimalt
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Tara Todesco
   display_name: "Todesco, Tara"
   municipality: esquimalt
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 # --- Oak Bay ---
 - name: Will Moore
   display_name: "Moore, Will"
   municipality: oak-bay
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Kevin Murdoch
   display_name: "Murdoch, Kevin"
   municipality: oak-bay
   office: Mayor
-  incumbent: true
+  standing: incumbent-mayor
 
 - name: Karin Sweeney
   display_name: "Sweeney, Karin"
   municipality: oak-bay
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 # --- View Royal ---
 - name: Ryan Painter
   display_name: "Painter, Ryan"
   municipality: view-royal
   office: Mayor
-  incumbent: false
+  standing: challenger
 
 # --- Colwood ---
 - name: Harold Bloomenthal
   display_name: "Bloomenthal, Harold"
   municipality: colwood
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Doug Kobayashi
   display_name: "Kobayashi, Doug"
   municipality: colwood
   office: Mayor
-  incumbent: true
+  standing: incumbent-mayor
 
 # --- Langford ---
 - name: Jennifer Dunnett
   display_name: "Dunnett, Jennifer"
   municipality: langford
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Lisa Foxhall
   display_name: "Foxhall, Lisa"
   municipality: langford
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Scott Goodmanson
   display_name: "Goodmanson, Scott"
   municipality: langford
   office: Mayor
-  incumbent: true
+  standing: incumbent-mayor
 
 - name: Brandy Gordon
   display_name: "Gordon, Brandy"
   municipality: langford
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Colby Harder
   display_name: "Harder, Colby"
   municipality: langford
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Bryson Hill
   display_name: "Hill, Bryson"
   municipality: langford
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Mary Wagner
   display_name: "Wagner, Mary"
   municipality: langford
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Keith Yacucha
   display_name: "Yacucha, Keith"
   municipality: langford
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Stew Young
   display_name: "Young, Stew"
   municipality: langford
   office: Mayor
-  incumbent: null
+  standing: ex-incumbent-mayor
 
 # --- Sooke ---
 - name: Janet Evans
   display_name: "Evans, Janet"
   municipality: sooke
   office: Councillor
-  incumbent: null
+  standing: ex-incumbent-mayor
 
 - name: Herb Haldane
   display_name: "Haldane, Herb"
   municipality: sooke
   office: Councillor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Elliot Lifton
   display_name: "Lifton, Elliot"
   municipality: sooke
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Rob Pearce
   display_name: "Pearce, Rob"
   municipality: sooke
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Kevin Pearson
   display_name: "Pearson, Kevin"
   municipality: sooke
   office: Mayor
-  incumbent: true
+  standing: incumbent-councillor
 
 - name: Curtis Peterec
   display_name: "Peterec, Curtis"
   municipality: sooke
   office: Councillor
-  incumbent: false
+  standing: challenger
 
 - name: Christine Thomas
   display_name: "Thomas, Christine"
   municipality: sooke
   office: Councillor
-  incumbent: false
+  standing: challenger

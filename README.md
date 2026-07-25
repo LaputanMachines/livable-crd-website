@@ -49,10 +49,10 @@ The repo root [`CNAME`](CNAME) file must contain `livablecrd.ca` (already commit
 [`_data/candidates.yml`](_data/candidates.yml) is **auto-generated — do not edit it by hand.** A scheduled GitHub Action, [.github/workflows/sync-candidates.yml](.github/workflows/sync-candidates.yml), runs daily (and on demand via *Actions → Sync candidates from Google Sheet → Run workflow*). It:
 
 1. Fetches the coalition candidate-tracking sheet as CSV ([`scripts/sync-candidates.py`](scripts/sync-candidates.py));
-2. Keeps only confirmed-running candidates and the published fields (name, municipality, office, incumbent, per-topic grades) — subjective columns are never read;
+2. Keeps only confirmed-running candidates and the published fields (name, municipality, office, standing, per-topic grades) — subjective columns are never read;
 3. Commits the regenerated file to `main` and redeploys — only when something changed.
 
-The job **fails without writing** if the sheet can't be fetched, isn't valid CSV, has zero confirmed candidates, or contains an unknown municipality or an invalid grade — so bad data can't reach the live site.
+The job **fails without writing** if the sheet can't be fetched, isn't valid CSV, has zero confirmed candidates, or contains an unknown municipality, an invalid grade, or a standing with no entry in [`_data/standings.yml`](_data/standings.yml) — so bad data can't reach the live site.
 
 ### One-time setup
 
@@ -63,7 +63,7 @@ The job **fails without writing** if the sheet can't be fetched, isn't valid CSV
 
 ### Editing the data
 
-Edit the **source spreadsheet**, not the YAML. To support a new municipality, add its `slug`/`name` to [`_data/municipalities.yml`](_data/municipalities.yml) first; grades live in the topic columns and must be one of `A`, `B`, `C`, `C-`, `F`. Preview locally:
+Edit the **source spreadsheet**, not the YAML. To support a new municipality, add its `slug`/`name` to [`_data/municipalities.yml`](_data/municipalities.yml) first; grades live in the topic columns and must be one of `A`, `B`, `C`, `C-`, `F`. The sheet's `Incumbent?` column is role-specific (`Incumbent Councillor`, `Ex-Incumbent Mayor`, `Challenger, …`); to support new wording there, add an entry to [`_data/standings.yml`](_data/standings.yml) and map it in `normalize_standing()`. Preview locally:
 
 ```bash
 CANDIDATES_CSV_URL="…" python3 scripts/sync-candidates.py --dry-run

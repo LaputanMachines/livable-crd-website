@@ -1,0 +1,72 @@
+# What elected position, if any, a candidate currently holds or used to hold.
+# Sourced from the "Incumbent?" column of the coalition tracking sheet and
+# normalized to these ids by scripts/sync-candidates.py.
+#
+# Incumbency is role-specific and does NOT always match the office a candidate
+# is seeking: a sitting councillor may run for mayor, and a former mayor may run
+# for council. Labelling both cases simply "Incumbent" would mislead voters, so
+# each standing carries two labels:
+#
+#   label       used when `role` matches the office sought — a sitting
+#               councillor running for council is just "Incumbent".
+#   role_label  used when they differ, or when the office sought is unknown — a
+#               sitting councillor running for mayor is "Incumbent Councillor".
+#   role        the office this standing refers to; null when it refers to none.
+#
+# Labels are Title Case to match the office they sit beside in the scorecard
+# ("Mayor · Incumbent Councillor").
+#   current     whether they hold elected office right now (false for former
+#               officeholders and for challengers).
+#
+# To support a new value in the sheet, add an entry here and map the sheet's
+# wording to its id in sync-candidates.py's normalize_standing().
+- id: incumbent-mayor
+  role: Mayor
+  label: Incumbent
+  role_label: Incumbent Mayor
+  current: true
+
+- id: incumbent-councillor
+  role: Councillor
+  label: Incumbent
+  role_label: Incumbent Councillor
+  current: true
+
+# Sheet wording that names no role. Kept so a plain "Incumbent" in the sheet
+# still labels correctly instead of falling through to unlabelled.
+- id: incumbent
+  role: null
+  label: Incumbent
+  role_label: Incumbent
+  current: true
+
+# Role-less counterparts of the two above, for the same reason.
+- id: ex-incumbent
+  role: null
+  label: Former Incumbent
+  role_label: Former Incumbent
+  current: false
+
+- id: ex-incumbent-mayor
+  role: Mayor
+  label: Former Incumbent
+  role_label: Former Mayor
+  current: false
+
+- id: ex-incumbent-councillor
+  role: Councillor
+  label: Former Incumbent
+  role_label: Former Councillor
+  current: false
+
+- id: challenger
+  role: null
+  label: Newcomer
+  role_label: Newcomer
+  current: false
+
+- id: challenger-experienced
+  role: null
+  label: Previously Elected
+  role_label: Previously Elected
+  current: false

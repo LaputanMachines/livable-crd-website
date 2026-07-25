@@ -130,8 +130,20 @@ description: >-
           <tr class="scorecard-row" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
             <th scope="row" class="scorecard-matrix__name">
               <span class="scorecard-matrix__cand">{{ c.display_name | default: c.name }}</span>
+              {%- comment -%}
+                Standing label comes from _data/standings.yml. Use the role-qualified
+                form whenever the standing's role differs from the office sought, so a
+                sitting councillor running for mayor reads "Incumbent councillor"
+                rather than a misleading bare "Incumbent".
+              {%- endcomment -%}
               {%- assign status = "" -%}
-              {%- if c.incumbent == true -%}{%- assign status = "Incumbent" -%}{%- elsif c.incumbent == false -%}{%- assign status = "Newcomer" -%}{%- endif -%}
+              {%- if c.standing -%}
+                {%- assign st = site.data.standings | where: "id", c.standing | first -%}
+                {%- if st -%}
+                  {%- if st.role and st.role != c.office -%}{%- assign status = st.role_label -%}
+                  {%- else -%}{%- assign status = st.label -%}{%- endif -%}
+                {%- endif -%}
+              {%- endif -%}
               {%- if c.office and status != "" -%}<span class="scorecard-matrix__meta">{{ c.office }} · {{ status }}</span>
               {%- elsif c.office -%}<span class="scorecard-matrix__meta">{{ c.office }}</span>
               {%- elsif status != "" -%}<span class="scorecard-matrix__meta">{{ status }}</span>{%- endif -%}

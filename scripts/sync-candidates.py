@@ -25,6 +25,7 @@ import urllib.error
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MUNI_YML = os.path.join(ROOT, "_data", "municipalities.yml")
 SUBJECTS_YML = os.path.join(ROOT, "_data", "subjects.yml")
+STANDINGS_YML = os.path.join(ROOT, "_data", "standings.yml")
 OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 
 # Sheet column -> subject id (in _data/subjects.yml). "general" has no column.
@@ -66,7 +67,11 @@ HEADER = """\
 #                surname particles ("de", "van", ...) kept on the last name.
 #   municipality Slug matching _data/municipalities.yml.
 #   office       "Mayor", "Councillor", or null if not specified in the source.
-#   incumbent    true = incumbent, false = challenger, null = unspecified.
+#   standing     Id from _data/standings.yml describing what elected position the
+#                candidate holds or held ("incumbent-councillor",
+#                "ex-incumbent-mayor", "challenger", ...), or null if the sheet
+#                does not say. Role-specific on purpose: a sitting councillor
+#                running for mayor is not the incumbent mayor.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -101,7 +106,8 @@ def load_municipalities(path):
     return ordered, lookup
 
 
-def load_subject_ids(path):
+def load_ids(path):
+    """Collect every "- id: value" from one of our simple list-of-maps data files."""
     ids = set()
     with open(path, encoding="utf-8") as f:
         for line in f:
@@ -139,15 +145,38 @@ def normalize_office(value, name, warnings):
     return None
 
 
-def normalize_incumbent(value, name, warnings):
+def normalize_standing(value, name, warnings):
+    """Map the sheet's "Incumbent?" wording to a _data/standings.yml id.
+
+    The sheet qualifies incumbency by role ("Incumbent Councillor", "Ex-Incumbent
+    Mayor"), which matters because the role often differs from the office being
+    sought — a sitting councillor running for mayor is not the incumbent mayor.
+    Role is preserved here rather than flattened to a boolean.
+    """
     low = norm(value)
     if low == "":
         return None
+
+    if "councillor" in low:
+        role = "councillor"
+    elif "mayor" in low:
+        role = "mayor"
+    else:
+        role = None
+
+    # "Ex-" first: "Ex-Incumbent Mayor" also contains "incumbent".
+    is_former = low.startswith(("ex-incumbent", "ex incumbent", "former incumbent"))
+    if is_former:
+        return f"ex-incumbent-{role}" if role else "ex-incumbent"
     if low.startswith("incumbent"):
-        return True
+        return f"incumbent-{role}" if role else "incumbent"
     if low.startswith("challenger"):
-        return False
-    warnings.append(f"{name}: unrecognized incumbent {value!r} → null")
+        # "Challenger, with past elected experience" vs "no current elected position".
+        if "past" in low or "experience" in low or "former" in low:
+            return "challenger-experienced"
+        return "challenger"
+
+    warnings.append(f"{name}: unrecognized Incumbent? value {value!r} → null (no standing shown)")
     return None
 
 
@@ -203,7 +232,7 @@ def build_records(rows, muni_lookup, errors, warnings):
             "name": name,
             "municipality": slug,
             "office": normalize_office(row.get("Position Sought"), name, warnings),
-            "incumbent": normalize_incumbent(row.get("Incumbent?"), name, warnings),
+            "standing": normalize_standing(row.get("Incumbent?"), name, warnings),
             "scores": scores,
         })
     return records, skipped
@@ -275,7 +304,7 @@ def render_record(rec, subject_order):
         f"  display_name: {scalar(display_name(rec['name']))}",
         f"  municipality: {rec['municipality']}",
         f"  office: {rec['office'] if rec['office'] else 'null'}",
-        f"  incumbent: {'true' if rec['incumbent'] is True else 'false' if rec['incumbent'] is False else 'null'}",
+        f"  standing: {rec['standing'] if rec['standing'] else 'null'}",
     ]
     if rec["scores"]:
         lines.append("  scores:")
@@ -317,11 +346,13 @@ def main(argv=None):
     args = ap.parse_args(argv)
 
     # Subject ids order (for stable scores emission) + sanity-check SCORE_MAP.
-    subject_ids = load_subject_ids(SUBJECTS_YML)
+    subject_ids = load_ids(SUBJECTS_YML)
     subject_order = [sid for _, sid in SCORE_MAP]
     missing = [sid for sid in subject_order if sid not in subject_ids]
     if missing:
         sys.exit(f"FATAL: score map targets not in subjects.yml: {missing}")
+
+    standing_ids = load_ids(STANDINGS_YML)
 
     ordered_munis, muni_lookup = load_municipalities(MUNI_YML)
 
@@ -349,6 +380,13 @@ def main(argv=None):
 
     errors, warnings = [], []
     records, skipped = build_records(list(reader), muni_lookup, errors, warnings)
+
+    # A standing id with no entry in standings.yml would render as a blank label,
+    # so treat it as fatal rather than shipping an unexplained gap.
+    for rec in records:
+        if rec["standing"] and rec["standing"] not in standing_ids:
+            errors.append(f"{rec['name']}: standing {rec['standing']!r} has no entry in "
+                          f"_data/standings.yml (add one, or fix normalize_standing)")
 
     for w in warnings:
         print(f"WARN: {w}", file=sys.stderr)
