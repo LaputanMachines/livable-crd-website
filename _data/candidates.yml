@@ -302,13 +302,6 @@
   office: Councillor
   standing: challenger
 
-# --- View Royal ---
-- name: Ryan Painter
-  display_name: "Painter, Ryan"
-  municipality: view-royal
-  office: Mayor
-  standing: challenger
-
 # --- Colwood ---
 - name: Harold Bloomenthal
   display_name: "Bloomenthal, Harold"
