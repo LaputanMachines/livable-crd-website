@@ -241,12 +241,6 @@
   standing: incumbent-councillor
 
 # --- Esquimalt ---
-- name: Meagan Braeme
-  display_name: "Braeme, Meagan"
-  municipality: esquimalt
-  office: Councillor
-  standing: incumbent-councillor
-
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
   municipality: esquimalt
@@ -320,6 +314,12 @@
   municipality: colwood
   office: Mayor
   standing: incumbent-mayor
+
+- name: Ian Ward
+  display_name: "Ward, Ian"
+  municipality: colwood
+  office: Councillor
+  standing: incumbent-councillor
 
 # --- Langford ---
 - name: Jennifer Dunnett
