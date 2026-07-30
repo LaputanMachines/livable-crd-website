@@ -315,6 +315,12 @@
   office: Mayor
   standing: incumbent-mayor
 
+- name: Misty Olsen
+  display_name: "Olsen, Misty"
+  municipality: colwood
+  office: Councillor
+  standing: incumbent-councillor
+
 - name: Ian Ward
   display_name: "Ward, Ian"
   municipality: colwood
