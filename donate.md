@@ -26,13 +26,14 @@ description: >-
 <ul>
   <li>
     <strong>Maximum donation limit.</strong> The most any individual may contribute
-    is <strong>$1,484.96 per year</strong>, in line with British Columbia's annual
+    is <strong>$1,429.70 per year</strong>, in line with British Columbia's annual
     political contribution limit.
   </li>
   <li>
     <strong>Anonymous donation threshold.</strong> Donations of <strong>$99 or
-    less</strong> may be made anonymously. For any contribution above $99 we are
-    required to record the donor's name and address.
+    less</strong> may be published anonymously, but we still need your name so we
+    can verify that every contribution comes from an individual. For any
+    contribution above $99 we are required to record the donor's name and address.
   </li>
   <li>
     <strong>No corporate or union donations.</strong> We can only accept
