@@ -346,6 +346,12 @@
   office: Councillor
   standing: challenger
 
+- name: Kimberly Guiry
+  display_name: "Guiry, Kimberly"
+  municipality: langford
+  office: Councillor
+  standing: incumbent-councillor
+
 - name: Colby Harder
   display_name: "Harder, Colby"
   municipality: langford
