@@ -79,6 +79,16 @@ ul, ol {
   margin-top: $space-md;
 }
 
+// Inline Elections BC notice on About/Donate/Press. The footer overrides this
+// for its own dark-background variant (see .sponsor-notice--footer).
+.sponsor-notice {
+  margin-top: $space-md;
+  padding: $space-sm;
+  border-left: $border-weight solid $color-accent;
+  background: $color-bg-warm;
+  font-size: 0.95rem;
+}
+
 a {
   color: $color-accent; // Livable Purple — stands apart from the inky body text
   text-decoration-thickness: 2px;

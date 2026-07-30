@@ -47,6 +47,7 @@ description: >-
       Once candidates are surveyed, ratings will be published by municipality ahead
       of election day.
     </p>
+    {% include sponsor-notice.html %}
   </div>
 </section>
 

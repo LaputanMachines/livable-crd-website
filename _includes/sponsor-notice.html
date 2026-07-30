@@ -1,0 +1,20 @@
+{%- comment -%}
+  Elections BC sponsor notice. Wording comes from `sponsor:` in _config.yml so
+  there is a single source of truth across the footer and the inline page
+  callouts. Renders nothing when `sponsor.registered` is false, and appends the
+  registration number only once `sponsor.registration_number` is set.
+
+  Params:
+    class - extra class names on the wrapper (e.g. "sponsor-notice--footer")
+{%- endcomment -%}
+{%- if site.sponsor.registered -%}
+{%- comment -%} An unset number is "" in YAML, which Liquid treats as truthy — normalize first. {%- endcomment -%}
+{%- assign sponsor_reg = site.sponsor.registration_number | default: "" | strip -%}
+<p class="sponsor-notice{% if include.class %} {{ include.class }}{% endif %}">
+  <strong>{{ site.title }}</strong> is a {{ site.sponsor.term }} with
+  {{ site.sponsor.authority }}{% if sponsor_reg != "" %} (registration
+  no.&nbsp;{{ sponsor_reg }}){% endif %}. Election advertising
+  on this site is authorized by {{ site.title }},
+  <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
+</p>
+{%- endif -%}

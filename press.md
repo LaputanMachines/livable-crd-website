@@ -15,6 +15,8 @@ description: >-
   and we do not endorse candidates.
 </p>
 
+{% include sponsor-notice.html %}
+
 <h2>Media contact</h2>
 <p>
   For all press inquiries, please email

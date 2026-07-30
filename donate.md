@@ -52,6 +52,8 @@ description: >-
   </li>
 </ul>
 
+{% include sponsor-notice.html %}
+
 <p>
   Questions about giving? Reach us at
   <a href="mailto:{{ site.email }}">{{ site.email }}</a>.

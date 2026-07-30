@@ -27,6 +27,21 @@ social:
 # src is .../widgets/v5/form/livable-crd-mailing-list?..., use that final token.
 signup_form_slug: "livable-crd-mailing-list"
 
+# --- Elections BC registration ---
+# Rendered by _includes/sponsor-notice.html: the footer on every page, plus an
+# inline callout on the About, Donate, and Press pages. Edit the wording here,
+# not in the templates, so every instance stays consistent.
+#
+# `registration_number` is blank until Elections BC issues one; the include
+# renders the number automatically as soon as it is set. Set `registered: false`
+# to pull the notice off the entire site at once (e.g. between election cycles,
+# when the registration lapses).
+sponsor:
+  registered: true
+  term: "registered local elections advertising sponsor"
+  authority: "Elections BC"
+  registration_number: ""
+
 # Feature flags
 # Render coalition partner logos on the homepage. Disabled for now; the logo
 # files and `logo:` entries in _data/partners.yml are kept — flip to true to

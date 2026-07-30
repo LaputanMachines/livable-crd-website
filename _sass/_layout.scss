@@ -404,6 +404,20 @@ main {
     font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.6);
   }
+
+  // Elections BC notice: legally-required text, so it keeps more contrast than
+  // the brand credit below it while still reading as fine print.
+  .sponsor-notice--footer {
+    // Drop the inline callout treatment from .sponsor-notice; on the inky
+    // footer the box reads as a broken panel rather than a highlight.
+    padding: 0;
+    border-left: none;
+    background: none;
+    margin-top: $space-sm;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 60ch;
+  }
 }
 
 .hero {

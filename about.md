@@ -14,6 +14,8 @@ description: >-
   so residents can make informed choices.
 </p>
 
+{% include sponsor-notice.html %}
+
 <h2>Our mission</h2>
 <p>
   The region needs affordable homes, reliable transit, climate action, healthcare access, and vibrant communities.
