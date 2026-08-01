@@ -114,3 +114,17 @@
   example: >-
     How would you work in partnership with local First Nations to advance
     reconciliation in your municipality?
+
+- id: governance
+  name: Governance
+  short: Governance
+  abbr: Gov
+  icon: governance.svg
+  accent: "#831843"
+  description: >-
+    Open and accountable local government — transparent decision-making,
+    meaningful public consultation, and council processes residents can follow
+    and trust.
+  example: >-
+    How would you make council decision-making more transparent and easier for
+    residents to take part in?

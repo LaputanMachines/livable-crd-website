@@ -94,12 +94,13 @@ description: >-
           {% for subject in site.data.subjects %}
           <th scope="col" class="scorecard-matrix__col" title="{{ subject.name }}">
             <img class="scorecard-matrix__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="22" height="22" loading="lazy">
-            {% if subject.abbr %}
-            <span class="scorecard-matrix__th-label scorecard-matrix__th-label--abbr" aria-hidden="true">{{ subject.abbr }}</span>
-            <span class="scorecard-matrix__th-label scorecard-matrix__th-label--full" aria-hidden="true">{{ subject.short | default: subject.name }}</span>
-            {% else %}
-            <span class="scorecard-matrix__th-label" aria-hidden="true">{{ subject.short | default: subject.name }}</span>
-            {% endif %}
+            {%- comment -%}
+              `abbr` wins wherever a topic defines one: the columns are equal
+              width, so a long label would either overflow its column or force
+              every other column wider. The full name stays on the `title`
+              tooltip above and in the .sr-only span below.
+            {%- endcomment -%}
+            <span class="scorecard-matrix__th-label" aria-hidden="true">{{ subject.abbr | default: subject.short | default: subject.name }}</span>
             <span class="sr-only">{{ subject.name }}</span>
           </th>
           {% endfor %}
@@ -116,11 +117,11 @@ description: >-
         {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
         <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}"{% if mc.size == 0 %} data-empty="true"{% endif %}>
           <tr class="scorecard-matrix__group-row">
-            <th scope="colgroup" colspan="10" class="scorecard-matrix__group-head">{{ muni.name }}</th>
+            <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head">{{ muni.name }}</th>
           </tr>
           {% if mc.size == 0 %}
           <tr class="scorecard-matrix__empty-row">
-            <td colspan="10" class="scorecard-matrix__empty-cell">
+            <td colspan="11" class="scorecard-matrix__empty-cell">
               No candidates have publicly announced here yet. Check back, or
               <a href="mailto:{{ site.email }}?subject=Candidate%20in%20{{ muni.name | url_encode }}">tell us about one</a>.
             </td>

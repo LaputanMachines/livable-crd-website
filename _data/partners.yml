@@ -12,7 +12,8 @@
 #   category  Focus area, shown as a colored pill (optional). Use a topic id from
 #             _data/subjects.yml so the pill picks up that topic's name and accent color:
 #               general, transit, housing, climate, arts,
-#               rolling-cycling, walking, healthcare-access
+#               rolling-cycling, walking, healthcare-access,
+#               reconciliation, governance
 #             Any other value is shown verbatim with the default accent.
 
 - name: Walk On, Victoria
@@ -54,7 +55,7 @@
   category: general
 - name: Strong Towns Victoria
   note: A grassroots organization focussed on good governance, fiscal responsibility, livable cities, and all things in between!
-  category: general
+  category: governance
 - name: Common Horizon Victoria
   note: Common Horizon is a mass movement of working people who are coming together to take power away from the billionaire class.
   url: https://www.instagram.com/chcvictoriabc/

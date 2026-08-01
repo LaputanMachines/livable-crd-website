@@ -28,7 +28,10 @@ SUBJECTS_YML = os.path.join(ROOT, "_data", "subjects.yml")
 STANDINGS_YML = os.path.join(ROOT, "_data", "standings.yml")
 OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 
-# Sheet column -> subject id (in _data/subjects.yml). "general" has no column.
+# Sheet column -> subject id (in _data/subjects.yml). Subjects with no column in
+# the tracking sheet are omitted here and render as pending ("—") until a column
+# exists: "general", "reconciliation", "governance". Add the pair below once the
+# coalition adds the matching column.
 SCORE_MAP = [
     ("Housing", "housing"),
     ("Transit", "transit"),

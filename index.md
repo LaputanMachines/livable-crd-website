@@ -90,7 +90,7 @@ description: >-
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers nine topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, and general livability. Each candidate is graded
+      The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, governance, and general livability. Each candidate is graded
       in every area, so voters can compare positions topic by topic at a glance.
     </p>
     <div class="card-grid">
