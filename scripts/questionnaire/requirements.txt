@@ -1,0 +1,3 @@
+# Only the questionnaire scripts need these; the rest of scripts/ is stdlib-only.
+gspread>=6.2
+google-auth>=2.0

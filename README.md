@@ -69,6 +69,12 @@ Edit the **source spreadsheet**, not the YAML. To support a new municipality, ad
 CANDIDATES_CSV_URL="…" python3 scripts/sync-candidates.py --dry-run
 ```
 
+## Questionnaire committee tooling
+
+[`scripts/questionnaire/`](scripts/questionnaire/) builds the working sheet the committee uses to choose which questions make the questionnaire: it collects every submitted question into one categorised master list and generates a per-member voting tab so scoring can happen asynchronously. See [`scripts/questionnaire/README.md`](scripts/questionnaire/README.md).
+
+These scripts only touch that working Google Sheet — never the site or `_data/`. They need `gspread` and interactive Google auth, so unlike the rest of `scripts/` they are run locally, not in CI. The spreadsheet key comes from `QUESTIONNAIRE_SHEET_ID`; it is kept out of source because the sheet holds submitter email addresses.
+
 ## Adding content later
 
 - **Municipalities**: [`_data/municipalities.yml`](_data/municipalities.yml)
