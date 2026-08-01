@@ -19,11 +19,20 @@ interactive Google auth, so they are not run in CI.
 | `Victori'Us Questions` | Arts & culture submissions. Source, read-only. |
 | `All Refined Questions` | **Master.** Every question, categorised, plus vote aggregates. Generated. |
 | `Vote - <Name>` | One per committee member. Generated. |
+| `Summary` | All counts and roll-ups. Generated. |
 
-`All Refined Questions` holds two native tables:
+`All Refined Questions` holds one native table, **`Questions`** (`A1:V`) — `A–J`
+question data, `K–V` vote aggregates.
 
-- **`Questions`** (`A1:V`) — `A–J` question data, `K–V` vote aggregates.
-- **`CategoryCounts`** (`X1:Y`) — live `COUNTIF` per official category.
+`Summary` holds five, side by side, all live formulas:
+
+| Table | Range | Shows |
+|---|---|---|
+| `CategoryCounts` | `A:D` | Questions per category, with strong / excluded splits |
+| `Totals` | `F:G` | Question count, committee size, completion percentage |
+| `VoterProgress` | `I:N` | Per-member progress, exclude ticks, comments left |
+| `StatusMix` | `P:R` | Distribution across `STRONG` / `MAYBE` / `WEAK` / `EXCLUDE` / unvoted |
+| `FlagTotals` | `S:V` | Questions carrying each flag, and total ticks |
 
 ### Official categories
 
@@ -114,6 +123,19 @@ formulas into master columns `K–V`.
 and rebuilt, so re-running with one name wipes that person's votes and leaves the
 aggregates referencing only them.
 
+### `summary.py` — rebuild the Summary tab
+
+```bash
+python3 scripts/questionnaire/summary.py
+```
+
+Rebuilds all five roll-up tables. Committee members are discovered from the
+`Vote - <Name>` tab names, so it needs no arguments and picks up changes on its own.
+
+Everything on the tab is a live formula, so it only needs re-running when the
+committee or the question set changes — not to refresh numbers. This is the only
+write script that's safe to run mid-voting: it touches nothing but its own tab.
+
 ## How committee members vote
 
 Send each person the sheet link and their tab name. In their tab:
@@ -169,6 +191,9 @@ that's disagreement the average is hiding.
 
 Always read `Status` alongside `Votes cast`. `STRONG` on two votes is two people.
 
+For the aggregate picture — who still owes votes, how the categories are splitting,
+which flags are firing — read the `Summary` tab instead.
+
 ### Status thresholds
 
 Set in `aggregate_formulas()` in `voting.py`:
@@ -197,5 +222,5 @@ away from column A silently overwrites the headers in columns A, B, … That's w
 `CategoryCounts` is created without them and infers its names from `X1:Y1`.
 
 **Editing questions.** Edit the master directly — text and category propagate to
-every voter tab automatically. Recategorise with the column `B` dropdown and
-`CategoryCounts` updates immediately. Only structural changes need a rebuild.
+every voter tab automatically. Recategorise with the column `B` dropdown and the
+`Summary` counts update immediately. Only structural changes need a rebuild.

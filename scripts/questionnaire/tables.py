@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Rebuild the 'All Refined Questions' tab as two native Google Sheets tables.
+"""Rebuild the 'All Refined Questions' tab as a native Google Sheets table.
 
-  Questions       A1:V<last>   header row 1, data from row 2.
-                               A-J question data, K-V vote aggregates (values are
-                               written by voting.py once voter tabs exist).
-  CategoryCounts  X1:Y15       live COUNTIF per official category.
+  Questions  A1:V<last>  header row 1, data from row 2. A-J question data, K-V
+                         vote aggregates (values written by voting.py once voter
+                         tabs exist).
+
+Counts and roll-ups live on the Summary tab - see summary.py.
 
 Tables give per-column sort/filter, banded rows, and enforced column types - the
 Category column becomes a real dropdown, so the taxonomy cannot drift.
@@ -25,8 +26,6 @@ AGG_HEADERS = [
     "Votes cast", "F: our view", "F: users", "F: allies", "F: how",
     "Exclude votes", "Status", "Comments",
 ]
-
-COUNTS_COL = 24  # X
 
 NUMERIC = {
     "Avg importance", "Avg distinguishes", "Avg answerable", "Mean score",
@@ -56,18 +55,12 @@ def main():
     if teardown:
         sh.batch_update({"requests": teardown})
 
+    n_cols = len(HEADERS) + len(AGG_HEADERS)
     ws.clear()
-    # X:Y holds the counts table, so the grid needs to reach at least column Y.
-    if ws.col_count < COUNTS_COL + 1:
-        ws.resize(rows=max(ws.row_count, last + 50), cols=COUNTS_COL + 4)
+    if ws.col_count < n_cols:
+        ws.resize(rows=max(ws.row_count, last + 50), cols=n_cols)
     ws.update([HEADERS + AGG_HEADERS], "A1", value_input_option="RAW")
     ws.update(rows, f"A{FIRST}", value_input_option="RAW")
-
-    counts = [["Category", "Questions"]]
-    counts += [[c, f'=COUNTIF($B${FIRST}:$B,"{c}")'] for c in CATEGORIES]
-    counts += [["Uncategorised", f'=COUNTIF($B${FIRST}:$B{last},"")'],
-               ["TOTAL", f'=COUNTA($A${FIRST}:$A)']]
-    ws.update(counts, "X1", value_input_option="USER_ENTERED")
 
     col_props = []
     for i, name in enumerate(HEADERS + AGG_HEADERS):
@@ -83,29 +76,16 @@ def main():
             col_props.append({"columnIndex": i, "columnName": name,
                               "columnType": "DOUBLE" if name in NUMERIC else "TEXT"})
 
-    requests = [
-        {"addTable": {"table": {
-            "name": "Questions",
-            "range": {"sheetId": ws.id, "startRowIndex": 0, "endRowIndex": last,
-                      "startColumnIndex": 0,
-                      "endColumnIndex": len(HEADERS) + len(AGG_HEADERS)},
-            "columnProperties": col_props,
-        }}},
-        {"addTable": {"table": {
-            "name": "CategoryCounts",
-            "range": {"sheetId": ws.id, "startRowIndex": 0, "endRowIndex": len(counts),
-                      "startColumnIndex": COUNTS_COL - 1, "endColumnIndex": COUNTS_COL + 1},
-            # No columnProperties on purpose: columnIndex is validated table-relative
-            # but the resulting columnName is written back at the *sheet* offset, so
-            # naming a table anchored at column X clobbers A1/B1. Letting Sheets infer
-            # the names from X1:Y1 avoids that.
-        }}},
-    ]
-    sh.batch_update({"requests": requests})
+    sh.batch_update({"requests": [{"addTable": {"table": {
+        "name": "Questions",
+        "range": {"sheetId": ws.id, "startRowIndex": 0, "endRowIndex": last,
+                  "startColumnIndex": 0, "endColumnIndex": n_cols},
+        "columnProperties": col_props,
+    }}}]})
     ws.freeze(rows=1)
 
     print(f"Questions table: A1:V{last} ({len(rows)} questions)")
-    print(f"CategoryCounts table: X1:Y{len(counts)}")
+    print("run summary.py to refresh the Summary tab")
 
 
 if __name__ == "__main__":
