@@ -87,6 +87,13 @@ ul, ol {
   border-left: $border-weight solid $color-accent;
   background: $color-bg-warm;
   font-size: 0.95rem;
+  // On a wide screen this wrapped with one or two words stranded on the last
+  // line. `pretty` tells the browser to pull a word down from the line above so
+  // the last line is never a stub, without shortening the lines above it the
+  // way `balance` would. Purely typographic on purpose: this is a legally
+  // required Elections BC disclosure, so the fix must not touch its wording.
+  // Ignored by browsers that do not support it, which just reinstates the stub.
+  text-wrap: pretty;
 }
 
 a {

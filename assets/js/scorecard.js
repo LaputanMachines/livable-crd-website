@@ -145,4 +145,15 @@
   }
 
   apply();
+
+  // --- Seam: assets/js/favourites.js ---------------------------------------
+  // That script moves rows between tbodies at runtime (into and out of the
+  // pinned favourites group, which is an ordinary candidate group as far as
+  // everything above is concerned). Every decision in apply() is recomputed
+  // from the DOM, so it stays correct across a move — but only if something
+  // re-runs it, and only this file may decide what "visible" means.
+  //
+  // Deliberately one-way and event-shaped: nothing here knows what a favourite
+  // is, and nothing there reaches into this closure.
+  table.addEventListener('scorecard:refilter', apply);
 })();

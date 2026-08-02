@@ -1,0 +1,246 @@
+@use "variables" as *;
+
+// --- Scorecard favourites ---------------------------------------------------
+// Markup: scorecard/index.md (the pinned tbody, the star on every row).
+// Behaviour: assets/js/favourites.js.
+//
+// Loaded after "components" so the few rules here that restate a matrix
+// selector — the group heading, the row backgrounds during a drag — win on
+// source order without needing extra specificity piled on top.
+//
+// Everything in this file is dead weight without JS: the star ships `hidden`
+// and the pinned group ships `hidden`, so the only rule that changes the
+// no-JS page is the flex layout of the name cell, which lays out exactly as
+// the block it replaced when its one visible child is the name.
+
+// The name cell became a row of things: name + meta on the left, controls on
+// the right. The flex container has to be this span rather than the <th>,
+// because `display: flex` on a table cell takes the cell out of the table's
+// box model and the column widths go with it.
+.scorecard-matrix__name-inner {
+  display: flex;
+  align-items: center;
+  // Tighter than $space-xs on purpose — the matrix is a dense component and
+  // already sets its own sub-scale paddings (0.2rem, 0.35rem) for the same
+  // reason: ten topic columns have to survive a phone.
+  gap: 0.25rem;
+}
+
+.scorecard-matrix__name-text {
+  // min-width: 0 lets a long name wrap instead of forcing the flex line wider
+  // than the column — the default `min-width: auto` on a flex item refuses to
+  // shrink below its content.
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+// The star and the reorder handle stack instead of sitting side by side. The
+// name column is 7rem wide on a phone and two 1.5rem controls in a row would
+// claim 3.25rem of it with the gap; stacked they claim 1.5rem, and the vertical
+// room is free — a pinned row's name has already wrapped to two or three lines,
+// which is taller than the two buttons together.
+//
+// Only the star is in the markup. favourites.js inserts the handle after it and
+// inside this element, so the column builds itself as rows are pinned.
+.fav-controls {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  // Tighter than the row gap: these two are one control cluster, and the space
+  // between them should read as smaller than the space separating them from the
+  // name.
+  gap: 0.1rem;
+}
+
+// Shared shape for both row controls. 1.5rem is 24px: the WCAG 2.5.8 minimum
+// target, and as much as a two-line row in this matrix can give up.
+.fav-toggle,
+.fav-handle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: $radius;
+  line-height: 1;
+  cursor: pointer;
+  transition: color $transition-fast, background $transition-fast;
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: 1px;
+  }
+}
+
+// Both controls ship or end up `hidden` — the star until the script reveals it,
+// the handle whenever its row is not pinned — and an author `display` beats the
+// browser's own `[hidden] { display: none }`. Without this the no-JS page would
+// show 66 dead stars. Same reason _components.scss restates it for the rows.
+.fav-toggle[hidden],
+.fav-handle[hidden] {
+  display: none;
+}
+
+.fav-toggle {
+  // Muted until it means something. A row of 66 accent-purple stars would
+  // out-shout the grades, which are the reason the table exists.
+  color: rgba($color-muted, 0.5);
+
+  &:hover {
+    color: $color-accent;
+    background: rgba($color-accent, 0.08);
+  }
+
+  &[aria-pressed="true"] {
+    color: $color-accent;
+  }
+}
+
+// On/off is a filled star vs a hollow one, not purple vs grey: state carried by
+// colour alone fails for anyone who cannot separate the two (WCAG 1.4.1). The
+// pair is swapped here rather than by the script so the two never disagree with
+// aria-pressed, which is the single source of truth for the state.
+.fav-toggle__icon {
+  font-size: 1rem;
+}
+
+.fav-toggle[aria-pressed="true"] .fav-toggle__icon--off,
+.fav-toggle[aria-pressed="false"] .fav-toggle__icon--on {
+  display: none;
+}
+
+.fav-handle {
+  color: $color-muted;
+  font-size: 0.95rem;
+  // The drag owns vertical movement once it starts on this element. Without
+  // this the browser claims the gesture for scrolling on touch and the pointer
+  // events stop arriving mid-drag.
+  touch-action: none;
+  cursor: grab;
+
+  &:hover {
+    color: $color-text;
+    background: rgba($color-accent, 0.08);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+// --- The pinned group -------------------------------------------------------
+
+// Kwetlal purple against the municipality bands' pale lavender: the reader has
+// to be able to tell at a glance that the top block is theirs and the rest is
+// the region's. Same type treatment as every other band, so it still reads as
+// one of the table's headings rather than as a widget dropped on top of it.
+.scorecard-matrix .scorecard-matrix__group-head--fav {
+  background: $color-warm;
+  border-top: none; // it sits directly under the table head's own bottom border
+}
+
+// Instructions, not a heading: normal case and weight so the eye skips it once
+// it has been read. Also the aria-describedby target for every reorder handle,
+// which is why the keyboard path is spelled out in words here and nowhere else.
+.scorecard-matrix__group-hint {
+  display: block;
+  margin-top: 0.15rem;
+  max-width: 46rem;
+  font-family: $font-sans;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  // Full-strength ink rather than $color-muted: muted grey on Kwetlal purple
+  // lands around the 4.5:1 line, and this is small text.
+  color: $color-text;
+}
+
+// --- Drag feedback ----------------------------------------------------------
+// No lifted ghost row. A <tr> is `display: table-row`; transforming or floating
+// one takes its cells out of the column sizing and the grid twitches on every
+// pointer move. So the row stays exactly where it is, dimmed, and a solid line
+// marks the slot it would drop into. See the comment above the drag section in
+// assets/js/favourites.js.
+.scorecard-row.is-fav-dragging > th,
+.scorecard-row.is-fav-dragging > td {
+  background: $color-bg-warm;
+  opacity: 0.55;
+}
+
+// Drawn as an inset shadow rather than a border: under `border-collapse` a
+// border on a row is negotiated with its neighbours' borders and can lose,
+// and a real border would also change the row's height as it moves.
+.scorecard-row.is-fav-drop-before > th,
+.scorecard-row.is-fav-drop-before > td {
+  box-shadow: inset 0 3px 0 0 $color-accent;
+}
+
+.scorecard-row.is-fav-drop-after > th,
+.scorecard-row.is-fav-drop-after > td {
+  box-shadow: inset 0 -3px 0 0 $color-accent;
+}
+
+.scorecard-matrix__group.is-fav-reordering {
+  // A drag that starts sweeping text selection across the table is unusable,
+  // and on touch it triggers the OS text-selection handles.
+  user-select: none;
+
+  // The row hover tint would otherwise follow the pointer during a drag and
+  // read as a second, competing drop indicator.
+  .scorecard-row:hover > th,
+  .scorecard-row:hover > td {
+    background: $color-surface;
+  }
+
+  .scorecard-row.is-fav-dragging > th,
+  .scorecard-row.is-fav-dragging > td {
+    background: $color-bg-warm;
+  }
+}
+
+// The only movement in the whole feature is the colour/shadow fade above.
+// _animations.scss already collapses every transition under this query with
+// !important; this is the local, explicit statement of the same intent, so the
+// promise survives any future rework of that global reset.
+@media (prefers-reduced-motion: reduce) {
+  .fav-toggle,
+  .fav-handle,
+  .scorecard-row.is-fav-dragging > th,
+  .scorecard-row.is-fav-dragging > td,
+  .scorecard-row.is-fav-drop-before > th,
+  .scorecard-row.is-fav-drop-before > td,
+  .scorecard-row.is-fav-drop-after > th,
+  .scorecard-row.is-fav-drop-after > td {
+    transition: none;
+  }
+}
+
+@media (min-width: 720px) {
+  // Room to breathe once the matrix is not fighting for every pixel: a 28px
+  // target is comfortably above the 24px floor, and matches the grade chips
+  // sitting alongside it.
+  .fav-toggle,
+  .fav-handle {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .fav-toggle__icon { font-size: 1.15rem; }
+  .fav-handle { font-size: 1.1rem; }
+  .scorecard-matrix__name-inner { gap: 0.35rem; }
+  // The 46rem measure cap is for phone and tablet widths, where this would
+  // otherwise run the full bleed of the table. On a desktop bar it just left a
+  // third of the band empty, and the hint is one short utility line rather than
+  // body copy, so it can have the whole width.
+  .scorecard-matrix__group-hint {
+    font-size: 0.75rem;
+    max-width: none;
+  }
+}

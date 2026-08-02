@@ -463,6 +463,12 @@ tr:hover td { background: $color-bg-warm; }
   border: none;
   border-collapse: collapse;
   font-size: 0.9rem;
+  // Fixed at every width, not just desktop. Under the default `auto` layout the
+  // name column grows to fit the longest name it contains and the ten grade
+  // columns divide the remainder, which on a phone left them barely wider than
+  // the chip inside them. Fixed layout inverts that: the name column gets a
+  // declared width and the grade columns split what is left, evenly.
+  table-layout: fixed;
 
   th, td {
     padding: 0.25rem 0.12rem;
@@ -488,7 +494,10 @@ tr:hover td { background: $color-bg-warm; }
 .scorecard-matrix__group[hidden] { display: none; }
 
 // Topic column headers: icon always, short text label only when there's room.
-.scorecard-matrix__col { width: 2.4rem; }
+// `auto` under the fixed layout above means "split what the name column leaves
+// evenly", which is what keeps all ten topics on a phone screen. A fixed width
+// here instead would add up to more than the viewport and force a scroll.
+.scorecard-matrix__col { width: auto; }
 
 .scorecard-matrix__icon {
   display: block;
@@ -511,6 +520,12 @@ tr:hover td { background: $color-bg-warm; }
 .scorecard-matrix .scorecard-matrix__name-h {
   text-align: left;
   padding-left: $space-xs; // align "Candidate" with the names below, off the edge-to-edge viewport edge
+  // The name column is the only one given a width; every topic column then
+  // splits what is left. 7rem is deliberately tight — names wrap to two or
+  // three lines on a phone, which is a cheaper cost than either scrolling the
+  // table sideways or crushing the grade chips against their cell edges. The
+  // chips are the reason the table exists, so they get the slack.
+  width: 7rem;
 }
 
 // The matrix is edge-to-edge on mobile (negative margins above), so the outer
@@ -529,7 +544,8 @@ tr:hover td { background: $color-bg-warm; }
   color: $color-text;
   padding-left: $space-xs;
   padding-right: $space-xs;
-  min-width: 5rem;
+  // No min-width: under `table-layout: fixed` only the header row sizes a
+  // column, so the width lives on .scorecard-matrix__name-h above.
   text-transform: none;
   letter-spacing: 0;
 }
@@ -597,25 +613,22 @@ tr:hover td { background: $color-bg-warm; }
     border-left: $border-weight solid $color-text;
     border-right: $border-weight solid $color-text;
   }
-  // Fixed layout so every topic column is exactly the same width. Under the
-  // default `auto` layout each column sizes to its own widest label, which left
-  // the longer topics visibly broader than "Arts". Widths now come from the
-  // header row only: the name column is pinned, and the topic columns are all
-  // `auto`, so fixed layout splits the remainder between them evenly.
-  //
-  // `min-width` keeps that split from squeezing the labels below their legible
-  // width on a narrow desktop — 14rem for names plus ten ~4rem topic columns.
-  // Below that the .table-scroll wrapper scrolls horizontally, as it already
-  // did here before the columns were equalized.
+  // `table-layout: fixed` is set at the base now, so all this adds is room: a
+  // wider name column and a floor under the table. `min-width` keeps the even
+  // split from squeezing the topic labels below their legible width on a narrow
+  // desktop — 14rem for names plus ten ~4rem topic columns. Below that the
+  // .table-scroll wrapper scrolls horizontally, as it already did here.
   .scorecard-matrix {
     font-size: 0.95rem;
-    table-layout: fixed;
     min-width: 55rem;
   }
   .scorecard-matrix th,
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
   .scorecard-matrix .scorecard-matrix__name-h { width: 14rem; }
-  .scorecard-matrix__col { width: auto; }
+  // The base padding-left carries through here on purpose. Zeroing it puts the
+  // names hard against the table's left border, which reads as a rendering
+  // fault rather than as a tighter layout — the column needs a visible inset at
+  // this width, where the table sits inside its container behind a 3px border.
   .scorecard-matrix__th-label { display: block; }
   .scorecard-matrix__icon { width: 1.6rem; height: 1.6rem; }
   .scorecard-matrix__cell .grade { width: 1.9rem; height: 1.9rem; font-size: 0.95rem; }

@@ -107,6 +107,35 @@ description: >-
         </tr>
       </thead>
       {% comment %}
+        Favourites: a pinned group above every municipality, filled at runtime by
+        assets/js/favourites.js, which MOVES rows here out of the municipality
+        groups below (never copies them — a copy would count twice in
+        #candidate-count and be filtered twice).
+
+        Ships empty and `hidden` on purpose. Without JS there is nothing to pin,
+        and an empty band headed "Your favourites" would promise a feature that
+        is not there. The same rule holds once the script is running: with no
+        favourites saved the group stays hidden rather than carrying a "click a
+        star to pin someone" hint, because the stars are already visible on
+        every row of the table — the hint would be a permanent second copy of an
+        affordance the reader can see. Hiding it needs no extra code either: the
+        group has no data-empty attribute, so scorecard.js treats it like any
+        other candidate group and hides it whenever no visible row is inside.
+      {% endcomment %}
+      <tbody class="scorecard-matrix__group scorecard-matrix__group--fav" id="favourites-group" hidden>
+        <tr class="scorecard-matrix__group-row">
+          <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head scorecard-matrix__group-head--fav">
+            Your favourites
+            {%- comment -%}
+              Also the accessible description of every reorder handle
+              (aria-describedby), so the keyboard path is stated once here
+              instead of being repeated inside 66 button labels.
+            {%- endcomment -%}
+            <span class="scorecard-matrix__group-hint" id="favourites-hint">Saved in this browser only. Drag a row by its reorder handle, or focus a handle and press the up or down arrow key, to change the order.</span>
+          </th>
+        </tr>
+      </tbody>
+      {% comment %}
         Every municipality and electoral area gets a heading, including those with
         no confirmed candidates yet — an absent heading reads as an oversight
         rather than as "nobody has announced here". Empty groups are marked
@@ -128,26 +157,99 @@ description: >-
           </tr>
           {% endif %}
           {% for c in mc %}
-          <tr class="scorecard-row" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
+          {%- comment -%}
+            The candidate's slug is used twice below — in the deep link and in
+            data-candidate — so it is derived once, here, before the row opens.
+          {%- endcomment -%}
+          {%- assign cand_slug = c.name | slugify -%}
+          {%- assign cand_display = c.display_name | default: c.name -%}
+          {%- comment -%}
+            data-candidate is the stable id assets/js/favourites.js stores. It is
+            the per-candidate page's path minus the /scorecard/ prefix, so the
+            saved list can be read against the URLs without parsing an href, and
+            a candidate who changes municipality correctly reads as a different
+            person (their page moves too).
+          {%- endcomment -%}
+          <tr class="scorecard-row" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
             <th scope="row" class="scorecard-matrix__name">
-              <span class="scorecard-matrix__cand">{{ c.display_name | default: c.name }}</span>
               {%- comment -%}
-                Standing label comes from _data/standings.yml. Use the role-qualified
-                form whenever the standing's role differs from the office sought, so a
-                sitting councillor running for mayor reads "Incumbent councillor"
-                rather than a misleading bare "Incumbent".
+                The name cell holds a link, a meta line and (with JS) up to two
+                controls, so it needs a flex row the <th> itself cannot be:
+                giving a table cell `display: flex` takes it out of the table
+                box model and the column widths collapse with it.
               {%- endcomment -%}
-              {%- assign status = "" -%}
-              {%- if c.standing -%}
-                {%- assign st = site.data.standings | where: "id", c.standing | first -%}
-                {%- if st -%}
-                  {%- if st.role and st.role != c.office -%}{%- assign status = st.role_label -%}
-                  {%- else -%}{%- assign status = st.label -%}{%- endif -%}
-                {%- endif -%}
-              {%- endif -%}
-              {%- if c.office and status != "" -%}<span class="scorecard-matrix__meta">{{ c.office }} · {{ status }}</span>
-              {%- elsif c.office -%}<span class="scorecard-matrix__meta">{{ c.office }}</span>
-              {%- elsif status != "" -%}<span class="scorecard-matrix__meta">{{ status }}</span>{%- endif -%}
+              <span class="scorecard-matrix__name-inner">
+                <span class="scorecard-matrix__name-text">
+                  {%- comment -%}
+                    Deep link to the per-candidate page generated by
+                    _plugins/candidate_pages.rb. The path is rebuilt here from the
+                    same two fields the plugin slugifies (municipality slug + name),
+                    so the two must be changed together.
+
+                    The plugin skips any name that slugifies to nothing (a name of
+                    only punctuation clears .strip but not slugify), so there would
+                    be no page to point at. Fall back to plain text on the same
+                    condition rather than emitting a link that 404s — the row still
+                    shows the candidate, it just is not clickable.
+                  {%- endcomment -%}
+                  {%- if cand_slug != '' -%}
+                  <a class="scorecard-matrix__cand-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | append: cand_slug | append: '/' | relative_url }}"><span class="scorecard-matrix__cand">{{ cand_display }}</span></a>
+                  {%- else -%}
+                  <span class="scorecard-matrix__cand">{{ cand_display }}</span>
+                  {%- endif -%}
+                  {%- comment -%}
+                    Standing label comes from _data/standings.yml. Use the role-qualified
+                    form whenever the standing's role differs from the office sought, so a
+                    sitting councillor running for mayor reads "Incumbent councillor"
+                    rather than a misleading bare "Incumbent".
+                  {%- endcomment -%}
+                  {%- assign status = "" -%}
+                  {%- if c.standing -%}
+                    {%- assign st = site.data.standings | where: "id", c.standing | first -%}
+                    {%- if st -%}
+                      {%- if st.role and st.role != c.office -%}{%- assign status = st.role_label -%}
+                      {%- else -%}{%- assign status = st.label -%}{%- endif -%}
+                    {%- endif -%}
+                  {%- endif -%}
+                  {%- if c.office and status != "" -%}<span class="scorecard-matrix__meta">{{ c.office }} · {{ status }}</span>
+                  {%- elsif c.office -%}<span class="scorecard-matrix__meta">{{ c.office }}</span>
+                  {%- elsif status != "" -%}<span class="scorecard-matrix__meta">{{ status }}</span>{%- endif -%}
+                </span>
+                {%- comment -%}
+                  The two row controls stack vertically rather than sitting side
+                  by side: the name column is 7rem on a phone, and two 1.5rem
+                  buttons in a row eat 3.25rem of it. Stacked they cost 1.5rem,
+                  and a pinned row is already tall enough to hold both because
+                  its name has wrapped.
+
+                  This wrapper is also where the reorder handle lands —
+                  favourites.js inserts it after the star, within whatever the
+                  star's parent happens to be, so it follows this element.
+                {%- endcomment -%}
+                <span class="fav-controls">
+                {%- comment -%}
+                  Favourite toggle. Ships hidden and is revealed by
+                  assets/js/favourites.js, so a reader without JS never sees a
+                  control that could not remember anything. The label names the
+                  candidate because "Favourite" alone is meaningless in a screen
+                  reader's list of 66 buttons; the on/off state rides on
+                  aria-pressed rather than on relabelling, and the title (set by
+                  the script) spells the next action out for mouse users.
+                {%- endcomment -%}
+                <button type="button" class="fav-toggle" aria-pressed="false" hidden>
+                  {%- comment -%}
+                    Both stars ship; CSS shows one, keyed off aria-pressed. A
+                    hollow star for off and a filled one for on means the state
+                    is a shape and not only a colour (WCAG 1.4.1), and keying the
+                    swap off the same attribute the script sets makes it
+                    impossible for the icon and the state to disagree.
+                  {%- endcomment -%}
+                  <span class="fav-toggle__icon fav-toggle__icon--off" aria-hidden="true">☆</span>
+                  <span class="fav-toggle__icon fav-toggle__icon--on" aria-hidden="true">★</span>
+                  <span class="sr-only">Favourite {{ cand_display }}</span>
+                </button>
+                </span>
+              </span>
             </th>
             {% for subject in site.data.subjects %}
             {% assign cell = c.scores[subject.id] %}
@@ -159,6 +261,15 @@ description: >-
       {% endfor %}
     </table>
   </div>
+
+  {%- comment -%}
+    Pinning and reordering happen inside a table with no visible confirmation —
+    a sighted reader watches the row jump, a screen-reader user gets nothing.
+    This is where assets/js/favourites.js narrates those moves. Separate from
+    #candidate-count above because that region is owned by the filter script and
+    overwriting it would swallow the result count mid-search.
+  {%- endcomment -%}
+  <p class="sr-only" id="favourites-status" role="status" aria-live="polite"></p>
 
   <p class="candidate-empty" id="candidate-empty" role="status" hidden>No candidates match your search.</p>
 
@@ -317,3 +428,10 @@ description: >-
 </div>
 
 <script src="{{ '/assets/js/scorecard.js' | relative_url }}" defer></script>
+{%- comment -%}
+  Loaded after scorecard.js and, like it, deferred: favourites moves rows
+  between groups and then asks the filter script to re-run, so the filters have
+  to be listening by the time the first row moves. `defer` scripts execute in
+  document order, which is what guarantees that.
+{%- endcomment -%}
+<script src="{{ '/assets/js/favourites.js' | relative_url }}" defer></script>
