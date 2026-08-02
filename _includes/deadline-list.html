@@ -1,0 +1,62 @@
+{%- comment -%}
+  The dated list behind both deadline displays: the band rendered by
+  deadline-notice.html (homepage and scorecard) and the full timeline in the
+  #deadlines FAQ at the bottom of scorecard/index.md. One template, so a change
+  to how a date is marked up lands in both places at once.
+
+  Dates come from _data/deadlines.yml and are sorted here rather than trusting
+  the file's order — the timeline reads as a schedule and an entry added out of
+  order would be a silently wrong one.
+
+  Params:
+    audience - keep only entries whose `audience` matches (e.g. "candidate").
+               Omit to render every entry.
+    class    - extra class names on the <ol>
+{%- endcomment -%}
+{%- if include.audience -%}
+{%- assign deadline_items = site.data.deadlines | where: "audience", include.audience -%}
+{%- else -%}
+{%- assign deadline_items = site.data.deadlines -%}
+{%- endif -%}
+{%- assign deadline_items = deadline_items | sort: "date" -%}
+{%- if deadline_items.size > 0 -%}
+{%- comment -%}
+  A passed date is struck through and flagged rather than dropped. Someone
+  arriving on September 15 needs to see that the print cut-off is gone, not a
+  page that never mentioned it.
+
+  This is build-time state: the site rebuilds on push and after the daily
+  candidate sync, so the flag can trail a deadline by up to a day. The date
+  itself is always printed and always machine-readable in `datetime`, so a late
+  flag never hides the fact the reader actually needs.
+{%- endcomment -%}
+{%- assign deadline_now = site.time | date: "%s" | plus: 0 -%}
+<ol class="deadline-list{% if include.class %} {{ include.class }}{% endif %}">
+  {%- for d in deadline_items -%}
+  {%- comment -%}
+    A date in the data file parses to midnight UTC, but a deadline runs to the
+    end of its day here — so add 24 hours to reach end of day, then 8 more
+    (PST, the larger of the two Pacific offsets) so the flip can never land
+    before local midnight. In PDT that makes it an hour late, which is the safe
+    direction: better to still show a deadline as open for an hour after it
+    closed than to close it seven hours early. Kept identical to the same sum
+    in deadline-timeline.html so the two displays never disagree about whether
+    a date has gone.
+  {%- endcomment -%}
+  {%- assign d_end = d.date | date: "%s" | plus: 115200 -%}
+  {%- assign d_past = false -%}
+  {%- if d_end < deadline_now -%}{%- assign d_past = true -%}{%- endif -%}
+  <li class="deadline-list__item{% if d_past %} deadline-list__item--past{% endif %}">
+    <time class="deadline-list__date" datetime="{{ d.date | date: '%Y-%m-%d' }}">
+      <span class="deadline-list__month">{{ d.date | date: "%b" }}</span>
+      <span class="deadline-list__day">{{ d.date | date: "%-d" }}</span>
+    </time>
+    <span class="deadline-list__text">
+      <span class="deadline-list__label">{{ d.label }}</span>
+      {%- if d.detail %}<span class="deadline-list__detail">{{ d.detail }}</span>{% endif -%}
+      {%- if d_past %}<span class="deadline-list__flag">Passed</span>{% endif -%}
+    </span>
+  </li>
+  {%- endfor -%}
+</ol>
+{%- endif -%}

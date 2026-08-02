@@ -1,0 +1,82 @@
+{%- comment -%}
+  Homepage project timeline: every entry in _data/deadlines.yml in date order,
+  marked done / up next / upcoming so a reader can see what stage the project
+  is at without reading five dates and doing the arithmetic themselves.
+
+  It shows the coalition's own milestones alongside the two candidate cut-offs,
+  which the scorecard band deliberately does not — the point here is the shape
+  of the whole schedule, and the cut-offs make more sense when you can see the
+  questionnaire being built ahead of them. They stay distinguishable: a
+  candidate deadline carries a visible "Deadline" tag.
+
+  Uses the `short`/`brief` copy from the data file. Five milestones share the
+  page width here, and the full `label`/`detail` wording does not survive being
+  squeezed into a fifth of it — that version runs in the scorecard band and the
+  #deadlines FAQ.
+
+  Params:
+    class - extra class names on the <ol>
+{%- endcomment -%}
+{%- assign timeline_items = site.data.deadlines | sort: "date" -%}
+{%- if timeline_items.size > 0 -%}
+{%- comment -%}
+  Build-time state: the site rebuilds on push and after the daily candidate
+  sync, so "up next" can trail reality by up to a day. Every date is printed in
+  full and machine-readable in `datetime`, so a late marker never hides the
+  fact the reader needs.
+{%- endcomment -%}
+{%- assign deadline_now = site.time | date: "%s" | plus: 0 -%}
+{%- assign next_found = false -%}
+<ol class="deadline-timeline{% if include.class %} {{ include.class }}{% endif %}">
+  {%- for d in timeline_items -%}
+  {%- comment -%}
+    A date in the data file parses to midnight UTC, but a deadline runs to the
+    end of its day here — so add 24 hours to reach end of day, then 8 more
+    (PST, the larger of the two Pacific offsets) so the flip can never land
+    before local midnight. In PDT that makes it an hour late, which is the safe
+    direction: better to still show a deadline as open for an hour after it
+    closed than to close it seven hours early.
+  {%- endcomment -%}
+  {%- assign d_end = d.date | date: "%s" | plus: 115200 -%}
+  {%- assign d_state = "upcoming" -%}
+  {%- if d_end < deadline_now -%}
+    {%- assign d_state = "done" -%}
+  {%- elsif next_found == false -%}
+    {%- assign d_state = "next" -%}
+    {%- assign next_found = true -%}
+  {%- endif -%}
+  <li class="deadline-timeline__item deadline-timeline__item--{{ d_state }}">
+    {%- comment -%}
+      The dot and the connector running out of it to the next milestone. Purely
+      a picture of the state carried in the item's modifier class and spelled
+      out in the .sr-only status below, so it is hidden from assistive tech
+      rather than read out as stray punctuation.
+    {%- endcomment -%}
+    <span class="deadline-timeline__track" aria-hidden="true">
+      <span class="deadline-timeline__dot">{% if d_state == "done" %}✓{% endif %}</span>
+      <span class="deadline-timeline__line"></span>
+    </span>
+    <div class="deadline-timeline__body">
+      <time class="deadline-timeline__date" datetime="{{ d.date | date: '%Y-%m-%d' }}">{{ d.date | date: "%b %-d" }}</time>
+      {%- comment -%}
+        State reaches a screen reader as words, not as a filled dot or a colour
+        change. "Up next" is also on screen, so it is not repeated here.
+      {%- endcomment -%}
+      {%- if d_state == "done" %}<span class="sr-only">Completed.</span>{% endif -%}
+      {%- if d_state == "upcoming" %}<span class="sr-only">Upcoming.</span>{% endif -%}
+      <span class="deadline-timeline__label">{{ d.short | default: d.label }}</span>
+      {%- if d.brief %}<span class="deadline-timeline__brief">{{ d.brief }}</span>{% endif -%}
+      <span class="deadline-timeline__tags">
+        {%- if d_state == "next" %}<span class="deadline-timeline__tag deadline-timeline__tag--next">Up next</span>{% endif -%}
+        {%- comment -%}
+          Marks the milestones a candidate can actually miss. Without it the
+          timeline flattens a hard cut-off and an internal planning date into
+          the same thing.
+        {%- endcomment -%}
+        {%- if d.audience == "candidate" %}<span class="deadline-timeline__tag deadline-timeline__tag--cutoff">Candidate deadline</span>{% endif -%}
+      </span>
+    </div>
+  </li>
+  {%- endfor -%}
+</ol>
+{%- endif -%}

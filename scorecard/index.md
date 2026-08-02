@@ -25,6 +25,19 @@ description: >-
     <p><strong>This list grows as candidates come forward.</strong> Candidates are added once they publicly announce their candidacy. Our volunteers track every announcement across the region as best we can, but mistakes happen — if a candidate is missing or listed incorrectly, <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">email us at {{ site.email }}</a>. More on <a href="#how-candidates-are-added">how candidates get added</a>.</p>
   </div>
 
+  {%- comment -%}
+    Above the grading key, not below the table: a candidate landing here to
+    check what is expected of them should not have to scroll past 66 rows to
+    find the cut-off. Links down to #deadlines for the full schedule and for
+    what a missed date actually costs.
+  {%- endcomment -%}
+  {% include deadline-notice.html
+     class="deadline-notice--scorecard"
+     heading="Candidate deadlines"
+     lead="Grades on this page come from the coalition questionnaire. Candidates have to return it by these dates for their results to be published."
+     more_url="#deadlines"
+     more_label="Key dates, and what a missed deadline means" %}
+
   <div class="scorecard-legend" aria-label="Grading key">
     {% for grade in site.data.grades %}
     <span class="scorecard-legend__item">
@@ -422,6 +435,59 @@ description: >-
         of any kind,
         <a href="mailto:{{ site.email }}?subject=Scorecard%20candidate%20update">email us at {{ site.email }}</a>.
         Public help is a real part of how this list stays accurate.
+      </p>
+    </div>
+  </details>
+
+  {%- comment -%}
+    Every date below comes from _data/deadlines.yml, including the ones quoted
+    mid-sentence — writing "September 11" into the prose would be a second copy
+    to keep in sync with the list right above it.
+  {%- endcomment -%}
+  {%- assign print_cutoff = site.data.deadlines | where: "id", "print-cutoff" | first -%}
+  {%- assign web_cutoff = site.data.deadlines | where: "id", "web-cutoff" | first -%}
+  <details class="methodology" id="deadlines">
+    <summary>Key dates, and what a missed deadline means</summary>
+    <div class="methodology__body">
+      <p>
+        The grades on this page come from the coalition questionnaire, which goes
+        to every confirmed candidate. The last two dates below are cut-offs a
+        candidate can miss; the ones before them are the coalition milestones
+        leading up to those, listed so the whole schedule is public. The same
+        schedule runs as a timeline on the <a href="{{ '/' | relative_url }}">homepage</a>.
+      </p>
+
+      {% include deadline-list.html class="deadline-list--stacked" %}
+
+      <h2>Why there are two candidate deadlines</h2>
+      <p>
+        Print runs and the website are produced on different schedules. Printed
+        scorecards, stickers, and posters have to go to the printer well before
+        election day, so
+        <strong>{{ print_cutoff.date | date: "%B %-d" }}</strong> is the last day a
+        response can still make it onto physical materials. The website can be
+        updated later, which buys candidates until
+        <strong>{{ web_cutoff.date | date: "%B %-d" }}</strong> to have their
+        results published here.
+      </p>
+      <p>
+        A response returned between those two dates is graded and published on this
+        site, but arrives too late for anything printed.
+      </p>
+
+      <h2>What happens to a candidate who does not respond</h2>
+      <p>
+        A missed deadline never removes anyone from this scorecard. Every confirmed
+        candidate stays listed with their row intact — their topic grades simply
+        stay pending. We do not treat silence as a failing grade, and we do not
+        drop the candidate from the list. See
+        <a href="#how-candidates-are-added">how candidates get added</a> for why the
+        list itself is not selective.
+      </p>
+      <p>
+        If you are a candidate and the questionnaire has not reached you, or you
+        want to confirm your response was received,
+        <a href="mailto:{{ site.email }}?subject=Questionnaire%20deadline">email us at {{ site.email }}</a>.
       </p>
     </div>
   </details>

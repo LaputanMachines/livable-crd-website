@@ -35,7 +35,14 @@ description: >-
   </div>
 </section>
 
-<section class="section">
+{%- comment -%}
+  --under-hero, not --alt: the two carry the same background, but --alt also
+  draws a top border, and the hero already closes with a heavy one. The
+  modifier names the slot rather than the content because the alternating
+  background belongs to the position on the page — whatever section is put
+  here next keeps the rhythm by keeping the class.
+{%- endcomment -%}
+<section class="section section--under-hero">
   <div class="container">
     <h2 class="section-title">What we are building</h2>
     <p>
@@ -48,6 +55,30 @@ description: >-
       of election day.
     </p>
     {% include sponsor-notice.html %}
+  </div>
+</section>
+
+{%- comment -%}
+  The schedule comes early, straight after the explanation of what the project
+  is: it is the only thing on this page that expires, and the readers who have
+  to act on it — candidates — mostly arrive from a link rather than scrolling
+  the whole homepage.
+
+  One timeline rather than a block of coalition milestones and a block of
+  candidate cut-offs: the two were the same schedule split in half, and split
+  they answered "what are the dates" without answering "where are we now".
+{%- endcomment -%}
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Project timeline</h2>
+    <p>
+      Where the scorecard is in its schedule, from the coalition drafting the
+      questionnaire through to the last day a candidate can respond.
+    </p>
+    {% include deadline-timeline.html %}
+    <p class="content-follow-up">
+      <a href="{{ '/scorecard/#deadlines' | relative_url }}">Learn more about project timelines <span aria-hidden="true">→</span></a>
+    </p>
   </div>
 </section>
 

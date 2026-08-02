@@ -554,6 +554,15 @@ main {
   border-bottom: $border-weight solid $color-text;
 }
 
+// The first section after the hero. Carries the same alternating background as
+// .section--alt but no top border — .hero already closes with a heavy one, and
+// two rules stacked read as a mistake. Named for the slot, not its contents,
+// so reordering the homepage keeps the background rhythm intact.
+.section--under-hero {
+  background: $color-bg-warm;
+  border-bottom: $border-weight solid $color-text;
+}
+
 .section--topics {
   background: $color-surface;
 }

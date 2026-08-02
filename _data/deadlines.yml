@@ -1,0 +1,77 @@
+# Election-cycle milestones. Single source of truth for every place a date is
+# printed: the timeline on the homepage, the banner near the top of the
+# scorecard, and the #deadlines FAQ block at the bottom of the scorecard page.
+# Change a date here and all three follow — no date is written out by hand in a
+# template.
+#
+# audience:
+#   candidate — a cut-off a candidate can miss, with a consequence attached.
+#               These are the only entries the scorecard band renders, so it
+#               stays a list of things its reader can act on. The homepage
+#               timeline shows every entry but tags these ones.
+#   coalition — an internal milestone. It gives the cut-offs their context
+#               (when the questionnaire is written, when it goes out) without
+#               being something anyone outside the coalition can miss.
+#
+# Each entry carries two lengths of copy, because the two displays have very
+# different room:
+#   label / detail — the full wording, used by the scorecard band and the FAQ
+#   short / brief  — a few words, used by the homepage timeline, where five
+#                    milestones share the width of the page
+# Keep them saying the same thing. `short`/`brief` fall back to `label` if
+# omitted, so a new entry renders either way.
+#
+# Dates are unquoted so Jekyll parses them as real dates; templates format them
+# with the `date` filter and sort and compare on them, rather than repeating a
+# written-out string that would have to be kept in sync with the
+# machine-readable one.
+- id: questions-submitted
+  date: 2026-07-15
+  audience: coalition
+  label: Partner organizations submit questions
+  detail: >-
+    Each participating organization writes and submits the questions for its own
+    policy area.
+  short: Questions submitted
+  brief: Each group writes the questions for its own policy area.
+
+- id: draft-questionnaire
+  date: 2026-08-09
+  audience: coalition
+  label: Draft questionnaires ready for coalition review
+  detail: >-
+    The submitted questions are assembled into draft questionnaires and
+    circulated to the whole coalition for review.
+  short: Coalition review
+  brief: The combined draft goes to the whole coalition.
+
+- id: final-questionnaire
+  date: 2026-08-16
+  audience: coalition
+  label: Final questionnaires ready to send to candidates
+  detail: >-
+    Review closes and the question set is locked, ready to go out to every
+    confirmed candidate.
+  short: Questionnaires sent
+  brief: The question set is locked and goes out to every candidate.
+
+- id: print-cutoff
+  date: 2026-09-11
+  audience: candidate
+  label: Candidate deadline to appear on print materials
+  detail: >-
+    The last day a candidate can return the questionnaire and still have their
+    results appear on printed scorecards, stickers, posters, and other physical
+    materials.
+  short: Print cut-off
+  brief: Last day to make printed scorecards, stickers, and posters.
+
+- id: web-cutoff
+  date: 2026-09-18
+  audience: candidate
+  label: Candidate deadline to appear on the website
+  detail: >-
+    The last day a candidate can return the questionnaire and still have their
+    results published on this website.
+  short: Website cut-off
+  brief: Last day to be graded and published on this site.
