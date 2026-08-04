@@ -16,7 +16,7 @@ module LivableCrd
   # `index.html` inside a per-candidate directory gives the pretty URL the rest
   # of the site uses (/scorecard/saanich/jane-doe/) without a `permalink` key.
   class CandidatePage < Jekyll::PageWithoutAFile
-    def initialize(site, dir, candidate, municipality_name, standing_label)
+    def initialize(site, dir, candidate, municipality_name, standing_label, slate_class = nil)
       super(site, site.source, dir, "index.html")
 
       name = candidate["name"]
@@ -36,6 +36,15 @@ module LivableCrd
       # data, and getting the middots right in Liquid takes more conditionals
       # than it is worth. Same string is reused by the print leaflet.
       data["subtitle"] = [office, municipality_name, standing_label].compact.join(" · ")
+
+      # Slate stays out of that line and gets its own labelled one in the
+      # template. Dropped into the middots it read as a fourth attribute of the
+      # same kind as the standing beside it — "Newcomer · Sooke First" gives a
+      # reader no way to tell that the last part is an electoral organization.
+      # Normalized to nil here because a blank sheet cell arrives as "".
+      slate = candidate["slate"].to_s.strip
+      data["slate"] = slate.empty? ? nil : slate
+      data["slate_class"] = slate.empty? ? nil : slate_class
 
       # jekyll-seo-tag renders `title` as "<title> | Livable CRD", so qualify the
       # name here — a bare "Jane Doe" is meaningless in a search result, and two
@@ -66,9 +75,19 @@ module LivableCrd
     safe true
     priority :normal
 
+    # Palette slots defined in _sass/_candidate.scss / _components.scss as
+    # .slate-c1 … .slate-c8. Slates beyond the eighth wrap around and share a
+    # colour, which is why the legend always spells the slate out in text.
+    SLATE_PALETTE_SIZE = 8
+
     def generate(site)
       candidates = site.data["candidates"]
       return unless candidates.is_a?(Array)
+
+      # Published so scorecard/index.md can colour its rows from the same map
+      # these pages use. Computing it twice — once here, once in Liquid — is how
+      # the two would drift into disagreeing about which slate is which colour.
+      site.data["slate_classes"] = slate_classes(candidates)
 
       municipalities = index_by(site.data["municipalities"], "slug")
       standings = index_by(site.data["standings"], "id")
@@ -122,12 +141,30 @@ module LivableCrd
           dir,
           candidate,
           municipality_name,
-          standing_label(standings[candidate["standing"]], candidate["office"])
+          standing_label(standings[candidate["standing"]], candidate["office"]),
+          site.data["slate_classes"][candidate["slate"].to_s.strip]
         )
       end
     end
 
     private
+
+    # {slate label => palette class}. Assigned by alphabetical order of the
+    # label, deliberately not by first appearance in the sheet: row order in a
+    # spreadsheet changes whenever someone sorts it, and a colour that silently
+    # moves from one slate to another between two nightly syncs is worse than no
+    # colour at all. Alphabetical means the mapping only shifts when the set of
+    # slates itself changes.
+    def slate_classes(candidates)
+      labels = candidates.map { |c| c.is_a?(Hash) ? c["slate"].to_s.strip : "" }
+                         .reject(&:empty?)
+                         .uniq
+                         .sort
+
+      labels.each_with_object({}).with_index do |(label, acc), i|
+        acc[label] = "slate-c#{(i % SLATE_PALETTE_SIZE) + 1}"
+      end
+    end
 
     # Mirrors the role-qualified logic in scorecard/index.md: when the standing
     # names a role different from the office being sought, use the role-qualified

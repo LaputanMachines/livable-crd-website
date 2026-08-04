@@ -9,4 +9,13 @@ vendor/
 __pycache__/
 *.pyc
 
+# Local secrets. The candidate sheet's CSV export URL is a capability: anyone
+# with it can read the whole tracking sheet, including contact details and the
+# subjective columns the site never publishes. CI keeps it as a repo secret;
+# keep it out of git here. .env.example is the committed placeholder.
+.env
+.env.*
+!.env.example
+.envrc
+
 .DS_Store

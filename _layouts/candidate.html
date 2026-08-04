@@ -53,6 +53,25 @@ layout: default
     {%- if page.subtitle != "" %}
     <p class="candidate-hero__meta">{{ page.subtitle }}</p>
     {%- endif %}
+    {%- comment -%}
+      Slate on its own labelled line rather than appended to the meta line
+      above: "Running with" is what tells a reader the name is an electoral
+      organization and not another attribute like the standing. Absent entirely
+      when the sheet does not name one — a blank cell means unrecorded, not
+      independent, and "Running with nobody" would assert something the data
+      does not support. Naming a slate is not an endorsement.
+    {%- endcomment -%}
+    {%- if page.slate %}
+    <p class="candidate-hero__slate {{ page.slate_class }}">
+      {%- comment -%}
+        The dot repeats the colour this slate has in the scorecard's optional
+        row highlighting, so a reader arriving from a tinted table recognizes
+        it. Decorative only — the slate is named right beside it — hence
+        aria-hidden and no print treatment.
+      {%- endcomment -%}
+      <span class="slate-dot" aria-hidden="true"></span>Running with <strong>{{ page.slate }}</strong>
+    </p>
+    {%- endif %}
   </div>
 </div>
 

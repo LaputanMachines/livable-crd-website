@@ -26,12 +26,19 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MUNI_YML = os.path.join(ROOT, "_data", "municipalities.yml")
 SUBJECTS_YML = os.path.join(ROOT, "_data", "subjects.yml")
 STANDINGS_YML = os.path.join(ROOT, "_data", "standings.yml")
+SLATES_YML = os.path.join(ROOT, "_data", "slates.yml")
 OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 
 # Sheet column -> subject id (in _data/subjects.yml). Subjects with no column in
 # the tracking sheet are omitted here and render as pending ("—") until a column
 # exists: "general", "reconciliation", "governance". Add the pair below once the
 # coalition adds the matching column.
+#
+# As of the sheet's 2026-08 restructure NONE of these columns exist any more —
+# grades are moving to a separate sheet. Every candidate therefore syncs with no
+# scores and renders fully pending, which is correct for now but would also be
+# how a silent regression looked, so main() warns for each column it cannot find
+# rather than letting an empty grade column pass unremarked.
 SCORE_MAP = [
     ("Housing", "housing"),
     ("Transit", "transit"),
@@ -47,6 +54,19 @@ SCORE_MAP = [
 VALID_GRADES = {"A", "B", "C", "C-", "F"}
 
 REQUIRED_COLUMNS = ("Candidate Name", "Municipality", "Running?")
+
+# The sheet's electoral-organization column. Deliberately NOT in
+# REQUIRED_COLUMNS: it is a newer addition, and a sheet that predates it (or a
+# tab that omits it) must still sync rather than fail the whole job.
+SLATE_COLUMN = "Slate"
+
+# Slate wording that means "nobody filled this in", as distinct from a real
+# answer. Blank publishes no slate at all; "Independent" is a genuine, factual
+# answer and is published as written.
+UNKNOWN_SLATE = {
+    "", "-", "--", "---", "–", "—", "?", "n/a", "na", "none", "nil",
+    "tbd", "tba", "unknown", "not applicable", "not known",
+}
 
 # Reproduced (and updated for the automation) from the original hand-authored file.
 HEADER = """\
@@ -75,6 +95,11 @@ HEADER = """\
 #                "ex-incumbent-mayor", "challenger", ...), or null if the sheet
 #                does not say. Role-specific on purpose: a sitting councillor
 #                running for mayor is not the incumbent mayor.
+#   slate        Electoral organization the candidate runs with, as a display
+#                label ("Together Victoria", "Independent"), or null if the sheet
+#                does not say. Free text from the sheet, optionally tidied via
+#                _data/slates.yml — an unrecognized slate is published as
+#                written, not rejected. Naming a slate is not an endorsement.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -84,6 +109,28 @@ HEADER = """\
 def norm(s):
     """Lowercase, trim, and collapse internal whitespace."""
     return " ".join((s or "").split()).lower()
+
+
+def tidy(s):
+    """Trim and collapse internal whitespace, preserving case."""
+    return " ".join((s or "").split())
+
+
+def slugify(s):
+    """Lowercase slug: runs of non-alphanumerics become a single hyphen.
+
+    Mirrors Jekyll's `slugify` closely enough for the slate ids in
+    _data/slates.yml. The published data carries the label, not this slug, so
+    the two implementations never have to agree byte-for-byte — only this
+    file's slates.yml lookup depends on it.
+    """
+    out = []
+    for ch in norm(s):
+        if ch.isalnum():
+            out.append(ch)
+        elif out and out[-1] != "-":
+            out.append("-")
+    return "".join(out).strip("-")
 
 
 # --- Minimal YAML readers (these files are simple "- key: value" blocks) -----
@@ -107,6 +154,29 @@ def load_municipalities(path):
         lookup[norm(slug)] = slug
         lookup[norm(slug.replace("-", " "))] = slug
     return ordered, lookup
+
+
+def load_slates(path):
+    """Return {slug: label-or-None} from _data/slates.yml.
+
+    Key presence marks a slate as known; the value is an optional display label
+    that replaces the sheet's own text. The file is optional and normally an
+    empty list — see its header comment for why this is not an allowlist.
+    """
+    labels = {}
+    if not os.path.exists(path):
+        return labels
+    with open(path, encoding="utf-8") as f:
+        current = None
+        for line in f:
+            stripped = line.strip()
+            if stripped.startswith("- id:"):
+                current = stripped.split(":", 1)[1].strip().strip("\"'")
+                labels.setdefault(current, None)
+            elif stripped.startswith("label:") and current is not None:
+                labels[current] = stripped.split(":", 1)[1].strip().strip("\"'") or None
+                current = None
+    return labels
 
 
 def load_ids(path):
@@ -183,6 +253,51 @@ def normalize_standing(value, name, warnings):
     return None
 
 
+def normalize_slate(value, name, slate_labels, canonical, warnings):
+    """Return the slate label to publish, or None if the sheet does not say.
+
+    Unrecognized slates are published as written rather than rejected. New
+    electoral organizations get announced mid-campaign, and making this fatal
+    (as municipality and standing are) would stall the daily sync — and with it
+    every grade update — until someone edited _data/slates.yml.
+
+    Every spelling that slugifies alike publishes ONE label, so the scorecard's
+    slate filter gets one pill per slate. Without this, a sheet holding both
+    "Together Victoria" and "together victoria" produces two pills carrying the
+    same data-slate value, each counting half the candidates and each selecting
+    all of them. `canonical` accumulates slug -> label across the run; a
+    _data/slates.yml label always wins, otherwise the first spelling the sheet
+    happens to use does.
+    """
+    text = tidy(value)
+    if norm(text) in UNKNOWN_SLATE:
+        return None
+
+    # scorecard/index.md joins the candidate meta line by splitting on "|", so a
+    # literal pipe in a slate name would silently split it into two parts.
+    text = tidy(text.replace("|", "/"))
+
+    slug = slugify(text)
+    if not slug:
+        # Punctuation-only wording ("--", "??") that UNKNOWN_SLATE did not list.
+        return None
+
+    if slug in canonical:
+        return canonical[slug]
+
+    if slug in slate_labels:
+        label = slate_labels[slug] or text
+    else:
+        # Once per slate, not once per candidate: a 30-candidate slate would
+        # otherwise bury every other warning in the CI log.
+        warnings.append(f"slate {text!r} (first seen on {name}) has no entry in "
+                        f"_data/slates.yml → published as written")
+        label = text
+
+    canonical[slug] = label
+    return label
+
+
 def normalize_grade(value):
     """Return a valid grade string, or None if blank. Raise ValueError if invalid."""
     g = (value or "").strip().upper().replace("−", "-")  # U+2212 minus → hyphen
@@ -195,10 +310,12 @@ def normalize_grade(value):
 
 # --- Build records -----------------------------------------------------------
 
-def build_records(rows, muni_lookup, errors, warnings):
+def build_records(rows, muni_lookup, slate_labels, has_slate, errors, warnings):
     records = []
     skipped = 0
     seen = set()
+    # slug -> the one label published for it; see normalize_slate().
+    slate_canonical = {}
     for row in rows:
         name = (row.get("Candidate Name") or "").strip()
         if not is_confirmed(row.get("Running?")):
@@ -231,11 +348,17 @@ def build_records(rows, muni_lookup, errors, warnings):
             if grade is not None:
                 scores[subject_id] = grade
 
+        slate = None
+        if has_slate:
+            slate = normalize_slate(row.get(SLATE_COLUMN), name, slate_labels,
+                                    slate_canonical, warnings)
+
         records.append({
             "name": name,
             "municipality": slug,
             "office": normalize_office(row.get("Position Sought"), name, warnings),
             "standing": normalize_standing(row.get("Incumbent?"), name, warnings),
+            "slate": slate,
             "scores": scores,
         })
     return records, skipped
@@ -308,6 +431,7 @@ def render_record(rec, subject_order):
         f"  municipality: {rec['municipality']}",
         f"  office: {rec['office'] if rec['office'] else 'null'}",
         f"  standing: {rec['standing'] if rec['standing'] else 'null'}",
+        f"  slate: {scalar(rec['slate']) if rec['slate'] else 'null'}",
     ]
     if rec["scores"]:
         lines.append("  scores:")
@@ -356,6 +480,7 @@ def main(argv=None):
         sys.exit(f"FATAL: score map targets not in subjects.yml: {missing}")
 
     standing_ids = load_ids(STANDINGS_YML)
+    slate_labels = load_slates(SLATES_YML)
 
     ordered_munis, muni_lookup = load_municipalities(MUNI_YML)
 
@@ -382,7 +507,23 @@ def main(argv=None):
         sys.exit(f"FATAL: CSV missing expected columns {missing_cols}; got {fields}")
 
     errors, warnings = [], []
-    records, skipped = build_records(list(reader), muni_lookup, errors, warnings)
+
+    # Optional column: warn once rather than per row, and publish no slates.
+    has_slate = SLATE_COLUMN in fields
+    if not has_slate:
+        warnings.append(f"CSV has no {SLATE_COLUMN!r} column — no slate published "
+                        f"for any candidate")
+
+    # Grade columns are optional in the same way, but their absence is worth
+    # saying out loud: it is indistinguishable from "everyone is ungraded", and
+    # publishing an all-pending scorecard by accident is the failure this catches.
+    absent_grades = [column for column, _ in SCORE_MAP if column not in fields]
+    if absent_grades:
+        warnings.append(f"CSV has no grade column(s) {absent_grades} — those topics "
+                        f"publish as pending for every candidate")
+
+    records, skipped = build_records(list(reader), muni_lookup, slate_labels,
+                                    has_slate, errors, warnings)
 
     # A standing id with no entry in standings.yml would render as a blank label,
     # so treat it as fatal rather than shipping an unexplained gap.

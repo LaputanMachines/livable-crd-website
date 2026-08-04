@@ -49,10 +49,12 @@ The repo root [`CNAME`](CNAME) file must contain `livablecrd.ca` (already commit
 [`_data/candidates.yml`](_data/candidates.yml) is **auto-generated — do not edit it by hand.** A scheduled GitHub Action, [.github/workflows/sync-candidates.yml](.github/workflows/sync-candidates.yml), runs daily (and on demand via *Actions → Sync candidates from Google Sheet → Run workflow*). It:
 
 1. Fetches the coalition candidate-tracking sheet as CSV ([`scripts/sync-candidates.py`](scripts/sync-candidates.py));
-2. Keeps only confirmed-running candidates and the published fields (name, municipality, office, standing, per-topic grades) — subjective columns are never read;
+2. Keeps only confirmed-running candidates and the published fields (name, municipality, office, standing, slate, per-topic grades) — subjective columns are never read;
 3. Commits the regenerated file to `main` and redeploys — only when something changed.
 
 The job **fails without writing** if the sheet can't be fetched, isn't valid CSV, has zero confirmed candidates, or contains an unknown municipality, an invalid grade, or a standing with no entry in [`_data/standings.yml`](_data/standings.yml) — so bad data can't reach the live site.
+
+Slate is the deliberate exception to that strictness: an unrecognized slate **warns and publishes as written** instead of failing. New electoral organizations get announced mid-campaign, and a fatal error there would stall every grade update until someone edited this repo. See [Slates](#slates).
 
 ### One-time setup
 
@@ -68,6 +70,42 @@ Edit the **source spreadsheet**, not the YAML. To support a new municipality, ad
 ```bash
 CANDIDATES_CSV_URL="…" python3 scripts/sync-candidates.py --dry-run
 ```
+
+### Slates
+
+The sheet's optional `Slate` column names the electoral organization a candidate runs with. Listing a slate is a factual public-record field, not an endorsement. It surfaces in three places:
+
+- The scorecard **meta line** under each name — `Councillor · Incumbent · Sooke First`.
+- The **search box**, which matches slate as well as name, so typing `sooke first` narrows to that slate. There is deliberately no slate filter group: the filter bar already carries four controls, and since most candidates run unaffiliated, pills would cost every reader vertical space to filter a minority of rows. Note search matches name and slate only — not municipality, which has its own filter.
+- An opt-in **row tint**, one colour per slate, toggled by a *Highlight slates* checkbox in each municipality's heading — see below.
+- Each **candidate page**, on its own labelled line (`Running with Sooke First`) with a dot in that slate's colour, which also prints on the leaflet. Kept off that page's uppercase meta line on purpose: beside the standing, a bare slate name read as another attribute of the same kind.
+
+#### Colour coding
+
+Slates get one colour each, defined as `.slate-c1` … `.slate-c8` in [`_sass/_slates.scss`](_sass/_slates.scss) and assigned to slates by `slate_classes` in [`_plugins/candidate_pages.rb`](_plugins/candidate_pages.rb). That map is published as `site.data.slate_classes`, so the table, the legends and the candidate pages all colour from one source and cannot disagree.
+
+- **Assigned alphabetically by slate name**, not by order of appearance in the sheet. Spreadsheet row order changes whenever someone sorts it, and a colour that silently jumped between slates on a nightly sync would be worse than no colour.
+- **Off by default, and scoped per municipality.** The checkbox sits in the municipality heading band, because a slate contests one council — a table-wide legend would list entries irrelevant to every group but one. Only municipalities that actually have slates get a control.
+- **Colour is never the only carrier** (WCAG 1.4.1): the row already names its slate in text and each legend labels its swatch. That is also what keeps things readable past eight slates, where colours start repeating.
+- The tint class goes on the **row**, not the municipality's `<tbody>`, so a row keeps its colour when `favourites.js` moves it into the pinned group.
+- Palette hues deliberately avoid the letter-grade colours, so a tinted row never reads as a grade. Worst-case measured contrast: body text 12.6:1, meta text 5.8:1, swatches 4.4:1.
+
+Unlike municipality and standing, [`_data/slates.yml`](_data/slates.yml) is **not an allowlist** — the sheet's own text is the label, and a slate missing from that file is published as written with a warning. Add an entry only to tidy up the sheet's wording:
+
+```yaml
+- id: together-victoria     # slugified sheet text
+  label: Together Victoria  # what the scorecard shows instead
+```
+
+Behaviour worth knowing:
+
+- **Every spelling that slugifies alike publishes one label**, so `Together Victoria` and `together victoria` produce a single filter pill. A `slates.yml` label wins; otherwise the first spelling in the sheet does.
+- **A blank cell publishes no slate** and shows nothing. `Independent` is treated as a real, publishable answer — if you want candidates labelled that way, write it in the sheet rather than leaving the cell empty.
+- **No `Slate` column at all** is fine: the job warns once and no slate is published.
+
+### Grades come from a separate sheet
+
+As of August 2026 the tracking sheet no longer has the per-topic grade columns (`Housing`, `Transit`, …) — grades are moving to a sheet of their own. The sync job handles this without failing: every topic publishes as pending (`—`) and the run **warns once listing the missing columns**, because an absent grade column is otherwise indistinguishable from "nobody has been graded yet". Wiring up the new grades sheet means adding its columns back to `SCORE_MAP` in [`scripts/sync-candidates.py`](scripts/sync-candidates.py), or fetching it as a second source.
 
 ## Questionnaire committee tooling
 

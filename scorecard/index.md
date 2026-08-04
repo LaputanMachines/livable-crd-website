@@ -17,8 +17,8 @@ description: >-
   <p>
     Confirmed candidates for the upcoming municipal elections across the Capital
     Regional District. Each candidate is graded across the policy areas the
-    coalition evaluates. Search by name, filter by municipality, or narrow to
-    candidates who meet a minimum grade in a given topic.
+    coalition evaluates. Search by name or slate, filter by municipality or
+    office, or narrow to candidates who meet a minimum grade in a given topic.
   </p>
 
   <div class="status-banner">
@@ -50,8 +50,8 @@ description: >-
   </div>
 
   <div class="scorecard-controls">
-    <label for="candidate-search" class="sr-only">Search candidates by name</label>
-    <input type="search" id="candidate-search" class="scorecard-search" placeholder="Search candidates by name…" autocomplete="off">
+    <label for="candidate-search" class="sr-only">Search candidates by name or slate</label>
+    <input type="search" id="candidate-search" class="scorecard-search" placeholder="Search by name or slate…" autocomplete="off">
   </div>
 
   <div class="scorecard-filterbar">
@@ -83,6 +83,19 @@ description: >-
       </div>
     </div>
 
+    {%- comment -%}
+      No slate filter group here on purpose. Slate reaches the reader through
+      the search box (which matches slate as well as name) and the meta line
+      under each candidate, rather than through a fourth row of pills.
+
+      Two reasons. The filter bar already carries grade, topic, office and
+      municipality, and slate would be the least load-bearing of them: most
+      candidates run unaffiliated, so the pills would cover a small minority of
+      rows while every reader paid the vertical space. And because a blank slate
+      is "the sheet does not say" rather than "independent", there is no honest
+      pill for the majority — selecting any slate would silently hide most of
+      the region.
+    {%- endcomment -%}
     <div class="scorecard-filtergroup">
       <span class="scorecard-filtergroup__label" id="muni-filter-label">Municipality</span>
       <div class="scorecard-filters" role="group" aria-labelledby="muni-filter-label">
@@ -159,7 +172,65 @@ description: >-
         {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
         <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}"{% if mc.size == 0 %} data-empty="true"{% endif %}>
           <tr class="scorecard-matrix__group-row">
-            <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head">{{ muni.name }}</th>
+            <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head">
+              {%- comment -%}
+                The municipality name and its slate block sit on one flex row, so
+                they share a vertical centre — as bare text beside an inline-flex
+                box they aligned on mismatched baselines instead.
+
+                The flex row is this inner span and not the <th>: giving a table
+                cell `display: flex` takes it out of the table box model and the
+                column widths collapse with it, the same reason the candidate
+                name cell wraps its contents (see .scorecard-matrix__name-inner).
+              {%- endcomment -%}
+              <span class="scorecard-matrix__group-inner">
+                <span class="scorecard-matrix__group-name">{{ muni.name }}</span>
+                {%- comment -%}
+                  Slates, scoped to this municipality. A slate contests one
+                  council, so its colour key belongs beside that municipality
+                  rather than above the whole table, where every entry would be
+                  irrelevant to all but one group. Absent from headings whose
+                  municipality has no slates, which is most of them.
+
+                  The legend is always visible: which slates are running here is
+                  useful whether or not anyone wants the rows coloured, and it
+                  needs no scripting, so it renders for a reader without JS too.
+
+                  The checkbox is the part that needs JS — it applies a class the
+                  script toggles — so it alone ships `hidden` and is revealed by
+                  assets/js/scorecard.js, the same contract as the favourite star.
+
+                  Highlighting is off by default: most candidates run
+                  unaffiliated, and colouring by default would spend the table's
+                  strongest visual signal on a minority of rows, implying slate is
+                  the most important fact about a candidate. It is not.
+
+                  Colour is never the only carrier (WCAG 1.4.1): the row names its
+                  slate in the meta line and the legend labels every swatch, which
+                  is also what keeps a >8-slate region readable once two slates
+                  start sharing a colour.
+                {%- endcomment -%}
+                {%- assign muni_slated = mc | where_exp: "c", "c.slate" -%}
+                {%- if muni_slated.size > 0 -%}
+                {%- assign muni_slates = muni_slated | group_by: "slate" | sort: "name" -%}
+                <span class="slate-control">
+                  <span class="slate-legend">
+                    {%- for sg in muni_slates -%}
+                    {%- if sg.name != "" -%}
+                    <span class="slate-legend__item">
+                      <span class="slate-legend__swatch {{ site.data.slate_classes[sg.name] }}" aria-hidden="true"></span>{{ sg.name }} ({{ sg.size }})
+                    </span>
+                    {%- endif -%}
+                    {%- endfor -%}
+                  </span>
+                  <label class="slate-toggle" for="slate-highlight-{{ muni.slug }}" data-slate-control="{{ muni.slug }}" hidden>
+                    <input type="checkbox" id="slate-highlight-{{ muni.slug }}" data-slate-toggle="{{ muni.slug }}">
+                    <span>Highlight</span>
+                  </label>
+                </span>
+                {%- endif -%}
+              </span>
+            </th>
           </tr>
           {% if mc.size == 0 %}
           <tr class="scorecard-matrix__empty-row">
@@ -183,7 +254,15 @@ description: >-
             a candidate who changes municipality correctly reads as a different
             person (their page moves too).
           {%- endcomment -%}
-          <tr class="scorecard-row" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}">
+          {%- comment -%}
+            The slate palette class comes from site.data.slate_classes, built by
+            _plugins/candidate_pages.rb so the row, the legend below and the
+            candidate's own page all colour from one map. It only tints anything
+            once the reader turns on highlighting for this municipality, which
+            marks the row .is-slate-lit.
+          {%- endcomment -%}
+          {%- assign slate_class = site.data.slate_classes[c.slate] -%}
+          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}">
             <th scope="row" class="scorecard-matrix__name">
               {%- comment -%}
                 The name cell holds a link, a meta line and (with JS) up to two
@@ -224,9 +303,26 @@ description: >-
                       {%- else -%}{%- assign status = st.label -%}{%- endif -%}
                     {%- endif -%}
                   {%- endif -%}
-                  {%- if c.office and status != "" -%}<span class="scorecard-matrix__meta">{{ c.office }} · {{ status }}</span>
-                  {%- elsif c.office -%}<span class="scorecard-matrix__meta">{{ c.office }}</span>
-                  {%- elsif status != "" -%}<span class="scorecard-matrix__meta">{{ status }}</span>{%- endif -%}
+                  {%- comment -%}
+                    Office, standing and slate are each independently optional,
+                    so the middots are placed by collecting whichever parts
+                    exist and joining them, rather than by enumerating the
+                    combinations — three optional parts is seven branches, and
+                    the old two-part version was already the whole conditional.
+
+                    Captured with "|" and split because Liquid has no array
+                    append: `split` drops the empty trailing field, so the
+                    result is exactly the present parts. sync-candidates.py
+                    rewrites any literal "|" in a slate name to "/" so a slate
+                    cannot inject an extra part here.
+                  {%- endcomment -%}
+                  {%- capture meta_raw -%}
+                  {%- if c.office %}{{ c.office }}|{% endif -%}
+                  {%- if status != "" %}{{ status }}|{% endif -%}
+                  {%- if c.slate %}{{ c.slate }}|{% endif -%}
+                  {%- endcapture -%}
+                  {%- assign meta_parts = meta_raw | split: "|" -%}
+                  {%- if meta_parts.size > 0 -%}<span class="scorecard-matrix__meta">{{ meta_parts | join: " · " }}</span>{%- endif -%}
                 </span>
                 {%- comment -%}
                   The two row controls stack vertically rather than sitting side

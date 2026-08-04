@@ -1,6 +1,6 @@
-// Scorecard matrix: client-side search (by name) + filters (minimum grade,
-// municipality). Progressive enhancement — without JS, all candidate rows
-// remain visible.
+// Scorecard matrix: client-side search (by name or slate) + filters (minimum
+// grade, office, municipality). Progressive enhancement — without JS, all
+// candidate rows remain visible.
 (function () {
   // Open a collapsed <details> panel when it — or an element inside it — is the
   // link target. Covers #methodology, #who-grades, #categories, and the
@@ -75,7 +75,13 @@
     rows.forEach(function (row) {
       var muniOk = activeMuni === 'all' || row.getAttribute('data-municipality') === activeMuni;
       var officeOk = activeOffice === 'all' || row.getAttribute('data-office') === activeOffice;
-      var nameOk = query === '' || (row.getAttribute('data-name') || '').indexOf(query) !== -1;
+      // Slate is searched rather than filtered by pills (see scorecard/index.md),
+      // so it shares the query with the name: typing "sooke first" narrows to
+      // that slate, and a slate name can never collide with a person's name in
+      // a way that matters — both are things a reader might reasonably type.
+      var nameOk = query === '' ||
+        (row.getAttribute('data-name') || '').indexOf(query) !== -1 ||
+        (row.getAttribute('data-slate') || '').indexOf(query) !== -1;
       var gradeOk = minRank === null || bestRank(row, activeTopic) >= minRank;
       var show = muniOk && officeOk && nameOk && gradeOk;
       row.hidden = !show;
@@ -143,6 +149,40 @@
       apply();
     });
   }
+
+  // --- Slate highlighting ---------------------------------------------------
+  // Opt-in tint, one colour per slate, toggled per municipality from that
+  // municipality's heading. The palette classes are already on the rows (see
+  // scorecard/index.md); all this does is decide whether they paint anything,
+  // so nothing here knows a colour.
+  //
+  // The controls ship hidden and are revealed here because the tint needs this
+  // script: an unchecked box that could never do anything is worse than no box.
+  //
+  // Independent of every filter above — highlighting changes how rows look, not
+  // which rows show — so it deliberately does not touch apply().
+  // Only the checkbox is revealed here. Each municipality's slate legend renders
+  // visible from the start — which slates are running there is worth knowing
+  // whether or not the reader wants the rows coloured, and it needs no script.
+  var slateToggles = Array.prototype.slice.call(document.querySelectorAll('[data-slate-toggle]'));
+  slateToggles.forEach(function (toggle) {
+    var muni = toggle.getAttribute('data-slate-toggle');
+    var label = document.querySelector('[data-slate-control="' + muni + '"]');
+    if (label) label.hidden = false;
+
+    toggle.addEventListener('change', function () {
+      var on = this.checked;
+      // Marked on the rows themselves rather than on the municipality's tbody,
+      // because favourites.js MOVES rows out of that tbody into the pinned
+      // group. A class on the container would drop the tint the moment a
+      // reader starred a row; a class on the row travels with it.
+      rows.forEach(function (row) {
+        if (row.getAttribute('data-municipality') === muni) {
+          row.classList.toggle('is-slate-lit', on);
+        }
+      });
+    });
+  });
 
   apply();
 

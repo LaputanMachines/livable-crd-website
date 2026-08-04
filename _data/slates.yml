@@ -1,0 +1,25 @@
+# Electoral organizations ("slates") candidates run with, sourced from the
+# "Slate" column of the coalition candidate-tracking sheet.
+#
+# This file is OPTIONAL and is not an allowlist. The sheet's own text is the
+# canonical label: scripts/sync-candidates.py publishes whatever the Slate
+# column says, and only consults this file for a tidier label. A slate with no
+# entry here logs a warning and is published as written — new electoral
+# organizations appear mid-campaign, and failing the daily sync until someone
+# edited this repo would stall the whole site over a cosmetic gap.
+#
+# Add an entry when the sheet's wording needs cleaning up for publication
+# (inconsistent capitalization, an internal shorthand, a trailing "slate"):
+#
+#   - id: together-victoria     # slugified sheet text: lowercase, "-" for runs
+#                               # of non-alphanumerics
+#     label: Together Victoria   # what the scorecard shows instead
+#
+# `id` must match the slugified form of the sheet text, not the label — that is
+# what the script looks up. An entry with no `label` marks a slate as known
+# (silencing the warning) while still publishing the sheet's text.
+#
+# Listing a slate here does NOT imply endorsement, and slate is published as a
+# factual public-record field only. See the note in _data/candidates.yml about
+# which candidate fields are publishable.
+[]

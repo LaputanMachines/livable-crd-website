@@ -70,6 +70,22 @@
   color: $color-warm;
 }
 
+// Slate line under the meta line. Deliberately not the uppercase display type
+// above it: the slate is a proper name, and upper-casing an organization's name
+// alongside the candidate's standing is what made the two indistinguishable
+// when this lived on the meta line. Sentence case with the name emphasized
+// keeps "Running with" readable as the label it is.
+.candidate-hero__slate {
+  margin: $space-xs 0 0;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: $color-warm;
+
+  strong {
+    font-family: $font-display;
+    font-weight: 700;
+  }
+}
+
 // Both scoped to .candidate-page purely for specificity: .callout and the base
 // `.page-content > h2:not(:first-child)` rule would otherwise win on source
 // order and pseudo-class weight respectively.
@@ -304,6 +320,12 @@
       margin-top: 1mm;
       color: #000;
       font-size: 12pt;
+    }
+
+    .candidate-hero__slate {
+      margin-top: 1mm;
+      color: #000;
+      font-size: 11pt;
     }
 
     // Page chrome that only exists to centre and pad content in a viewport.

@@ -1,0 +1,183 @@
+@use "variables" as *;
+
+// --- Slate colour coding -----------------------------------------------------
+// One colour per electoral organization, used in three places: the opt-in row
+// tint on the scorecard, the legend that explains it, and a dot beside the
+// slate line on each candidate page.
+//
+// Colour is never the only carrier of the information (WCAG 1.4.1). Every
+// scorecard row names its slate in the meta line, the legend labels every
+// swatch, and the candidate page spells it out — the colour is a shortcut for
+// scanning, not the message. That also covers the >8-slate case, where two
+// slates share a colour and only the text tells them apart.
+//
+// Palette slots are assigned to slates in _plugins/candidate_pages.rb, in
+// alphabetical order of the slate name, and published as site.data.slate_classes
+// so the table and the candidate pages cannot disagree about who is which.
+
+// Hues deliberately avoid the letter-grade palette ($grade-a green, $grade-b
+// blue, $grade-c gold, $grade-f red): a tinted row sitting under a row of grade
+// chips must not read as a grade itself. Each slot carries three values —
+//   --slate-colour  saturated, for a swatch on a light background
+//   --slate-tint    very light, for a row background (and for a dot on the dark
+//                   candidate hero, where the saturated version would vanish)
+//   --slate-tint-strong  one step up, so :hover still registers on a tinted row
+.slate-c1 { --slate-colour: #0f766e; --slate-tint: #e4f4f2; --slate-tint-strong: #d2ebe8; }
+.slate-c2 { --slate-colour: #b45309; --slate-tint: #fdeedc; --slate-tint-strong: #fae0c4; }
+.slate-c3 { --slate-colour: #4338ca; --slate-tint: #e8e7fb; --slate-tint-strong: #d8d6f7; }
+.slate-c4 { --slate-colour: #a21c68; --slate-tint: #fbe5f0; --slate-tint-strong: #f6d2e5; }
+.slate-c5 { --slate-colour: #4d7c0f; --slate-tint: #eef5dd; --slate-tint-strong: #e2eec6; }
+.slate-c6 { --slate-colour: #7c4a1e; --slate-tint: #f4eae0; --slate-tint-strong: #ebdac9; }
+.slate-c7 { --slate-colour: #0e7490; --slate-tint: #e2f2f7; --slate-tint-strong: #cbe8f0; }
+.slate-c8 { --slate-colour: #6d28d9; --slate-tint: #eee8fc; --slate-tint-strong: #e0d6f9; }
+
+// --- The toggle and its legend -----------------------------------------------
+// Lives inside the municipality heading band (.scorecard-matrix__group-head),
+// so the control and the colour key sit with the rows they describe. Follows
+// .scorecard-matrix__group-hint in _favourites.scss, the other thing that
+// borrows space in that band.
+// The municipality heading's flex row: name on the left, slates beside it. On the
+// inner span rather than the <th> — see the note in scorecard/index.md.
+.scorecard-matrix__group-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.15rem $space-sm;
+}
+
+// Takes the heading's own uppercase display styling by inheritance; it exists
+// only to be a flex item so it can centre against the slate block.
+.scorecard-matrix__group-name {
+  // Stops a long municipality name being squeezed by the slate block beside it.
+  flex: 0 0 auto;
+}
+
+.slate-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  // Shrinks and wraps internally rather than pushing the row wider: this lives in
+  // a fixed-layout table, so an unbreakable block here would widen every column.
+  min-width: 0;
+  gap: 0.15rem $space-sm;
+  // The heading band is uppercase display type; slate names are proper nouns
+  // and the label is a sentence, so both opt out of it.
+  font-family: $font-sans;
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+// The toggle ships `hidden` until scorecard.js reveals it, and an author
+// `display: inline-flex` beats the browser's own `[hidden] { display: none }` no
+// matter how specific it is. Without this the no-JS page would show a checkbox
+// that could never do anything. Same guard as .fav-toggle[hidden], same reason.
+//
+// The legend carries no such guard: it is always shown, JS or not.
+.slate-toggle[hidden] {
+  display: none;
+}
+
+.slate-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  // Full-strength ink, not $color-muted: this sits on the Kwetlal-tinted
+  // heading band, where muted grey lands around the 4.5:1 line on small text —
+  // the same call _favourites.scss makes for the group hint.
+  color: $color-text;
+  cursor: pointer;
+
+  // Native checkbox on purpose: it is keyboard-operable, announces its own
+  // state, and a custom control here would be a lot of CSS to end up worse.
+  input {
+    accent-color: $color-accent;
+    width: 0.9rem;
+    height: 0.9rem;
+    margin: 0;
+    cursor: pointer;
+  }
+}
+
+.slate-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem $space-sm;
+}
+
+.slate-legend__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  color: $color-text;
+}
+
+.slate-legend__swatch {
+  display: inline-block;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 2px;
+  // The saturated colour reads better than the row tint at swatch size, and the
+  // border keeps a pale slot visible against the page background.
+  background: var(--slate-colour, #{$color-muted});
+  border: 1px solid rgba($inky-purple, 0.35);
+}
+
+// --- The row tint ------------------------------------------------------------
+// Applied only to rows assets/js/scorecard.js has marked .is-slate-lit, which
+// it does per municipality, so the default view is uncoloured and a reader only
+// ever lights up the group they are looking at.
+//
+// The class is on the row rather than the municipality's tbody because
+// favourites.js moves rows between tbodies — see the note in scorecard.js.
+//
+// Both halves of a row need stating: the name cell carries its own opaque
+// background (it has to, being the sticky column on a scrolling table), so a
+// tint set on the <tr> alone would stop at the first column.
+//
+// The fallbacks are the untinted values, so an un-slated row inside a lit
+// municipality — it has no palette class, so no --slate-tint to find — keeps
+// looking exactly as it does with highlighting off.
+.scorecard-row.is-slate-lit th,
+.scorecard-row.is-slate-lit td {
+  background: var(--slate-tint, transparent);
+}
+
+.scorecard-row.is-slate-lit .scorecard-matrix__name {
+  background: var(--slate-tint, #{$color-surface});
+}
+
+// Hover has to be restated, and one step darker rather than the shared
+// $color-bg-warm: hovering a tinted row should not look like the tint
+// switching off.
+.scorecard-row.is-slate-lit:hover th,
+.scorecard-row.is-slate-lit:hover td {
+  background: var(--slate-tint-strong, #{$color-bg-warm});
+}
+
+// --- Candidate page ----------------------------------------------------------
+// A dot beside "Running with <slate>", tying that page to the colour the reader
+// may have just been scanning in the table. Always shown — there is one slate on
+// the page, so there is nothing to opt out of.
+.candidate-hero__slate .slate-dot {
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.4em;
+  border-radius: 50%;
+  vertical-align: baseline;
+  // The light tint, not the saturated colour: this sits on the inky-purple hero,
+  // where a dark teal or indigo dot would disappear.
+  background: var(--slate-tint, #{$color-warm});
+}
+
+// The leaflet is black-on-white, so the dot would print as a grey blob carrying
+// no information the adjacent text does not already give.
+@media print {
+  .candidate-hero__slate .slate-dot { display: none; }
+}
