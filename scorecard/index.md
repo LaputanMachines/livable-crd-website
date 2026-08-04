@@ -581,11 +581,11 @@ description: >-
   </details>
 </div>
 
-<script src="{{ '/assets/js/scorecard.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/scorecard.js' | asset_url }}" defer></script>
 {%- comment -%}
   Loaded after scorecard.js and, like it, deferred: favourites moves rows
   between groups and then asks the filter script to re-run, so the filters have
   to be listening by the time the first row moves. `defer` scripts execute in
   document order, which is what guarantees that.
 {%- endcomment -%}
-<script src="{{ '/assets/js/favourites.js' | relative_url }}" defer></script>
+<script src="{{ '/assets/js/favourites.js' | asset_url }}" defer></script>
