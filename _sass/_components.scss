@@ -751,28 +751,6 @@ tr:hover td { background: $color-bg-warm; }
   line-height: 1.5;
 }
 
-// Sample questionnaire question shown beneath each category description.
-.topic-def__example {
-  display: block;
-  margin-top: 0.6rem;
-  color: $color-text;
-  font-style: italic;
-  font-size: 0.9rem;
-  line-height: 1.5;
-}
-
-.topic-def__example-label {
-  display: block;
-  margin-bottom: 0.15rem;
-  font-family: $font-display;
-  font-style: normal;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.68rem;
-  color: var(--card-accent, $color-accent);
-}
-
 @media (min-width: 720px) {
   .grade-def,
   .topic-def {

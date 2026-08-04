@@ -391,15 +391,7 @@ description: >-
         {% for subject in site.data.subjects %}
         <div class="topic-def" id="category-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
           <dt class="topic-def__name">{{ subject.name }}</dt>
-          <dd class="topic-def__desc">
-            {{ subject.description }}
-            {% if subject.example %}
-            <span class="topic-def__example">
-              <span class="topic-def__example-label">Example question</span>
-              “{{ subject.example }}”
-            </span>
-            {% endif %}
-          </dd>
+          <dd class="topic-def__desc">{{ subject.description }}</dd>
         </div>
         {% endfor %}
       </dl>
