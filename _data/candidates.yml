@@ -425,6 +425,12 @@
   office: Councillor
   standing: challenger
 
+- name: Katherine Strongwind
+  display_name: "Strongwind, Katherine"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+
 - name: Christine Thomas
   display_name: "Thomas, Christine"
   municipality: sooke
