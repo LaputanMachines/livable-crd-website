@@ -22,4 +22,17 @@
 # Listing a slate here does NOT imply endorsement, and slate is published as a
 # factual public-record field only. See the note in _data/candidates.yml about
 # which candidate fields are publishable.
-[]
+
+# The three slates contesting the 2026 election. Each carries an explicit `label`
+# even though the sheet already spells them this way: without one the published
+# label is whichever spelling the sheet happens to use first, so a later edit
+# typing "SOOKE FIRST" would change what the scorecard shows. Naming it here
+# pins it.
+- id: save-our-saanich
+  label: Save Our Saanich
+
+- id: sooke-first
+  label: Sooke First
+
+- id: victoria-for-all
+  label: Victoria For All
