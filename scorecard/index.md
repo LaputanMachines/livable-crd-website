@@ -225,7 +225,7 @@ description: >-
                   </span>
                   <label class="slate-toggle" for="slate-highlight-{{ muni.slug }}" data-slate-control="{{ muni.slug }}" hidden>
                     <input type="checkbox" id="slate-highlight-{{ muni.slug }}" data-slate-toggle="{{ muni.slug }}">
-                    <span>Highlight</span>
+                    <span>Highlight Slate Candidates</span>
                   </label>
                 </span>
                 {%- endif -%}

@@ -77,7 +77,7 @@ The sheet's optional `Slate` column names the electoral organization a candidate
 
 - The scorecard **meta line** under each name — `Councillor · Incumbent · Sooke First`.
 - The **search box**, which matches slate as well as name, so typing `sooke first` narrows to that slate. There is deliberately no slate filter group: the filter bar already carries four controls, and since most candidates run unaffiliated, pills would cost every reader vertical space to filter a minority of rows. Note search matches name and slate only — not municipality, which has its own filter.
-- An opt-in **row tint**, one colour per slate, toggled by a *Highlight slates* checkbox in each municipality's heading — see below.
+- An opt-in **row tint**, one colour per slate, toggled by a *Highlight Slate Candidates* checkbox in each municipality's heading — see below.
 - Each **candidate page**, on its own labelled line (`Running with Sooke First`) with a dot in that slate's colour, which also prints on the leaflet. Kept off that page's uppercase meta line on purpose: beside the standing, a bare slate name read as another attribute of the same kind.
 
 #### Colour coding
