@@ -34,6 +34,13 @@
 # Within each municipality, candidates are ordered alphabetically by last name.
 
 # --- Saanich ---
+- name: Mehdi Bagheri
+  display_name: "Bagheri, Mehdi"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Teale Phelps Bondaroff
   display_name: "Bondaroff, Teale Phelps"
   municipality: saanich
@@ -281,6 +288,20 @@
   slate: null
 
 # --- Esquimalt ---
+- name: Andrea Boardman
+  display_name: "Boardman, Andrea"
+  municipality: esquimalt
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
+- name: Meagan Braeme
+  display_name: "Braeme, Meagan"
+  municipality: esquimalt
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
   municipality: esquimalt
@@ -297,6 +318,13 @@
 
 - name: Rob Johnstone
   display_name: "Johnstone, Rob"
+  municipality: esquimalt
+  office: Councillor
+  standing: challenger
+  slate: null
+
+- name: Robb Johnstone
+  display_name: "Johnstone, Robb"
   municipality: esquimalt
   office: Councillor
   standing: challenger
@@ -358,6 +386,13 @@
   municipality: colwood
   office: Councillor
   standing: challenger
+  slate: null
+
+- name: David Grove
+  display_name: "Grove, David"
+  municipality: colwood
+  office: Councillor
+  standing: incumbent-councillor
   slate: null
 
 - name: Doug Kobayashi
@@ -461,6 +496,13 @@
   slate: null
 
 # --- Sooke ---
+- name: Ty Daniels
+  display_name: "Daniels, Ty"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Janet Evans
   display_name: "Evans, Janet"
   municipality: sooke
