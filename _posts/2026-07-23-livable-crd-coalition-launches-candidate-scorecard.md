@@ -35,7 +35,7 @@ so many candidates. We intend to solve that."
 ## How the scorecard works
 
 Participating organizations collaborate on a shared questionnaire, with each
-group contributing questions in its area of expertise. Livable CRD then sends
+group contributing questions in its area of focus. Livable CRD then sends
 this questionnaire to candidates, and their responses are graded with a
 published, reproducible methodology using a clear letter-grade system. Where a
 candidate declines to respond, that is documented as well. Results will be

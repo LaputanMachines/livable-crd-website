@@ -27,7 +27,7 @@ SCORES = [
      "5 = sharply separating."),
     ("Answerable",
      "Can a candidate answer confidently with modest research? 1 = needs deep "
-     "expertise, 5 = squarely in public discourse."),
+     "specialist knowledge, 5 = squarely in public discourse."),
 ]
 
 FLAGS = [

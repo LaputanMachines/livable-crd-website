@@ -145,7 +145,7 @@ Send each person the sheet link and their tab name. In their tab:
    - **Distinguishes** — how well it separates candidates. 1 everyone answers the
      same, 5 sharply separating.
    - **Answerable** — can a candidate answer confidently with modest research?
-     1 needs deep expertise, 5 squarely in public discourse.
+     1 needs deep specialist knowledge, 5 squarely in public discourse.
 2. Four checkbox flags, ticked **only if the question trips that criterion**:
    - `F: our view` — doesn't reflect the view of the folks involved in this effort
    - `F: users` — doesn't reflect the view of the folks we hope use the scorecard

@@ -464,7 +464,7 @@ description: >-
       <p>
         <strong>The same group that submits a set of questions also grades candidates'
         responses to those questions.</strong> Each group grades only within its own area
-        of expertise, so no single organization assigns a candidate's full slate of grades
+        of focus, so no single organization assigns a candidate's full slate of grades
         alone. This keeps every topic in the hands of the people who understand it best,
         and keeps the overall scorecard a shared, coalition-wide effort.
       </p>
