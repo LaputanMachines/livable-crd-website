@@ -816,14 +816,6 @@ p + .partner-list {
   border: $border-weight solid $color-text;
 }
 
-// Growth note under the coalition roster: signals the coalition can still grow.
-.partner-list-note {
-  margin-top: $space-sm;
-  margin-bottom: 0;
-  font-style: italic;
-  color: $color-muted;
-}
-
 .partner-list li {
   background: $color-surface;
   border: none;

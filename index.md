@@ -106,9 +106,6 @@ description: >-
       </li>
       {% endfor %}
     </ul>
-    <p class="partner-list-note">
-      This is a growing coalition. New member organizations are welcome to join.
-    </p>
     <p class="content-follow-up">
       Interested in joining the coalition or supporting this work?
       <a href="{{ '/donate/' | relative_url }}">Donate</a>
