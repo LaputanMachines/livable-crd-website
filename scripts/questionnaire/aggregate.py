@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Collect every submitted question from the source tabs into one normalised list.
 
-This is the shared data layer for tables.py and voting.py: it reads the three
+This is the shared data layer for tables.py, voting.py and append.py: it reads the
 submission tabs, assigns each question a stable ID and an official category, and
 flags near-duplicates. It does not write to the sheet - run it directly to preview
 the categorisation before rebuilding anything.
@@ -35,7 +35,12 @@ CATEGORIES = [
     "Housekeeping",  # internal only - not published on the scorecard
 ]
 
-SOURCES = ["Form Responses 1", "HFL Questions", "Victori'Us Questions"]
+SOURCES = ["Form Responses 1", "HFL Questions", "Victori'Us Questions", "RUSH Questions"]
+
+# The RUSH tab opens with a cover note sitting in the question column rather than a
+# question. Matched case-insensitively on the prefix so the row is skipped by intent,
+# not by a "does it end in a question mark" guess that could drop a real submission.
+RUSH_PREAMBLE = "here are our questions"
 
 HEADERS = [
     "ID", "Category", "Submitted topic", "Question", "Answers / options",
@@ -119,7 +124,12 @@ def map_topic(topic):
 
 
 def build_rows(sh):
-    """Return one normalised row per question, ordered FR-*, HFL-*, VU-*."""
+    """Return one normalised row per question, ordered FR-*, HFL-*, VU-*, RUSH-*.
+
+    Source order is append-only on purpose: new tabs go on the end so their rows land
+    below the existing ones, which is what lets append.py extend a sheet that is
+    already being voted on without shifting anyone's row alignment.
+    """
     rows = []
 
     fr = sh.worksheet("Form Responses 1").get_all_values()
@@ -168,6 +178,21 @@ def build_rows(sh):
             qid, cat, clean(r[1]), clean(r[2]), clean(r[3]),
             clean(r[4])[:120], "Victori'Us Questions", "Victori'Us (Erin)", "Victoria",
             " | ".join(notes),
+        ])
+
+    rush = sh.worksheet("RUSH Questions").get_all_values()
+    n = 0
+    for r in rush[1:]:
+        if not any(c.strip() for c in r) or not r[0].strip():
+            continue
+        if clean(r[0]).lower().startswith(RUSH_PREAMBLE):
+            continue
+        n += 1
+        qid = f"RUSH-{n:02d}"
+        topic = clean(r[2]) if len(r) > 2 else ""
+        rows.append([
+            qid, map_topic(topic), topic, clean(r[0]), "", "",
+            "RUSH Questions", "RUSH Initiative", "", DUPES.get(qid, ""),
         ])
 
     return rows

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Rebuild the 'All Refined Questions' tab as a native Google Sheets table.
 
-  Questions  A1:V<last>  header row 1, data from row 2. A-J question data, K-V
+  Questions  A1:X<last>  header row 1, data from row 2. A-J question data, K-X
                          vote aggregates (values written by voting.py once voter
                          tabs exist).
 
@@ -20,22 +20,47 @@ Usage:
 from aggregate import (
     CATEGORIES, FIRST, HEADERS, MASTER, SOURCES, build_rows, open_sheet,
 )
+from voting import col_letter
 
 AGG_HEADERS = [
     "Avg importance", "Avg distinguishes", "Avg answerable", "Mean score",
     "Votes cast", "F: our view", "F: users", "F: allies", "F: how",
+    "Needs rewording", "Shouldn't be graded",
     "Exclude votes", "Status", "Comments",
 ]
 
 NUMERIC = {
     "Avg importance", "Avg distinguishes", "Avg answerable", "Mean score",
-    "Votes cast", "F: our view", "F: users", "F: allies", "F: how", "Exclude votes",
+    "Votes cast", "F: our view", "F: users", "F: allies", "F: how",
+    "Needs rewording", "Shouldn't be graded", "Exclude votes",
 }
 
 
 def one_of(values):
     return {"condition": {"type": "ONE_OF_LIST",
                           "values": [{"userEnteredValue": v} for v in values]}}
+
+
+def column_properties():
+    """Column types for the Questions table, in sheet order.
+
+    Shared with append.py so the Category and Source dropdowns stay in step with
+    CATEGORIES and SOURCES no matter which script last touched the table.
+    """
+    col_props = []
+    for i, name in enumerate(HEADERS + AGG_HEADERS):
+        if name == "Category":
+            col_props.append({"columnIndex": i, "columnName": name,
+                              "columnType": "DROPDOWN",
+                              "dataValidationRule": one_of(CATEGORIES)})
+        elif name == "Source":
+            col_props.append({"columnIndex": i, "columnName": name,
+                              "columnType": "DROPDOWN",
+                              "dataValidationRule": one_of(SOURCES)})
+        else:
+            col_props.append({"columnIndex": i, "columnName": name,
+                              "columnType": "DOUBLE" if name in NUMERIC else "TEXT"})
+    return col_props
 
 
 def main():
@@ -62,19 +87,7 @@ def main():
     ws.update([HEADERS + AGG_HEADERS], "A1", value_input_option="RAW")
     ws.update(rows, f"A{FIRST}", value_input_option="RAW")
 
-    col_props = []
-    for i, name in enumerate(HEADERS + AGG_HEADERS):
-        if name == "Category":
-            col_props.append({"columnIndex": i, "columnName": name,
-                              "columnType": "DROPDOWN",
-                              "dataValidationRule": one_of(CATEGORIES)})
-        elif name == "Source":
-            col_props.append({"columnIndex": i, "columnName": name,
-                              "columnType": "DROPDOWN",
-                              "dataValidationRule": one_of(SOURCES)})
-        else:
-            col_props.append({"columnIndex": i, "columnName": name,
-                              "columnType": "DOUBLE" if name in NUMERIC else "TEXT"})
+    col_props = column_properties()
 
     sh.batch_update({"requests": [{"addTable": {"table": {
         "name": "Questions",
@@ -84,7 +97,7 @@ def main():
     }}}]})
     ws.freeze(rows=1)
 
-    print(f"Questions table: A1:V{last} ({len(rows)} questions)")
+    print(f"Questions table: A1:{col_letter(n_cols)}{last} ({len(rows)} questions)")
     print("run summary.py to refresh the Summary tab")
 
 

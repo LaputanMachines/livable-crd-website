@@ -17,22 +17,24 @@ interactive Google auth, so they are not run in CI.
 | `Form Responses 1` | Public intake form. Source, read-only. |
 | `HFL Questions` | Homes for Living submissions. Source, read-only. |
 | `Victori'Us Questions` | Arts & culture submissions. Source, read-only. |
+| `RUSH Questions` | RUSH Initiative climate submissions. Source, read-only. |
 | `All Refined Questions` | **Master.** Every question, categorised, plus vote aggregates. Generated. |
 | `Vote - <Name>` | One per committee member. Generated. |
 | `Summary` | All counts and roll-ups. Generated. |
 
-`All Refined Questions` holds one native table, **`Questions`** (`A1:V`) — `A–J`
-question data, `K–V` vote aggregates.
+`All Refined Questions` holds one native table, **`Questions`** (`A1:X`) — `A–J`
+question data, `K–X` vote aggregates.
 
-`Summary` holds five, side by side, all live formulas:
+`Summary` holds six, side by side, all live formulas:
 
 | Table | Range | Shows |
 |---|---|---|
 | `CategoryCounts` | `A:D` | Questions per category, with strong / excluded splits |
 | `Totals` | `F:G` | Question count, committee size, completion percentage |
-| `VoterProgress` | `I:N` | Per-member progress, exclude ticks, comments left |
-| `StatusMix` | `P:R` | Distribution across `STRONG` / `MAYBE` / `WEAK` / `EXCLUDE` / unvoted |
-| `FlagTotals` | `S:V` | Questions carrying each flag, and total ticks |
+| `VoterProgress` | `I:P` | Per-member progress, exclude ticks, comments, mark ticks |
+| `StatusMix` | `R:T` | Distribution across `STRONG` / `MAYBE` / `WEAK` / `EXCLUDE` / unvoted |
+| `FlagTotals` | `V:Y` | Questions carrying each criterion flag, and total ticks |
+| `Dispositions` | `AA:AD` | Questions marked *needs rewording* / *shouldn't be graded* |
 
 ### Official categories
 
@@ -107,8 +109,33 @@ python3 scripts/questionnaire/tables.py
 ```
 
 Clears `All Refined Questions` and rebuilds it from the source tabs as native tables.
-Question IDs (`FR-01`, `HFL-01`, `VU-01`) are positional — stable as long as the
-source tabs keep their row order.
+Question IDs (`FR-01`, `HFL-01`, `VU-01`, `RUSH-01`) are positional — stable as long as
+the source tabs keep their row order.
+
+**Once voting has started, use `append.py` instead.** This wipes votes.
+
+### `append.py` — add new questions mid-vote
+
+```bash
+python3 scripts/questionnaire/append.py --dry-run   # preview
+python3 scripts/questionnaire/append.py
+```
+
+The non-destructive path for a source tab that has grown. It writes only the rows
+that aren't in the master yet, at the bottom, then extends the `Questions` table, the
+`Status` colour rules and every `Vote - <Name>` tab to match. Existing rows are never
+rewritten, so hand edits to categories and question text survive, and no votes are lost.
+
+New questions land below the existing ones because `build_rows()` reads the source tabs
+in a fixed, append-only order — a new tab goes on the *end* of `SOURCES`, never in the
+middle, or its rows would interleave and shift every voter tab out of alignment.
+
+It aborts if the master's IDs are no longer a prefix of what the source tabs produce.
+That means rows were reordered, renumbered or deleted at source, where appending would
+pair votes with the wrong questions — rebuild with `tables.py` + `voting.py` instead.
+
+Handles growth only. Removing a question still needs a full rebuild. Run `summary.py`
+afterwards to repoint the roll-ups at the longer range.
 
 ### `voting.py` — build voter tabs
 
@@ -153,6 +180,11 @@ Send each person the sheet link and their tab name. In their tab:
    - `F: how` — prescribes *how* rather than asking *what* we want
 3. **EXCLUDE** — argue the question should be dropped entirely.
 4. **Comment** — rewrites, merges, objections.
+5. Two disposition checkboxes — what should *happen* to the question, as opposed to how
+   well it scores:
+   - `Needs rewording` — worth asking, but not as currently written. Say how in `Comment`.
+   - `Shouldn't be graded` — worth asking, but answers shouldn't be scored on the
+     scorecard.
 
 Blank scores don't count toward averages, so partial progress is safe. Every header
 carries the full criterion wording as a hover note. Columns `A–C` warn on edit; they
@@ -161,15 +193,21 @@ are formulas pulled from the master.
 Because each tab is a table, members can filter to one category and vote a theme at
 a time rather than facing the whole list at once.
 
-### Why three scores and four flags
+### Why three scores, four flags and two dispositions
 
 The committee's criteria split into two kinds. Importance, distinguishing power and
 answerability are matters of degree, so they're scored. The other four are pass/fail
 conditions — averaging a 1–5 on "reflects our view" produces noise, while a flag count
 shows dissent directly (one person flagged versus five).
 
-It's also a completion argument: seven scores across ~93 questions is ~650 cells per
+It's also a completion argument: seven scores across ~96 questions is ~670 cells per
 member, which nobody finishes.
+
+The two dispositions are a third kind again. A flag says the question is *faulty*;
+a disposition says what to *do* with it, and a question can score well on every
+criterion and still need rewording, or be worth asking without being gradeable. They
+started as two columns one member added to their own tab, which is a good sign they
+were answering a question the rubric didn't ask.
 
 ## Reading the results
 
@@ -209,11 +247,22 @@ Add a minimum-vote guard if that's noisy in practice.
 
 **Row alignment.** Voter tabs pull from the master by row number. Inserting or
 deleting master rows shifts every voter tab out of alignment. Do dedupe and pruning
-*before* voting starts; if you must change the row set afterwards, re-run both
-`tables.py` and `voting.py` — and accept that votes are lost.
+*before* voting starts. Afterwards, `append.py` can still add questions safely, because
+appending only ever writes below the last row — but anything that reorders or removes
+rows needs `tables.py` + `voting.py`, and loses votes.
 
-**Rebuilds wipe votes.** Both write scripts are destructive by design. Once voting is
-under way, treat them as off-limits unless you've exported the voter tabs first.
+**Rebuilds wipe votes.** `tables.py` and `voting.py` are destructive by design. Once
+voting is under way, treat them as off-limits unless you've exported the voter tabs
+first. `append.py` and `summary.py` are the two that are safe to run mid-vote.
+
+**Voter tabs must keep the standard column order.** The master's aggregates and the
+Summary read voter tabs *positionally* — `D:F` scores, `G:J` flags, `K` exclude, `L`
+comment. A member who inserts their own column shifts everything to its right, and the
+formulas then read the wrong column without erroring — a checkbox gets reported as that
+person's comments. Keep custom columns to the *right* of `Comment`.
+
+`append.py` and `summary.py` call `check_voter_columns()` and refuse to run when a tab
+drifts, so this fails loudly rather than quietly corrupting column `V`.
 
 **`addTable` column naming.** In the Sheets API, `columnIndex` inside
 `columnProperties` is validated *table-relative*, but the resulting `columnName` is

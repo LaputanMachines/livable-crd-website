@@ -1,39 +1,49 @@
 #!/usr/bin/env python3
 """Build the 'Summary' tab: every count and roll-up in one place.
 
-Five native tables, side by side, all live formulas over the master and the voter
+Six native tables, side by side, all live formulas over the master and the voter
 tabs - nothing here is a stored value, so it never goes stale:
 
-  A:D  CategoryCounts  questions per official category, with strong/excluded splits
-  F:G  Totals          question count, committee size, completion percentage
-  I:N  VoterProgress   per-member progress, exclude ticks, comments left
-  P:Q  StatusMix       distribution across STRONG / MAYBE / WEAK / EXCLUDE / unvoted
-  S:U  FlagTotals      questions carrying each flag, and total ticks
+  A:D   CategoryCounts  questions per official category, with strong/excluded splits
+  F:G   Totals          question count, committee size, completion percentage
+  I:P   VoterProgress   per-member progress, exclude ticks, comments, mark ticks
+  R:T   StatusMix       distribution across STRONG / MAYBE / WEAK / EXCLUDE / unvoted
+  V:Y   FlagTotals      questions carrying each criterion flag, and total ticks
+  AA:AD Dispositions    questions marked 'needs rewording' / "shouldn't be graded"
 
 Voter tabs are discovered by name ('Vote - <Name>'), so this picks up committee
 changes without arguments. Safe to re-run at any time: it only rewrites this tab.
-
-Also removes the legacy CategoryCounts table from the master, which used to live at
-X:Y before counts moved here.
 
 Usage:
   QUESTIONNAIRE_SHEET_ID=... python3 scripts/questionnaire/summary.py
 """
 
 from aggregate import CATEGORIES, FIRST, MASTER, open_sheet
+from voting import check_voter_columns
 
 TAB = "Summary"
 
-# Master columns the roll-ups read.
+# Master columns the roll-ups read. Keep in step with AGG_HEADERS in tables.py.
 CAT, MEAN, VOTES = "B", "N", "O"
 FLAG_COLS = ["P", "Q", "R", "S"]
-EXCLUDE, STATUS = "T", "U"
+MARK_COLS = ["T", "U"]
+EXCLUDE, STATUS = "V", "W"
+
+# Voter-tab columns. Comment sits at L and the marks follow it, so that adding the
+# marks to a sheet already being voted on moved nobody's existing data.
+V_SCORE, V_EXCLUDE, V_COMMENT = "D", "K", "L"
+V_MARK_COLS = ["M", "N"]
 
 FLAG_LABELS = [
     ("F: our view", "Does not reflect the view of the folks involved in this effort"),
     ("F: users", "Does not reflect the view of the folks we hope use the scorecard"),
     ("F: allies", "Risks pitting us against communities or constituencies we care about"),
     ("F: how", "Prescribes HOW rather than asking WHAT we want"),
+]
+
+MARK_LABELS = [
+    ("Needs rewording", "Should be reworded before it goes out"),
+    ("Shouldn't be graded", "Worth asking, but answers should not be scored"),
 ]
 
 STATUSES = [
@@ -88,18 +98,19 @@ def totals(last, voters):
 
 
 def voter_progress(last, voters):
-    rows = [["Voter", "Scored", "Remaining", "Complete", "Excludes", "Comments"]]
+    rows = [["Voter", "Scored", "Remaining", "Complete", "Excludes", "Comments"]
+            + [lbl for lbl, _ in MARK_LABELS]]
     for v in voters:
         t = f"'Vote - {v}'"
         r = len(rows) + 1
         rows.append([
             v,
-            f'=COUNT({t}!$D${FIRST}:$D${last})',
+            f'=COUNT({t}!${V_SCORE}${FIRST}:${V_SCORE}${last})',
             f"=$G$2-J{r}",
             f"=IF($G$2=0,0,J{r}/$G$2)",
-            f'=COUNTIF({t}!$K${FIRST}:$K${last},TRUE)',
-            f'=COUNTIF({t}!$L${FIRST}:$L${last},"<>")',
-        ])
+            f'=COUNTIF({t}!${V_EXCLUDE}${FIRST}:${V_EXCLUDE}${last},TRUE)',
+            f'=COUNTIF({t}!${V_COMMENT}${FIRST}:${V_COMMENT}${last},"<>")',
+        ] + [f'=COUNTIF({t}!${c}${FIRST}:${c}${last},TRUE)' for c in V_MARK_COLS])
     return rows
 
 
@@ -110,9 +121,10 @@ def status_mix(last):
     return rows
 
 
-def flag_totals(last):
-    rows = [["Flag", "Questions flagged", "Total ticks", "Criterion"]]
-    for (label, meaning), col in zip(FLAG_LABELS, FLAG_COLS):
+def tick_totals(header, labels, cols, last):
+    """Per-question and total tick counts for one block of checkbox columns."""
+    rows = [[header, "Questions marked", "Total ticks", "Meaning"]]
+    for (label, meaning), col in zip(labels, cols):
         rows.append([
             label,
             f'=COUNTIF({m(col, last)},">0")',
@@ -120,6 +132,14 @@ def flag_totals(last):
             meaning,
         ])
     return rows
+
+
+def flag_totals(last):
+    return tick_totals("Flag", FLAG_LABELS, FLAG_COLS, last)
+
+
+def dispositions(last):
+    return tick_totals("Disposition", MARK_LABELS, MARK_COLS, last)
 
 
 def table(name, sheet_id, rows, start_col, col_types):
@@ -148,17 +168,9 @@ def main():
     if not voters:
         print("warning: no 'Vote - <Name>' tabs found; VoterProgress will be empty")
     print(f"{len(ids)} questions, {len(voters)} voters: {', '.join(voters) or '(none)'}")
+    check_voter_columns(sh, voters)
 
     meta = sh.fetch_sheet_metadata()
-
-    # Retire the old counts block on the master, if this is a migration.
-    mprops = next(s for s in meta["sheets"] if s["properties"]["sheetId"] == master.id)
-    legacy = [t for t in mprops.get("tables", []) if t["name"] == "CategoryCounts"]
-    if legacy:
-        sh.batch_update({"requests": [
-            {"deleteTable": {"tableId": t["tableId"]}} for t in legacy]})
-        master.batch_clear(["X1:Y30"])
-        print(f"removed legacy CategoryCounts table from {MASTER}")
 
     existing = {ws.title: ws for ws in sh.worksheets()}
     if TAB in existing:
@@ -177,9 +189,13 @@ def main():
         ("CategoryCounts", 1, category_counts(last)),
         ("Totals", 6, totals(last, voters)),
         ("VoterProgress", 9, voter_progress(last, voters)),
-        ("StatusMix", 16, status_mix(last)),
-        ("FlagTotals", 19, flag_totals(last)),
+        ("StatusMix", 18, status_mix(last)),
+        ("FlagTotals", 22, flag_totals(last)),
+        ("Dispositions", 27, dispositions(last)),
     ]
+    widest = max(col + len(rows[0]) for _, col, rows in blocks)
+    if ws.col_count < widest:
+        ws.resize(rows=ws.row_count, cols=widest + 2)
 
     def letter(idx):
         out = ""
