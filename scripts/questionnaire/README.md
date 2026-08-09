@@ -21,6 +21,8 @@ interactive Google auth, so they are not run in CI.
 | `All Refined Questions` | **Master.** Every question, categorised, plus vote aggregates. Generated. |
 | `Vote - <Name>` | One per committee member. Generated. |
 | `Summary` | All counts and roll-ups. Generated. |
+| `Reworded Questions` | Post-voting. Every question that changed, and why. Generated. |
+| `Finalized Questions` | Post-voting. **The shipping set.** Export as CSV for Tally. Generated. |
 
 `All Refined Questions` holds one native table, **`Questions`** (`A1:X`) — `A–J`
 question data, `K–X` vote aggregates.
@@ -149,6 +151,56 @@ formulas into master columns `K–V`.
 **Always pass the full committee list.** Named tabs that already exist are cleared
 and rebuilt, so re-running with one name wipes that person's votes and leaves the
 aggregates referencing only them.
+
+### `finalize.py` — build the questionnaire, after voting
+
+```bash
+python3 scripts/questionnaire/finalize.py --dry-run
+python3 scripts/questionnaire/finalize.py --csv ~/finalized-questions.csv
+```
+
+Run once grading is finished. It applies the committee's dispositions — the `Needs
+rewording` and `Shouldn't be graded` ticks, the EXCLUDE votes and, mostly, the free-text
+comments — and rebuilds two tabs:
+
+- **`Reworded Questions`** — one row per question that changed, with its original text
+  beside the new one, who asked for the change, and the argument for it. Dropped
+  questions are listed here too, with their reason. This is the audit trail: nothing
+  changes without a comment behind it.
+- **`Finalized Questions`** — the shipping set, one row per question a candidate will see.
+  Flat enough to export straight to CSV and import into Tally.
+
+The editorial decisions live in `FINAL` in the script, in question order, so a
+disagreement about one question is a one-line diff rather than a re-run of the vote.
+Submitter, source tab and municipality scope are read from the master at run time and
+never restated in the script — that's what keeps submitter emails out of this repo.
+`--csv` writes the same rows to a path of your choosing; send it somewhere outside the
+repo for the same reason.
+
+Both tabs are rebuilt wholesale on every run, and nothing else reads them, so this is
+safe to re-run at any time. It never touches the master or any voter tab.
+
+It aborts if an origin ID in `FINAL` is missing from the master. Every one of the master's
+questions must appear either in a `FINAL` row's `origins` or in `DROPPED`; the tabs are not
+a filtered view of the master, so a question left out of both would vanish silently.
+
+Municipality-specific blocks — the BC housing targets and the infrastructure funding gaps
+— are templated from `HOUSING_TARGETS` and `INFRA_FIGURES` and expanded to one row per
+municipality, rather than repeated by hand as they were in the source tabs. That's what
+stopped the wording drifting.
+
+`MUNICIPALITIES` is the questionnaire's scope: 13 jurisdictions. The CRD's three electoral
+areas — Juan de Fuca, Salt Spring Island, Southern Gulf Islands — are excluded, because
+they elect an electoral area director rather than a council and neither municipality-specific
+question applies. `_data/municipalities.yml` still publishes all 16 on the site; who gets a
+questionnaire is a separate decision, so this script does not touch it.
+
+Every municipality gets the infrastructure question, so every one needs a figure in
+`INFRA_FIGURES`. Municipalities whose figure is still blank ship a generic version and are
+printed with `<- FIGURE NEEDED` on every run, and flagged in the `Notes` column of
+`Finalized Questions`. Only the 10 in `HOUSING_TARGETS` received provincial housing target
+orders — Sooke, Highlands and Metchosin get one municipality-specific question rather than
+two.
 
 ### `summary.py` — rebuild the Summary tab
 
