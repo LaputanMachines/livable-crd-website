@@ -2,7 +2,7 @@
 """Generate the header (cover) image for the Tally candidate questionnaire.
 
 Run from repo root:  python3 scripts/gen-tally-header.py
-Output: assets/images/tally-header.png  (3000x1000 by default)
+Output: assets/tally/header.png  (3000x1000 by default)
 
 Tally asks for a cover "at least 1500 pixels wide" and states no upper bound,
 and the cover's aspect ratio changes with the window width — so this renders at
@@ -23,6 +23,10 @@ import argparse, importlib.util, os
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Every Tally asset lands here, separate from the site's own images.
+OUT_DIR = os.path.join(ROOT, "assets", "tally")
+os.makedirs(OUT_DIR, exist_ok=True)
 
 # gen-fb-banner has a hyphen in its name, so it can't be imported by name.
 _spec = importlib.util.spec_from_file_location(
@@ -92,8 +96,16 @@ def build(out_w=GW * 2, out_h=None):
     logo_h = int(round(238 * S))
     logo_w = int(round(logo_h * 1988 / 1546))          # preserve viewBox aspect
 
-    # Shrink the title until the whole lockup clears the side margins. Tally
-    # crops the cover horizontally on narrow viewports, so leave real slack.
+    # The lockup fills the canvas rather than hiding in a safe centre band. That
+    # relies on the form's custom CSS showing the cover whole:
+    #
+    #   .tally-form-cover     { background-color: #220940; height: auto !important; }
+    #   .tally-form-cover img { object-fit: contain !important; max-height: 280px; }
+    #
+    # Tally's default is to scale the cover to the box width and centre-crop, which
+    # on a wide viewport shows only the middle 3/N of a 3:1 image — content this
+    # size gets clipped and renders oversized. Shrink it back to roughly 30% of the
+    # canvas height if that CSS ever comes off.
     margin, gap, rule_w = 120 * S, 50 * S, max(1, int(round(3 * S)))
     fixed = logo_w + gap + rule_w + gap
     title_sz, sub_sz = int(58 * S), int(25 * S)
@@ -132,7 +144,7 @@ def build(out_w=GW * 2, out_h=None):
     draw.rectangle([0, Hp - bar, Wp, Hp], fill=KWETLAL)      # Kwetlal bottom bar
 
     header = header.resize((out_w, out_h), Image.LANCZOS)
-    out = os.path.join(IMG, "tally-header.png")
+    out = os.path.join(OUT_DIR, "header.png")
     header.save(out, optimize=True)
     print("wrote", out, header.size,
           "%.0f KB" % (os.path.getsize(out) / 1024))

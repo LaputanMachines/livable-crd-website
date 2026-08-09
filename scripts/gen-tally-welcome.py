@@ -2,7 +2,7 @@
 """Generate the welcome image for the first page of the Tally questionnaire.
 
 Run from repo root:  python3 scripts/gen-tally-welcome.py
-Output: assets/images/tally-welcome.png  (2800x880)
+Output: assets/tally/welcome.png  (2800x880)
 
 In-form images run the full width of the form, so Tally recommends 1400px;
 this renders 2x that for wide layouts and retina. Pass --width to change it —
@@ -19,6 +19,10 @@ import argparse, importlib.util, os, re
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Every Tally asset lands here, separate from the site's own images.
+OUT_DIR = os.path.join(ROOT, "assets", "tally")
+os.makedirs(OUT_DIR, exist_ok=True)
 
 # gen-fb-banner has a hyphen in its name, so it can't be imported by name.
 _spec = importlib.util.spec_from_file_location(
@@ -81,7 +85,7 @@ def build(out_w=GW * 2, out_h=None):
               font=f_line, fill=INKY, anchor="mm")
 
     img = img.resize((out_w, out_h), Image.LANCZOS)
-    out = os.path.join(fb.IMG, "tally-welcome.png")
+    out = os.path.join(OUT_DIR, "welcome.png")
     img.save(out, optimize=True)
     print("wrote", out, img.size, "%.0f KB" % (os.path.getsize(out) / 1024))
 

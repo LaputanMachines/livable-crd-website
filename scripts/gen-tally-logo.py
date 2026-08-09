@@ -2,7 +2,7 @@
 """Generate the form logo for the Tally candidate questionnaire.
 
 Run from repo root:  python3 scripts/gen-tally-logo.py
-Output: assets/images/tally-logo.png  (512x512; Tally asks for a square, min 200)
+Output: assets/tally/logo.png  (512x512; Tally asks for a square, min 200)
 
 The brand mark in Inky purple #220940 — the base colour of tally-header.png —
 on the site page background #faf9fc ($color-bg), a faint lavender off-white.
@@ -18,6 +18,10 @@ import argparse, importlib.util, os, re
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Every Tally asset lands here, separate from the site's own images.
+OUT_DIR = os.path.join(ROOT, "assets", "tally")
+os.makedirs(OUT_DIR, exist_ok=True)
 
 # gen-fb-banner has a hyphen in its name, so it can't be imported by name.
 _spec = importlib.util.spec_from_file_location(
@@ -69,8 +73,8 @@ def build(size=512, on_inky=False):
     logo.paste(Image.new("RGB", (mw, mh), ink),
                ((size - mw) // 2, (size - mh) // 2), mask)
 
-    out = os.path.join(fb.IMG,
-                       "tally-logo-inky.png" if on_inky else "tally-logo.png")
+    out = os.path.join(OUT_DIR,
+                       "logo-inky.png" if on_inky else "logo.png")
     logo.save(out, optimize=True)
     print("wrote", out, logo.size, "mark %dx%d" % (mw, mh),
           "%.0f KB" % (os.path.getsize(out) / 1024))
