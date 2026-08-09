@@ -26,10 +26,17 @@ import argparse
 import csv
 import sys
 
+import gspread
+
 from aggregate import MASTER, open_sheet
 
 REWORDED = "Reworded Questions"
 FINALIZED = "Finalized Questions"
+
+# Build tracking, ticked by hand as each question goes into the Tally form. Sheet-only:
+# it is deliberately not in FINAL_HEADERS, so it stays out of the CSV that gets
+# imported into Tally, where an empty tracking column would just be noise.
+TRACK_HEADER = "Added To Tally Questionnaire"
 
 ALL = "All municipalities"
 
@@ -953,7 +960,28 @@ def expand(final):
     return rows
 
 
-def write_tab(sh, title, headers, body, widths=None, wrap_from=0):
+def carry_over_ticks(sh):
+    """Ref -> current 'Added To Tally Questionnaire' value, from the existing tab.
+
+    The tab is rebuilt wholesale on every run, so without this a re-run would clear
+    the build tracking - the one column here that holds work the sheet is the only
+    record of. Rows are matched by Ref; a Ref that no longer exists drops its tick,
+    which is the right outcome, since that question is no longer being shipped.
+    """
+    try:
+        ws = sh.worksheet(FINALIZED)
+    except gspread.WorksheetNotFound:
+        return {}
+    values = ws.get_all_values()
+    if not values or TRACK_HEADER not in values[0]:
+        return {}
+    col = values[0].index(TRACK_HEADER)
+    return {row[0].strip(): row[col].strip().upper() == "TRUE"
+            for row in values[1:]
+            if row and row[0].strip() and len(row) > col}
+
+
+def write_tab(sh, title, headers, body, widths=None, wrap_from=0, bool_cols=()):
     """Replace a tab wholesale, as a frozen-header native table."""
     existing = {ws.title: ws for ws in sh.worksheets()}
     meta = sh.fetch_sheet_metadata()
@@ -972,11 +1000,18 @@ def write_tab(sh, title, headers, body, widths=None, wrap_from=0):
 
     ws.update([headers] + body, "A1", value_input_option="RAW")
 
-    reqs = [{"addTable": {"table": {
+    table = {
         "name": title.replace(" ", ""),
         "range": {"sheetId": ws.id, "startRowIndex": 0, "endRowIndex": len(body) + 1,
                   "startColumnIndex": 0, "endColumnIndex": len(headers)},
-    }}}]
+    }
+    # Checkbox columns. Safe to set columnProperties here only because this table is
+    # anchored at column A - see the addTable gotcha in the questionnaire README.
+    if bool_cols:
+        table["columnProperties"] = [
+            {"columnIndex": i, "columnName": headers[i], "columnType": "BOOLEAN"}
+            for i in bool_cols]
+    reqs = [{"addTable": {"table": table}}]
     for i, w in enumerate(widths or []):
         reqs.append({"updateDimensionProperties": {
             "range": {"sheetId": ws.id, "dimension": "COLUMNS",
@@ -1067,14 +1102,21 @@ def main():
             w.writerows(final_body)
         print(f"wrote {args.csv}")
 
+    ticks = carry_over_ticks(sh)
+    if ticks:
+        print(f"{sum(ticks.values())} existing Tally ticks carried over")
+
     if args.dry_run:
         return
 
     write_tab(sh, REWORDED, REWORD_HEADERS, reworded_body,
               widths=[80, 110, 120, 110, 420, 420, 320, 150, 130, 420], wrap_from=4)
-    write_tab(sh, FINALIZED, FINAL_HEADERS, final_body,
-              widths=[110, 120, 120, 460, 460, 170, 200, 140, 70, 130, 380], wrap_from=3)
-    print("done")
+    write_tab(sh, FINALIZED, FINAL_HEADERS + [TRACK_HEADER],
+              [row + [ticks.get(row[0], False)] for row in final_body],
+              widths=[110, 120, 120, 460, 460, 170, 200, 140, 70, 130, 380, 190],
+              wrap_from=3, bool_cols=[len(FINAL_HEADERS)])
+    print(f"done ({sum(1 for r in final_body if ticks.get(r[0]))} rows already "
+          f"ticked as added to Tally)")
 
 
 REWORD_HEADERS = [

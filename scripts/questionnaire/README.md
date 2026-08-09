@@ -177,8 +177,19 @@ never restated in the script — that's what keeps submitter emails out of this 
 `--csv` writes the same rows to a path of your choosing; send it somewhere outside the
 repo for the same reason.
 
+`Finalized Questions` carries one hand-maintained column, **`Added To Tally Questionnaire`**
+— a checkbox ticked as each question goes into the Tally form. It is the only thing on
+either tab that isn't generated, so `finalize.py` reads the existing ticks back before it
+clears the tab and re-applies them by `Ref`. A question whose `Ref` changed, or that has
+stopped shipping, comes back unticked. The column is sheet-only: `--csv` omits it, since
+an empty tracking column is noise in a Tally import.
+
 Both tabs are rebuilt wholesale on every run, and nothing else reads them, so this is
 safe to re-run at any time. It never touches the master or any voter tab.
+
+Re-running does **not** fold in new votes. `FINAL` is hand-authored, so grading that
+lands after it was written changes nothing until someone edits it — compare the master's
+`Status` column against the shipping set to see where the two have diverged.
 
 It aborts if an origin ID in `FINAL` is missing from the master. Every one of the master's
 questions must appear either in a `FINAL` row's `origins` or in `DROPPED`; the tabs are not
