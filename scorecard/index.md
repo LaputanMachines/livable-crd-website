@@ -449,6 +449,14 @@ description: >-
         Candidates will have an opportunity to review their published responses before
         grades are finalized, consistent with fair voter-information practices.
       </p>
+
+      <p>
+        Responses are published as written. The one exception is set out in our
+        <a href="{{ '/code-of-conduct/' | relative_url }}">questionnaire code of conduct</a>:
+        hateful, harassing, or threatening content is neither graded nor published.
+        Disagreeing with the coalition is not covered by that — a low grade and a
+        conduct decision are separate things, decided separately.
+      </p>
     </div>
   </details>
 
