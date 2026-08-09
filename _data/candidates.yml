@@ -409,6 +409,13 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Eugene Tseng
+  display_name: "Tseng, Eugene"
+  municipality: colwood
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Ian Ward
   display_name: "Ward, Ian"
   municipality: colwood
