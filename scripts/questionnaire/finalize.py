@@ -916,7 +916,10 @@ def expand(final):
                     "address this infrastructure funding gap? Select up to two.")
             note = ""
         else:
-            body = ("Which approaches would you prioritise to address your municipality's "
+            # Still names the municipality. Tally exports one CSV column per block, headed
+            # by the question text, so eight identically-worded blocks would export as
+            # eight indistinguishable columns.
+            body = (f"Which approaches would you prioritise to address {muni}'s "
                     "infrastructure funding gap? Select up to two.")
             note = (f"FIGURE NEEDED for {muni} - add it to INFRA_FIGURES in finalize.py "
                     "and re-run. This generic version ships in the meantime so the "
