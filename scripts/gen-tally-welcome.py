@@ -5,11 +5,11 @@ Run from repo root:  python3 scripts/gen-tally-welcome.py
 Output: assets/tally/welcome.png  (2800x880)
 
 In-form images run the full width of the form, so Tally recommends 1400px;
-this renders 2x that for wide layouts and retina. Pass --width to change it —
+this renders 2x that for wide layouts and retina. Pass --width to change it:
 the layout is a 1400x440 grid scaled to fit, so composition is size-independent.
 
 Deliberately plain: the page background #faf9fc, the colour brand lockup, and
-one line of Inky #220940 Lexend. No texture, no gradient, no second heading —
+one line of Inky #220940 Lexend. No texture, no gradient, no second heading: 
 the cover already carries the title, and this sits directly above the intro
 copy, where anything busier competes with the text the candidate has to read.
 

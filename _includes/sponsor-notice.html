@@ -8,7 +8,7 @@
     class - extra class names on the wrapper (e.g. "sponsor-notice--footer")
 {%- endcomment -%}
 {%- if site.sponsor.registered -%}
-{%- comment -%} An unset number is "" in YAML, which Liquid treats as truthy — normalize first. {%- endcomment -%}
+{%- comment -%} An unset number is "" in YAML, which Liquid treats as truthy; normalize first. {%- endcomment -%}
 {%- assign sponsor_reg = site.sponsor.registration_number | default: "" | strip -%}
 {%- assign sponsor_guide = site.sponsor.guide_url | default: "" | strip -%}
 <p class="sponsor-notice{% if include.class %} {{ include.class }}{% endif %}">
@@ -20,7 +20,7 @@
   {%- comment -%}
     Point at the regulator's own explainer rather than only asserting the
     status. New tab because this is a reference consulted alongside the page,
-    not a destination, and it is a PDF — which the label says out loud so nobody
+    not a destination, and it is a PDF, which the label says out loud so nobody
     is surprised by a download.
   {%- endcomment -%}
   {%- if sponsor_guide != "" %}

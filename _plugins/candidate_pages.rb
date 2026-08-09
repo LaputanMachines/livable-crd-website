@@ -10,7 +10,7 @@
 #
 # This file runs because .github/workflows/deploy.yml builds the site with
 # `bundle exec jekyll build` rather than handing the repo to GitHub Pages' own
-# builder — the latter runs Jekyll in safe mode and silently ignores _plugins/.
+# builder: the latter runs Jekyll in safe mode and silently ignores _plugins/.
 module LivableCrd
   # A page Jekyll writes straight from `data`; there is no source file on disk.
   # `index.html` inside a per-candidate directory gives the pretty URL the rest
@@ -39,7 +39,7 @@ module LivableCrd
 
       # Slate stays out of that line and gets its own labelled one in the
       # template. Dropped into the middots it read as a fourth attribute of the
-      # same kind as the standing beside it — "Newcomer · Sooke First" gives a
+      # same kind as the standing beside it: "Newcomer · Sooke First" gives a
       # reader no way to tell that the last part is an electoral organization.
       # Normalized to nil here because a blank sheet cell arrives as "".
       slate = candidate["slate"].to_s.strip
@@ -47,16 +47,16 @@ module LivableCrd
       data["slate_class"] = slate.empty? ? nil : slate_class
 
       # jekyll-seo-tag renders `title` as "<title> | Livable CRD", so qualify the
-      # name here — a bare "Jane Doe" is meaningless in a search result, and two
+      # name here: a bare "Jane Doe" is meaningless in a search result, and two
       # candidates in different municipalities would be indistinguishable.
-      data["title"] = office ? "#{name} — #{office}, #{municipality_name}" : "#{name} — #{municipality_name}"
+      data["title"] = office ? "#{name}, #{office}, #{municipality_name}" : "#{name}, #{municipality_name}"
       data["description"] = description_for(name, office, municipality_name)
 
       # og:image intentionally falls through to the site-wide default set in
       # _config.yml's `defaults:`. A per-candidate share card is out of scope:
       # it needs 66 rendered images and there is no image pipeline in this
-      # build. Once one exists, setting `data["image"]` here — same
-      # {path,width,height,alt} shape as the default — is all seo-tag needs.
+      # build. Once one exists, setting `data["image"]` here (same
+      # {path,width,height,alt} shape as the default) is all seo-tag needs.
     end
 
     private
@@ -85,7 +85,7 @@ module LivableCrd
       return unless candidates.is_a?(Array)
 
       # Published so scorecard/index.md can colour its rows from the same map
-      # these pages use. Computing it twice — once here, once in Liquid — is how
+      # these pages use. Computing it twice (once here, once in Liquid) is how
       # the two would drift into disagreeing about which slate is which colour.
       site.data["slate_classes"] = slate_classes(candidates)
 
@@ -108,7 +108,7 @@ module LivableCrd
           next
         end
 
-        # A non-empty name can still slugify to nothing — "—" or "???" survive
+        # A non-empty name can still slugify to nothing: "—" or "???" survive
         # .strip but reduce to "". That would build the page at .../<muni>//,
         # i.e. the municipality directory itself, and scorecard/index.md would
         # link somewhere that does not exist. The template suppresses the link
@@ -126,7 +126,7 @@ module LivableCrd
         # render to the same path and the later one would win silently. Warn
         # rather than disambiguate: the URL stays purely derived from the data,
         # which is what lets scorecard/index.md rebuild the same href in Liquid.
-        log_data_warning("duplicate candidate URL /#{dir}/ — a later entry overwrites an earlier one") if seen.key?(dir)
+        log_data_warning("duplicate candidate URL /#{dir}/: a later entry overwrites an earlier one") if seen.key?(dir)
         seen[dir] = true
 
         municipality = municipalities[muni_slug]

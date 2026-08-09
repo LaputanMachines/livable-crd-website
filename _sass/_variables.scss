@@ -5,9 +5,9 @@ $livable-purple: #5c18a4;
 $kwetlal-purple: #d5adff;
 $inky-purple:    #220940;
 
-// Neutrals — faint cool/lavender tints so they sit in the purple family.
+// Neutrals: faint cool/lavender tints so they sit in the purple family.
 $color-bg: #faf9fc;        // page background
-$color-bg-warm: #f3edfb;   // soft lavender surface (alt sections, hovers) — name kept for compatibility
+$color-bg-warm: #f3edfb;   // soft lavender surface (alt sections, hovers), name kept for compatibility
 $color-surface: #ffffff;
 $color-text: $inky-purple; // body text + heavy borders read as deep "ink" purple
 $color-muted: #564a66;     // muted aubergine-grey for secondary text
@@ -31,7 +31,7 @@ $grade-b: #2d6a9f;
 $grade-c: #b8860b;
 $grade-f: #c41e3a;
 
-// Lexend is the Livable CRD brand typeface (Google Fonts). Used throughout —
+// Lexend is the Livable CRD brand typeface (Google Fonts). Used throughout:
 // uppercase Lexend headings echo the "LIVABLE CRD" logo wordmark.
 $font-sans: "Lexend", system-ui, -apple-system, sans-serif;
 $font-display: "Lexend", system-ui, sans-serif;

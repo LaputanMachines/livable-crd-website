@@ -5,7 +5,7 @@
   to how a date is marked up lands in both places at once.
 
   Dates come from _data/deadlines.yml and are sorted here rather than trusting
-  the file's order — the timeline reads as a schedule and an entry added out of
+  the file's order: the timeline reads as a schedule and an entry added out of
   order would be a silently wrong one.
 
   Params:
@@ -35,7 +35,7 @@
   {%- for d in deadline_items -%}
   {%- comment -%}
     A date in the data file parses to midnight UTC, but a deadline runs to the
-    end of its day here — so add 24 hours to reach end of day, then 8 more
+    end of its day here, so add 24 hours to reach end of day, then 8 more
     (PST, the larger of the two Pacific offsets) so the flip can never land
     before local midnight. In PDT that makes it an hour late, which is the safe
     direction: better to still show a deadline as open for an hour after it

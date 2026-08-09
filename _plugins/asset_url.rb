@@ -2,29 +2,29 @@
 
 require "digest"
 
-# `asset_url` — relative_url plus a content hash, so a deployed asset can never
+# `asset_url`: relative_url plus a content hash, so a deployed asset can never
 # be served stale.
 #
 # Why this exists: the site sits behind Cloudflare, which caches .js and .css at
 # the edge for four hours (max-age=14400) while HTML is served DYNAMIC with a ten
 # minute max-age. After a deploy that skew means new HTML can be paired with an
-# asset from the previous build. That is not theoretical — it shipped a scorecard
+# asset from the previous build. That is not theoretical: it shipped a scorecard
 # whose HTML had the slate controls while the cached scorecard.js was the version
 # before slates existed, so the markup was there and nothing revealed it.
 #
 # Appending a hash of the file's contents puts each version at its own URL.
 # Cloudflare's cache key includes the query string, so a changed file is a cache
-# miss and an unchanged one keeps its cache — which is the reason for hashing
+# miss and an unchanged one keeps its cache, which is the reason for hashing
 # content rather than stamping site.time: the nightly data-only sync rebuilds the
 # site without touching the scripts, and there is no reason for every reader to
 # re-download them because a candidate's name changed.
 #
 # Handles both kinds of asset the site serves:
 #
-#   Static files (the scripts) — the source file IS the deployed file, so its own
+#   Static files (the scripts): the source file IS the deployed file, so its own
 #   contents are the hash.
 #
-#   Compiled stylesheets (/assets/css/main.css) — no such file exists in the
+#   Compiled stylesheets (/assets/css/main.css): no such file exists in the
 #   source. It is built from assets/css/main.scss plus the partials in _sass/, so
 #   hashing "the file" is impossible and hashing only main.scss would miss every
 #   change made in a partial, which is the common case. Instead the whole input
@@ -34,8 +34,8 @@ require "digest"
 # real output would mean reaching into Jekyll's converted pages mid-render, whose
 # ordering is not guaranteed. The input set is cheap and deterministic, and it
 # fails in the safe direction: every change that can alter the CSS changes the
-# hash. The cost is the occasional needless bust — editing a `//` comment in a
-# partial changes an input without changing the output — which costs one
+# hash. The cost is the occasional needless bust: editing a `//` comment in a
+# partial changes an input without changing the output, which costs one
 # re-download of one file.
 module LivableCrd
   module AssetUrl

@@ -5,7 +5,7 @@
 </head>
 {%- comment -%}
   `page.body_class` lets a page opt into styling that has to reach outside
-  <main> — the candidate leaflet's print rules hide the site header and footer,
+  <main>: the candidate leaflet's print rules hide the site header and footer,
   and scoping them to a body class keeps them off every other printed page.
 {%- endcomment -%}
 <body class="{% if page.url == '/' %}page-home{% else %}page-inner{% endif %}{% if page.body_class %} {{ page.body_class }}{% endif %}">

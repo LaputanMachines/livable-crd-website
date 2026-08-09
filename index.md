@@ -39,7 +39,7 @@ description: >-
   --under-hero, not --alt: the two carry the same background, but --alt also
   draws a top border, and the hero already closes with a heavy one. The
   modifier names the slot rather than the content because the alternating
-  background belongs to the position on the page — whatever section is put
+  background belongs to the position on the page: whatever section is put
   here next keeps the rhythm by keeping the class.
 {%- endcomment -%}
 <section class="section section--under-hero">
@@ -61,7 +61,7 @@ description: >-
 {%- comment -%}
   The schedule comes early, straight after the explanation of what the project
   is: it is the only thing on this page that expires, and the readers who have
-  to act on it — candidates — mostly arrive from a link rather than scrolling
+  to act on it (candidates) mostly arrive from a link rather than scrolling
   the whole homepage.
 
   One timeline rather than a block of coalition milestones and a block of

@@ -31,7 +31,7 @@ description: >-
   poll until it exists, then:
     1. Force every "Opt in to email updates" checkbox checked and hide its row
        (this is a mailing-list signup, so consent is implicit).
-    2. Strip Action Network branding — the logo image and the "Action by" /
+    2. Strip Action Network branding: the logo image and the "Action by" /
        "Sponsored by" credit lines. These have no stable class names, so we match
        the logo by image src and the credit block by its text content.
 {% endcomment %}
@@ -48,7 +48,7 @@ description: >-
         if (row) { row.style.display = 'none'; }
       });
 
-      // 2a. Action Network logo — image (any host), wordmark alt, or logo link.
+      // 2a. Action Network logo: image (any host), wordmark alt, or logo link.
       form.querySelectorAll(
         'img[src*="actionnetwork"], img[src*="action_network"], ' +
         'img[alt*="action network" i], a[href*="actionnetwork.org"]'
@@ -63,11 +63,11 @@ description: >-
       });
 
       // 2c. Country field: this is a CRD-only list, so country is always Canada
-      // (Action Network records it server-side). Hide the whole country UI — the
+      // (Action Network records it server-side). Hide the whole country UI: the
       // <select> and its container, plus the "Not in <country>?" toggle link.
       var country = form.querySelector('select');
       if (country) {
-        // Hide the select's immediate parent (the small country wrapper) — not
+        // Hide the select's immediate parent (the small country wrapper), not
         // an ancestor <div>, which wraps every field and would hide the form.
         (country.parentNode || country).style.display = 'none';
       }

@@ -5,7 +5,7 @@ Run from repo root:  python3 scripts/gen-tally-header.py
 Output: assets/tally/header.png  (3000x1000 by default)
 
 Tally asks for a cover "at least 1500 pixels wide" and states no upper bound,
-and the cover's aspect ratio changes with the window width — so this renders at
+and the cover's aspect ratio changes with the window width, so this renders at
 2x that minimum and keeps the content in a centred band that survives the crop.
 Pass --width to change it; the layout is a 1500x500 grid scaled to fit, so the
 composition is identical at any size.
@@ -62,7 +62,7 @@ def background(Wp, Hp, S):
     img = Image.alpha_composite(img, tex)
 
     # Both overlays are smooth gradients, so build them small and let LANCZOS
-    # do the interpolation — a per-pixel loop at 6000x2000 costs ~40s for an
+    # do the interpolation: a per-pixel loop at 6000x2000 costs ~40s for an
     # identical result.
     gw, gh = 120, 60
     dov = Image.new("L", (1, gh)); dp = dov.load()
@@ -103,7 +103,7 @@ def build(out_w=GW * 2, out_h=None):
     #   .tally-form-cover img { object-fit: contain !important; max-height: 280px; }
     #
     # Tally's default is to scale the cover to the box width and centre-crop, which
-    # on a wide viewport shows only the middle 3/N of a 3:1 image — content this
+    # on a wide viewport shows only the middle 3/N of a 3:1 image: content this
     # size gets clipped and renders oversized. Shrink it back to roughly 30% of the
     # canvas height if that CSS ever comes off.
     margin, gap, rule_w = 120 * S, 50 * S, max(1, int(round(3 * S)))

@@ -13,15 +13,15 @@ it. Canvas height follows the row count, so every set shares one set of metrics.
 `categories` is the ten graded topics, read from _data/subjects.yml so the
 graphic and the scorecard can't drift apart. The other three have no entry
 there and define their icons inline below: `housekeeping` is the internal
-block (HK-01, HK-02) — never scored, never published bar one answer —
+block (HK-01, HK-02), never scored, never published bar one answer; 
 `info` is the pre-start briefing, and `conduct` summarises the code of
 conduct page.
 
 The icons need a *stroke* renderer, which gen-fb-banner.py's fill rasteriser
 doesn't do: they're 24x24 Feather-style outlines (`stroke="currentColor"`,
 round caps and joins) built from arcs and circles the fill parser doesn't
-handle either. So this file carries its own small path parser — arcs and
-circles included — and strokes the flattened polylines with Pillow at 4x,
+handle either. So this file carries its own small path parser (arcs and
+circles included) and strokes the flattened polylines with Pillow at 4x,
 then downsamples. Only the palette and the Lexend loader come from
 gen-fb-banner.py.
 """
@@ -56,7 +56,7 @@ CATEGORIES = ["General", "Walking", "Rolling & cycling", "Transit", "Housing",
               "Governance"]
 LABELS = {"All categories / General": "General"}   # full name is too long to set
 
-# The Housekeeping block — HK-01 and HK-02 in finalize.py. It's the internal
+# The Housekeeping block: HK-01 and HK-02 in finalize.py. It's the internal
 # category: neither question is graded, and only "why you're running" is ever
 # published. It has no entry in subjects.yml and no icon in assets/images/icons,
 # by design, so its icons are inline here rather than added to the site's set,
@@ -328,7 +328,7 @@ def render_icon(svg, size, stroke=2.0, ss=SS):
 
 # ============================== compose ==================================
 def items_for(which):
-    """[(label, svg source)] for a set — subject icons come off disk."""
+    """[(label, svg source)] for a set; subject icons come off disk."""
     if which == "housekeeping":
         return list(HOUSEKEEPING)
     if which == "info":

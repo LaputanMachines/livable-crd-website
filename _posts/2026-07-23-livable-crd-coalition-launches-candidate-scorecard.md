@@ -9,7 +9,7 @@ description: >-
 
 **FOR IMMEDIATE RELEASE**
 
-**Victoria, BC, July 23, 2026** — A coalition of community organizations from
+**Victoria, BC, July 23, 2026**. A coalition of community organizations from
 across the Capital Regional District today announced the launch of Livable CRD,
 a non-partisan voter-engagement project. The group will publish a candidate
 scorecard and questionnaire for the region's municipal elections, with the goal

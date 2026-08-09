@@ -353,7 +353,7 @@ main {
 .page-content {
   flex: 1 1 auto;
   // main is a flex column and .container uses margin:0 auto, so without a
-  // definite cross size this flex item sizes to its widest content — defeating
+  // definite cross size this flex item sizes to its widest content, defeating
   // inner overflow-x:auto scrollers (e.g. methodology tables) and overflowing
   // on mobile. width:100% pins it to the viewport; max-width still caps desktop.
   width: 100%;
@@ -555,7 +555,7 @@ main {
 }
 
 // The first section after the hero. Carries the same alternating background as
-// .section--alt but no top border — .hero already closes with a heavy one, and
+// .section--alt but no top border: .hero already closes with a heavy one, and
 // two rules stacked read as a mistake. Named for the slot, not its contents,
 // so reordering the homepage keeps the background rhythm intact.
 .section--under-hero {
@@ -673,7 +673,7 @@ main {
     }
   }
 
-  // Flatten grouped items into a single flat hamburger list — no hierarchy.
+  // Flatten grouped items into a single flat hamburger list, no hierarchy.
   // The group labels ("Support", "About", "Contact") are dropped and their
   // links surface directly alongside the top-level items.
   .nav-group-label { display: none; }

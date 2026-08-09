@@ -1,7 +1,7 @@
 name: Sync candidates from Google Sheet
 
 # Pulls the coalition candidate-tracking sheet (CSV) daily, regenerates
-# _data/candidates.yml, and — only if it changed — commits to main and redeploys.
+# _data/candidates.yml, and (only if it changed) commits to main and redeploys.
 # The bot commit uses GITHUB_TOKEN, which does NOT re-trigger jekyll.yml's
 # `on: push`, so we deploy explicitly via the reusable workflow.
 

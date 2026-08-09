@@ -4,7 +4,7 @@
 # This file is OPTIONAL and is not an allowlist. The sheet's own text is the
 # canonical label: scripts/sync-candidates.py publishes whatever the Slate
 # column says, and only consults this file for a tidier label. A slate with no
-# entry here logs a warning and is published as written — new electoral
+# entry here logs a warning and is published as written: new electoral
 # organizations appear mid-campaign, and failing the daily sync until someone
 # edited this repo would stall the whole site over a cosmetic gap.
 #
@@ -15,7 +15,7 @@
 #                               # of non-alphanumerics
 #     label: Together Victoria   # what the scorecard shows instead
 #
-# `id` must match the slugified form of the sheet text, not the label — that is
+# `id` must match the slugified form of the sheet text, not the label; that is
 # what the script looks up. An entry with no `label` marks a slate as known
 # (silencing the warning) while still publishing the sheet's text.
 #

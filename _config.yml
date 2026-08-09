@@ -44,14 +44,14 @@ sponsor:
   # Elections BC's own explainer for third-party sponsors, linked from the notice
   # so a reader can check what the registration actually obliges us to do instead
   # of taking our sentence for it. `guide_label` is the document's exact title as
-  # printed on its cover — if Elections BC reissues it under a new name, change
+  # printed on its cover; if Elections BC reissues it under a new name, change
   # both together. Blank `guide_url` to drop the sentence site-wide.
   guide_url: "https://elections.bc.ca/docs/lecfa/guide-for-local-elections-third-party-sponsors-in-bc.pdf"
   guide_label: "Guide for Local Elections Third Party Sponsors in B.C."
 
 # Feature flags
 # Render coalition partner logos on the homepage. Disabled for now; the logo
-# files and `logo:` entries in _data/partners.yml are kept — flip to true to
+# files and `logo:` entries in _data/partners.yml are kept; flip to true to
 # re-enable. (Changing this requires restarting `jekyll serve`.)
 partner_logos: false
 

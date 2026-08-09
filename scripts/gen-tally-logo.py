@@ -4,7 +4,7 @@
 Run from repo root:  python3 scripts/gen-tally-logo.py
 Output: assets/tally/logo.png  (512x512; Tally asks for a square, min 200)
 
-The brand mark in Inky purple #220940 — the base colour of tally-header.png —
+The brand mark in Inky purple #220940 (the base colour of tally-header.png) 
 on the site page background #faf9fc ($color-bg), a faint lavender off-white.
 Icon only: the wordmark is unreadable once Tally crops to a circle.
 

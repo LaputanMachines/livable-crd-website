@@ -59,7 +59,7 @@ jobs:
           SIZE=$(wc -c < "$CSS_FILE")
           echo "main.css size: $SIZE bytes"
           if [ "$SIZE" -lt 1000 ]; then
-            echo "Sass did not compile — output looks like:"
+            echo "Sass did not compile. Output looks like:"
             head -5 "$CSS_FILE"
             exit 1
           fi

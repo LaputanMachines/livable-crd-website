@@ -1,8 +1,8 @@
 // Scorecard matrix: client-side search (by name or slate) + filters (minimum
-// grade, office, municipality). Progressive enhancement — without JS, all
+// grade, office, municipality). Progressive enhancement: without JS, all
 // candidate rows remain visible.
 (function () {
-  // Open a collapsed <details> panel when it — or an element inside it — is the
+  // Open a collapsed <details> panel when it (or an element inside it) is the
   // link target. Covers #methodology, #who-grades, #categories, and the
   // #category-<id> rows the homepage topic cards deep-link to. Without this,
   // jumping to an anchor inside a closed <details> scrolls to hidden content.
@@ -78,7 +78,7 @@
       // Slate is searched rather than filtered by pills (see scorecard/index.md),
       // so it shares the query with the name: typing "sooke first" narrows to
       // that slate, and a slate name can never collide with a person's name in
-      // a way that matters — both are things a reader might reasonably type.
+      // a way that matters: both are things a reader might reasonably type.
       var nameOk = query === '' ||
         (row.getAttribute('data-name') || '').indexOf(query) !== -1 ||
         (row.getAttribute('data-slate') || '').indexOf(query) !== -1;
@@ -95,7 +95,7 @@
 
     // Empty municipalities exist to show the region is fully covered, so they
     // stay put in the default view. Once the reader narrows by name, grade, or
-    // office they are only noise — nothing in them could ever match — so drop
+    // office they are only noise (nothing in them could ever match) so drop
     // them. The municipality filter still applies: picking one keeps only it.
     // Topic is excluded because it does nothing on its own, only alongside grade.
     var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all';
@@ -159,10 +159,10 @@
   // The controls ship hidden and are revealed here because the tint needs this
   // script: an unchecked box that could never do anything is worse than no box.
   //
-  // Independent of every filter above — highlighting changes how rows look, not
-  // which rows show — so it deliberately does not touch apply().
+  // Independent of every filter above: highlighting changes how rows look, not
+  // which rows show, so it deliberately does not touch apply().
   // Only the checkbox is revealed here. Each municipality's slate legend renders
-  // visible from the start — which slates are running there is worth knowing
+  // visible from the start: which slates are running there is worth knowing
   // whether or not the reader wants the rows coloured, and it needs no script.
   var slateToggles = Array.prototype.slice.call(document.querySelectorAll('[data-slate-toggle]'));
   slateToggles.forEach(function (toggle) {
@@ -190,7 +190,7 @@
   // That script moves rows between tbodies at runtime (into and out of the
   // pinned favourites group, which is an ordinary candidate group as far as
   // everything above is concerned). Every decision in apply() is recomputed
-  // from the DOM, so it stays correct across a move — but only if something
+  // from the DOM, so it stays correct across a move, but only if something
   // re-runs it, and only this file may decide what "visible" means.
   //
   // Deliberately one-way and event-shaped: nothing here knows what a favourite

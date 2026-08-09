@@ -13,7 +13,7 @@ Lexend installed. SVG stays sharp at any print size.
 Deps: segno (pip install segno). No system tools required.
 
 The committed PNG versions (assets/promo/*.png, 300dpi letter) are rendered from
-these SVGs with headless Chrome — regenerate after editing:
+these SVGs with headless Chrome; regenerate after editing:
   for f in poster-dark poster-light; do
     "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless \
       --disable-gpu --force-device-scale-factor=3 --window-size=850,1100 \
@@ -34,9 +34,9 @@ OUT = os.path.join(ROOT, "assets", "promo")
 URL = "https://livablecrd.ca"
 
 # ---- brand palette (from _sass/_variables.scss) -------------------------
-INKY = "#220940"      # Inky Purple  — deep background
-PURPLE = "#5C18A4"    # Livable Purple — primary brand colour
-KWETLAL = "#D5ADFF"   # Kwetlal Purple — light accent
+INKY = "#220940"      # Inky Purple, deep background
+PURPLE = "#5C18A4"    # Livable Purple, primary brand colour
+KWETLAL = "#D5ADFF"   # Kwetlal Purple, light accent
 WHITE = "#FFFFFF"
 BG_LIGHT = "#FAF9FC"  # site page background
 

@@ -3,14 +3,14 @@ layout: page
 title: Contact
 permalink: /contact/
 description: >-
-  Get in touch with Livable CRD. Email hello@livablecrd.ca — the best way to
+  Get in touch with Livable CRD. Email hello@livablecrd.ca, the best way to
   reach our non-partisan voter-education coalition covering Capital Regional
   District municipal elections.
 ---
 
 <p>
   <strong>Email is the best way to reach us.</strong> Livable CRD is a coalition
-  run by volunteers, so we do not staff a phone line or a mailing address — but
+  run by volunteers, so we do not staff a phone line or a mailing address, but
   our inbox is read by real people, and it is the fastest way to get a real
   answer.
 </p>
@@ -24,7 +24,7 @@ description: >-
 
 <h2>What to write to us about</h2>
 <p>
-  Anything, genuinely — but these come up most often, and all of them are
+  Anything, genuinely. But these come up most often, and all of them are
   welcome:
 </p>
 <ul>
@@ -52,7 +52,7 @@ description: >-
     and development all need hands.
   </li>
   <li>
-    <strong>Questions about our methodology</strong> — how grades are assigned and
+    <strong>Questions about our methodology</strong>: how grades are assigned and
     who assigns them is documented in our
     <a href="{{ '/scorecard/#methodology' | relative_url }}">published methodology</a>.
   </li>

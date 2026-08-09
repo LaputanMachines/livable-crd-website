@@ -22,7 +22,7 @@ description: >-
   </p>
 
   <div class="status-banner">
-    <p><strong>This list grows as candidates come forward.</strong> Candidates are added once they publicly announce their candidacy. Our volunteers track every announcement across the region as best we can, but mistakes happen — if a candidate is missing or listed incorrectly, <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">email us at {{ site.email }}</a>. More on <a href="#how-candidates-are-added">how candidates get added</a>.</p>
+    <p><strong>This list grows as candidates come forward.</strong> Candidates are added once they publicly announce their candidacy. Our volunteers track every announcement across the region as best we can, but mistakes happen: if a candidate is missing or listed incorrectly, <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">email us at {{ site.email }}</a>. More on <a href="#how-candidates-are-added">how candidates get added</a>.</p>
   </div>
 
   {%- comment -%}
@@ -93,7 +93,7 @@ description: >-
       candidates run unaffiliated, so the pills would cover a small minority of
       rows while every reader paid the vertical space. And because a blank slate
       is "the sheet does not say" rather than "independent", there is no honest
-      pill for the majority — selecting any slate would silently hide most of
+      pill for the majority: selecting any slate would silently hide most of
       the region.
     {%- endcomment -%}
     <div class="scorecard-filtergroup">
@@ -135,7 +135,7 @@ description: >-
       {% comment %}
         Favourites: a pinned group above every municipality, filled at runtime by
         assets/js/favourites.js, which MOVES rows here out of the municipality
-        groups below (never copies them — a copy would count twice in
+        groups below (never copies them; a copy would count twice in
         #candidate-count and be filtered twice).
 
         Ships empty and `hidden` on purpose. Without JS there is nothing to pin,
@@ -143,7 +143,7 @@ description: >-
         is not there. The same rule holds once the script is running: with no
         favourites saved the group stays hidden rather than carrying a "click a
         star to pin someone" hint, because the stars are already visible on
-        every row of the table — the hint would be a permanent second copy of an
+        every row of the table: the hint would be a permanent second copy of an
         affordance the reader can see. Hiding it needs no extra code either: the
         group has no data-empty attribute, so scorecard.js treats it like any
         other candidate group and hides it whenever no visible row is inside.
@@ -163,7 +163,7 @@ description: >-
       </tbody>
       {% comment %}
         Every municipality and electoral area gets a heading, including those with
-        no confirmed candidates yet — an absent heading reads as an oversight
+        no confirmed candidates yet: an absent heading reads as an oversight
         rather than as "nobody has announced here". Empty groups are marked
         data-empty so the filter script can hide them once a search or filter
         narrows the view.
@@ -175,7 +175,7 @@ description: >-
             <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head">
               {%- comment -%}
                 The municipality name and its slate block sit on one flex row, so
-                they share a vertical centre — as bare text beside an inline-flex
+                they share a vertical centre; as bare text beside an inline-flex
                 box they aligned on mismatched baselines instead.
 
                 The flex row is this inner span and not the <th>: giving a table
@@ -196,8 +196,8 @@ description: >-
                   useful whether or not anyone wants the rows coloured, and it
                   needs no scripting, so it renders for a reader without JS too.
 
-                  The checkbox is the part that needs JS — it applies a class the
-                  script toggles — so it alone ships `hidden` and is revealed by
+                  The checkbox is the part that needs JS (it applies a class the
+                  script toggles), so it alone ships `hidden` and is revealed by
                   assets/js/scorecard.js, the same contract as the favourite star.
 
                   Highlighting is off by default: most candidates run
@@ -242,8 +242,8 @@ description: >-
           {% endif %}
           {% for c in mc %}
           {%- comment -%}
-            The candidate's slug is used twice below — in the deep link and in
-            data-candidate — so it is derived once, here, before the row opens.
+            The candidate's slug is used twice below: in the deep link and in
+            data-candidate, so it is derived once, here, before the row opens.
           {%- endcomment -%}
           {%- assign cand_slug = c.name | slugify -%}
           {%- assign cand_display = c.display_name | default: c.name -%}
@@ -281,7 +281,7 @@ description: >-
                     The plugin skips any name that slugifies to nothing (a name of
                     only punctuation clears .strip but not slugify), so there would
                     be no page to point at. Fall back to plain text on the same
-                    condition rather than emitting a link that 404s — the row still
+                    condition rather than emitting a link that 404s: the row still
                     shows the candidate, it just is not clickable.
                   {%- endcomment -%}
                   {%- if cand_slug != '' -%}
@@ -307,7 +307,7 @@ description: >-
                     Office, standing and slate are each independently optional,
                     so the middots are placed by collecting whichever parts
                     exist and joining them, rather than by enumerating the
-                    combinations — three optional parts is seven branches, and
+                    combinations: three optional parts is seven branches, and
                     the old two-part version was already the whole conditional.
 
                     Captured with "|" and split because Liquid has no array
@@ -331,7 +331,7 @@ description: >-
                   and a pinned row is already tall enough to hold both because
                   its name has wrapped.
 
-                  This wrapper is also where the reorder handle lands —
+                  This wrapper is also where the reorder handle lands:
                   favourites.js inserts it after the star, within whatever the
                   star's parent happens to be, so it follows this element.
                 {%- endcomment -%}
@@ -372,7 +372,7 @@ description: >-
   </div>
 
   {%- comment -%}
-    Pinning and reordering happen inside a table with no visible confirmation —
+    Pinning and reordering happen inside a table with no visible confirmation:
     a sighted reader watches the row jump, a screen-reader user gets nothing.
     This is where assets/js/favourites.js narrates those moves. Separate from
     #candidate-count above because that region is owned by the filter script and
@@ -454,7 +454,7 @@ description: >-
         Responses are published as written. The one exception is set out in our
         <a href="{{ '/code-of-conduct/' | relative_url }}">questionnaire code of conduct</a>:
         hateful, harassing, or threatening content is neither graded nor published.
-        Disagreeing with the coalition is not covered by that — a low grade and a
+        Disagreeing with the coalition is not covered by that: a low grade and a
         conduct decision are separate things, decided separately.
       </p>
     </div>
@@ -510,8 +510,8 @@ description: >-
         office across the Capital Regional District. A candidate's entry starts out
         internal to that sheet, and is marked <strong>confirmed</strong> only once they
         have <strong>publicly announced their candidacy</strong>. This page is generated
-        from the confirmed entries, so a name appears here after that public announcement
-        — not before.
+        from the confirmed entries, so a name appears here after that public announcement,
+        not before.
       </p>
       <p>
         <strong>Every candidate is included in the Livable CRD project.</strong> We do not
@@ -523,7 +523,7 @@ description: >-
         If someone is missing, the most likely explanation is simply that we haven't
         updated their status on our back end yet. Tracking every announcement across
         thirteen municipalities and three electoral areas is volunteer work, and
-        announcements do not arrive in a tidy list — so gaps happen.
+        announcements do not arrive in a tidy list, so gaps happen.
       </p>
       <p>
         We genuinely welcome comments and suggestions from the public. If you know of a
@@ -537,7 +537,7 @@ description: >-
 
   {%- comment -%}
     Every date below comes from _data/deadlines.yml, including the ones quoted
-    mid-sentence — writing "September 11" into the prose would be a second copy
+    mid-sentence: writing "September 11" into the prose would be a second copy
     to keep in sync with the list right above it.
   {%- endcomment -%}
   {%- assign print_cutoff = site.data.deadlines | where: "id", "print-cutoff" | first -%}
@@ -574,7 +574,7 @@ description: >-
       <h2>What happens to a candidate who does not respond</h2>
       <p>
         A missed deadline never removes anyone from this scorecard. Every confirmed
-        candidate stays listed with their row intact — their topic grades simply
+        candidate stays listed with their row intact; their topic grades simply
         stay pending. We do not treat silence as a failing grade, and we do not
         drop the candidate from the list. See
         <a href="#how-candidates-are-added">how candidates get added</a> for why the

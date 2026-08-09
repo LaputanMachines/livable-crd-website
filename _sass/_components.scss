@@ -482,7 +482,7 @@ tr:hover td { background: $color-bg-warm; }
     background: $color-accent-alt;
     color: #fff;
     border-bottom: 2px solid $color-text;
-    border-right: 1px solid rgba(255, 255, 255, 0.18); // dark separator is invisible on navy — use a faint white one
+    border-right: 1px solid rgba(255, 255, 255, 0.18); // dark separator is invisible on navy, so use a faint white one
     padding: 0.4rem 0.2rem;
     font-family: $font-display;
   }
@@ -521,7 +521,7 @@ tr:hover td { background: $color-bg-warm; }
   text-align: left;
   padding-left: $space-xs; // align "Candidate" with the names below, off the edge-to-edge viewport edge
   // The name column is the only one given a width; every topic column then
-  // splits what is left. 7rem is deliberately tight — names wrap to two or
+  // splits what is left. 7rem is deliberately tight: names wrap to two or
   // three lines on a phone, which is a cheaper cost than either scrolling the
   // table sideways or crushing the grade chips against their cell edges. The
   // chips are the reason the table exists, so they get the slack.
@@ -529,8 +529,8 @@ tr:hover td { background: $color-bg-warm; }
 }
 
 // The matrix is edge-to-edge on mobile (negative margins above), so the outer
-// columns hug the viewport. Give the first/last columns matching edge gutters
-// — thead th otherwise only carries 0.2rem horizontal padding.
+// columns hug the viewport. Give the first/last columns matching edge gutters;
+// thead th otherwise only carries 0.2rem horizontal padding.
 .scorecard-matrix th:last-child,
 .scorecard-matrix td:last-child {
   padding-right: $space-xs;
@@ -582,7 +582,7 @@ tr:hover td { background: $color-bg-warm; }
 }
 
 // Placeholder under a municipality nobody has announced in yet. Quieter than a
-// candidate row — it is an absence, not an entry — and left-aligned to sit under
+// candidate row (it is an absence, not an entry) and left-aligned to sit under
 // its heading rather than centring across the grade columns.
 .scorecard-matrix .scorecard-matrix__empty-cell {
   text-align: left;
@@ -594,7 +594,7 @@ tr:hover td { background: $color-bg-warm; }
 
 .scorecard-matrix__empty-row:hover td { background: transparent; }
 
-// Grade chips inside the matrix — compact so all columns fit on a phone.
+// Grade chips inside the matrix: compact so all columns fit on a phone.
 .scorecard-matrix__cell .grade {
   width: 1.25rem;
   height: 1.25rem;
@@ -616,7 +616,7 @@ tr:hover td { background: $color-bg-warm; }
   // `table-layout: fixed` is set at the base now, so all this adds is room: a
   // wider name column and a floor under the table. `min-width` keeps the even
   // split from squeezing the topic labels below their legible width on a narrow
-  // desktop — 14rem for names plus ten ~4rem topic columns. Below that the
+  // desktop: 14rem for names plus ten ~4rem topic columns. Below that the
   // .table-scroll wrapper scrolls horizontally, as it already did here.
   .scorecard-matrix {
     font-size: 0.95rem;
@@ -627,7 +627,7 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix .scorecard-matrix__name-h { width: 14rem; }
   // The base padding-left carries through here on purpose. Zeroing it puts the
   // names hard against the table's left border, which reads as a rendering
-  // fault rather than as a tighter layout — the column needs a visible inset at
+  // fault rather than as a tighter layout: the column needs a visible inset at
   // this width, where the table sits inside its container behind a 3px border.
   .scorecard-matrix__th-label { display: block; }
   .scorecard-matrix__icon { width: 1.6rem; height: 1.6rem; }
@@ -764,7 +764,7 @@ tr:hover td { background: $color-bg-warm; }
   .topic-def__name { margin-bottom: 0; }
 }
 
-// Category FAQ — a collapsible box at the bottom of the scorecard page. Homepage
+// Category FAQ: a collapsible box at the bottom of the scorecard page. Homepage
 // topic cards deep-link to each row via #category-<id> (scorecard.js opens the
 // panel on hash). Styling rides on the shared .methodology accordion.
 // Offset anchored rows below the sticky header when reached via a deep link.
@@ -775,7 +775,7 @@ tr:hover td { background: $color-bg-warm; }
   border-left: 4px solid var(--card-accent, $color-accent-alt);
 }
 
-// "What this covers" link on each homepage topic card — tinted with the card
+// "What this covers" link on each homepage topic card, tinted with the card
 // accent, at the same size/weight as the partner cards' "Visit website" link.
 .card-faq-link {
   font-size: 0.9rem;
@@ -842,7 +842,7 @@ p + .partner-list {
   object-fit: contain;
 }
 
-// Category pill — shows the policy area a partner focuses on. Small, filled, with
+// Category pill: shows the policy area a partner focuses on. Small, filled, with
 // a distinct colour per category (see map below). Free-text/unmapped categories
 // fall back to the default accent.
 .partner-list .org-category { margin: 0 0 $space-xs; }
@@ -1041,7 +1041,7 @@ $category-colors: (
   }
 
   // Field labels are redundant with the placeholder text, so hide them
-  // visually — but keep them in the DOM for screen readers (don't display:none).
+  // visually, but keep them in the DOM for screen readers (don't display:none).
   #can_embed_form label {
     position: absolute;
     width: 1px;
@@ -1091,7 +1091,7 @@ $category-colors: (
     }
   }
 
-  // Submit button — reuse the primary button treatment.
+  // Submit button: reuse the primary button treatment.
   #can_embed_form .can_button,
   #can_embed_form input[type="submit"],
   #can_embed_form button[type="submit"] {

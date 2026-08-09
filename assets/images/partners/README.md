@@ -1,7 +1,7 @@
 # Coalition partner logos
 
 Drop partner logo files here, then reference the filename in
-`_data/partners.yml` via the `logo:` field (filename only — the path
+`_data/partners.yml` via the `logo:` field (filename only; the path
 `/assets/images/partners/` is added automatically).
 
 Guidelines:

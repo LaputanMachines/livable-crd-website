@@ -1,15 +1,15 @@
 # Confirmed municipal election candidates, grouped by municipality.
 #
-# AUTO-GENERATED — do not edit by hand.
+# AUTO-GENERATED: do not edit by hand.
 # Regenerated from the coalition candidate-tracking sheet by
 # scripts/sync-candidates.py (CI: .github/workflows/sync-candidates.yml).
-# Edit the source spreadsheet, not this file — manual changes are overwritten.
+# Edit the source spreadsheet, not this file; manual changes are overwritten.
 #
 # Includes ONLY candidates whose status is confirmed ("Yes Confirmed") as running.
 # Suspected, declined, and unconfirmed entries are intentionally omitted.
 #
 # Subjective tracking notes (political "vibe", commentary, character assessments)
-# are intentionally NOT published here — the scorecard evaluates positions, not
+# are intentionally NOT published here: the scorecard evaluates positions, not
 # people. Only factual public-record fields are stored.
 #
 # Fields:
@@ -26,7 +26,7 @@
 #   slate        Electoral organization the candidate runs with, as a display
 #                label ("Together Victoria", "Independent"), or null if the sheet
 #                does not say. Free text from the sheet, optionally tidied via
-#                _data/slates.yml — an unrecognized slate is published as
+#                _data/slates.yml; an unrecognized slate is published as
 #                written, not rejected. Naming a slate is not an endorsement.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").

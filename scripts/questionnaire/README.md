@@ -5,7 +5,7 @@ collect every submitted question into one master list, categorise it, and genera
 per-member voting tabs so the committee can score questions asynchronously.
 
 These write to a working Google Sheet. They do **not** touch the Jekyll site or any
-published data — `_data/candidates.yml` and the scorecard pages are unaffected.
+published data: `_data/candidates.yml` and the scorecard pages are unaffected.
 
 Unlike the rest of `scripts/`, these need third-party packages (`gspread`) and
 interactive Google auth, so they are not run in CI.
@@ -24,7 +24,7 @@ interactive Google auth, so they are not run in CI.
 | `Reworded Questions` | Post-voting. Every question that changed, and why. Generated. |
 | `Finalized Questions` | Post-voting. **The shipping set.** Export as CSV for Tally. Generated. |
 
-`All Refined Questions` holds one native table, **`Questions`** (`A1:X`) — `A–J`
+`All Refined Questions` holds one native table, **`Questions`** (`A1:X`): `A–J`
 question data, `K–X` vote aggregates.
 
 `Summary` holds six, side by side, all live formulas:
@@ -43,7 +43,7 @@ question data, `K–X` vote aggregates.
 `General` · `Transit` · `Housing` · `Climate` · `Arts` · `Rolling & cycling` ·
 `Walking` · `Healthcare access` · `Reconciliation` · `Governance`
 
-Plus `Housekeeping` — **internal only**, used for logistics questions (fundraising,
+Plus `Housekeeping`, **internal only**, used for logistics questions (fundraising,
 viability, photos). Not published on the scorecard.
 
 The `Category` column is a dropdown restricted to this list, so the taxonomy can't
@@ -70,12 +70,12 @@ The first script run opens a browser once and caches a refresh token to
 `~/.config/gspread/authorized_user.json`. Later runs are non-interactive.
 
 **Never commit either file.** They live outside the repo for that reason. The
-refresh token is the more sensitive of the two — it grants ongoing access to your
+refresh token is the more sensitive of the two: it grants ongoing access to your
 Google account's sheets.
 
 ## Configuration
 
-The spreadsheet key comes from the environment, never from source — the sheet
+The spreadsheet key comes from the environment, never from source; the sheet
 contains submitter email addresses and this repo is public. Same convention as
 `CANDIDATES_CSV_URL` in [`scripts/sync-candidates.py`](../sync-candidates.py).
 
@@ -87,7 +87,7 @@ The key is the segment between `/d/` and `/edit` in the sheet URL.
 
 ## Scripts
 
-### `aggregate.py` — preview, read-only
+### `aggregate.py`: preview, read-only
 
 ```bash
 python3 scripts/questionnaire/aggregate.py
@@ -99,24 +99,24 @@ nothing. Run this first to sanity-check categorisation after editing the source 
 It's also the shared data layer imported by the other two, and it holds the two
 things you're most likely to want to edit:
 
-- `FR_OVERRIDES` / `VU_OVERRIDES` — questions whose submitted topic was wrong. Each
+- `FR_OVERRIDES` / `VU_OVERRIDES`: questions whose submitted topic was wrong. Each
   carries a reason string that gets written into the sheet's `Notes` column, so every
   recategorisation is auditable.
-- `DUPES` — near-duplicate clusters, also surfaced in `Notes`.
+- `DUPES`: near-duplicate clusters, also surfaced in `Notes`.
 
-### `tables.py` — rebuild the master
+### `tables.py`: rebuild the master
 
 ```bash
 python3 scripts/questionnaire/tables.py
 ```
 
 Clears `All Refined Questions` and rebuilds it from the source tabs as native tables.
-Question IDs (`FR-01`, `HFL-01`, `VU-01`, `RUSH-01`) are positional — stable as long as
+Question IDs (`FR-01`, `HFL-01`, `VU-01`, `RUSH-01`) are positional, stable as long as
 the source tabs keep their row order.
 
 **Once voting has started, use `append.py` instead.** This wipes votes.
 
-### `append.py` — add new questions mid-vote
+### `append.py`: add new questions mid-vote
 
 ```bash
 python3 scripts/questionnaire/append.py --dry-run   # preview
@@ -129,17 +129,17 @@ that aren't in the master yet, at the bottom, then extends the `Questions` table
 rewritten, so hand edits to categories and question text survive, and no votes are lost.
 
 New questions land below the existing ones because `build_rows()` reads the source tabs
-in a fixed, append-only order — a new tab goes on the *end* of `SOURCES`, never in the
+in a fixed, append-only order: a new tab goes on the *end* of `SOURCES`, never in the
 middle, or its rows would interleave and shift every voter tab out of alignment.
 
 It aborts if the master's IDs are no longer a prefix of what the source tabs produce.
 That means rows were reordered, renumbered or deleted at source, where appending would
-pair votes with the wrong questions — rebuild with `tables.py` + `voting.py` instead.
+pair votes with the wrong questions; rebuild with `tables.py` + `voting.py` instead.
 
 Handles growth only. Removing a question still needs a full rebuild. Run `summary.py`
 afterwards to repoint the roll-ups at the longer range.
 
-### `voting.py` — build voter tabs
+### `voting.py`: build voter tabs
 
 ```bash
 python3 scripts/questionnaire/voting.py "Alice" "Bob" "Carla"
@@ -152,33 +152,33 @@ formulas into master columns `K–V`.
 and rebuilt, so re-running with one name wipes that person's votes and leaves the
 aggregates referencing only them.
 
-### `finalize.py` — build the questionnaire, after voting
+### `finalize.py`: build the questionnaire, after voting
 
 ```bash
 python3 scripts/questionnaire/finalize.py --dry-run
 python3 scripts/questionnaire/finalize.py --csv ~/finalized-questions.csv
 ```
 
-Run once grading is finished. It applies the committee's dispositions — the `Needs
+Run once grading is finished. It applies the committee's dispositions (the `Needs
 rewording` and `Shouldn't be graded` ticks, the EXCLUDE votes and, mostly, the free-text
-comments — and rebuilds two tabs:
+comments) and rebuilds two tabs:
 
-- **`Reworded Questions`** — one row per question that changed, with its original text
+- **`Reworded Questions`**: one row per question that changed, with its original text
   beside the new one, who asked for the change, and the argument for it. Dropped
   questions are listed here too, with their reason. This is the audit trail: nothing
   changes without a comment behind it.
-- **`Finalized Questions`** — the shipping set, one row per question a candidate will see.
+- **`Finalized Questions`**: the shipping set, one row per question a candidate will see.
   Flat enough to export straight to CSV and import into Tally.
 
 The editorial decisions live in `FINAL` in the script, in question order, so a
 disagreement about one question is a one-line diff rather than a re-run of the vote.
 Submitter, source tab and municipality scope are read from the master at run time and
-never restated in the script — that's what keeps submitter emails out of this repo.
+never restated in the script; that's what keeps submitter emails out of this repo.
 `--csv` writes the same rows to a path of your choosing; send it somewhere outside the
 repo for the same reason.
 
-`Finalized Questions` carries one hand-maintained column, **`Added To Tally Questionnaire`**
-— a checkbox ticked as each question goes into the Tally form. It is the only thing on
+`Finalized Questions` carries one hand-maintained column, **`Added To Tally Questionnaire`**:
+a checkbox ticked as each question goes into the Tally form. It is the only thing on
 either tab that isn't generated, so `finalize.py` reads the existing ticks back before it
 clears the tab and re-applies them by `Ref`. A question whose `Ref` changed, or that has
 stopped shipping, comes back unticked. The column is sheet-only: `--csv` omits it, since
@@ -188,20 +188,20 @@ Both tabs are rebuilt wholesale on every run, and nothing else reads them, so th
 safe to re-run at any time. It never touches the master or any voter tab.
 
 Re-running does **not** fold in new votes. `FINAL` is hand-authored, so grading that
-lands after it was written changes nothing until someone edits it — compare the master's
+lands after it was written changes nothing until someone edits it; compare the master's
 `Status` column against the shipping set to see where the two have diverged.
 
 It aborts if an origin ID in `FINAL` is missing from the master. Every one of the master's
 questions must appear either in a `FINAL` row's `origins` or in `DROPPED`; the tabs are not
 a filtered view of the master, so a question left out of both would vanish silently.
 
-Municipality-specific blocks — the BC housing targets and the infrastructure funding gaps
-— are templated from `HOUSING_TARGETS` and `INFRA_FIGURES` and expanded to one row per
+Municipality-specific blocks (the BC housing targets and the infrastructure funding gaps)
+are templated from `HOUSING_TARGETS` and `INFRA_FIGURES` and expanded to one row per
 municipality, rather than repeated by hand as they were in the source tabs. That's what
 stopped the wording drifting.
 
 `MUNICIPALITIES` is the questionnaire's scope: 13 jurisdictions. The CRD's three electoral
-areas — Juan de Fuca, Salt Spring Island, Southern Gulf Islands — are excluded, because
+areas (Juan de Fuca, Salt Spring Island, Southern Gulf Islands) are excluded, because
 they elect an electoral area director rather than a council and neither municipality-specific
 question applies. `_data/municipalities.yml` still publishes all 16 on the site; who gets a
 questionnaire is a separate decision, so this script does not touch it.
@@ -210,10 +210,10 @@ Every municipality gets the infrastructure question, so every one needs a figure
 `INFRA_FIGURES`. Municipalities whose figure is still blank ship a generic version and are
 printed with `<- FIGURE NEEDED` on every run, and flagged in the `Notes` column of
 `Finalized Questions`. Only the 10 in `HOUSING_TARGETS` received provincial housing target
-orders — Sooke, Highlands and Metchosin get one municipality-specific question rather than
+orders: Sooke, Highlands and Metchosin get one municipality-specific question rather than
 two.
 
-### `summary.py` — rebuild the Summary tab
+### `summary.py`: rebuild the Summary tab
 
 ```bash
 python3 scripts/questionnaire/summary.py
@@ -223,7 +223,7 @@ Rebuilds all five roll-up tables. Committee members are discovered from the
 `Vote - <Name>` tab names, so it needs no arguments and picks up changes on its own.
 
 Everything on the tab is a live formula, so it only needs re-running when the
-committee or the question set changes — not to refresh numbers. This is the only
+committee or the question set changes, not to refresh numbers. This is the only
 write script that's safe to run mid-voting: it touches nothing but its own tab.
 
 ## How committee members vote
@@ -231,22 +231,22 @@ write script that's safe to run mid-voting: it touches nothing but its own tab.
 Send each person the sheet link and their tab name. In their tab:
 
 1. Three dropdowns per question, `1–5`:
-   - **Importance** — how much the topic matters to us. 1 marginal, 5 central.
-   - **Distinguishes** — how well it separates candidates. 1 everyone answers the
+   - **Importance**: how much the topic matters to us. 1 marginal, 5 central.
+   - **Distinguishes**: how well it separates candidates. 1 everyone answers the
      same, 5 sharply separating.
-   - **Answerable** — can a candidate answer confidently with modest research?
+   - **Answerable**: can a candidate answer confidently with modest research?
      1 needs deep specialist knowledge, 5 squarely in public discourse.
 2. Four checkbox flags, ticked **only if the question trips that criterion**:
-   - `F: our view` — doesn't reflect the view of the folks involved in this effort
-   - `F: users` — doesn't reflect the view of the folks we hope use the scorecard
-   - `F: allies` — risks pitting us against communities or constituencies we care about
-   - `F: how` — prescribes *how* rather than asking *what* we want
-3. **EXCLUDE** — argue the question should be dropped entirely.
-4. **Comment** — rewrites, merges, objections.
-5. Two disposition checkboxes — what should *happen* to the question, as opposed to how
+   - `F: our view`: doesn't reflect the view of the folks involved in this effort
+   - `F: users`: doesn't reflect the view of the folks we hope use the scorecard
+   - `F: allies`: risks pitting us against communities or constituencies we care about
+   - `F: how`: prescribes *how* rather than asking *what* we want
+3. **EXCLUDE**: argue the question should be dropped entirely.
+4. **Comment**: rewrites, merges, objections.
+5. Two disposition checkboxes, what should *happen* to the question, as opposed to how
    well it scores:
-   - `Needs rewording` — worth asking, but not as currently written. Say how in `Comment`.
-   - `Shouldn't be graded` — worth asking, but answers shouldn't be scored on the
+   - `Needs rewording`: worth asking, but not as currently written. Say how in `Comment`.
+   - `Shouldn't be graded`: worth asking, but answers shouldn't be scored on the
      scorecard.
 
 Blank scores don't count toward averages, so partial progress is safe. Every header
@@ -260,7 +260,7 @@ a time rather than facing the whole list at once.
 
 The committee's criteria split into two kinds. Importance, distinguishing power and
 answerability are matters of degree, so they're scored. The other four are pass/fail
-conditions — averaging a 1–5 on "reflects our view" produces noise, while a flag count
+conditions: averaging a 1–5 on "reflects our view" produces noise, while a flag count
 shows dissent directly (one person flagged versus five).
 
 It's also a completion argument: seven scores across ~96 questions is ~670 cells per
@@ -279,7 +279,7 @@ Master columns `K–V`:
 | Col | Meaning |
 |---|---|
 | `K–M` | Average per criterion |
-| `N` | Mean score — the headline number |
+| `N` | Mean score, the headline number |
 | `O` | Votes cast on this row |
 | `P–S` | Flag tallies, one column per flag |
 | `T` | Exclude votes |
@@ -287,20 +287,20 @@ Master columns `K–V`:
 | `V` | All comments, prefixed by voter name |
 
 Sort by `Mean score` descending for the shortlist. Filter `Status = EXCLUDE` to find
-the fights. A row with both a high mean and a high flag count is the one to discuss —
+the fights. A row with both a high mean and a high flag count is the one to discuss: 
 that's disagreement the average is hiding.
 
 Always read `Status` alongside `Votes cast`. `STRONG` on two votes is two people.
 
-For the aggregate picture — who still owes votes, how the categories are splitting,
-which flags are firing — read the `Summary` tab instead.
+For the aggregate picture (who still owes votes, how the categories are splitting,
+which flags are firing), read the `Summary` tab instead.
 
 ### Status thresholds
 
 Set in `aggregate_formulas()` in `voting.py`:
 
-- `EXCLUDE` — exclude ticks are at least half of votes cast
-- `STRONG` — mean ≥ 4 · `MAYBE` — mean ≥ 3 · `WEAK` — below 3
+- `EXCLUDE`: exclude ticks are at least half of votes cast
+- `STRONG`: mean ≥ 4 · `MAYBE`: mean ≥ 3 · `WEAK`: below 3
 
 The exclude rule is relative to *votes cast*, not committee size, so it's jumpy early:
 one exclude among the first two voters flips the row. It settles as people finish.
@@ -311,7 +311,7 @@ Add a minimum-vote guard if that's noisy in practice.
 **Row alignment.** Voter tabs pull from the master by row number. Inserting or
 deleting master rows shifts every voter tab out of alignment. Do dedupe and pruning
 *before* voting starts. Afterwards, `append.py` can still add questions safely, because
-appending only ever writes below the last row — but anything that reorders or removes
+appending only ever writes below the last row, but anything that reorders or removes
 rows needs `tables.py` + `voting.py`, and loses votes.
 
 **Rebuilds wipe votes.** `tables.py` and `voting.py` are destructive by design. Once
@@ -319,9 +319,9 @@ voting is under way, treat them as off-limits unless you've exported the voter t
 first. `append.py` and `summary.py` are the two that are safe to run mid-vote.
 
 **Voter tabs must keep the standard column order.** The master's aggregates and the
-Summary read voter tabs *positionally* — `D:F` scores, `G:J` flags, `K` exclude, `L`
+Summary read voter tabs *positionally*: `D:F` scores, `G:J` flags, `K` exclude, `L`
 comment. A member who inserts their own column shifts everything to its right, and the
-formulas then read the wrong column without erroring — a checkbox gets reported as that
+formulas then read the wrong column without erroring; a checkbox gets reported as that
 person's comments. Keep custom columns to the *right* of `Comment`.
 
 `append.py` and `summary.py` call `check_voter_columns()` and refuse to run when a tab
@@ -333,6 +333,6 @@ written back at the *sheet* offset. Passing `columnProperties` for a table ancho
 away from column A silently overwrites the headers in columns A, B, … That's why
 `CategoryCounts` is created without them and infers its names from `X1:Y1`.
 
-**Editing questions.** Edit the master directly — text and category propagate to
+**Editing questions.** Edit the master directly; text and category propagate to
 every voter tab automatically. Recategorise with the column `B` dropdown and the
 `Summary` counts update immediately. Only structural changes need a rebuild.

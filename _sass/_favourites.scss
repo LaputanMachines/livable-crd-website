@@ -5,7 +5,7 @@
 // Behaviour: assets/js/favourites.js.
 //
 // Loaded after "components" so the few rules here that restate a matrix
-// selector — the group heading, the row backgrounds during a drag — win on
+// selector (the group heading, the row backgrounds during a drag) win on
 // source order without needing extra specificity piled on top.
 //
 // Everything in this file is dead weight without JS: the star ships `hidden`
@@ -20,7 +20,7 @@
 .scorecard-matrix__name-inner {
   display: flex;
   align-items: center;
-  // Tighter than $space-xs on purpose — the matrix is a dense component and
+  // Tighter than $space-xs on purpose: the matrix is a dense component and
   // already sets its own sub-scale paddings (0.2rem, 0.35rem) for the same
   // reason: ten topic columns have to survive a phone.
   gap: 0.25rem;
@@ -28,7 +28,7 @@
 
 .scorecard-matrix__name-text {
   // min-width: 0 lets a long name wrap instead of forcing the flex line wider
-  // than the column — the default `min-width: auto` on a flex item refuses to
+  // than the column: the default `min-width: auto` on a flex item refuses to
   // shrink below its content.
   flex: 1 1 auto;
   min-width: 0;
@@ -37,7 +37,7 @@
 // The star and the reorder handle stack instead of sitting side by side. The
 // name column is 7rem wide on a phone and two 1.5rem controls in a row would
 // claim 3.25rem of it with the gap; stacked they claim 1.5rem, and the vertical
-// room is free — a pinned row's name has already wrapped to two or three lines,
+// room is free: a pinned row's name has already wrapped to two or three lines,
 // which is taller than the two buttons together.
 //
 // Only the star is in the markup. favourites.js inserts the handle after it and
@@ -77,8 +77,8 @@
   }
 }
 
-// Both controls ship or end up `hidden` — the star until the script reveals it,
-// the handle whenever its row is not pinned — and an author `display` beats the
+// Both controls ship or end up `hidden` (the star until the script reveals it,
+// the handle whenever its row is not pinned) and an author `display` beats the
 // browser's own `[hidden] { display: none }`. Without this the no-JS page would
 // show 66 dead stars. Same reason _components.scss restates it for the rows.
 .fav-toggle[hidden],

@@ -4,11 +4,11 @@
 // Progressive enhancement, the same contract as scorecard.js: the toggle
 // buttons ship `hidden` and the pinned group ships `hidden`, so with JS off the
 // matrix reads exactly as it did before this feature existed. Rows are MOVED
-// into the pinned group, never copied — a copy would be counted twice by
+// into the pinned group, never copied: a copy would be counted twice by
 // #candidate-count and filtered twice by scorecard.js.
 (function () {
   // ---------------------------------------------------------------------------
-  // Pure helpers — no DOM, no storage.
+  // Pure helpers: no DOM, no storage.
   //
   // This repo has no test framework, no npm, and no browser that can be driven
   // here, so the list arithmetic (ordering, pruning, where an unpinned row goes
@@ -18,7 +18,7 @@
   // ---------------------------------------------------------------------------
 
   // Candidate keys always contain a "/", so they can never collide with a name
-  // on Object.prototype — but a plain `map[key]` truth test would still be a
+  // on Object.prototype, but a plain `map[key]` truth test would still be a
   // trap for whoever changes the key format later.
   function has(map, key) {
     return Object.prototype.hasOwnProperty.call(map, key);
@@ -40,7 +40,7 @@
 
   // Storage holds keys that were valid when they were written. Candidates come
   // and go from the tracking sheet between visits, so drop every key with no row
-  // on this page — and any duplicate, which would otherwise try to place the
+  // on this page, and any duplicate, which would otherwise try to place the
   // same row in two slots. `known` is a map of the keys that do exist.
   function pruneKeys(keys, known) {
     var out = [];
@@ -70,7 +70,7 @@
   }
 
   // Move `key` to `index`, where `index` counts positions in the list *after*
-  // the key has been lifted out of it — the same frame of reference both callers
+  // the key has been lifted out of it: the same frame of reference both callers
   // (arrow keys, drop target) naturally work in. Out-of-range indexes clamp to
   // the ends, so a move off either boundary is a no-op the caller can detect by
   // comparing indexOf() before and after.
@@ -85,7 +85,7 @@
   }
 
   // Where a row goes when it stops being a favourite: back into its own
-  // municipality group, in the exact slot it started in — not appended to the
+  // municipality group, in the exact slot it started in, not appended to the
   // end of it. `homeIndex` maps every key to its original position among its
   // group's rows, captured before anything moved. `presentKeys` is what is left
   // in that group right now, since the reader's other favourites are elsewhere
@@ -101,8 +101,8 @@
     return null;
   }
 
-  // Node has no `document`. When this file is loaded there — by a throwaway
-  // script checking the helpers above — hand them over and stop before the DOM
+  // Node has no `document`. When this file is loaded there (by a throwaway
+  // script checking the helpers above), hand them over and stop before the DOM
   // work starts. In a browser `module` is undefined, so this costs one guard.
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
@@ -126,7 +126,7 @@
   // (this browser, this origin), the same lifetime, and is never transmitted.
   //
   // If that ever has to change, readKeys/writeKeys are the only two functions in
-  // the file that know where the list lives — nothing else touches storage.
+  // the file that know where the list lives; nothing else touches storage.
   // ---------------------------------------------------------------------------
 
   // Versioned: a future format change can then be ignored by this reader
@@ -218,7 +218,7 @@
 
   // --- The seam with scorecard.js -------------------------------------------
   // Row and group visibility belong entirely to the filter script, which
-  // recomputes both from the DOM every time it runs — including for the pinned
+  // recomputes both from the DOM every time it runs, including for the pinned
   // group, which it treats as an ordinary candidate group and hides whenever
   // nothing inside it is visible. So after moving a row all this has to do is
   // ask for another pass. One-way on purpose: that script knows nothing about
@@ -253,8 +253,8 @@
     var handle = document.createElement('button');
     handle.type = 'button';
     handle.className = 'fav-handle';
-    // Names the row, nothing more. What the handle *does* — drag, or arrow keys
-    // — is stated once in the group heading and pulled in as the description,
+    // Names the row, nothing more. What the handle *does* (drag, or arrow keys
+    //) is stated once in the group heading and pulled in as the description,
     // rather than repeated inside every label the reader tabs past.
     handle.setAttribute('aria-label', 'Reorder ' + entry.name);
     if (hint && hint.id) handle.setAttribute('aria-describedby', hint.id);
@@ -314,7 +314,7 @@
 
     // Place each favourite in `order` sequence. insertBefore() on a node that is
     // already in the right slot still detaches and re-inserts it, which blurs
-    // whatever inside it had focus — so compare first and only move what has to
+    // whatever inside it had focus, so compare first and only move what has to
     // move. The live list is re-read after each move because the move changes it.
     var live = rowsIn(favGroup);
     for (var i = 0; i < order.length; i++) {
@@ -329,7 +329,7 @@
 
     // Set this here rather than leaving it to the filter pass below: if
     // scorecard.js ever fails to load, rows moved into a `hidden` tbody would
-    // disappear from the page altogether. refilter() then refines it — the group
+    // disappear from the page altogether. refilter() then refines it: the group
     // hides again when a search or filter leaves nothing visible inside it.
     favGroup.hidden = order.length === 0;
     refilter();
@@ -345,7 +345,7 @@
       : entry.name + ' removed from favourites.');
   }
 
-  // `index` is a position in the list with this key lifted out of it — see
+  // `index` is a position in the list with this key lifted out of it; see
   // moveKeyTo(). Everything that reorders goes through here so that storage,
   // focus and the announcement are handled in exactly one place.
   function moveTo(entry, index) {
@@ -355,7 +355,7 @@
     var next = moveKeyTo(order, entry.key, index);
     var to = next.indexOf(entry.key);
     if (to === from) {
-      // Silence would read as a broken key, so say why nothing happened —
+      // Silence would read as a broken key, so say why nothing happened,
       // naming the boundary when that is the reason, since "already first" is
       // the answer to "why did my arrow key do nothing".
       if (from === 0) {
@@ -369,7 +369,7 @@
     }
 
     // The row is detached and re-inserted by render(), and a focused element
-    // inside a detached node loses focus — which would strand a keyboard user
+    // inside a detached node loses focus, which would strand a keyboard user
     // at the top of the document mid-reorder.
     var refocus = entry.handle && document.activeElement === entry.handle;
     order = next;
@@ -385,7 +385,7 @@
   // without leaving the table's box model, at which point its cells stop
   // tracking the column widths and the whole grid twitches on every move. So
   // nothing moves during the drag. The dragged row is dimmed, a line is drawn at
-  // the place it would land, and the actual reorder happens once on release —
+  // the place it would land, and the actual reorder happens once on release:
   // robust at any column width, and identical on touch, mouse and pen.
   var drag = null;
   var DRAG_THRESHOLD = 4; // px of travel before a press counts as a drag
@@ -454,7 +454,7 @@
 
   function onHandleMove(entry, e) {
     if (!drag || drag.entry !== entry || e.pointerId !== drag.pointerId) return;
-    // A press that never travels is a click, not a drag — a touch in
+    // A press that never travels is a click, not a drag: a touch in
     // particular reports a few pixels of jitter just from the finger settling.
     // Below the threshold nothing is marked, and pointerup does nothing at all.
     if (!drag.moved && Math.abs(e.clientY - drag.startY) < DRAG_THRESHOLD) return;

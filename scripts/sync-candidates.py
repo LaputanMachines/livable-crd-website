@@ -7,7 +7,7 @@ matches the existing hand-authored format (documented header + "# --- City ---"
 group comments). The sheet is the single source of truth; this file is meant to
 run in CI (see .github/workflows/sync-candidates.yml).
 
-Stdlib only — no third-party deps (matches scripts/gen-social-assets.py).
+Stdlib only, no third-party deps (matches scripts/gen-social-assets.py).
 
 Usage:
   CANDIDATES_CSV_URL=... python3 scripts/sync-candidates.py
@@ -34,7 +34,7 @@ OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 # exists: "general", "reconciliation", "governance". Add the pair below once the
 # coalition adds the matching column.
 #
-# As of the sheet's 2026-08 restructure NONE of these columns exist any more —
+# As of the sheet's 2026-08 restructure NONE of these columns exist any more;
 # grades are moving to a separate sheet. Every candidate therefore syncs with no
 # scores and renders fully pending, which is correct for now but would also be
 # how a silent regression looked, so main() warns for each column it cannot find
@@ -72,16 +72,16 @@ UNKNOWN_SLATE = {
 HEADER = """\
 # Confirmed municipal election candidates, grouped by municipality.
 #
-# AUTO-GENERATED — do not edit by hand.
+# AUTO-GENERATED: do not edit by hand.
 # Regenerated from the coalition candidate-tracking sheet by
 # scripts/sync-candidates.py (CI: .github/workflows/sync-candidates.yml).
-# Edit the source spreadsheet, not this file — manual changes are overwritten.
+# Edit the source spreadsheet, not this file; manual changes are overwritten.
 #
 # Includes ONLY candidates whose status is confirmed ("Yes Confirmed") as running.
 # Suspected, declined, and unconfirmed entries are intentionally omitted.
 #
 # Subjective tracking notes (political "vibe", commentary, character assessments)
-# are intentionally NOT published here — the scorecard evaluates positions, not
+# are intentionally NOT published here: the scorecard evaluates positions, not
 # people. Only factual public-record fields are stored.
 #
 # Fields:
@@ -98,7 +98,7 @@ HEADER = """\
 #   slate        Electoral organization the candidate runs with, as a display
 #                label ("Together Victoria", "Independent"), or null if the sheet
 #                does not say. Free text from the sheet, optionally tidied via
-#                _data/slates.yml — an unrecognized slate is published as
+#                _data/slates.yml; an unrecognized slate is published as
 #                written, not rejected. Naming a slate is not an endorsement.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
@@ -121,7 +121,7 @@ def slugify(s):
 
     Mirrors Jekyll's `slugify` closely enough for the slate ids in
     _data/slates.yml. The published data carries the label, not this slug, so
-    the two implementations never have to agree byte-for-byte — only this
+    the two implementations never have to agree byte-for-byte; only this
     file's slates.yml lookup depends on it.
     """
     out = []
@@ -161,7 +161,7 @@ def load_slates(path):
 
     Key presence marks a slate as known; the value is an optional display label
     that replaces the sheet's own text. The file is optional and normally an
-    empty list — see its header comment for why this is not an allowlist.
+    empty list; see its header comment for why this is not an allowlist.
     """
     labels = {}
     if not os.path.exists(path):
@@ -223,7 +223,7 @@ def normalize_standing(value, name, warnings):
 
     The sheet qualifies incumbency by role ("Incumbent Councillor", "Ex-Incumbent
     Mayor"), which matters because the role often differs from the office being
-    sought — a sitting councillor running for mayor is not the incumbent mayor.
+    sought: a sitting councillor running for mayor is not the incumbent mayor.
     Role is preserved here rather than flattened to a boolean.
     """
     low = norm(value)
@@ -258,8 +258,8 @@ def normalize_slate(value, name, slate_labels, canonical, warnings):
 
     Unrecognized slates are published as written rather than rejected. New
     electoral organizations get announced mid-campaign, and making this fatal
-    (as municipality and standing are) would stall the daily sync — and with it
-    every grade update — until someone edited _data/slates.yml.
+    (as municipality and standing are) would stall the daily sync (and with it
+    every grade update) until someone edited _data/slates.yml.
 
     Every spelling that slugifies alike publishes ONE label, so the scorecard's
     slate filter gets one pill per slate. Without this, a sheet holding both
@@ -511,7 +511,7 @@ def main(argv=None):
     # Optional column: warn once rather than per row, and publish no slates.
     has_slate = SLATE_COLUMN in fields
     if not has_slate:
-        warnings.append(f"CSV has no {SLATE_COLUMN!r} column — no slate published "
+        warnings.append(f"CSV has no {SLATE_COLUMN!r} column: no slate published "
                         f"for any candidate")
 
     # Grade columns are optional in the same way, but their absence is worth
@@ -519,7 +519,7 @@ def main(argv=None):
     # publishing an all-pending scorecard by accident is the failure this catches.
     absent_grades = [column for column, _ in SCORE_MAP if column not in fields]
     if absent_grades:
-        warnings.append(f"CSV has no grade column(s) {absent_grades} — those topics "
+        warnings.append(f"CSV has no grade column(s) {absent_grades}: those topics "
                         f"publish as pending for every candidate")
 
     records, skipped = build_records(list(reader), muni_lookup, slate_labels,
@@ -541,7 +541,7 @@ def main(argv=None):
         sys.exit(f"FATAL: {len(errors)} validation error(s); candidates.yml not written.")
 
     if not records and not args.allow_empty:
-        sys.exit("FATAL: zero confirmed candidates parsed — refusing to overwrite "
+        sys.exit("FATAL: zero confirmed candidates parsed; refusing to overwrite "
                  "candidates.yml (use --allow-empty to override).")
 
     print(f"{len(records)} confirmed, {skipped} skipped, {len(warnings)} warning(s).")

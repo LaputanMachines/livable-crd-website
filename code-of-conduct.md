@@ -19,7 +19,7 @@ description: >-
   <p>
     <strong>The short version.</strong> Say anything you want about policy,
     including about us. Do not attack people. Content that is hateful,
-    harassing, or threatening is not graded and not published — the rest of your
+    harassing, or threatening is not graded and not published; the rest of your
     response still is, and you stay on the scorecard.
   </p>
 </div>
@@ -45,7 +45,7 @@ description: >-
 </p>
 <ul>
   <li>
-    <strong>Attacks or demeans people for who they are</strong> — on any ground
+    <strong>Attacks or demeans people for who they are</strong>, on any ground
     protected by the
     <a href="https://www.bclaws.gov.bc.ca/civix/document/id/complete/statreg/96210_01" rel="noopener">B.C. Human Rights Code</a>,
     including race, ancestry, place of origin, religion, marital or family
@@ -57,7 +57,7 @@ description: >-
   </li>
   <li><strong>Uses slurs or dehumanizing language</strong>, including language that describes a group of people as vermin, a disease, an infestation, or a burden to be removed.</li>
   <li><strong>Threatens, incites, or endorses violence</strong> against any person or group.</li>
-  <li><strong>Harasses a named individual</strong> — another candidate, a public servant, a journalist, a coalition volunteer, or a resident.</li>
+  <li><strong>Harasses a named individual</strong>: another candidate, a public servant, a journalist, a coalition volunteer, or a resident.</li>
   <li><strong>Publishes private information</strong> about a third party, such as a home address, phone number, immigration status, or medical history.</li>
   <li><strong>Makes a defamatory factual claim</strong> about a named person that the candidate cannot substantiate. Characterizing someone's record is fine; asserting a discreditable fact you cannot back up is not.</li>
 </ul>
@@ -122,7 +122,7 @@ description: >-
 </ol>
 <p>
   We keep the original response on file either way. We will not quote a withheld
-  passage in our own publicity or social media — the point is that it does not get
+  passage in our own publicity or social media; the point is that it does not get
   amplified, and that applies to us too.
 </p>
 
@@ -145,7 +145,7 @@ description: >-
 <h2>Questions</h2>
 <p>
   If you are a candidate and unsure whether something you want to say falls on
-  the wrong side of this, ask before you submit —
+  the wrong side of this, ask before you submit:
   <a href="mailto:{{ site.email }}?subject=Code%20of%20conduct">{{ site.email }}</a>.
   We would much rather answer that question early than withhold an answer later.
 </p>

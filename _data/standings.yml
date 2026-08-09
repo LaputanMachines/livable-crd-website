@@ -7,9 +7,9 @@
 # for council. Labelling both cases simply "Incumbent" would mislead voters, so
 # each standing carries two labels:
 #
-#   label       used when `role` matches the office sought — a sitting
+#   label       used when `role` matches the office sought: a sitting
 #               councillor running for council is just "Incumbent".
-#   role_label  used when they differ, or when the office sought is unknown — a
+#   role_label  used when they differ, or when the office sought is unknown: a
 #               sitting councillor running for mayor is "Incumbent Councillor".
 #   role        the office this standing refers to; null when it refers to none.
 #

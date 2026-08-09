@@ -59,7 +59,7 @@
   border: $border-weight solid $color-text;
 }
 
-// One entry per row — for the FAQ timeline and the homepage milestones, where
+// One entry per row, for the FAQ timeline and the homepage milestones, where
 // the list reads as a schedule in order rather than as a pair of side-by-side
 // cut-offs. Layout only: the gap above it belongs to whatever encloses it.
 .deadline-list--stacked {
@@ -128,7 +128,7 @@
   color: $color-muted;
 }
 
-// "Passed" reads as a shape and a word, not only as the greyed-out fill —
+// "Passed" reads as a shape and a word, not only as the greyed-out fill:
 // colour alone would carry the state (WCAG 1.4.1).
 .deadline-list__flag {
   display: inline-block;
@@ -143,8 +143,8 @@
   letter-spacing: 0.08em;
 }
 
-// A passed cut-off stays on the page — its absence would read as "there was
-// never a deadline" — but stops competing with the one still open.
+// A passed cut-off stays on the page (its absence would read as "there was
+// never a deadline") but stops competing with the one still open.
 .deadline-list__item--past {
   background: $color-bg-warm;
 
@@ -158,7 +158,7 @@
 // Vertical by default and horizontal from 900px up. Five milestones need about
 // 200px of column each before the short labels start wrapping to three lines,
 // and below that width the vertical run is the more readable of the two
-// anyway — it is a list of dates either way, and stacked it can carry the
+// anyway: it is a list of dates either way, and stacked it can carry the
 // `brief` line at full size.
 .deadline-timeline {
   list-style: none;
@@ -177,7 +177,7 @@
 
 // The dot plus the connector running out of it toward the next milestone. The
 // line belongs to the milestone it leaves, so its colour answers "have we got
-// past this one" — which is what makes the run of filled segments read as
+// past this one", which is what makes the run of filled segments read as
 // progress rather than as decoration.
 .deadline-timeline__track {
   flex: 0 0 auto;
@@ -302,7 +302,7 @@
 }
 
 // Up next: the dot is hollow but ringed in the light brand accent, and it is
-// the only milestone carrying an "Up next" tag — so "where are we" is legible
+// the only milestone carrying an "Up next" tag, so "where are we" is legible
 // without relying on the colour.
 .deadline-timeline__item--next {
   .deadline-timeline__dot {

@@ -4,14 +4,14 @@
   is at without reading five dates and doing the arithmetic themselves.
 
   It shows the coalition's own milestones alongside the two candidate cut-offs,
-  which the scorecard band deliberately does not — the point here is the shape
+  which the scorecard band deliberately does not: the point here is the shape
   of the whole schedule, and the cut-offs make more sense when you can see the
   questionnaire being built ahead of them. They stay distinguishable: a
   candidate deadline carries a visible "Deadline" tag.
 
   Uses the `short`/`brief` copy from the data file. Five milestones share the
   page width here, and the full `label`/`detail` wording does not survive being
-  squeezed into a fifth of it — that version runs in the scorecard band and the
+  squeezed into a fifth of it; that version runs in the scorecard band and the
   #deadlines FAQ.
 
   Params:
@@ -31,7 +31,7 @@
   {%- for d in timeline_items -%}
   {%- comment -%}
     A date in the data file parses to midnight UTC, but a deadline runs to the
-    end of its day here — so add 24 hours to reach end of day, then 8 more
+    end of its day here, so add 24 hours to reach end of day, then 8 more
     (PST, the larger of the two Pacific offsets) so the flip can never land
     before local midnight. In PDT that makes it an hour late, which is the safe
     direction: better to still show a deadline as open for an hour after it

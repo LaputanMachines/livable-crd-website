@@ -7,7 +7,7 @@
 //
 // Colour is never the only carrier of the information (WCAG 1.4.1). Every
 // scorecard row names its slate in the meta line, the legend labels every
-// swatch, and the candidate page spells it out — the colour is a shortcut for
+// swatch, and the candidate page spells it out: the colour is a shortcut for
 // scanning, not the message. That also covers the >8-slate case, where two
 // slates share a colour and only the text tells them apart.
 //
@@ -17,7 +17,7 @@
 
 // Hues deliberately avoid the letter-grade palette ($grade-a green, $grade-b
 // blue, $grade-c gold, $grade-f red): a tinted row sitting under a row of grade
-// chips must not read as a grade itself. Each slot carries three values —
+// chips must not read as a grade itself. Each slot carries three values:
 //   --slate-colour  saturated, for a swatch on a light background
 //   --slate-tint    very light, for a row background (and for a dot on the dark
 //                   candidate hero, where the saturated version would vanish)
@@ -37,7 +37,7 @@
 // .scorecard-matrix__group-hint in _favourites.scss, the other thing that
 // borrows space in that band.
 // The municipality heading's flex row: name on the left, slates beside it. On the
-// inner span rather than the <th> — see the note in scorecard/index.md.
+// inner span rather than the <th>; see the note in scorecard/index.md.
 .scorecard-matrix__group-inner {
   display: flex;
   flex-wrap: wrap;
@@ -85,7 +85,7 @@
   font-size: 0.7rem;
   line-height: 1.3;
   // Full-strength ink, not $color-muted: this sits on the Kwetlal-tinted
-  // heading band, where muted grey lands around the 4.5:1 line on small text —
+  // heading band, where muted grey lands around the 4.5:1 line on small text;
   // the same call _favourites.scss makes for the group hint.
   color: $color-text;
   cursor: pointer;
@@ -134,14 +134,14 @@
 // ever lights up the group they are looking at.
 //
 // The class is on the row rather than the municipality's tbody because
-// favourites.js moves rows between tbodies — see the note in scorecard.js.
+// favourites.js moves rows between tbodies; see the note in scorecard.js.
 //
 // Both halves of a row need stating: the name cell carries its own opaque
 // background (it has to, being the sticky column on a scrolling table), so a
 // tint set on the <tr> alone would stop at the first column.
 //
 // The fallbacks are the untinted values, so an un-slated row inside a lit
-// municipality — it has no palette class, so no --slate-tint to find — keeps
+// municipality (it has no palette class, so no --slate-tint to find) keeps
 // looking exactly as it does with highlighting off.
 .scorecard-row.is-slate-lit th,
 .scorecard-row.is-slate-lit td {
@@ -162,7 +162,7 @@
 
 // --- Candidate page ----------------------------------------------------------
 // A dot beside "Running with <slate>", tying that page to the colour the reader
-// may have just been scanning in the table. Always shown — there is one slate on
+// may have just been scanning in the table. Always shown: there is one slate on
 // the page, so there is nothing to opt out of.
 .candidate-hero__slate .slate-dot {
   display: inline-block;
