@@ -3,19 +3,20 @@
 
 Run from repo root:
     python3 scripts/gen-tally-categories.py                    -> categories.png
-    python3 scripts/gen-tally-categories.py --set housekeeping -> housekeeping.png
+    python3 scripts/gen-tally-categories.py --set general      -> general.png
 Output: assets/tally/  (2800x800 for a two-row set, 2800x448 for one row)
 
 An icon-and-label grid on the page background #faf9fc with Inky #220940
 labels, sized 2x Tally's recommended 1400px in-form width; --width to change
 it. Canvas height follows the row count, so every set shares one set of metrics.
 
-`categories` is the ten graded topics, read from _data/subjects.yml so the
-graphic and the scorecard can't drift apart. The other three have no entry
-there and define their icons inline below: `housekeeping` is the internal
-block (HK-01, HK-02), never scored, never published bar one answer; 
-`info` is the pre-start briefing, and `conduct` summarises the code of
-conduct page.
+Only `categories` reads _data/subjects.yml, so that graphic and the scorecard
+can't drift apart. Every other set defines its icons inline below, because each
+one describes the questions in a single block rather than a topic: `general` is
+GEN-01 and GEN-02, `walking` is WLK-01 to WLK-04, `housekeeping` is the
+internal block (HK-01, HK-02), never scored and never published bar one answer,
+`info` is the pre-start briefing, and `conduct` summarises the code of conduct
+page.
 
 The icons need a *stroke* renderer, which gen-fb-banner.py's fill rasteriser
 doesn't do: they're 24x24 Feather-style outlines (`stroke="currentColor"`,
@@ -45,6 +46,14 @@ INKY = fb.INKY
 LIVABLE = (0x5C, 0x18, 0xA4)          # $livable-purple
 PAGE_BG = (0xFA, 0xF9, 0xFC)          # $color-bg in _sass/_variables.scss
 
+# Deliberately not $grade-a (#1b7a3d), the only green the site owns. That one is
+# the colour of an A on the scorecard, and _variables.scss keeps the grade ramp
+# semantic on purpose: "they convey data, not brand identity." Ten topic icons
+# wearing it on the page that follows a candidate's submission is a sentence
+# nobody meant to write. This is a brighter UI-tick green that reads as done
+# rather than as a grade.
+CHECK_GREEN = (0x16, 0xA3, 0x4A)
+
 ICON_DIR = os.path.join(fb.IMG, "icons")
 SUBJECTS = os.path.join(ROOT, "_data", "subjects.yml")
 
@@ -55,6 +64,241 @@ CATEGORIES = ["General", "Walking", "Rolling & cycling", "Transit", "Housing",
               "Climate", "Arts", "Healthcare access", "Reconciliation",
               "Governance"]
 LABELS = {"All categories / General": "General"}   # full name is too long to set
+
+# The General block: GEN-01 and GEN-02 in finalize.py. Both are cross-cutting
+# rather than tied to one topic, which is what the first tile says; the other
+# two are the questions themselves, a single forced choice and a forced
+# trade-off. General does have a subjects.yml entry, but its icon there is the
+# scorecard clipboard, which says "topic" and not "the two questions in this
+# block", so this set defines its icons inline like every other set here.
+GENERAL = [
+    ("Cross-cutting",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
+     '<path d="M16.24 7.76l-2.12 6.36-6.36 2.12 2.12-6.36z"/></svg>'),
+    ("One policy change",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
+     '<circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>'),
+    ("$10M to allocate",
+     '<svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>'
+     '<path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>'),
+]
+
+# The Walking block: WLK-01 to WLK-04 in finalize.py, one tile per question in
+# the order candidates meet them. WLK-01 is the adopted mode-shift targets, so
+# it reuses the trending-up arrow the Housekeeping set gives to campaign
+# viability: the two graphics are separate section breaks and never share a
+# screen, and the arrow means the same thing in both.
+WALKING = [
+    ("Mode-shift targets",
+     '<svg viewBox="0 0 24 24"><path d="M23 6l-9 9-5-5-8 8"/>'
+     '<path d="M17 6h6v6"/></svg>'),
+    ("Pedestrian safety",
+     '<svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94'
+     'a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>'
+     '<path d="M12 9v4"/><path d="M12 17h.01"/></svg>'),
+    ("Sidewalk funding",
+     '<svg viewBox="0 0 24 24"><line x1="6" y1="20" x2="6" y2="15"/>'
+     '<line x1="12" y1="20" x2="12" y2="10"/>'
+     '<line x1="18" y1="20" x2="18" y2="4"/></svg>'),
+    # A slashed car is the obvious icon and it loses to the stroke weight: the
+    # body is 8 grid units tall against a 2-unit stroke, wheels small enough to
+    # clear it fill in solid, and the slash then crosses all of it. Two figures
+    # would be the easy alternative and it's taken, by reconciliation.svg, which
+    # a candidate has already seen in categories.png. So: the place the question
+    # actually names, a downtown or main street or village centre.
+    ("Car-free streets",
+     '<svg viewBox="0 0 24 24"><path d="M1 6L1 22 8 18 16 22 23 18 23 2 16 6 8 2z"/>'
+     '<line x1="8" y1="2" x2="8" y2="18"/>'
+     '<line x1="16" y1="6" x2="16" y2="22"/></svg>'),
+]
+
+# The Rolling & cycling block: ROL-01 to ROL-05. ROL-04 is `change="Unchanged"`
+# and lives in the master sheet, so there was no text here to build a tile from.
+ROLLING = [
+    ("Missing links",
+     '<svg viewBox="0 0 24 24"><path d="M15 7h3a5 5 0 0 1 0 10h-3"/>'
+     '<path d="M9 7H6a5 5 0 0 0 0 10h3"/>'
+     '<line x1="8.5" y1="12" x2="10.5" y2="12"/>'
+     '<line x1="13.5" y1="12" x2="15.5" y2="12"/></svg>'),
+    ("Physical protection",
+     '<svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'
+     '</svg>'),
+    ("No downgrades",
+     '<svg viewBox="0 0 24 24"><path d="M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14'
+     'V7.86L7.86 2z"/><line x1="15" y1="9" x2="9" y2="15"/>'
+     '<line x1="9" y1="9" x2="15" y2="15"/></svg>'),
+    # ROL-05 is ungraded, but unlike HSG-10 it asks about a record rather than a
+    # personal circumstance, so it earns a tile where the tenure question didn't.
+    ("Your record",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="7"/>'
+     '<path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg>'),
+]
+
+# The Transit block: TRN-01 to TRN-05. TRN-04 is `change="Unchanged"`, so it has
+# no tile for the same reason ROL-04 doesn't.
+TRANSIT = [
+    ("Fares and passes",
+     '<svg viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/>'
+     '<line x1="1" y1="10" x2="23" y2="10"/></svg>'),
+    ("Parking to bus lanes",
+     '<svg viewBox="0 0 24 24"><path d="M17 1l4 4-4 4"/>'
+     '<path d="M3 11V9a4 4 0 0 1 4-4h14"/><path d="M7 23l-4-4 4-4"/>'
+     '<path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>'),
+    ("Transit priority",
+     '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>'),
+    ("New connections",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/>'
+     '<line x1="1" y1="12" x2="8" y2="12"/>'
+     '<line x1="16" y1="12" x2="23" y2="12"/></svg>'),
+]
+
+# The Housing block: HSG-01 to HSG-11, the biggest in the questionnaire, so
+# these are subjects rather than questions. Two rows of three in form order.
+#
+# HSG-01, HSG-02 and HSG-03 are one tile: three angles on what can be built
+# without a rezoning. HSG-07 and HSG-08 are one tile: the tools list and the
+# displacement list are both "what would you actually do about affordability".
+#
+# Two questions get no tile. HSG-10 asks the candidate's own housing situation,
+# which is demographic, ungraded and carries a "prefer not to say" - announcing
+# it on a section break oversells a question we deliberately made easy to skip.
+# HSG-09 is `change="Unchanged"`, so its text is in the master sheet rather than
+# finalize.py and there was nothing here to label it from. Worth a look before
+# this ships: if HSG-09 is a subject none of these six covers, it needs a tile.
+HOUSING = [
+    ("Building by right",
+     '<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/>'
+     '<path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>'),
+    ("Public opposition",
+     '<svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72'
+     'a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3z"/>'
+     '<path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>'),
+    ("Approval deadlines",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
+     '<path d="M12 6v6l4 2"/></svg>'),
+    # A P in a sign, rather than a slashed car. The car lost this argument once
+    # already, in the Walking set.
+    ("Parking minimums",
+     '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/>'
+     '<path d="M9.5 17.5V7h3.7a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>'),
+    ("Affordability tools",
+     '<svg viewBox="0 0 24 24"><circle cx="7.5" cy="16.5" r="5"/>'
+     '<path d="M11 13L21 3"/><path d="M16.5 7.5l2.5 2.5"/>'
+     '<path d="M19 5l2.5 2.5"/></svg>'),
+    ("Housing targets",
+     '<svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1'
+     '-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'),
+]
+
+# The Climate block: CLI-01 to CLI-11, six tiles for the five questions whose
+# text is in finalize.py plus CLI-06. Four have no tile and all four are
+# `change="Unchanged"`: CLI-05 (a zoning amendment, per Michael's note), CLI-07
+# (the one Claude marked first to cut), and CLI-09 to CLI-11, the three that
+# arrived after voting closed and are ungraded. Five unlabelled questions is the
+# widest gap of any set here. Worth pulling their text from the sheet and
+# checking whether any deserves a tile before this ships.
+CLIMATE = [
+    ("Climate priority",
+     '<svg viewBox="0 0 24 24"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26'
+     'a4.5 4.5 0 1 0 5 0z"/></svg>'),
+    ("Fossil fuel ads",
+     '<svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/>'
+     '<line x1="8" y1="21" x2="16" y2="21"/>'
+     '<line x1="12" y1="17" x2="12" y2="21"/></svg>'),
+    ("Lobbying register",
+     '<svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>'
+     '<path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>'),
+    # Scales, because CLI-04 is literally about joining a lawsuit. The Arts set
+    # wants a balance too, for ART-07's trade-off, and doesn't get one: a court
+    # is the more specific claim on the metaphor.
+    ("Cost recovery",
+     '<svg viewBox="0 0 24 24"><path d="M12 3v18"/><path d="M5 7h14"/>'
+     '<path d="M8 21h8"/><path d="M5 7l-3 6a3 3 0 0 0 6 0z"/>'
+     '<path d="M19 7l3 6a3 3 0 0 1-6 0z"/></svg>'),
+    ("Heat and wildfire",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/>'
+     '<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>'
+     '<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>'
+     '<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>'
+     '<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>'
+     '<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>'
+     '<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>'),
+    ("Data centres",
+     '<svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/>'
+     '<rect x="2" y="14" width="20" height="8" rx="2"/>'
+     '<line x1="6" y1="6" x2="6.4" y2="6"/>'
+     '<line x1="6" y1="18" x2="6.4" y2="18"/></svg>'),
+]
+
+# The Arts block: ART-01 to ART-07. ART-03 and ART-07 share the "Cultural
+# spaces" tile - the implementation framework and the redevelopment trade-off
+# are both about keeping venues - which is what frees a tile for ART-06's
+# budget question.
+ARTS = [
+    ("Economic strategy",
+     '<svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/>'
+     '<path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>'),
+    ("First-year action",
+     '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/>'
+     '<line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>'
+     '<line x1="3" y1="10" x2="21" y2="10"/></svg>'),
+    ("Cultural spaces",
+     '<svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>'
+     '<circle cx="12" cy="10" r="3"/></svg>'),
+    ("Permitting barriers",
+     '<svg viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></svg>'),
+    # Two icons here are second uses, both where the meaning carries over intact:
+    # the dollar sign is Housekeeping's fundraising tile, and the pie chart is
+    # the General set's $10M split. Money and a budget share mean the same thing
+    # in all four places, and the graphics are separate section breaks.
+    ("Funding venues",
+     '<svg viewBox="0 0 24 24"><path d="M12 1v22"/>'
+     '<path d="M17.5 5H9.75a3.75 3.75 0 0 0 0 7.5h4.5a3.75 3.75 0 0 1 0 7.5H6"/></svg>'),
+    ("Budget priority",
+     '<svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/>'
+     '<path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>'),
+]
+
+# The Governance block: GOV-01, GOV-02 and the per-municipality GOV-03. Not one
+# tile per question, because GOV-01 asks two unrelated things in one block and
+# GOV-02 is a second helping of its first half. Split by subject instead:
+# regional delivery (GOV-01 part 1 and GOV-02), amalgamation (GOV-01 part 2,
+# published unscored per its note), and the funding gap (GOV-03).
+GOVERNANCE = [
+    ("Shared services",
+     '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/>'
+     '<circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>'
+     '<line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>'
+     '<line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>'),
+    ("Amalgamation",
+     '<svg viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/>'
+     '<circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>'),
+    ("Infrastructure gap",
+     '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 '
+     '1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91'
+     'a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'),
+]
+
+# Healthcare access and Reconciliation share one section break: HLT-01 and
+# REC-01 are the only questions in either category, and a section break per
+# question would be two graphics for two questions.
+#
+# The only set that takes its icons off disk rather than defining them inline.
+# Everywhere else an inline icon is the point, because the tile stands for a
+# question and the subject icon would say "topic" instead. Here the tile stands
+# for a topic, because the category is one question wide, so borrowing the
+# subject icon is what keeps this graphic and categories.png saying the same
+# thing. It also keeps me from inventing Indigenous iconography for REC-01:
+# reconciliation.svg is the project's own choice and this defers to it.
+#
+# REC-01 is `change="Unchanged"`, so its text lives in the master sheet rather
+# than finalize.py. The label follows aggregate.py's note on FR-55: "primary
+# subject is First Nations representation in governance." Check it against the
+# sheet before this ships.
+HEALTH_REC = [
+    ("Primary care clinics", "healthcare-access.svg"),
+    ("First Nations representation", "reconciliation.svg"),
+]
 
 # The Housekeeping block: HK-01 and HK-02 in finalize.py. It's the internal
 # category: neither question is graded, and only "why you're running" is ever
@@ -139,7 +383,16 @@ CONDUCT = [
      '<path d="M9 14l2 2 4-4"/></svg>'),
 ]
 
-SETS = {"categories": 5, "housekeeping": 3, "info": 4, "conduct": 5}   # name -> columns
+SETS = {"categories": 5, "complete": 5, "general": 3, "walking": 4,
+        "rolling": 4, "transit": 4, "housing": 3, "climate": 3,
+        "arts": 3, "health-rec": 2, "governance": 3,
+        "housekeeping": 3, "info": 4, "conduct": 5}             # name -> columns
+
+# Sets whose icons get a green tick badged onto them. `complete` is the ten
+# topics again, ticked off, for the Thank you page: the same grid the candidate
+# met at the start, now finished. Reusing it is the point, so it reads as the
+# progress bar filling rather than as a new graphic.
+CHECKED = {"complete"}
 
 GW = 1400                             # design grid width; all dimensions are in these units
 SS = 4                                # supersample factor, collapsed on the final resize
@@ -326,15 +579,56 @@ def render_icon(svg, size, stroke=2.0, ss=SS):
     return mask.resize((size, size), Image.LANCZOS)
 
 
+def check_badge(size, ss=SS):
+    """A green tick disc, RGBA, for badging onto the corner of an icon."""
+    W = int(round(size * ss))
+    im = Image.new("RGBA", (W, W), (0, 0, 0, 0))
+    d = ImageDraw.Draw(im)
+    # A page-background ring first, so the disc reads as sitting on top of the
+    # icon rather than tangled in it. Every topic icon has strokes running into
+    # its bottom-right corner and without the ring they touch the disc.
+    ring = W * 0.085
+    d.ellipse([0, 0, W - 1, W - 1], fill=PAGE_BG + (255,))
+    d.ellipse([ring, ring, W - 1 - ring, W - 1 - ring], fill=CHECK_GREEN + (255,))
+
+    sw = max(1, int(round(W * 0.10)))
+    pts = [(W * 0.31, W * 0.53), (W * 0.44, W * 0.66), (W * 0.71, W * 0.37)]
+    d.line(pts, fill=(255, 255, 255, 255), width=sw, joint="curve")
+    for px, py in (pts[0], pts[-1]):        # round caps, as in render_icon
+        d.ellipse([px - sw/2, py - sw/2, px + sw/2, py + sw/2],
+                  fill=(255, 255, 255, 255))
+    return im.resize((size, size), Image.LANCZOS)
+
+
 # ============================== compose ==================================
 def items_for(which):
     """[(label, svg source)] for a set; subject icons come off disk."""
+    if which == "general":
+        return list(GENERAL)
+    if which == "walking":
+        return list(WALKING)
+    if which == "rolling":
+        return list(ROLLING)
+    if which == "transit":
+        return list(TRANSIT)
+    if which == "housing":
+        return list(HOUSING)
+    if which == "climate":
+        return list(CLIMATE)
+    if which == "arts":
+        return list(ARTS)
+    if which == "governance":
+        return list(GOVERNANCE)
+    if which == "health-rec":
+        return [(label, open(os.path.join(ICON_DIR, f)).read())
+                for label, f in HEALTH_REC]
     if which == "housekeeping":
         return list(HOUSEKEEPING)
     if which == "info":
         return list(INFO)
     if which == "conduct":
         return list(CONDUCT)
+    # `categories` and `complete` are the same ten topics; only the tick differs.
     by_name = {s["name"]: s for s in yaml.safe_load(open(SUBJECTS))}
     out = []
     for name in CATEGORIES:
@@ -380,6 +674,16 @@ def build(which="categories", out_w=GW * 2):
         mask = render_icon(svg, icon_px)
         img.paste(Image.new("RGB", (icon_px, icon_px), LIVABLE),
                   (int(cx - icon_px / 2), int(cy)), mask)
+
+        # Overhanging the corner rather than tucked inside it: the icons don't
+        # share a common bounding box (the bike fills its viewBox, the clipboard
+        # doesn't), so an inset badge would sit at a different distance from
+        # every one of them. Hung off the box, they line up.
+        if which in CHECKED:
+            bs = max(1, int(round(icon_px * 0.44)))
+            badge = check_badge(bs)
+            img.paste(badge, (int(round(cx + icon_px / 2 - bs * 0.70)),
+                              int(round(cy + icon_px - bs * 0.70))), badge)
 
         sz = label_sz
         f = fb.font(sz, 500)

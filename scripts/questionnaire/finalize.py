@@ -32,6 +32,7 @@ from aggregate import MASTER, open_sheet
 
 REWORDED = "Reworded Questions"
 FINALIZED = "Finalized Questions"
+EXCLUDED = "Excluded Questions"
 
 # Build tracking, ticked by hand as each question goes into the Tally form. Sheet-only:
 # it is deliberately not in FINAL_HEADERS, so it stays out of the CSV that gets
@@ -105,6 +106,16 @@ INFRA_FIGURES = {
     "Metchosin": ("", ""),
 }
 
+# Victori'Us resubmitted their whole set on 2026-08-09, after voting closed. The new
+# questions replaced VU-01..VU-11 in the master one for one, so the origins below still
+# point at the right subject matter, but no committee member has scored this text. The
+# rewordings are the ones the committee argued for on the 2026-08-01 version, re-applied
+# to the new wording, plus whatever the resubmission genuinely added. Stamped on every
+# arts row so nobody reads a `why` as a verdict on words the committee never saw.
+RESUB = ("Refreshed against the Victori'Us resubmission of 2026-08-09, which arrived "
+         "after voting closed and was not scored. The rewording is the committee's, "
+         "carried over from the 2026-08-01 version of the same question.")
+
 INFRA_OPTIONS = (
     "a) Allow substantially more housing and commercial development to grow the tax base "
     "and help fund infrastructure renewal. "
@@ -158,7 +169,9 @@ FINAL = [
         note="Dropped line items: Accessibility, Healthcare access & community wellbeing, "
              "Economic development & local business, Other. Police kept as its own line "
              "despite being the most loaded item - removing it removes the sharpest "
-             "signal. Sam asked for links to each municipality's budget alongside it.",
+             "signal. Sam asked for links to each municipality's budget alongside it. "
+             "The resubmission restated the same 14 line items, so the trim stands. "
+             + RESUB,
     ),
 
     # ---------------------------------------------------------------- Walking
@@ -660,8 +673,9 @@ FINAL = [
         change="Reworded", asked_by="Michael, Sam, Claude",
         why="The preamble answered the question - nobody says arts are bad for the economy "
             "- and it named Victoria, so it could not go to other municipalities. Preamble "
-            "stripped, scope broadened.",
-        note="Score the follow-up, not the yes/no.",
+            "stripped, scope broadened. The resubmission restored both, so both come back "
+            "out.",
+        note="Score the follow-up, not the yes/no. " + RESUB,
     ),
     dict(
         ref="ART-02", category="Arts", origins=["VU-03", "VU-11"], municipality=ALL,
@@ -669,15 +683,19 @@ FINAL = [
                  "to strengthen your municipality's arts and cultural sector, and what "
                  "measurable outcome should residents expect by the end of your four-year "
                  "term?",
-        options="", qtype="Open response (1500 characters), scored 0-3",
+        options="Name measurable outcomes where you can. Policy changes, funding "
+                "commitments, infrastructure projects, regulatory reforms and "
+                "partnerships all count.",
+        qtype="Open response (2000 characters), scored 0-3",
         change="Reworded + merged", asked_by="Michael, Sam, Claude",
         why="VU-11 is VU-03 at a different horizon. Merged into one question covering both "
             "and reworded away from 'Victoria's arts sector' so it reaches the region.",
         note="Rubric: 0 = no commitment or vague support, 1 = identifies a general "
              "priority, 2 = identifies a specific policy action, 3 = specific action with "
-             "a measurable outcome or timeline. VU-11 referenced a global rubric at the "
-             "bottom of the source sheet that did not survive the import - check whether "
-             "anything else depended on it.",
+             "a measurable outcome or timeline. The resubmission spelled out the kinds of "
+             "outcome it wanted named, which is worth having and is now the prompt under "
+             "the question; its 2000 character limit replaces the 1500 this carried, since "
+             "one box answers what were two questions. " + RESUB,
     ),
     dict(
         ref="ART-03", category="Arts", origins=["VU-04"], municipality=ALL,
@@ -690,47 +708,63 @@ FINAL = [
                 "intervention c) Establishing municipal tools to support long-term "
                 "affordability and stability d) Partnerships with non-profits to secure "
                 "permanent cultural assets e) Reviewing zoning, permitting and regulatory "
-                "barriers affecting cultural uses f) Reporting publicly on progress "
-                "g) I do not support such a framework",
+                "barriers affecting cultural uses f) Measurable implementation targets and "
+                "timelines g) Reporting publicly on progress h) Developing or updating a "
+                "cultural space strategy or action plan first "
+                "i) I do not support such a framework",
         qtype="Multi-select (max 3)",
         change="Reworded", asked_by="Michael, Claude",
         why="'Would you support timelines and accountability' is a free yes, and it was "
             "Victoria-scoped. Six components that all sound reasonable meant most "
             "candidates would tick most boxes, so it is capped at three and an opposing "
             "option was added.",
+        note="Two components added from the resubmission: measurable targets (f), and "
+             "writing another strategy first (h). Option (h) is the weak answer to a "
+             "question about why strategies do not get implemented, which is exactly why "
+             "it is worth offering - spending one of three picks on it says something. The "
+             "cap of three does the work of holding a nine-option list down. " + RESUB,
     ),
     dict(
         ref="ART-04", category="Arts", origins=["VU-05"], municipality=ALL,
         question="Arts organisations and event producers identify permitting, zoning and "
                  "regulatory requirements as barriers to cultural activity. What would you "
                  "commit to? Select all that apply.",
-        options="a) Clear, published service standards for permit decisions b) A dedicated "
-                "review of cultural and event permitting processes and policies "
-                "c) Simplified requirements for small-scale events d) Better coordination "
-                "between municipal departments e) A single point of coordination for "
-                "cultural and event permits f) Reviewing zoning barriers for cultural uses "
-                "g) Reviewing requirements that impose disproportionate costs on "
-                "non-profits h) None - current processes are working",
+        options="a) Clear, published service standards for permit decisions b) Published "
+                "decision-making criteria, so requirements are not interpreted "
+                "inconsistently c) A dedicated review of cultural and event permitting "
+                "processes and policies d) Simplified requirements for small-scale events "
+                "e) Better coordination between municipal departments f) A single point of "
+                "coordination for cultural and event permits g) Reviewing zoning barriers "
+                "for cultural uses h) Reviewing requirements that impose disproportionate "
+                "costs on non-profits i) None - current processes are working",
         qtype="Multi-select",
         change="Reworded", asked_by="Michael, Sam, Claude",
         why="Unopposable by construction: no candidate defends unnecessary barriers, and "
             "neither the question nor any of the seven options had an opposing answer. "
             "Reordered to lead with measurable service standards, widened to 'processes "
             "and policies' per Sam, and given an opt-out option.",
+        note="Option (b) is new from the resubmission, which named inconsistent "
+             "interpretation as a barrier in its own right rather than a symptom of the "
+             "others. " + RESUB,
     ),
     dict(
         ref="ART-05", category="Arts", origins=["VU-06", "VU-07", "VU-10"],
         municipality=ALL,
         question="Preserving cultural venues costs money. Which funding and ownership "
-                 "approaches would you support? Select all that apply.",
+                 "approaches would you support? Select up to five.",
         options="a) Reallocating existing municipal resources b) Increasing property taxes "
-                "or a dedicated levy c) Development contributions or amenity fees (e.g. "
-                "~1% of capital project budgets to public art) d) Municipal incentives for "
-                "landlords and developers who maintain affordable cultural space e) A "
-                "cultural land trust or non-profit ownership model f) Municipal loan "
-                "guarantees or financing partnerships g) Long-term municipal leases for "
-                "cultural use h) I do not support additional municipal investment",
-        qtype="Multi-select",
+                "or a dedicated cultural infrastructure levy c) Development contributions "
+                "or amenity fees (e.g. ~1% of capital project budgets to public art) d) A "
+                "regional cultural infrastructure fund shared across CRD municipalities "
+                "e) Municipal money used to leverage matching, foundation or community "
+                "capital f) Requiring or incentivising cultural space as part of major "
+                "developments g) Density or other development incentives in exchange for "
+                "dedicated cultural space h) Reduced or waived municipal fees, or property "
+                "tax relief, for eligible cultural spaces i) A cultural land trust or "
+                "non-profit ownership model j) Municipal loan guarantees or financing "
+                "partnerships k) Long-term municipal leases for cultural use l) I do not "
+                "support additional municipal investment",
+        qtype="Multi-select (max 5)",
         change="Reworded + merged", asked_by="Michael, Claude",
         why="VU-06 is the one arts question that makes candidates choose. VU-07 ('would "
             "you support exploring...') costs nothing to say yes to, and VU-10 was a free "
@@ -738,7 +772,12 @@ FINAL = [
         note="VU-07's full tool menu - patient capital, community bonds, loan guarantees, "
              "collateral funds - is municipal-finance specialist vocabulary; most "
              "candidates would have picked 'Unsure'. Condensed to two plain-language "
-             "options.",
+             "options. The resubmission turned VU-10 from a bare yes/no into a real menu, "
+             "so its development-linked tools now appear as (f) to (h), and VU-06 added "
+             "(d) and (e). That took the merged list from eight options to twelve, and an "
+             "uncapped select-all that long invites ticking everything, so it is capped at "
+             "five - the same move the committee made on ART-03. Drop the cap if the "
+             "committee would rather see the full spread. " + RESUB,
     ),
     dict(
         ref="ART-06", category="Arts", origins=["VU-08"], municipality=ALL,
@@ -754,6 +793,8 @@ FINAL = [
         why="Deleted the '(i.e. Police funding)' aside. Those four words turn an "
             "arts-budget question into a police-budget question - candidates answer the "
             "parenthetical - and cost us the non-partisan posture.",
+        note="The resubmission dropped that aside and arrived at the same four options "
+             "independently, so this one needed nothing. " + RESUB,
     ),
     dict(
         ref="ART-07", category="Arts", origins=["VU-09"], municipality=ALL,
@@ -771,6 +812,29 @@ FINAL = [
             "in direct opposition - our arts partners against our housing partners. "
             "Reworded neutral, trade-off intact, and select-one resolved per the sheet "
             "note.",
+        note="The resubmission restated both the 'pressure' framing and the original "
+             "option (c) verbatim, so the committee's version stands. This is the one arts "
+             "row where we are knowingly not shipping what was asked for; if that is the "
+             "wrong call it is a one-line diff here. " + RESUB,
+    ),
+    dict(
+        ref="ART-08", category="Arts", origins=["VU-12"], municipality=ALL, graded=False,
+        question="Should your municipality show a preference for particular types of arts "
+                 "and cultural activity when deciding where to invest, or treat them "
+                 "alike? If it should choose, how should those priorities be set?",
+        options="Criteria you might weigh: community demand, gaps in cultural "
+                "infrastructure, economic impact, equity and access, preservation of "
+                "cultural heritage, or others of your own.",
+        qtype="Open response (1000 characters)",
+        change="Reworded", asked_by="(arrived after voting closed, no committee comment)",
+        why="New in the resubmission and the only genuinely new arts question in it. "
+            "Reworded off 'Victoria and municipalities across the CRD have historically "
+            "supported ... particular types of performing arts', which both scoped it to "
+            "one municipality and answered it: naming the incumbent preference tells a "
+            "candidate which way to lean. The choice is put both ways instead.",
+        note="Published unscored at the submitter's request - they asked that answers "
+             "appear beside the scorecard without affecting a grade, which is also the "
+             "only defensible call on a question no committee member has seen. " + RESUB,
     ),
 
     # ------------------------------------------------------- Healthcare access
@@ -875,6 +939,151 @@ DROPPED = [
      "our own sheet, where HFL-04 and HFL-09 list inclusionary zoning as a neutral option. "
      "Sam, who submitted it, agreed. Now covered neutrally as option (h) of HSG-07."),
 ]
+
+
+# Why a question that is not in DROPPED still has no row of its own in the shipping set.
+# These are the merges: the reason is never "we did not want it", it is "another question
+# carries it", so each entry has to say which one and what was kept. Keyed by master ID.
+#
+# The destination row's `why` argues the merge from the surviving question's side. This
+# argues it from the excluded one's, which is what somebody looking up their own
+# submission wants to read. Falls back to the destination's `why` if a merge is added
+# here without a reason, so a new merge degrades to a vaguer answer rather than none.
+MERGED_WHY = {
+    "FR-04":
+        "Third of three open 'what would you do' prompts in the bank, and the vaguest of "
+        "them. Caleb: 'possibly worthy of exclusion; this question is too vague.' Michael: "
+        "'Merge into FR-02. Same shape, vaguer, and I can't grade \"ideas\" consistently "
+        "across a full candidate field.' Sam ticked shouldn't-be-graded. FR-02 survives as "
+        "WLK-02, rewritten to demand one concrete commitment rather than ideas.",
+    "FR-07":
+        "A yes/no on all-ages-and-abilities routes that almost nobody answers no to. "
+        "Caleb: 'great question but lacks distinguishablilty broadly speaking.' Michael: "
+        "'Everyone says yes. Merge into FR-10, which at least asks for funding and "
+        "completion.' Claude wanted the scoring weight moved to the specific route "
+        "questions. FR-10 ships as ROL-01, anchored to completing one missing link inside "
+        "one term.",
+    "FR-13":
+        "The same question as HFL-05 in weaker wording. Claude: 'Duplicate of HFL-05, "
+        "which spells out uses, heights and densities and closes the loophole where "
+        "\"pre-zoning\" is answered loosely. Drop this, keep HFL-05.' Michael agreed. "
+        "HFL-05 ships as HSG-02 with its text kept as submitted.",
+    "FR-14":
+        "One of four questions asking about parking minimums (FR-14, FR-36, HFL-08, "
+        "HFL-09). Every voter who commented said merge - Sam: 'should be combined with "
+        "other car parking requirement questions'; Claude: 'Fold the land-use split into "
+        "HFL-08 and cut the rest.' HFL-08 ships as HSG-06 because its conditional option "
+        "captures the conditional supporter a yes/no cannot. Nothing was lost: FR-14's "
+        "land-use tiers are the option list there, and Michael's note that Bill 47 already "
+        "bars residential minimums near transit is written into the question stem.",
+    "FR-16":
+        "Duplicate of HFL-03. Sam: 'dupe of HfL Qs.' The disagreement was over which to "
+        "keep, not whether: Michael preferred this one because '\"Maximum\" is a "
+        "commitment; \"target\" is a wish', Claude preferred HFL-03 for its day-count "
+        "tiers that can be scored. HSG-05 takes FR-16's framing and HFL-03's tiers, so "
+        "both arguments won.",
+    "FR-19":
+        "Tied the pedestrian share of the transport budget to the proportion of residents "
+        "without a driver's licence. Michael: 'The licence-holder ratio is invented and no "
+        "candidate can compute it.' Claude: 'Ask for the funding commitment and drop the "
+        "formula ... prescribes a mechanism, and needs a statistic most candidates will "
+        "not have.' Three of four voters flagged 'F: how'. The funding commitment survives "
+        "as WLK-03, built on FR-18, with the ratio gone.",
+    "FR-20":
+        "A price point, an age, a licence test and two time windows in a single yes/no. "
+        "Michael: 'Half price, 65+, no licence, 10-4 and after 7 is a fare schedule, not a "
+        "question. And the VRTC sets fares.' Claude: it 'leaves no way to back discounted "
+        "senior fares but not the off-peak restriction'. Sam wanted the off-peak window "
+        "moved to 2:30pm. Folded into TRN-01, which asks the fare question as VRTC "
+        "advocacy, the lever a councillor actually has. The fare schedule was dropped "
+        "rather than corrected.",
+    "FR-21":
+        "Duplicate of FR-03 with the reasoning removed. Claude: 'Duplicate of FR-03, which "
+        "asks for reasoning. Drop this one.' Michael: 'Merge into FR-03, which at least "
+        "asks for reasoning.' FR-03 ships as TRN-01.",
+    "FR-23":
+        "One of four fossil-fuel questions competing for the same climate slots. Michael: "
+        "'Merge into FR-22. Same gesture, two climate slots.' It won its own head-to-head "
+        "against FR-31 in the comments (Claude: 'this one is unambiguously about the "
+        "municipality') but lost the slot to the advertising version, FR-22, which ships "
+        "as CLI-01 with sponsorship folded in as part of the same commitment.",
+    "FR-24":
+        "BC Transit advertising is decided by the VRTC, not by a council. Michael cut it "
+        "on jurisdiction, and could not verify the submitter's '(this is illegal)' note: "
+        "'Charter s.2(b) makes it contestable, not illegal.' Claude: as written 'it "
+        "penalises candidates who know the law'. Sam: 'combine with FR-22'. It survives "
+        "inside CLI-01 as an advocacy follow-up rather than a council commitment.",
+    "FR-25":
+        "Named a specific programme instead of asking what the municipality should do "
+        "about wildfire risk, and was Victoria-scoped. Claude: 'Nobody opposes an "
+        "awareness campaign.' Michael: 'FR-26 rewritten as an outcome covers this better.' "
+        "Sam asked for teeth - 'bylaws on vegitation and cladding, and funding for "
+        "retrofits' - and CLI-06, built on FR-26, carries them.",
+    "FR-31":
+        "Same substance as FR-23 and ambiguous about who is being asked. Claude: "
+        "'Duplicate of FR-23, and ambiguous per the sheet note - candidate personally, or "
+        "the municipality? Keep FR-23.' Michael: 'Same substance as FR-23. Merge into "
+        "FR-22.' Sam: 'seems repetitive with the lobby ones'. All four voters who scored "
+        "it ticked EXCLUDE - the only question in the bank that was unanimous on that at "
+        "full turnout (RUSH-01 and RUSH-03 are too, but on a single vote each).",
+    "FR-36":
+        "Second of the four parking-minimum questions, and the only one that pre-declared "
+        "its own grade. Michael: 'the text pre-declares the grade - \"A for yes, F for "
+        "no\" cannot ship to candidates.' Claude: 'Drop; keep HFL-08.' Sam: 'needs to be "
+        "merged with other parking Qs'. The substance is in HSG-06; the 2030 deadline is "
+        "not, since HSG-06 asks what candidates support rather than by when.",
+    "FR-49":
+        "The same viability judgement as FR-47. Michael: 'Fold into FR-47 as one viability "
+        "question. Candidates can answer it; many will decline.' Claude: 'Ask for a range, "
+        "not a number. Candidates will under-report or skip it, and Elections BC financing "
+        "disclosures cover the same ground after the fact.' HK-01 asks for a range, per "
+        "that comment.",
+    "FR-53":
+        "Three commitments run together with slashes: raise property taxes, follow the "
+        "asset replacement strategy, accelerate the timeline. Michael: 'Split the run-on. "
+        "The question I want is the first clause.' Claude suggested reusing 'the HFL-12 "
+        "\"select up to two\" format'. Sam: 'dupe of similar HfL question'. It folds into "
+        "the HFL-12 infrastructure block, which ships once per municipality as GOV-03-*, "
+        "and its first clause is option (b) there. Worth noting this is the strongest "
+        "question on the excluded list - mean 4.08, status STRONG - and it is here because "
+        "a better-formatted question asks the same thing, not because the committee "
+        "thought little of it.",
+    "HFL-01":
+        "Asks what housing a municipality needs more of; HFL-06 asks the same thing with "
+        "teeth. Caleb: 'HFL-04 is this question but better.' Michael: 'Merge into HFL-06.' "
+        "Claude asked for its 'luxury housing' option to go - 'nobody ticks it and its "
+        "presence telegraphs the answer we want' - and HSG-03, built on HFL-06, drops it.",
+    "HFL-04":
+        "One of three questions asking for the same incentive list. Claude: 'Overlaps "
+        "HFL-09's option list almost item for item. Merge them.' Michael: 'Merge into "
+        "FR-15. Running both asks for the incentive list twice.' FR-15 ships as HSG-07 "
+        "with the list supplied as options rather than as an open box.",
+    "HFL-09":
+        "A broken row in the source tab. Claude: 'the question text is copy-pasted from "
+        "HFL-08 but the options are affordable-housing delivery tools.' Both halves were "
+        "recovered and sent where each belonged: the parking question into HSG-06 with the "
+        "rest of that cluster, the incentive options into HSG-07. Sam: 'merge with other "
+        "parking requirements questions'. This is the only entry on this list excluded for "
+        "being two questions in one cell rather than for its content.",
+    "VU-07":
+        "Not voted on: the Victori'Us resubmission of 2026-08-09 replaced this question "
+        "after voting closed, so the reasoning is the committee's verdict on the version "
+        "they did see. 'Would you support exploring ...' costs nothing to say yes to, and "
+        "its tool menu - patient capital, community bonds, loan guarantees, collateral "
+        "funds - is municipal-finance specialist vocabulary that most candidates would "
+        "answer 'Unsure' to. Condensed into plain-language options inside ART-05.",
+    "VU-10":
+        "Not voted on: replaced by the 2026-08-09 resubmission after voting closed. The "
+        "version the committee saw was a bare Yes / No / Unsure already covered by one of "
+        "VU-06's options, which is why it was folded in. The resubmission turned it into a "
+        "seven-option menu of development-linked tools, which is real content, so it ships "
+        "as options (f) to (h) of ART-05 rather than as a row of its own.",
+    "VU-11":
+        "Not voted on: replaced by the 2026-08-09 resubmission after voting closed. VU-11 "
+        "is VU-03 at a different horizon - first-year action against four-year outcome - "
+        "so the two ship as one question, ART-02, which asks for both. Its list of outcome "
+        "kinds and its 2000-character limit were carried across.",
+}
 
 
 def normalise_muni(value):
@@ -1084,8 +1293,55 @@ def main():
             "", "", "", who, why,
         ])
 
+    # Every question that has no shipping row of its own: the nine in DROPPED, and the
+    # ones absorbed into somebody else's row. Both are invisible in Finalized Questions,
+    # and a submitter looking for their question needs to find out which happened.
+    shipped, absorbed = {}, {}
+    for r in rows:
+        shipped.setdefault(r["origins"][0], r)
+        for o in r["origins"][1:]:
+            absorbed.setdefault(o, []).append(r)
+    dropped_by_id = {d[0]: d for d in DROPPED}
+
+    # The tabs are not a filtered view of the master, so a question in neither the
+    # shipping set nor DROPPED would disappear from all three without saying so.
+    orphans = [q for q in master if q not in shipped and q not in absorbed
+               and q not in dropped_by_id]
+    if orphans:
+        sys.exit(f"FATAL: these questions are in no FINAL row and not in DROPPED, so "
+                 f"they would vanish silently: {', '.join(orphans)}")
+
+    def cell(row, i):
+        return row[i].strip() if len(row) > i else ""
+
+    excluded_body = []
+    for qid, src in master.items():
+        if qid in shipped:
+            continue
+        if qid in dropped_by_id:
+            _, _, who, why = dropped_by_id[qid]
+            outcome, refs, kept = "Dropped", "", ""
+        else:
+            dest = absorbed[qid]
+            outcome = "Merged"
+            refs = ", ".join(dict.fromkeys(d["ref"] for d in dest))
+            kept = dest[0]["origins"][0]
+            who = dest[0].get("asked_by", "")
+            why = MERGED_WHY.get(qid) or dest[0].get("why", "")
+        excluded_body.append([
+            qid, cell(src, 1), cell(src, 3), cell(src, 4), cell(src, 7), cell(src, 6),
+            outcome, refs, kept, cell(src, 13), cell(src, 14), cell(src, 21),
+            cell(src, 22), who, why, cell(src, 23),
+        ])
+
     print(f"{len(final_body)} finalized rows, "
           f"{len(reworded_body) - len(DROPPED)} changed, {len(DROPPED)} dropped")
+    merged = sum(1 for r in excluded_body if r[6] == "Merged")
+    print(f"{len(excluded_body)} of {len(master)} questions have no row of their own "
+          f"({len(DROPPED)} dropped, {merged} merged into another)")
+    thin = [r[0] for r in excluded_body if not r[14]]
+    if thin:
+        print(f"  no reason recorded for: {', '.join(thin)}")
     region_wide = sum(1 for r in final_body if r[2] == ALL)
     graded = sum(1 for r in final_body if r[8] == "Yes")
     print(f"{graded} graded, {len(final_body) - graded} published unscored")
@@ -1115,6 +1371,10 @@ def main():
               [row + [ticks.get(row[0], False)] for row in final_body],
               widths=[110, 120, 120, 460, 460, 170, 200, 140, 70, 130, 380, 190],
               wrap_from=3, bool_cols=[len(FINAL_HEADERS)])
+    write_tab(sh, EXCLUDED, EXCLUDED_HEADERS, excluded_body,
+              widths=[80, 130, 420, 320, 170, 150, 90, 150, 100, 80, 80, 90, 90, 140,
+                      520, 520],
+              wrap_from=2)
     print(f"done ({sum(1 for r in final_body if ticks.get(r[0]))} rows already "
           f"ticked as added to Tally)")
 
@@ -1128,6 +1388,17 @@ REWORD_HEADERS = [
 FINAL_HEADERS = [
     "Ref", "Category", "Municipality", "Question", "Answers / options", "Question type",
     "Submitter", "Source", "Graded", "Origin IDs", "Notes",
+]
+
+# Scores are carried across so a reader can see that most of these lost on the vote and
+# a few, FR-53 above all, did not. "Kept from" is the master ID that ended up carrying
+# the question, which is what a submitter asking "where did mine go" wants; "Shipped
+# instead" is where to read it in Finalized Questions.
+EXCLUDED_HEADERS = [
+    "ID", "Category", "Question", "Answers / options", "Submitter", "Source",
+    "Outcome", "Shipped instead", "Kept from", "Mean score", "Votes cast",
+    "Exclude votes", "Status", "Decided by", "Why it is not in the questionnaire",
+    "Voter comments",
 ]
 
 

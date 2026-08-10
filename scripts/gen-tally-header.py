@@ -11,9 +11,13 @@ Pass --width to change it; the layout is a 1500x500 grid scaled to fit, so the
 composition is identical at any size.
 
 Same theme as the site hero and the Facebook banner: Inky-purple background,
-16px dot texture, the white brand logo with the camas mark in Kwetlal purple,
-and a Kwetlal bottom bar. The lockup is horizontal rather than stacked, because
-a tall lockup is the first thing a wide crop eats.
+16px dot texture, and the white brand logo with the camas mark in Kwetlal
+purple. The lockup is horizontal rather than stacked, because a tall lockup is
+the first thing a wide crop eats.
+
+No bottom bar. The cover sits directly above the form body, so a rule along its
+bottom edge reads as a border on the form itself rather than as part of the
+image.
 
 The SVG rasteriser, the Lexend loader and the palette all come from
 gen-fb-banner.py; this script only composes. Everything is drawn at 2x the
@@ -120,7 +124,7 @@ def build(out_w=GW * 2, out_h=None):
 
     block_w = fixed + text_w
     x = int((Wp - block_w) / 2)
-    cy = int(Hp // 2 - 5 * S)                     # optical centre, above the bar
+    cy = int(Hp // 2)                             # true centre, with no bar to sit above
 
     ly = cy - logo_h // 2
     white_mask = fb.render_svg_group(svg, {0, 1, 2, 3, 4}, logo_w, logo_h)
@@ -139,9 +143,6 @@ def build(out_w=GW * 2, out_h=None):
     draw.text((tx, t_top), TITLE, font=f_title, fill=WHITE, anchor="la")
     draw.text((tx, t_top + title_sz + line_gap), SUBTITLE,
               font=f_sub, fill=KWETLAL, anchor="la")
-
-    bar = int(round(12 * S))
-    draw.rectangle([0, Hp - bar, Wp, Hp], fill=KWETLAL)      # Kwetlal bottom bar
 
     header = header.resize((out_w, out_h), Image.LANCZOS)
     out = os.path.join(OUT_DIR, "header.png")

@@ -174,10 +174,14 @@ def build_rows(sh):
         qid = f"VU-{n:02d}"
         cat, note = VU_OVERRIDES.get(qid, ("Arts", ""))
         notes = [x for x in (note, clean(r[5]) if len(r) > 5 else "") if x]
+        # Scope is one value for the whole tab because the tab has no scope column.
+        # The 2026-08-09 resubmission marked eleven of its twelve questions "All
+        # municipalities" (VU-03 alone was submitted Victoria-only, and its Notes say
+        # so), which is also what finalize.py already ships them as.
         rows.append([
             qid, cat, clean(r[1]), clean(r[2]), clean(r[3]),
-            clean(r[4])[:120], "Victori'Us Questions", "Victori'Us (Erin)", "Victoria",
-            " | ".join(notes),
+            clean(r[4])[:120], "Victori'Us Questions", "Victori'Us (Erin)",
+            "All municipalities", " | ".join(notes),
         ])
 
     rush = sh.worksheet("RUSH Questions").get_all_values()

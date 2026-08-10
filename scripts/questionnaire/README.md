@@ -23,6 +23,7 @@ interactive Google auth, so they are not run in CI.
 | `Summary` | All counts and roll-ups. Generated. |
 | `Reworded Questions` | Post-voting. Every question that changed, and why. Generated. |
 | `Finalized Questions` | Post-voting. **The shipping set.** Export as CSV for Tally. Generated. |
+| `Excluded Questions` | Post-voting. Every question with no shipping row, and why not. Generated. |
 
 `All Refined Questions` holds one native table, **`Questions`** (`A1:X`): `A–J`
 question data, `K–X` vote aggregates.
@@ -136,8 +137,40 @@ It aborts if the master's IDs are no longer a prefix of what the source tabs pro
 That means rows were reordered, renumbered or deleted at source, where appending would
 pair votes with the wrong questions; rebuild with `tables.py` + `voting.py` instead.
 
-Handles growth only. Removing a question still needs a full rebuild. Run `summary.py`
-afterwards to repoint the roll-ups at the longer range.
+Handles growth only. Removing or replacing a question needs `resubmit.py` (below) or a
+full rebuild. Run `summary.py` afterwards to repoint the roll-ups at the longer range.
+
+### `resubmit.py`: swap a source tab's questions after voting closes
+
+```bash
+python3 scripts/questionnaire/resubmit.py --dry-run   # preview
+python3 scripts/questionnaire/resubmit.py
+```
+
+Written for one event and kept as the record of it: on 2026-08-09 Victori'Us resubmitted
+their whole arts set through the public intake form, replacing the eleven questions the
+committee had already voted on with twelve new ones. Neither of the other two paths fits
+that. `append.py` only appends, and aborts anyway because the twelve arrived at the *top*
+of `Form Responses 1` and renumbered every `FR-*` ID; `tables.py` + `voting.py` express it
+but cost every vote on the sheet, and voting was finished.
+
+So it does the swap surgically: the submissions move into `Victori'Us Questions` and out of
+`Form Responses 1`, the master's VU block is rewritten in place and grown by one row, and
+each voter tab gets the same one inserted row with its twelve arts rows cleared. `FR-*`,
+`HFL-*` and `RUSH-*` never move relative to their votes, so only the arts votes are lost,
+which they had to be: they were cast on questions that no longer exist.
+
+Every tab it overwrites is dumped to `~/livable-crd-backups/questionnaire-<stamp>.json`
+first. **The old arts votes are in that file and nowhere else.**
+
+It asserts its way in rather than searching: the master must still hold `VU-01`..`VU-11` at
+rows 84-94, each submission must still be findable by timestamp, and after the source edits
+`build_rows()` must still reproduce every non-arts ID. Any of those failing stops the run.
+
+The reason the swap was this cheap is that the new set mapped 1:1 onto the old one in
+submission order, so `VU-01`..`VU-11` kept their subject matter and only `VU-12` was new.
+That is what let `finalize.py`'s `origins` lists survive. A resubmission that reorders or
+drops questions would not have that property and would need `FINAL` rewritten too.
 
 ### `voting.py`: build voter tabs
 
@@ -161,7 +194,7 @@ python3 scripts/questionnaire/finalize.py --csv ~/finalized-questions.csv
 
 Run once grading is finished. It applies the committee's dispositions (the `Needs
 rewording` and `Shouldn't be graded` ticks, the EXCLUDE votes and, mostly, the free-text
-comments) and rebuilds two tabs:
+comments) and rebuilds three tabs:
 
 - **`Reworded Questions`**: one row per question that changed, with its original text
   beside the new one, who asked for the change, and the argument for it. Dropped
@@ -169,6 +202,9 @@ comments) and rebuilds two tabs:
   changes without a comment behind it.
 - **`Finalized Questions`**: the shipping set, one row per question a candidate will see.
   Flat enough to export straight to CSV and import into Tally.
+- **`Excluded Questions`**: the other side of the same ledger, one row per master question
+  that has no shipping row of its own, with the scores it got, the voter comments verbatim,
+  and why it is not in the questionnaire. See below.
 
 The editorial decisions live in `FINAL` in the script, in question order, so a
 disagreement about one question is a one-line diff rather than a re-run of the vote.
@@ -184,8 +220,33 @@ clears the tab and re-applies them by `Ref`. A question whose `Ref` changed, or 
 stopped shipping, comes back unticked. The column is sheet-only: `--csv` omits it, since
 an empty tracking column is noise in a Tally import.
 
-Both tabs are rebuilt wholesale on every run, and nothing else reads them, so this is
-safe to re-run at any time. It never touches the master or any voter tab.
+All three tabs are rebuilt wholesale on every run, and nothing else reads them, so this
+is safe to re-run at any time. It never touches the master or any voter tab.
+
+#### `Excluded Questions`
+
+A question can be missing from the shipping set two ways, and only one of them is a
+rejection:
+
+- **Dropped**: not asked at all. The nine in `DROPPED`, each with the argument for cutting it.
+- **Merged**: absorbed into somebody else's row. `Shipped instead` gives the `Ref` to read it
+  under, and `Kept from` gives the master ID that ended up carrying it, which is the answer
+  to "which one beat mine".
+
+That distinction is the point of the tab. 30 of 97 questions have no row of their own, but
+only 9 were actually rejected; the other 21 are in the questionnaire under another ID, and
+one of them, `FR-53`, scored `STRONG`. Reading `Finalized Questions` alone, all 30 look the
+same.
+
+Reasons come from `DROPPED` for the dropped ones and from `MERGED_WHY` for the merges, which
+argues each merge from the *excluded* question's side; the destination row's `why` argues it
+from the surviving question's. A merge with no `MERGED_WHY` entry falls back to that
+destination `why` and is listed on stdout, so it degrades to a vaguer answer rather than a
+blank one. The last column carries every voter comment verbatim, so the tab cites the
+committee rather than paraphrasing it.
+
+The run now aborts if a master question appears in neither the shipping set nor `DROPPED`.
+It could previously vanish from all three tabs without a word.
 
 Re-running does **not** fold in new votes. `FINAL` is hand-authored, so grading that
 lands after it was written changes nothing until someone edits it; compare the master's
@@ -317,6 +378,12 @@ rows needs `tables.py` + `voting.py`, and loses votes.
 **Rebuilds wipe votes.** `tables.py` and `voting.py` are destructive by design. Once
 voting is under way, treat them as off-limits unless you've exported the voter tabs
 first. `append.py` and `summary.py` are the two that are safe to run mid-vote.
+
+**Late submissions land at the top of `Form Responses 1`.** Rows have been inserted above
+the existing ones rather than appended at least once, and because `FR-*` IDs are positional
+that silently renumbers all of them. `append.py`'s prefix check catches it, but only if you
+run something; the sheet itself looks fine. Check where new intake rows actually sit before
+assuming a submission is additive.
 
 **Voter tabs must keep the standard column order.** The master's aggregates and the
 Summary read voter tabs *positionally*: `D:F` scores, `G:J` flags, `K` exclude, `L`
