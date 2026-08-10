@@ -42,8 +42,8 @@
   detail: >-
     The submitted questions are assembled into draft questionnaires and
     circulated to the whole coalition for review.
-  short: Coalition review
-  brief: The combined draft goes to the whole coalition.
+  short: Draft ready
+  brief: The combined draft goes to the whole coalition for review.
 
 - id: final-questionnaire
   date: 2026-08-16

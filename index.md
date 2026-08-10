@@ -50,7 +50,8 @@ description: >-
       walking and cycling, healthcare access, and more. This
       scorecard will survey candidates, publish their responses, and rate their
       positions using a clear letter-grade system across the topics our coalition
-      evaluates. Several participating organizations are drafting a shared questionnaire now.
+      evaluates. Several participating organizations are building a shared
+      questionnaire; the timeline below shows where it stands.
       Once candidates are surveyed, ratings will be published by municipality ahead
       of election day.
     </p>
