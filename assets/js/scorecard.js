@@ -151,13 +151,13 @@
   }
 
   // --- Slate highlighting ---------------------------------------------------
-  // Opt-in tint, one colour per slate, toggled per municipality from that
+  // Per-municipality tint, one colour per slate, toggled from that
   // municipality's heading. The palette classes are already on the rows (see
   // scorecard/index.md); all this does is decide whether they paint anything,
   // so nothing here knows a colour.
   //
   // The controls ship hidden and are revealed here because the tint needs this
-  // script: an unchecked box that could never do anything is worse than no box.
+  // script: a box that could never do anything is worse than no box.
   //
   // Independent of every filter above: highlighting changes how rows look, not
   // which rows show, so it deliberately does not touch apply().
@@ -170,8 +170,7 @@
     var label = document.querySelector('[data-slate-control="' + muni + '"]');
     if (label) label.hidden = false;
 
-    toggle.addEventListener('change', function () {
-      var on = this.checked;
+    function paint(on) {
       // Marked on the rows themselves rather than on the municipality's tbody,
       // because favourites.js MOVES rows out of that tbody into the pinned
       // group. A class on the container would drop the tint the moment a
@@ -181,6 +180,16 @@
           row.classList.toggle('is-slate-lit', on);
         }
       });
+    }
+
+    // The box ships `checked`, so the tint has to be painted once here: a
+    // checkbox that is already on fires no change event. Read the live property
+    // rather than assuming true, so a browser restoring the reader's unchecked
+    // state across a reload is honoured instead of overridden.
+    paint(toggle.checked);
+
+    toggle.addEventListener('change', function () {
+      paint(this.checked);
     });
   });
 

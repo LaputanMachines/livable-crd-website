@@ -200,10 +200,11 @@ description: >-
                   script toggles), so it alone ships `hidden` and is revealed by
                   assets/js/scorecard.js, the same contract as the favourite star.
 
-                  Highlighting is off by default: most candidates run
-                  unaffiliated, and colouring by default would spend the table's
-                  strongest visual signal on a minority of rows, implying slate is
-                  the most important fact about a candidate. It is not.
+                  Highlighting is on by default, so the box ships `checked` and
+                  the script paints the rows on load rather than waiting for a
+                  change event. A reader who does not want slate colour can turn
+                  it off per municipality; the swatches in the legend stay either
+                  way, so nothing is lost by unchecking it.
 
                   Colour is never the only carrier (WCAG 1.4.1): the row names its
                   slate in the meta line and the legend labels every swatch, which
@@ -224,7 +225,7 @@ description: >-
                     {%- endfor -%}
                   </span>
                   <label class="slate-toggle" for="slate-highlight-{{ muni.slug }}" data-slate-control="{{ muni.slug }}" hidden>
-                    <input type="checkbox" id="slate-highlight-{{ muni.slug }}" data-slate-toggle="{{ muni.slug }}">
+                    <input type="checkbox" id="slate-highlight-{{ muni.slug }}" data-slate-toggle="{{ muni.slug }}" checked>
                     <span>Highlight Slate Candidates</span>
                   </label>
                 </span>

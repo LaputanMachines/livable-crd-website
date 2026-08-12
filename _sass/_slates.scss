@@ -130,8 +130,8 @@
 
 // --- The row tint ------------------------------------------------------------
 // Applied only to rows assets/js/scorecard.js has marked .is-slate-lit, which
-// it does per municipality, so the default view is uncoloured and a reader only
-// ever lights up the group they are looking at.
+// it does per municipality: lit on load, and a reader can drop the colour on
+// any one group without touching the others.
 //
 // The class is on the row rather than the municipality's tbody because
 // favourites.js moves rows between tbodies; see the note in scorecard.js.
