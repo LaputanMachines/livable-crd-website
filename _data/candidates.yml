@@ -518,6 +518,42 @@
   standing: incumbent-councillor
   slate: null
 
+# --- North Saanich ---
+- name: Kristine Marshall
+  display_name: "Marshall, Kristine"
+  municipality: north-saanich
+  office: null
+  standing: incumbent-councillor
+  slate: North Saanich Strong
+
+- name: Jack McClintock
+  display_name: "McClintock, Jack"
+  municipality: north-saanich
+  office: null
+  standing: incumbent-councillor
+  slate: null
+
+- name: Irene McConkey
+  display_name: "McConkey, Irene"
+  municipality: north-saanich
+  office: null
+  standing: incumbent-councillor
+  slate: North Saanich Strong
+
+- name: "Sanjiv Shrivastava, Ph.D"
+  display_name: "Ph.D, Sanjiv Shrivastava,"
+  municipality: north-saanich
+  office: null
+  standing: incumbent-councillor
+  slate: North Saanich Strong
+
+- name: Jim Woolford
+  display_name: "Woolford, Jim"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+
 # --- Sooke ---
 - name: Ty Daniels
   display_name: "Daniels, Ty"
