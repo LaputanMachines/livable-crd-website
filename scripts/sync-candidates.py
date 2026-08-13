@@ -34,11 +34,11 @@ OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 # exists: "general", "reconciliation", "governance". Add the pair below once the
 # coalition adds the matching column.
 #
-# As of the sheet's 2026-08 restructure NONE of these columns exist any more;
-# grades are moving to a separate sheet. Every candidate therefore syncs with no
-# scores and renders fully pending, which is correct for now but would also be
-# how a silent regression looked, so main() warns for each column it cannot find
-# rather than letting an empty grade column pass unremarked.
+# As of the sheet's 2026-08 restructure NONE of these columns exist any more:
+# grades live in a separate sheet, so every candidate syncs with no scores and
+# renders fully pending. That is the expected steady state and is no longer
+# warned about. The pairs stay listed so a column reappearing in the tracking
+# sheet is picked up automatically.
 SCORE_MAP = [
     ("Housing", "housing"),
     ("Transit", "transit"),
@@ -526,13 +526,10 @@ def main(argv=None):
         warnings.append(f"CSV has no {SLATE_COLUMN!r} column: no slate published "
                         f"for any candidate")
 
-    # Grade columns are optional in the same way, but their absence is worth
-    # saying out loud: it is indistinguishable from "everyone is ungraded", and
-    # publishing an all-pending scorecard by accident is the failure this catches.
-    absent_grades = [column for column, _ in SCORE_MAP if column not in fields]
-    if absent_grades:
-        warnings.append(f"CSV has no grade column(s) {absent_grades}: those topics "
-                        f"publish as pending for every candidate")
+    # Grade columns are optional too, and their absence is deliberately NOT
+    # warned about: the coalition moved grades to a separate sheet, so every
+    # column in SCORE_MAP is expected to be missing and flagging it on every run
+    # is pure noise. A grade that is present but unparseable still errors below.
 
     records, skipped = build_records(list(reader), muni_lookup, slate_labels,
                                     has_slate, errors, warnings)
