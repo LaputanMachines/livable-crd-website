@@ -280,6 +280,13 @@
   standing: challenger
   slate: null
 
+- name: Matthew Schryer
+  display_name: "Schryer, Matthew"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+
 - name: Dave Thompson
   display_name: "Thompson, Dave"
   municipality: victoria
@@ -386,6 +393,13 @@
   municipality: view-royal
   office: Councillor
   standing: incumbent-councillor
+  slate: null
+
+- name: David Screech
+  display_name: "Screech, David"
+  municipality: view-royal
+  office: Mayor
+  standing: ex-incumbent-mayor
   slate: null
 
 # --- Colwood ---
