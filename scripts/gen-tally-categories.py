@@ -152,40 +152,48 @@ TRANSIT = [
      '<line x1="16" y1="12" x2="23" y2="12"/></svg>'),
 ]
 
-# The Housing block: HSG-01 to HSG-11, the biggest in the questionnaire, so
-# these are subjects rather than questions. Two rows of three in form order.
+# The Housing block: HSG-01 to HSG-11, the biggest in the questionnaire. These
+# labels are given rather than derived - they came in as a per-question tagging
+# of the block, which is why they read as tags ("OCP", "Plan") where the other
+# sets read as phrases. Two rows of four.
 #
-# HSG-01, HSG-02 and HSG-03 are one tile: three angles on what can be built
-# without a rezoning. HSG-07 and HSG-08 are one tile: the tools list and the
-# displacement list are both "what would you actually do about affordability".
-#
-# Two questions get no tile. HSG-10 asks the candidate's own housing situation,
-# which is demographic, ungraded and carries a "prefer not to say" - announcing
-# it on a section break oversells a question we deliberately made easy to skip.
-# HSG-09 is `change="Unchanged"`, so its text is in the master sheet rather than
-# finalize.py and there was nothing here to label it from. Worth a look before
-# this ships: if HSG-09 is a subject none of these six covers, it needs a tile.
+# The source list had ten entries for eight labels: "Approvals" and "OCP" each
+# appeared twice, once per question carrying that tag. Duplicates are dropped
+# here - two identical tiles in one grid read as a rendering fault, not as two
+# questions - and the order is first appearance in that list.
 HOUSING = [
-    ("Building by right",
-     '<svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/>'
-     '<path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>'),
-    ("Public opposition",
-     '<svg viewBox="0 0 24 24"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72'
-     'a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3z"/>'
-     '<path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>'),
-    ("Approval deadlines",
-     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
-     '<path d="M12 6v6l4 2"/></svg>'),
-    # A P in a sign, rather than a slashed car. The car lost this argument once
-    # already, in the Walking set.
-    ("Parking minimums",
-     '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/>'
-     '<path d="M9.5 17.5V7h3.7a2.9 2.9 0 0 1 0 5.8H9.5"/></svg>'),
-    ("Affordability tools",
+    # The one glyph here from a family already in use: reconciliation.svg is two
+    # figures and the Conduct set has a figure with an x. All three mean people,
+    # and no two share a section break, so the resemblance is the point rather
+    # than a collision.
+    ("Housing need",
+     '<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>'
+     '<circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/>'
+     '<line x1="23" y1="11" x2="17" y2="11"/></svg>'),
+    ("Displacement",
+     '<svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>'
+     '<path d="M16 17l5-5-5-5"/><line x1="21" y1="12" x2="9" y2="12"/></svg>'),
+    ("Approvals",
+     '<svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/>'
+     '<path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>'),
+    ("OCP",
+     '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/>'
+     '<line x1="3" y1="9" x2="21" y2="9"/>'
+     '<line x1="9" y1="21" x2="9" y2="9"/></svg>'),
+    ("Housing types",
+     '<svg viewBox="0 0 24 24"><path d="M2 21h20"/>'
+     '<path d="M3 21v-7l4-3 4 3v7"/>'
+     '<rect x="14" y="8" width="7" height="13" rx="1"/>'
+     '<path d="M16.5 12h2M16.5 16h2"/></svg>'),
+    ("Policy",
+     '<svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>'
+     '<path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>'
+     '</svg>'),
+    ("Non-market housing",
      '<svg viewBox="0 0 24 24"><circle cx="7.5" cy="16.5" r="5"/>'
      '<path d="M11 13L21 3"/><path d="M16.5 7.5l2.5 2.5"/>'
      '<path d="M19 5l2.5 2.5"/></svg>'),
-    ("Housing targets",
+    ("Plan",
      '<svg viewBox="0 0 24 24"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1'
      '-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>'),
 ]
@@ -384,7 +392,7 @@ CONDUCT = [
 ]
 
 SETS = {"categories": 5, "complete": 5, "general": 3, "walking": 4,
-        "rolling": 4, "transit": 4, "housing": 3, "climate": 3,
+        "rolling": 4, "transit": 4, "housing": 4, "climate": 3,
         "arts": 3, "health-rec": 2, "governance": 3,
         "housekeeping": 3, "info": 4, "conduct": 5}             # name -> columns
 
