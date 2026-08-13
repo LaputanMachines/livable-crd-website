@@ -397,14 +397,26 @@ SURNAME_PARTICLES = {
 }
 
 
+# Names the particle heuristic below can't get right, e.g. multi-word surnames
+# with no particle to key off of. Maps the full name to an explicit
+# (last, first) split. Matched case-insensitively on collapsed whitespace.
+NAME_SPLIT_OVERRIDES = {
+    "teale phelps bondaroff": ("Phelps Bondaroff", "Teale"),
+}
+
+
 def split_name(name):
     """Split "First Middle Last" into (last, first) for "Last, First" display.
 
     The last name is the final token, extended leftward to absorb any surname
     particles ("de", "van", ...). Everything before it is the given name(s).
-    A single-token name yields ("Name", "").
+    A single-token name yields ("Name", ""). Names in NAME_SPLIT_OVERRIDES
+    bypass the heuristic entirely.
     """
     parts = (name or "").split()
+    override = NAME_SPLIT_OVERRIDES.get(" ".join(parts).casefold())
+    if override:
+        return override
     if len(parts) <= 1:
         return (parts[0] if parts else ""), ""
     i = len(parts) - 1

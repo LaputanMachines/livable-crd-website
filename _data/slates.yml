@@ -23,11 +23,14 @@
 # factual public-record field only. See the note in _data/candidates.yml about
 # which candidate fields are publishable.
 
-# The three slates contesting the 2026 election. Each carries an explicit `label`
+# The four slates contesting the 2026 election. Each carries an explicit `label`
 # even though the sheet already spells them this way: without one the published
 # label is whichever spelling the sheet happens to use first, so a later edit
 # typing "SOOKE FIRST" would change what the scorecard shows. Naming it here
 # pins it.
+- id: north-saanich-strong
+  label: North Saanich Strong
+
 - id: save-our-saanich
   label: Save Our Saanich
 

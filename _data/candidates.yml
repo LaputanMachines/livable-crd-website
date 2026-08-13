@@ -41,13 +41,6 @@
   standing: challenger
   slate: null
 
-- name: Teale Phelps Bondaroff
-  display_name: "Bondaroff, Teale Phelps"
-  municipality: saanich
-  office: Councillor
-  standing: incumbent-councillor
-  slate: null
-
 - name: Susan Brice
   display_name: "Brice, Susan"
   municipality: saanich
@@ -124,6 +117,13 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+
+- name: Teale Phelps Bondaroff
+  display_name: "Phelps Bondaroff, Teale"
+  municipality: saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
 
 - name: Colin Plant
   display_name: "Plant, Colin"
