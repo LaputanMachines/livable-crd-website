@@ -446,6 +446,13 @@
   slate: null
 
 # --- Langford ---
+- name: Shawn Blair
+  display_name: "Blair, Shawn"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Jennifer Dunnett
   display_name: "Dunnett, Jennifer"
   municipality: langford
