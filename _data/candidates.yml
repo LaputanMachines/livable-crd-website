@@ -55,6 +55,13 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Mauricio Curbelo
+  display_name: "Curbelo, Mauricio"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Zac De Vries
   display_name: "De Vries, Zac"
   municipality: saanich
