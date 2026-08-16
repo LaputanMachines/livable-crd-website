@@ -122,6 +122,13 @@ description: >-
       The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, governance, and general livability. Each candidate is graded
       in every area, so voters can compare positions topic by topic at a glance.
     </p>
+    {%- comment -%}
+      Between the section's description and the ten topic cards: the sentence
+      above says what the questionnaire covers, so this is where "food systems
+      is not one of them, and here is who is covering it" reads as part of the
+      same answer rather than as a footnote under the grid.
+    {%- endcomment -%}
+    {% include other-scorecard-notice.html %}
     <div class="card-grid">
       {% for subject in site.data.subjects %}
       {% include topic-card.html subject=subject %}

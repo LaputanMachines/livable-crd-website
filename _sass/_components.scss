@@ -918,6 +918,83 @@ $category-colors: (
   line-height: 1.4;
 }
 
+// --- Other organizations' scorecards ----------------------------------------
+// Data:   _data/other-scorecards.yml
+// Markup: _includes/other-scorecard-notice.html (homepage + scorecard)
+//
+// Deliberately not a .status-banner or a .callout: both of those speak for
+// Livable CRD, and this band speaks about somebody else's work. The lavender
+// surface with a heavy accent edge reads as "related, not ours" without
+// inventing a second colour language.
+.other-scorecards {
+  display: grid;
+  gap: $space-md;
+  margin-top: $space-md;
+}
+
+.other-scorecard {
+  background: $color-bg-warm;
+  border: $border-weight solid $color-text;
+  border-left-width: $space-xs;
+  border-left-color: $color-accent;
+  padding: $space-md $space-gutter;
+}
+
+.other-scorecard__eyebrow {
+  margin: 0 0 $space-xs;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  color: $color-accent;
+}
+
+.other-scorecard__title {
+  margin: 0 0 $space-xs;
+  font-family: $font-display;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.other-scorecard__body {
+  margin: 0;
+  color: $color-muted;
+  font-size: 0.95rem;
+}
+
+// Row of end matter: the pill, the timing, and the outbound link. Wraps rather
+// than shrinking, so the pill keeps its shape on a phone.
+.other-scorecard__action {
+  margin: $space-sm 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-xs $space-sm;
+  font-size: 0.9rem;
+}
+
+.other-scorecard__status {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  background: $color-text;
+  color: #fff;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.7rem;
+  line-height: 1;
+  border-radius: $radius;
+}
+
+.other-scorecard__expected { color: $color-muted; }
+
+.other-scorecard__org-link { font-weight: 600; }
+
 .contact-panel {
   background: $color-surface;
   border-radius: 0;

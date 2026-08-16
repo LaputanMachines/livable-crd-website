@@ -1,0 +1,38 @@
+# Scorecards other organizations are publishing about the same candidates.
+#
+# These are NOT Livable CRD scorecards, and the organizations here are not
+# coalition partners (see _data/partners.yml for those): we are working
+# alongside them, which is a different claim and the wording should stay that
+# way unless they tell us otherwise. The point is voter service: a reader
+# comparing candidates here should know when someone else is grading the same
+# candidates on a subject our questionnaire leaves out.
+#
+# Rendered by _includes/other-scorecard-notice.html, on the homepage and at the
+# top of the scorecard. The banner does not wait for a URL: an entry with no
+# `url` still renders, saying the scorecard is on its way. Delete every entry to
+# pull the banner site-wide.
+#
+# Fields:
+#   org       Organization name (required).
+#   topic     Subject area, shown as the eyebrow above the headline (required).
+#   headline  One line naming what they are publishing (required).
+#   note      A sentence or two of context for a voter (optional).
+#   url       The scorecard itself, once they send it. Adding it is the only
+#             edit needed to turn the banner's "not published yet" line into a
+#             button through to their scorecard, on both pages at once.
+#   org_url   The organization's own site (optional). Shown while `url` is
+#             blank, so a reader has somewhere to go in the meantime.
+#   expected  Optional timing line, e.g. "Expected in the fall". Leave it out
+#             unless the organization has actually committed to a date: it is
+#             their schedule to announce, not ours to promise on their behalf.
+
+- org: Victoria Urban Food Table
+  topic: Food systems
+  headline: Victoria Urban Food Table is preparing a food systems scorecard
+  note: >-
+    The Livable CRD questionnaire does not cover food systems. Victoria Urban
+    Food Table is putting its own questions to City of Victoria candidates and
+    plans to publish the answers separately, so voters who weigh food policy can
+    read both scorecards side by side.
+  url: ""
+  org_url: "https://www.victoriaurbanfoodtable.com/"

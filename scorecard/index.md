@@ -38,6 +38,15 @@ description: >-
      more_url="#deadlines"
      more_label="Key dates, and what a missed deadline means" %}
 
+  {%- comment -%}
+    Below the candidate deadlines rather than above them: the deadline band is
+    the one thing on this page a reader can miss at a cost, so nothing gets
+    inserted ahead of it. Still above the table, because a voter who cares
+    about food policy should see it while choosing what to compare, not after
+    scrolling every municipality.
+  {%- endcomment -%}
+  {% include other-scorecard-notice.html %}
+
   <div class="scorecard-legend" aria-label="Grading key">
     {% for grade in site.data.grades %}
     <span class="scorecard-legend__item">
