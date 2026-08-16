@@ -15,8 +15,11 @@ can't drift apart. Every other set defines its icons inline below, because each
 one describes the questions in a single block rather than a topic: `general` is
 GEN-01 and GEN-02, `walking` is WLK-01 to WLK-04, `housekeeping` is the
 internal block (HK-01, HK-02), never scored and never published bar one answer,
-`info` is the pre-start briefing, and `conduct` summarises the code of conduct
-page.
+`info` is the pre-start briefing, `optional`, `saving`, `authorship`, `grading`
+and `threshold` are five paragraphs inside it (skipping and grades, coming back
+later, who wrote the questions, how they're marked, and the half-a-category
+rule), `feedback` is the optional comments section at the end, and `conduct`
+summarises the code of conduct page.
 
 The icons need a *stroke* renderer, which gen-fb-banner.py's fill rasteriser
 doesn't do: they're 24x24 Feather-style outlines (`stroke="currentColor"`,
@@ -267,11 +270,14 @@ ARTS = [
      '<path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>'),
 ]
 
-# The Governance block: GOV-01, GOV-02 and the per-municipality GOV-03. Not one
-# tile per question, because GOV-01 asks two unrelated things in one block and
-# GOV-02 is a second helping of its first half. Split by subject instead:
-# regional delivery (GOV-01 part 1 and GOV-02), amalgamation (GOV-01 part 2,
-# published unscored per its note), and the funding gap (GOV-03).
+# The Governance block: GOV-01 and GOV-02. Not one tile per question, because
+# GOV-01 asks two unrelated things in one block and GOV-02 is a second helping of
+# its first half. Split by subject instead: regional delivery (GOV-01 part 1 and
+# GOV-02) and amalgamation (GOV-01 part 2, published unscored per its note).
+#
+# GOV-03, the per-municipality infrastructure funding gap, has no tile: it is the
+# one question here that every candidate sees a different version of, so the
+# section break says nothing about it.
 GOVERNANCE = [
     ("Shared services",
      '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/>'
@@ -281,31 +287,57 @@ GOVERNANCE = [
     ("Amalgamation",
      '<svg viewBox="0 0 24 24"><circle cx="18" cy="18" r="3"/>'
      '<circle cx="6" cy="6" r="3"/><path d="M6 21V9a9 9 0 0 0 9 9"/></svg>'),
-    ("Infrastructure gap",
-     '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 '
-     '1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91'
-     'a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'),
 ]
 
-# Healthcare access and Reconciliation share one section break: HLT-01 and
-# REC-01 are the only questions in either category, and a section break per
-# question would be two graphics for two questions.
+# The Healthcare access block: HLT-01, on its own now that Reconciliation has its
+# own section break and the two no longer share one. One question, so the tiles split it
+# rather than the block: the subject, and the choice it actually asks - who runs
+# the clinic, the municipality, a non-profit the municipality backs, or nobody
+# because it is the province's job.
 #
-# The only set that takes its icons off disk rather than defining them inline.
-# Everywhere else an inline icon is the point, because the tile stands for a
-# question and the subject icon would say "topic" instead. Here the tile stands
-# for a topic, because the category is one question wide, so borrowing the
-# subject icon is what keeps this graphic and categories.png saying the same
-# thing. It also keeps me from inventing Indigenous iconography for REC-01:
-# reconciliation.svg is the project's own choice and this defers to it.
-#
-# REC-01 is `change="Unchanged"`, so its text lives in the master sheet rather
-# than finalize.py. The label follows aggregate.py's note on FR-55: "primary
-# subject is First Nations representation in governance." Check it against the
-# sheet before this ships.
-HEALTH_REC = [
+# The first icon comes off disk, the only one in an inline set that does. Its tile
+# stands for a whole category rather than for one question among several, because
+# Healthcare access is one question wide, so borrowing the subject icon is what
+# keeps this graphic and categories.png saying the same thing.
+HEALTHCARE = [
     ("Primary care clinics", "healthcare-access.svg"),
-    ("First Nations representation", "reconciliation.svg"),
+    ("Clinic operator",
+     '<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>'
+     '<circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/>'
+     '<line x1="23" y1="11" x2="17" y2="11"/></svg>'),
+]
+
+# The Reconciliation block: REC-01, the transit-governance question, plus the
+# consultation-practices multi-select that arrived with it. One tile per question,
+# not per subject, because the two ask different things: who sits on a named body,
+# and how the municipality consults day to day.
+#
+# Neither tile borrows reconciliation.svg off disk the way Healthcare borrows its
+# subject icon. That glyph is two figures, a candidate has already met it in
+# categories.png standing for the whole category, and reusing it for one of two
+# questions would say "this tile is the category" next to a tile that isn't. The
+# user-plus / user-x variants of the same family are spoken for by Housing and
+# Conduct, so both icons here are drawn from what the questions name instead.
+RECONCILIATION = [
+    # REC-01 names two bodies (the VRTC and the CRD Transportation Commission), so
+    # the icon is the body: a boardroom table from above, two seats a side. A round
+    # table with seats on a ring was the first draft and it read as a cluster of
+    # dots - at r=2 against a 2-unit stroke a seat fills in solid, so the table has
+    # to be the long pill for the arrangement to say "meeting" rather than "pattern".
+    # Four seats isn't a claim about the size of either board.
+    ("Seats in transit governance",
+     '<svg viewBox="0 0 24 24"><rect x="3" y="10" width="18" height="4" rx="2"/>'
+     '<circle cx="7.5" cy="4.2" r="2"/><circle cx="16.5" cy="4.2" r="2"/>'
+     '<circle cx="7.5" cy="19.8" r="2"/><circle cx="16.5" cy="19.8" r="2"/></svg>'),
+    # A round bubble with an ellipsis, where Housekeeping's is a square one with
+    # lines of text: that tile is a written answer in a text field, this one is a
+    # conversation still going. The ellipsis dots are zero-length strokes, drawn as
+    # dots by the round caps render_icon adds.
+    ("Consultation practices",
+     '<svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1'
+     '-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1'
+     ' 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8z"/>'
+     '<path d="M8.5 12h.01M12 12h.01M15.5 12h.01"/></svg>'),
 ]
 
 # The Housekeeping block: HK-01 and HK-02 in finalize.py. It's the internal
@@ -358,6 +390,187 @@ INFO = [
      '<circle cx="12" cy="12" r="3"/></svg>'),
 ]
 
+# The skipping-and-grades paragraph, which sits inside the same briefing `info`
+# summarises. It gets its own graphic because it's the one paragraph there that
+# costs the candidate something: `info`'s "Every one optional" tile states the
+# permission and stops, and the sentence that follows takes half of it back.
+#
+# Three tiles for the paragraph's three clauses, in its order: the permission, the
+# consequence, the way out. The middle tile is the reason the set exists, so it
+# doesn't get softened - the arrow points down.
+OPTIONAL = [
+    # A skip-forward, the one glyph a candidate reads as "move past this" without a
+    # label. `info`'s two adjacent tiles use a ticked circle (every question
+    # optional) and a circle with a minus (N/A or decline); this is the action
+    # rather than the property, so it isn't a third circle.
+    ("Skip any question",
+     '<svg viewBox="0 0 24 24"><path d="M5 4l11 8-11 8z"/>'
+     '<line x1="19" y1="4" x2="19" y2="20"/></svg>'),
+    # The mirror of the trending-up arrow Walking and Housekeeping use. Same glyph
+    # family, opposite direction, and here the direction is the whole content of the
+    # tile: a blank answer moves the category grade down. A warning triangle was the
+    # alternative and it overstates this - the paragraph is a caution inside an
+    # invitation, not an alert, and Walking's safety tile owns that triangle anyway.
+    ("Blanks lower the grade",
+     '<svg viewBox="0 0 24 24"><path d="M23 18l-9-9-5 5-8-8"/>'
+     '<path d="M17 18h6v-6"/></svg>'),
+    # An envelope, not a speech bubble: the paragraph names an address, and every
+    # bubble in these graphics stands for something the candidate types into the
+    # form. This one is the door out of it.
+    ("Email us and we’ll help",
+     '<svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/>'
+     '<path d="M2.5 6.5L12 13.5l9.5-7"/></svg>'),
+]
+
+# The come-back-later paragraph, the other half of the briefing `optional`
+# summarises: answer over several days, but don't clear the browser cache before
+# submitting. Three tiles for two sentences, because the warning only makes sense
+# with the mechanism beside it - the middle tile is why the third one matters.
+#
+# `info`'s "Saved as you go" tile is the floppy disk, and this set deliberately
+# doesn't reuse it: that tile is a reassurance a candidate reads once, this graphic
+# has to say *where* the answers are, since that's what makes clearing the cache
+# expensive. Hence a drive rather than a save icon.
+SAVING = [
+    ("Take a few days",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
+     '<path d="M12 6v6l4.5 2.5"/></svg>'),
+    ("Saved in this browser",
+     '<svg viewBox="0 0 24 24"><line x1="2" y1="12" x2="22" y2="12"/>'
+     '<path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89'
+     'A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'
+     '<line x1="6" y1="16" x2="6.01" y2="16"/>'
+     '<line x1="10" y1="16" x2="10.01" y2="16"/></svg>'),
+    # A struck-through bin. The lid and body are drawn without the two inner blades
+    # Feather's trash-2 has: the slash already crosses the box corner to corner, and
+    # a candidate has to read the negation before they read the object.
+    ("Don’t clear your cache",
+     '<svg viewBox="0 0 24 24"><path d="M3.5 6.5h17"/>'
+     '<path d="M9 6.5V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5"/>'
+     '<path d="M18.5 6.5l-.9 12.6a2 2 0 0 1-2 1.9H8.4a2 2 0 0 1-2-1.9L5.5 6.5"/>'
+     '<path d="M2 2l20 20"/></svg>'),
+]
+
+# Who wrote the questions: coalition members for their own categories, Livable CRD
+# volunteers for the mechanics. Two tiles, one per author.
+#
+# The paragraph's last sentence - housekeeping is never graded - had a third tile
+# and doesn't any more: `grading` states the same thing one screen later, and a
+# graphic that says "not graded" twice makes a candidate look for the difference
+# between the two claims. Authorship here, grading there.
+AUTHORSHIP = [
+    # Stacked sheets: several organisations' question sets, one on top of another.
+    # The two-figures glyph would be the obvious "members" icon and it belongs to
+    # reconciliation.svg, which a candidate has already met in categories.png.
+    ("Members wrote them",
+     '<svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/>'
+     '<path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>'),
+    # A wrench, for the questions about the questionnaire rather than about policy.
+    # It's the only tool in any of these graphics, which is the point: every other
+    # icon stands for a subject, and this one stands for the machinery.
+    ("Housekeeping is ours",
+     '<svg viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6'
+     'a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3'
+     'l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>'),
+]
+
+# How grading works: the coalition member who asked a question marks it, some
+# questions ship unscored as raw text, every grade carries a rationale, and every
+# answer is published either way. Four clauses, four tiles.
+#
+# Two of these icons are `info`'s, unchanged and meaning the same thing: the
+# document for "Grades with rationale" and the eye for "Answers published". That is
+# deliberate rather than tolerated - this paragraph is the long form of those two
+# briefing tiles, so a candidate meeting the same glyph again is being told they
+# already know this bit.
+GRADING = [
+    # The third variant of the figure family, after Housing's user-plus and Conduct's
+    # user-x, and the only one where the tick is the content: the person who wrote
+    # the question is the person who marks it.
+    ("Members grade them",
+     '<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>'
+     '<circle cx="8.5" cy="7" r="4"/><path d="M17 11l2 2 4-4"/></svg>'),
+    # Four lines of prose, ragged right: an answer as the candidate typed it, with no
+    # grade attached. Info's question-count tile is also a stack of lines, but that
+    # one is a bulleted list - a numbered set of questions - and this one isn't.
+    ("Some aren’t graded",
+     '<svg viewBox="0 0 24 24"><line x1="21" y1="5" x2="3" y2="5"/>'
+     '<line x1="17" y1="10" x2="3" y2="10"/>'
+     '<line x1="21" y1="15" x2="3" y2="15"/>'
+     '<line x1="17" y1="20" x2="3" y2="20"/></svg>'),
+    ("Rationale included",
+     '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12'
+     'a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8M16 17H8M10 9H8"/></svg>'),
+    # Same glyph *and* same words as info's last tile, not just the same glyph: the
+    # paragraph's closing promise is the one thing here a candidate has already been
+    # told, and repeating it verbatim is cheaper than paraphrasing it.
+    ("Answers published",
+     '<svg viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/>'
+     '<circle cx="12" cy="12" r="3"/></svg>'),
+]
+
+# The half-a-category rule: pick the option nearest your actual position, and skip
+# more than half a category and it goes ungraded. Two tiles, one per sentence.
+#
+# This is the third graphic in the briefing to touch skipping - `optional` says
+# blanks lower the grade, `grading` says some questions aren't graded at all - and
+# it's the only one that names the line where the grade disappears. So neither icon
+# here is a negation: the first is the scale, the second is the fraction of it that
+# has to be filled. Struck-through glyphs are `saving`'s and Conduct's.
+THRESHOLD = [
+    # A scale with end stops and a marker somewhere along it, off centre. Not a
+    # ticked circle (info's "Every one optional") and not the concentric rings
+    # General uses for "one policy change": the instruction isn't "choose correctly",
+    # it's "choose the point on the scale you actually occupy".
+    #
+    # The end stops run nearly the full height of the box on purpose: at the size
+    # these render, an icon that only uses the middle third reads as a smaller icon
+    # rather than as a wider one, and every tile beside it fills its box.
+    ("Where you stand",
+     '<svg viewBox="0 0 24 24"><line x1="2" y1="12" x2="22" y2="12"/>'
+     '<line x1="2" y1="3" x2="2" y2="21"/><line x1="22" y1="3" x2="22" y2="21"/>'
+     '<circle cx="15" cy="12" r="4.5"/></svg>'),
+    # A bar split down the middle. A half-filled pie would be the other way to draw
+    # a half and the wedge is taken twice over - General's $10M split and Arts'
+    # budget tile - so this one is a bar, which also reads as a category's questions
+    # laid end to end rather than as a share of money.
+    ("Over half, or no grade",
+     '<svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/>'
+     '<line x1="12" y1="4" x2="12" y2="20"/></svg>'),
+]
+
+# The closing feedback section: nearly finished, then the three things it asks for.
+# "This section is optional" gets no tile of its own - `optional` and `threshold`
+# already own that idea twice over, and a fourth tile saying you may skip this is a
+# strange thing to lead an invitation with.
+#
+# The only set here that isn't about the questionnaire's subject matter or its
+# rules, which is why its first tile is progress rather than a topic: a candidate
+# arrives at this page having answered up to 70 questions, and the useful thing to
+# say first is that the end is in sight.
+FEEDBACK = [
+    # An open ring, the arc nearly closed. It's the same idea as `complete`'s green
+    # ticks without claiming the work is finished, since at this point it isn't.
+    ("Almost done",
+     '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 1-7.07 2.93"/></svg>'),
+    ("Rate the experience",
+     '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88'
+     'L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>'),
+    # A question mark, for the question about the questions. The one glyph in these
+    # graphics that points at the form rather than at the world.
+    ("Were we clear?",
+     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/>'
+     '<path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>'
+     '<line x1="12" y1="17" x2="12.01" y2="17"/></svg>'),
+    # A paper plane rather than a third speech bubble: Housekeeping's is square with
+    # lines of text and Reconciliation's is round with an ellipsis, and both stand
+    # for something the candidate says *inside* a question. This one is addressed to
+    # the people on the other end of the form.
+    ("Tell the volunteers",
+     '<svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/>'
+     '<path d="M22 2L15 22l-4-9-9-4z"/></svg>'),
+]
+
 # The code of conduct (/code-of-conduct/), reduced to the five things a
 # candidate needs from it before they start typing. Three of the five are
 # reassurances rather than prohibitions, in the same proportion the page gives
@@ -393,8 +606,10 @@ CONDUCT = [
 
 SETS = {"categories": 5, "complete": 5, "general": 3, "walking": 4,
         "rolling": 4, "transit": 4, "housing": 4, "climate": 3,
-        "arts": 3, "health-rec": 2, "governance": 3,
-        "housekeeping": 3, "info": 4, "conduct": 5}             # name -> columns
+        "arts": 3, "healthcare": 2, "reconciliation": 2, "governance": 2,
+        "housekeeping": 3, "info": 4, "optional": 3, "saving": 3,
+        "authorship": 2, "grading": 4, "threshold": 2,
+        "feedback": 4, "conduct": 5}                            # name -> columns
 
 # Sets whose icons get a green tick badged onto them. `complete` is the ten
 # topics again, ticked off, for the Thank you page: the same grid the candidate
@@ -627,13 +842,29 @@ def items_for(which):
         return list(ARTS)
     if which == "governance":
         return list(GOVERNANCE)
-    if which == "health-rec":
-        return [(label, open(os.path.join(ICON_DIR, f)).read())
-                for label, f in HEALTH_REC]
+    if which == "healthcare":
+        # One tile takes its icon off disk; see the comment on HEALTHCARE.
+        return [(label, src if src.lstrip().startswith("<")
+                 else open(os.path.join(ICON_DIR, src)).read())
+                for label, src in HEALTHCARE]
+    if which == "reconciliation":
+        return list(RECONCILIATION)
     if which == "housekeeping":
         return list(HOUSEKEEPING)
     if which == "info":
         return list(INFO)
+    if which == "optional":
+        return list(OPTIONAL)
+    if which == "saving":
+        return list(SAVING)
+    if which == "authorship":
+        return list(AUTHORSHIP)
+    if which == "grading":
+        return list(GRADING)
+    if which == "threshold":
+        return list(THRESHOLD)
+    if which == "feedback":
+        return list(FEEDBACK)
     if which == "conduct":
         return list(CONDUCT)
     # `categories` and `complete` are the same ten topics; only the tick differs.

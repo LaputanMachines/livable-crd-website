@@ -233,9 +233,9 @@ rejection:
   under, and `Kept from` gives the master ID that ended up carrying it, which is the answer
   to "which one beat mine".
 
-That distinction is the point of the tab. 30 of 97 questions have no row of their own, but
-only 9 were actually rejected; the other 21 are in the questionnaire under another ID, and
-one of them, `FR-53`, scored `STRONG`. Reading `Finalized Questions` alone, all 30 look the
+That distinction is the point of the tab. 28 of 97 questions have no row of their own, but
+only 9 were actually rejected; the other 19 are in the questionnaire under another ID, and
+one of them, `FR-53`, scored `STRONG`. Reading `Finalized Questions` alone, all 28 look the
 same.
 
 Reasons come from `DROPPED` for the dropped ones and from `MERGED_WHY` for the merges, which
@@ -256,10 +256,44 @@ It aborts if an origin ID in `FINAL` is missing from the master. Every one of th
 questions must appear either in a `FINAL` row's `origins` or in `DROPPED`; the tabs are not
 a filtered view of the master, so a question left out of both would vanish silently.
 
-Municipality-specific blocks (the BC housing targets and the infrastructure funding gaps)
-are templated from `HOUSING_TARGETS` and `INFRA_FIGURES` and expanded to one row per
-municipality, rather than repeated by hand as they were in the source tabs. That's what
-stopped the wording drifting.
+#### Questions with no master row
+
+A `FINAL` row may have `origins=[]`. That is for a question that arrived too late to go
+through intake, voting and the master at all — `CLI-12`, added 2026-08-13, is the only one.
+Such a row has to carry its own `question`, `options`, `qtype` and `source`, because there is
+no master row to read them from, and the run aborts if `question` or `qtype` is missing rather
+than shipping a blank cell to candidates. It is ungraded, like the other questions no
+committee member scored, and it appears in no `Excluded Questions` bookkeeping, since it
+displaced nothing.
+
+The alternative is to put the question through `append.py` so it lands in the master properly.
+That is the better path if more than one late question shows up, or if the committee wants to
+score it: `origins=[]` buys a one-off, not a second intake route.
+
+#### Homes for Living ships verbatim
+
+Homes for Living objected on 2026-08-13 to their questions having been reworded. All 25 now
+ship exactly as submitted, under their own submission codes (`HFL-01`..`HFL-25`) and in
+submission order, as one contiguous block of `FINAL`. Every one is `change="Unchanged"`, which
+is what keeps the whole block off `Reworded Questions`, and none carries a `question` or
+`options` key, so the text comes from the master, which holds HFL's own words.
+
+Three consequences, all of them deliberate:
+
+- The eight `HSG-*` rows that were rewrites or merges of HFL text are gone; the HFL row each
+  was built on ships in its place. Those refs are also the refs that lose their
+  `Added To Tally Questionnaire` tick, so the Tally form needs the same swap by hand.
+- The non-HFL questions those rows had absorbed (`FR-13`, `FR-14`, `FR-15`, `FR-16`, `FR-36`)
+  are absorbed into the HFL row that replaced them, so nothing is asked twice and nothing
+  leaves the ledger. `MERGED_WHY` still carries the committee's argument for each merge; what
+  changed is which question carries it, and each entry now says so.
+- The committee's edits are reversed, not hidden. What each row lost - HFL-09's copy-paste
+  error, HFL-18's `1/2/3` options, HFL-02's uncapped nine-option list, the Bill 44 and Bill 47
+  framings - is stated in that row's `Notes` cell rather than fixed in its text.
+
+The HFL tab has no question-type column, so `qtype` is the one call this file still makes on
+an HFL row. Where the answer list does not settle select-one against select-all, the note says
+the type was inferred and asks for confirmation, because getting it wrong changes the question.
 
 `MUNICIPALITIES` is the questionnaire's scope: 13 jurisdictions. The CRD's three electoral
 areas (Juan de Fuca, Salt Spring Island, Southern Gulf Islands) are excluded, because
@@ -267,12 +301,18 @@ they elect an electoral area director rather than a council and neither municipa
 question applies. `_data/municipalities.yml` still publishes all 16 on the site; who gets a
 questionnaire is a separate decision, so this script does not touch it.
 
-Every municipality gets the infrastructure question, so every one needs a figure in
-`INFRA_FIGURES`. Municipalities whose figure is still blank ship a generic version and are
-printed with `<- FIGURE NEEDED` on every run, and flagged in the `Notes` column of
-`Finalized Questions`. Only the 10 in `HOUSING_TARGETS` received provincial housing target
-orders: Sooke, Highlands and Metchosin get one municipality-specific question rather than
-two.
+Only one municipality-specific block is still templated: the infrastructure funding gap, and
+only for the eight municipalities in `INFRA_FIGURES`, which are the ones HFL never wrote an
+infrastructure question for. The five in `HFL_INFRA` (Victoria, Saanich, Oak Bay, Esquimalt,
+Colwood) ask it in HFL's wording, with HFL's figure, so a municipality whose figure is still
+blank ships the generic version and is printed with `<- FIGURE NEEDED` on every run and
+flagged in the `Notes` column of `Finalized Questions`. Every housing-target question is
+HFL's own row; the three in `NO_TARGET` (Sooke, Highlands, Metchosin) received no provincial
+target order, so they get one municipality-specific question rather than two.
+
+The wording of the target and infrastructure questions can therefore drift between
+municipalities again - HFL-18's numbered options against its siblings' lettered ones is the
+existing case - and that is now HFL's call rather than a bug to fix here.
 
 ### `summary.py`: rebuild the Summary tab
 

@@ -54,56 +54,65 @@ MUNICIPALITIES = [
     "Metchosin",
 ]
 
-# Municipality-specific figures, lifted from the HFL source rows they came in on. Both
-# blocks were submitted as one question repeated per municipality with the numbers swapped;
-# they are templated here so the wording cannot drift again the way HFL-18's did.
+# Homes for Living objected on 2026-08-13 to their questions having been reworded, so every
+# HFL-* question now ships exactly as it was submitted, under its own submission code, in
+# submission order, and none of them appears on `Reworded Questions`. Three things follow:
 #
-# The province's housing target orders cover 10 of the 13. Sooke, Highlands and Metchosin
-# were never ordered, so they skip this question rather than being asked a hollow version
-# of it.
-HOUSING_TARGETS = {
-    "Victoria": ("4,902", "HFL-11"),
-    "Saanich": ("4,610", "HFL-13"),
-    "Oak Bay": ("664", "HFL-15"),
-    "Central Saanich": ("588", "HFL-17"),
-    "Esquimalt": ("754", "HFL-18"),
-    "Sidney": ("468", "HFL-20"),
-    "Langford": ("2,993", "HFL-21"),
-    "View Royal": ("585", "HFL-22"),
-    "North Saanich": ("419", "HFL-23"),
-    "Colwood": ("940", "HFL-24"),
+#   - The eight HSG-* rows that were rewrites or merges of HFL text are gone. The HFL row
+#     each was built on ships in its place.
+#   - The non-HFL questions those rows had absorbed (FR-13, FR-14, FR-15, FR-16, FR-36) are
+#     absorbed into the HFL row that replaced them instead, so nothing is asked twice and
+#     nothing vanishes from the ledger. The committee's argument for each merge is still in
+#     MERGED_WHY; what changed is which question carries it.
+#   - The two municipality-templated blocks are HFL's own rows again wherever HFL wrote one,
+#     so only the infrastructure question is still templated, and only for the eight
+#     municipalities HFL never submitted one for.
+#
+# The cost is deliberate and worth stating: the wording HFL-18's options had already drifted
+# to, the copy-paste error in HFL-09, and the overlaps the committee had merged away all ship
+# as submitted. Those are notes on the rows below, not edits to them.
+AS_SUBMITTED = ("Ships as submitted, not reworded, at Homes for Living's request "
+                "(2026-08-13).")
+
+# The HFL tab has no question-type column, so a select-one / select-all-that-apply reading of
+# the answer list is the one call this file still makes on an HFL row. Flagged where the list
+# does not settle it, because getting it wrong changes what the question asks.
+INFERRED_TYPE = ("Question type inferred from the submitted answer list; the HFL tab has no "
+                 "type column. Confirm with Homes for Living before the form is built.")
+
+TARGET_NOTE = ("Options are in the order submitted (fewer / more / about right), which is "
+               "not the order of the underlying scale. Targets: https://www2.gov.bc.ca/gov/"
+               "content/housing-tenancy/local-governments-and-housing/housing-targets/orders")
+
+# The five municipalities HFL researched an infrastructure figure for and wrote a question
+# around. Those ship verbatim as the mapped rows; the other eight get the templated question
+# below, because FR-35 and FR-53 asked it region-wide.
+HFL_INFRA = {
+    "Victoria": "HFL-12",
+    "Saanich": "HFL-14",
+    "Oak Bay": "HFL-16",
+    "Esquimalt": "HFL-19",
+    "Colwood": "HFL-25",
 }
 
-# Every municipality gets this question, so every municipality needs its own figure. Only
-# five had been researched when voting closed; the rest are marked FIGURE NEEDED below and
-# ship a generic version until their number lands, so the gap shows up in the sheet rather
-# than silently producing an unbalanced questionnaire.
-#
-# Each entry is a clause that reads after "In <muni>, ...", plus the master row it came
-# from ("" for municipalities that had no HFL source row).
+# The three municipalities the province never issued a housing target order to. They get one
+# municipality-specific question rather than two, rather than a hollow version of the target
+# question. HFL submitted target questions for the other ten, which ship as HFL-11..HFL-24.
+NO_TARGET = {"Sooke", "Highlands", "Metchosin"}
+
+# Figures for the eight municipalities with no HFL infrastructure question, keyed to a clause
+# that reads after "In <muni>, ...". None has been researched yet, so all eight ship the
+# generic wording and print FIGURE NEEDED on every run - fill one in citing the document and
+# year, in the shape of HFL's own five, and its row picks the figure up.
 INFRA_FIGURES = {
-    "Victoria": ("the 2024 Corporate Asset Management Strategy identified $570 million "
-                 "worth of infrastructure in poor or very poor condition", "HFL-12"),
-    "Saanich": ("the 2023 Asset Management Strategy identified a $697 million "
-                "infrastructure deficit, and the 2025 State of Asset Report estimates a "
-                "shortfall of $51 million per year", "HFL-14"),
-    "Oak Bay": ("the 2024-2028 Financial Plan estimated the infrastructure deficit at "
-                "$463.5 million", "HFL-16"),
-    "Esquimalt": ("the 2026-2030 Workforce Plan estimated the infrastructure deficit at "
-                  "$35.8 million, with current funding at 40% of sustainable levels",
-                  "HFL-19"),
-    "Colwood": ("the 2024 Sustainable Infrastructure Replacement Plan estimates the "
-                "100-year infrastructure funding gap at $530 million", "HFL-25"),
-    # FIGURE NEEDED - fill in the same shape as the five above, citing the document and
-    # year the number comes from. Until then these ship the generic wording.
-    "Central Saanich": ("", ""),
-    "Sidney": ("", ""),
-    "Langford": ("", ""),
-    "View Royal": ("", ""),
-    "North Saanich": ("", ""),
-    "Sooke": ("", ""),
-    "Highlands": ("", ""),
-    "Metchosin": ("", ""),
+    "Central Saanich": "",
+    "Sidney": "",
+    "Langford": "",
+    "View Royal": "",
+    "North Saanich": "",
+    "Sooke": "",
+    "Highlands": "",
+    "Metchosin": "",
 }
 
 # Victori'Us resubmitted their whole set on 2026-08-09, after voting closed. The new
@@ -126,21 +135,20 @@ INFRA_OPTIONS = (
     "e) Seek additional provincial or federal funding."
 )
 
-TARGET_OPTIONS = (
-    "a) Fewer homes than the target (the target is too high) "
-    "b) About that many homes (the target is approximately right) "
-    "c) More homes than the target (the target is too low)"
-)
-
 # Every question in the shipping set, in the order candidates will see it.
 #
 #   ref        stable ID for the final questionnaire
 #   origins    the master IDs this row came from; the first is the row we inherit
-#              submitter / source / municipality from
+#              submitter / source / municipality from. Empty only for a question that
+#              never went through the master at all - see CLI-12 - which then has to
+#              carry its own question, options, qtype and source
 #   change     "Unchanged" | "Reworded" | "Merged" | "Reworded + merged" | "Recategorised"
 #   asked_by   who called for the change, from the voter comments
 #   why        the argument for it, condensed from those comments
 #   graded     False for questions we publish but do not score
+#   source     overrides the source tab read from the master; origin-less rows only
+#   submitter  same, for the submitter column. Left blank rather than filled in with a
+#              name or address, for the same reason nothing else here carries one
 #   note       anything the person building the Tally form has to act on
 FINAL = [
     # ---------------------------------------------------------------- General
@@ -370,134 +378,148 @@ FINAL = [
         change="Reworded", asked_by="Caleb, Michael, Claude",
         why="Without naming SSMUH / Bill 44, a yes just endorses the status quo, and "
             "'multifamily of similar size to a single-family house' had no concrete unit "
-            "ceiling. Adjacent to HSG-03, not a duplicate - process versus built form.",
+            "ceiling. Adjacent to HFL-06, not a duplicate - process versus built form.",
+    ),
+
+    # ------------------------------- Homes for Living, exactly as submitted (HFL-01..25)
+    #
+    # Refs are the submission codes and the block is in submission order, so a reader can
+    # lay this against the `HFL Questions` tab row for row. Every row here is `Unchanged`,
+    # which is what keeps the whole block off `Reworded Questions`; question text, options
+    # and municipality scope come from the master, which holds HFL's own words.
+    dict(
+        ref="HFL-01", category="Housing", origins=["HFL-01"], change="Unchanged",
+        qtype="Multi-select",
+        note=AS_SUBMITTED + " The committee had merged this into HFL-06 and cut its "
+             "'luxury housing' option; both reversed, so all nine options ship. " +
+             INFERRED_TYPE,
     ),
     dict(
-        ref="HSG-02", category="Housing", origins=["HFL-05", "FR-13"],
-        change="Merged", asked_by="Michael, Claude",
-        why="FR-13 asked the same question in weaker wording. HFL-05 names uses, heights "
-            "and densities, which closes the loophole where 'pre-zoning' gets answered "
-            "loosely, so FR-13 folds in and HFL-05's text is kept as submitted.",
-        note="Bill 44 already bars public hearings on OCP-consistent residential "
-             "rezonings, so part of this is compliance with existing law. Several "
+        ref="HFL-02", category="Housing", origins=["HFL-02"], change="Unchanged",
+        qtype="Multi-select",
+        note=AS_SUBMITTED + " Nine options, uncapped: the committee's cap of three is "
+             "reversed. " + INFERRED_TYPE,
+    ),
+    dict(
+        ref="HFL-03", category="Housing", origins=["HFL-03", "FR-16"], change="Unchanged",
+        qtype="Single choice",
+        note=AS_SUBMITTED + " FR-16 asked the same thing with 'maximum' rather than "
+             "'target' and is folded in here; HFL's wording stands.",
+    ),
+    dict(
+        ref="HFL-04", category="Housing", origins=["HFL-04", "FR-15"], change="Unchanged",
+        qtype="Multi-select",
+        note=AS_SUBMITTED + " FR-15 asked for the same incentive list and is folded in "
+             "here. Option (g) is 'Other (specify)', so the form needs a free-text "
+             "follow-up. " + INFERRED_TYPE,
+    ),
+    dict(
+        ref="HFL-05", category="Housing", origins=["HFL-05", "FR-13"], change="Unchanged",
+        qtype="Single choice",
+        note=AS_SUBMITTED + " FR-13 asked the same thing in weaker wording and is folded "
+             "in here. Bill 44 already bars public hearings on OCP-consistent residential "
+             "rezonings, so part of this is compliance with existing law, and several "
              "municipalities have already done it (Sam).",
     ),
     dict(
-        ref="HSG-03", category="Housing", origins=["HFL-06", "HFL-01"],
-        question="Beyond the three to four units Bill 44 already requires, what is the "
-                 "most housing you think should be legal to build by right - without "
-                 "rezoning - in traditional single-family areas of your municipality? "
-                 "Select one. Then: which kinds of housing does your municipality most "
-                 "need more of? Select up to three.",
-        options="Select one: a) Nothing beyond the provincial minimum b) Small-scale "
-                "multi-unit housing (up to 6 units) c) Multi-lot townhouse developments "
-                "(strata or freehold) d) Small apartments (up to 3 storeys) e) Mid-rise "
-                "apartments (up to 6 storeys). "
-                "Select up to three: a) Supportive housing for people who need mental "
-                "health and substance use support b) Publicly funded accessible housing "
-                "for elderly and/or disabled people c) Non-market affordable housing "
-                "d) Small homes (under 500 sq. ft.) e) Market rental housing "
-                "f) Family-suitable housing (3+ bedrooms, over 1200 sq. ft.) g) Market "
-                "ownership housing (condos, townhouses)",
-        qtype="Single choice + multi-select (max 3)",
-        change="Reworded + merged", asked_by="Michael, Sam, Claude",
-        why="HFL-01 asked what housing a municipality needs more of; HFL-06 asks the same "
-            "thing with teeth, so it folds in as the follow-up. Added 'beyond the SSMUH "
-            "minimum' and made the ladder explicitly select-one, or the ordinal score "
-            "breaks. Dropped HFL-01's 'luxury housing' option - nobody ticks it and its "
-            "presence telegraphs the answer we want.",
-    ),
-    dict(
-        ref="HSG-04", category="Housing", origins=["HFL-07"],
-        question="A housing proposal consistent with the Official Community Plan has been "
-                 "reviewed by staff, who recommend approval. It still requires rezoning "
-                 "because the zoning has not been updated to match the OCP. If it faces "
-                 "substantial public opposition, how would you generally vote?",
-        options="a) Support it if opposing comments have been considered by staff. "
-                "b) Support it only if it includes additional affordability or community "
-                "benefits. c) Decide case by case, with public opposition being an "
-                "important consideration. d) Generally oppose it if there is substantial "
-                "public opposition.",
+        ref="HFL-06", category="Housing", origins=["HFL-06"], change="Unchanged",
         qtype="Single choice",
-        change="Reworded", asked_by="Michael, Sam",
-        why="Highest-scoring question in the bank - it forces the exact trade-off a "
-            "councillor faces. Two edits only, both Sam's: state that the proposal is "
-            "OCP-compliant, and drop 'neighbourhood', which implies only nearby residents "
-            "count.",
+        note=AS_SUBMITTED + " Option (a), 'Single-family and suites only', is below the "
+             "three-to-four units Bill 44 already requires, so it is not a choice a "
+             "council can make; the committee's 'beyond the provincial minimum' framing is "
+             "reversed. Answers need reading as an ordinal ladder for scoring.",
     ),
     dict(
-        ref="HSG-05", category="Housing", origins=["HFL-03", "FR-16"],
-        question="Do you support setting a maximum approval time for multifamily housing "
-                 "applications in your municipality - a deadline, not a target?",
-        options="a) Yes - under 30 days for projects under six units, 180 days for "
-                "projects over six units. b) Yes - under 60 days / 365 days. c) Yes - "
-                "under 90 days / 545 days. d) No.",
+        ref="HFL-07", category="Housing", origins=["HFL-07"], change="Unchanged",
         qtype="Single choice",
-        change="Reworded + merged", asked_by="Michael, Sam, Claude",
-        why="Both questions ask the same thing. FR-16's 'maximum' is a commitment where "
-            "HFL-03's 'target' is a wish, but HFL-03 carries the day-count tiers that can "
-            "actually be scored. Merged: FR-16's framing, HFL-03's tiers.",
+        note=AS_SUBMITTED + " Highest-scoring question in the bank. The committee's two "
+             "edits - saying the proposal is OCP-compliant, and 'public' for "
+             "'neighbourhood' opposition - are both reversed.",
     ),
     dict(
-        ref="HSG-06", category="Housing", origins=["HFL-08", "FR-14", "FR-36", "HFL-09"],
-        question="Bill 47 already bars residential parking minimums in transit-oriented "
-                 "areas. Beyond that, where do you support eliminating minimum off-street "
-                 "parking requirements in your municipality? Select all that apply.",
-        options="a) All residential development b) Residential development under 12 units "
-                "c) Small-scale commercial d) All commercial e) Only where alternatives "
-                "are provided for residents (secure bike storage, car share, e-bike "
-                "charging, transit passes) f) None - keep the current minimums",
+        ref="HFL-08", category="Housing", origins=["HFL-08", "FR-14", "FR-36"],
+        change="Unchanged", qtype="Single choice",
+        note=AS_SUBMITTED + " The other two parking-minimum questions fold in here: "
+             "FR-14's split by land use and FR-36's 2030 deadline are not in this wording, "
+             "and neither is Michael's point that Bill 47 already bars residential "
+             "minimums in transit-oriented areas.",
+    ),
+    dict(
+        ref="HFL-09", category="Housing", origins=["HFL-09"], change="Unchanged",
         qtype="Multi-select",
-        change="Reworded + merged", asked_by="Michael, Sam, Claude",
-        why="Four questions asked this: FR-14 (tiered by land use), FR-36 (all land uses "
-            "by 2030), HFL-08 and HFL-09 (identical text). Every voter who commented said "
-            "merge. HFL-08's conditional option captures the conditional supporter that "
-            "the yes/no versions cannot; FR-14's land-use tiers add the rest of the "
-            "signal.",
-        note="FR-36's text contained '(A for yes, F for no)' - a grading instruction that "
-             "leaked into the question and could not have shipped to candidates.",
+        note=AS_SUBMITTED + " Its question text is copy-pasted from HFL-08 while its "
+             "options are non-market housing delivery tools, so as submitted the question "
+             "and the answers do not match. Confirm the intended question text with Homes "
+             "for Living before the form is built. " + INFERRED_TYPE,
     ),
     dict(
-        ref="HSG-07", category="Housing", origins=["FR-15", "HFL-04", "HFL-09"],
-        question="Which municipal tools would you support to get more non-market and "
-                 "affordable housing built? Select up to three.",
-        options="a) Pre-zoning b) Bonus height or density c) Relaxing setbacks, form and "
-                "character, or other zoning restrictions d) Removing or reducing municipal "
-                "fees, levies and development cost charges e) Expedited review "
-                "f) Donating or leasing municipal land g) Directly building, or partnering "
-                "with non-profit developers h) Requiring affordable units in market "
-                "projects (inclusionary zoning) i) None of the above",
-        qtype="Multi-select (max 3)",
-        change="Reworded + merged", asked_by="Michael, Sam, Claude, sheet note",
-        why="FR-15, HFL-04 and HFL-09 all ask for the incentive list. FR-15's first clause "
-            "('should non-market housing be incentivised?') gets a yes from everyone, so "
-            "the list becomes the question; scoped to municipal-level tools per the sheet "
-            "note and supplied as options, because an open 'list the incentives' is "
-            "uncomparable and penalises candidates who are less fluent in policy jargon.",
-        note="HFL-09 is a broken source row: its question text is copy-pasted from HFL-08 "
-             "but its options are affordable-housing delivery tools. Those options are "
-             "recovered here, which is where they belonged.",
+        ref="HFL-10", category="Housing", origins=["HFL-10"], change="Unchanged",
+        qtype="Long answer (1000-2000 characters, bullet points)",
+        note=AS_SUBMITTED + " Homes for Living scores this one manually, per their tab.",
     ),
     dict(
-        ref="HSG-08", category="Housing", origins=["HFL-02"],
-        question="Which of the following do you support to minimise tenant displacement "
-                 "and maintain or grow the supply of affordable housing? Select up to "
-                 "three.",
-        options="a) Award bonus density to affordable housing developments. b) Redirect "
-                "development pressure away from existing older multifamily by allowing "
-                "new multifamily in more low-density areas. c) Municipality-wide tenant "
-                "assistance policies that let existing tenants keep their current rent "
-                "after redevelopment. d) Working with the province on province-wide tenant "
-                "assistance policies. e) Identify and acquire land for non-market housing. "
-                "f) Temporarily exempt existing rental buildings from property taxes to "
-                "fund retrofits. g) Exempt below-market housing from municipal fees and "
-                "levies. h) Target a higher rental vacancy rate. i) None of the above.",
-        qtype="Multi-select (max 3)",
-        change="Reworded", asked_by="Claude",
-        why="Nine options, each a full policy concept, means candidates tick everything "
-            "and the question stops separating. Capped at three.",
+        ref="HFL-11", category="Housing", origins=["HFL-11"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
     ),
-    dict(ref="HSG-09", category="Housing", origins=["HFL-10"], change="Unchanged"),
+    dict(
+        ref="HFL-12", category="Governance", origins=["HFL-12"], change="Unchanged",
+        qtype="Multi-select (max 2)", note=AS_SUBMITTED,
+    ),
+    dict(
+        ref="HFL-13", category="Housing", origins=["HFL-13"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-14", category="Governance", origins=["HFL-14"], change="Unchanged",
+        qtype="Multi-select (max 2)", note=AS_SUBMITTED,
+    ),
+    dict(
+        ref="HFL-15", category="Housing", origins=["HFL-15"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-16", category="Governance", origins=["HFL-16"], change="Unchanged",
+        qtype="Multi-select (max 2)", note=AS_SUBMITTED,
+    ),
+    dict(
+        ref="HFL-17", category="Housing", origins=["HFL-17"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-18", category="Housing", origins=["HFL-18"], change="Unchanged",
+        qtype="Single choice",
+        note=AS_SUBMITTED + " Its options are numbered 1/2/3 where every sibling row uses "
+             "a/b/c; kept as submitted. " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-19", category="Governance", origins=["HFL-19"], change="Unchanged",
+        qtype="Multi-select (max 2)", note=AS_SUBMITTED,
+    ),
+    dict(
+        ref="HFL-20", category="Housing", origins=["HFL-20"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-21", category="Housing", origins=["HFL-21"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-22", category="Housing", origins=["HFL-22"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-23", category="Housing", origins=["HFL-23"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-24", category="Housing", origins=["HFL-24"], change="Unchanged",
+        qtype="Single choice", note=AS_SUBMITTED + " " + TARGET_NOTE,
+    ),
+    dict(
+        ref="HFL-25", category="Governance", origins=["HFL-25"], change="Unchanged",
+        qtype="Multi-select (max 2)", note=AS_SUBMITTED,
+    ),
+
     dict(
         ref="HSG-10", category="Housing", origins=["FR-34"], graded=False,
         question="What is your current housing situation? If you are not currently "
@@ -661,6 +683,23 @@ FINAL = [
          graded=False, note="Submitted after voting closed - ungraded by the committee."),
     dict(ref="CLI-11", category="Climate", origins=["RUSH-03"], change="Unchanged",
          graded=False, note="Submitted after voting closed - ungraded by the committee."),
+    dict(
+        ref="CLI-12", category="Climate", origins=[], municipality=ALL, graded=False,
+        question="The UBCM passed several resolutions saying municipalities should be able "
+                 "to have climate action lens and climate considerations in development and "
+                 "housing mandates. Do you support blue green infrastructure upgrades as a "
+                 "requirement of developments for climate readiness?",
+        options="a) Yes b) No", qtype="Yes/no",
+        source="Late submission", change="Unchanged",
+        note="Arrived 2026-08-13, after voting closed and after the master was built, so "
+             "this is the only shipping question with no master row behind it. Ungraded by "
+             "the committee, on the same footing as CLI-09 to CLI-11. Ships as received, "
+             "including 'should be able to have climate action lens' - read 'to apply a "
+             "climate action lens' if that is meant as a typo. 'Blue green infrastructure' "
+             "is specialist vocabulary that candidates may read as anything from a rain "
+             "garden to a daylighted creek, so gloss it with examples if the committee "
+             "wants comparable answers.",
+    ),
 
     # ------------------------------------------------------------------ Arts
     dict(
@@ -937,7 +976,9 @@ DROPPED = [
      "models one Los Angeles programme - and then asks candidates to answer 'despite this'. "
      "BC only received inclusionary zoning authority in Bill 16 (2024). It also contradicts "
      "our own sheet, where HFL-04 and HFL-09 list inclusionary zoning as a neutral option. "
-     "Sam, who submitted it, agreed. Now covered neutrally as option (h) of HSG-07."),
+     "Sam, who submitted it, agreed. Now covered neutrally as an option of HFL-04 "
+     "('Mandated requirements') and HFL-09 ('Mandating that affordable housing be built by "
+     "developers')."),
 ]
 
 
@@ -967,21 +1008,30 @@ MERGED_WHY = {
         "The same question as HFL-05 in weaker wording. Claude: 'Duplicate of HFL-05, "
         "which spells out uses, heights and densities and closes the loophole where "
         "\"pre-zoning\" is answered loosely. Drop this, keep HFL-05.' Michael agreed. "
-        "HFL-05 ships as HSG-02 with its text kept as submitted.",
+        "HFL-05 ships as submitted, under its own code.",
     "FR-14":
         "One of four questions asking about parking minimums (FR-14, FR-36, HFL-08, "
         "HFL-09). Every voter who commented said merge - Sam: 'should be combined with "
         "other car parking requirement questions'; Claude: 'Fold the land-use split into "
-        "HFL-08 and cut the rest.' HFL-08 ships as HSG-06 because its conditional option "
-        "captures the conditional supporter a yes/no cannot. Nothing was lost: FR-14's "
-        "land-use tiers are the option list there, and Michael's note that Bill 47 already "
-        "bars residential minimums near transit is written into the question stem.",
+        "HFL-08 and cut the rest.' HFL-08 ships as submitted, so the merge stands but the "
+        "fold does not: FR-14's split by land use is not in HFL-08's wording, and neither "
+        "is Michael's note that Bill 47 already bars residential minimums near transit. "
+        "What survives is HFL-08's conditional option, which captures the conditional "
+        "supporter a yes/no cannot.",
+    "FR-15":
+        "One of three questions asking for the same list of tools for getting more "
+        "non-market and affordable housing (FR-15, HFL-04, HFL-09). Michael: 'Merge into "
+        "FR-15. Running both asks for the incentive list twice.' Its first clause - should "
+        "non-market housing be incentivised? - gets a yes from everyone, so only the list "
+        "was ever the question, and HFL-04 asks for that list. HFL-04 now ships as "
+        "submitted, so the list is an open-ended option set rather than the municipal-tool "
+        "options the committee had supplied.",
     "FR-16":
         "Duplicate of HFL-03. Sam: 'dupe of HfL Qs.' The disagreement was over which to "
         "keep, not whether: Michael preferred this one because '\"Maximum\" is a "
         "commitment; \"target\" is a wish', Claude preferred HFL-03 for its day-count "
-        "tiers that can be scored. HSG-05 takes FR-16's framing and HFL-03's tiers, so "
-        "both arguments won.",
+        "tiers that can be scored. HFL-03 ships as submitted, so Claude's day-count tiers "
+        "survive and Michael's 'maximum' does not.",
     "FR-19":
         "Tied the pedestrian share of the transport budget to the proportion of residents "
         "without a driver's licence. Michael: 'The licence-holder ratio is invented and no "
@@ -1030,8 +1080,8 @@ MERGED_WHY = {
         "Second of the four parking-minimum questions, and the only one that pre-declared "
         "its own grade. Michael: 'the text pre-declares the grade - \"A for yes, F for "
         "no\" cannot ship to candidates.' Claude: 'Drop; keep HFL-08.' Sam: 'needs to be "
-        "merged with other parking Qs'. The substance is in HSG-06; the 2030 deadline is "
-        "not, since HSG-06 asks what candidates support rather than by when.",
+        "merged with other parking Qs'. The substance is in HFL-08; the 2030 deadline is "
+        "not, since HFL-08 asks what candidates support rather than by when.",
     "FR-49":
         "The same viability judgement as FR-47. Michael: 'Fold into FR-47 as one viability "
         "question. Candidates can answer it; many will decline.' Claude: 'Ask for a range, "
@@ -1043,28 +1093,15 @@ MERGED_WHY = {
         "asset replacement strategy, accelerate the timeline. Michael: 'Split the run-on. "
         "The question I want is the first clause.' Claude suggested reusing 'the HFL-12 "
         "\"select up to two\" format'. Sam: 'dupe of similar HfL question'. It folds into "
-        "the HFL-12 infrastructure block, which ships once per municipality as GOV-03-*, "
-        "and its first clause is option (b) there. Worth noting this is the strongest "
+        "the HFL infrastructure block, which ships as HFL wrote it for the five "
+        "municipalities they researched a figure for and as GOV-03-* for the other eight; "
+        "its first clause is option (b) either way. Worth noting this is the strongest "
         "question on the excluded list - mean 4.08, status STRONG - and it is here because "
         "a better-formatted question asks the same thing, not because the committee "
         "thought little of it.",
-    "HFL-01":
-        "Asks what housing a municipality needs more of; HFL-06 asks the same thing with "
-        "teeth. Caleb: 'HFL-04 is this question but better.' Michael: 'Merge into HFL-06.' "
-        "Claude asked for its 'luxury housing' option to go - 'nobody ticks it and its "
-        "presence telegraphs the answer we want' - and HSG-03, built on HFL-06, drops it.",
-    "HFL-04":
-        "One of three questions asking for the same incentive list. Claude: 'Overlaps "
-        "HFL-09's option list almost item for item. Merge them.' Michael: 'Merge into "
-        "FR-15. Running both asks for the incentive list twice.' FR-15 ships as HSG-07 "
-        "with the list supplied as options rather than as an open box.",
-    "HFL-09":
-        "A broken row in the source tab. Claude: 'the question text is copy-pasted from "
-        "HFL-08 but the options are affordable-housing delivery tools.' Both halves were "
-        "recovered and sent where each belonged: the parking question into HSG-06 with the "
-        "rest of that cluster, the incentive options into HSG-07. Sam: 'merge with other "
-        "parking requirements questions'. This is the only entry on this list excluded for "
-        "being two questions in one cell rather than for its content.",
+    # No HFL-* entries: every one of the 25 ships under its own code. The merges the
+    # committee had voted for - HFL-01 into HFL-06, HFL-04 into FR-15, HFL-09 split between
+    # two rows - were reversed on 2026-08-13 and are recorded in the notes on those rows.
     "VU-07":
         "Not voted on: the Victori'Us resubmission of 2026-08-09 replaced this question "
         "after voting closed, so the reasoning is the committee's verdict on the version "
@@ -1100,33 +1137,20 @@ def normalise_muni(value):
 
 
 def expand(final):
-    """Expand the municipality-templated blocks into one row per municipality."""
+    """Expand the one municipality-templated block into a row per municipality.
+
+    Only the infrastructure question is still templated, and only for the eight
+    municipalities Homes for Living never wrote one for: HFL's own five ship verbatim from
+    FINAL, as does every housing-target row. FR-35 and FR-53, which asked this region-wide,
+    are absorbed here.
+    """
     rows = list(final)
-    housing = [
-        dict(
-            ref=f"HSG-11-{muni.replace(' ', '')}", category="Housing", municipality=muni,
-            origins=[origin],
-            question=f"The BC government set a housing target for {muni} of {homes} homes "
-                     "over five years, which represents 75% of the estimated housing need "
-                     "for that period. Regardless of provincial requirements or penalties, "
-                     "do you believe your municipality should aim to build:",
-            options=TARGET_OPTIONS, qtype="Single choice",
-            change="Reworded", asked_by="Claude",
-            why="Ten near-identical municipality variants whose wording had already "
-                "drifted - HFL-18 numbered its options 1/2/3 where every sibling used "
-                "a/b/c - and all ten said 'the city', which does not fit every "
-                "municipality. Templated from one master so it cannot drift again.",
-            note="Option order changed to fewer / about right / more so the scale reads in "
-                 "order. Targets: "
-                 "https://www2.gov.bc.ca/gov/content/housing-tenancy/local-governments-and-"
-                 "housing/housing-targets/orders",
-        )
-        for muni, (homes, origin) in HOUSING_TARGETS.items()
-    ]
 
     infra = []
     for muni in MUNICIPALITIES:
-        figure, origin = INFRA_FIGURES.get(muni, ("", ""))
+        if muni in HFL_INFRA:
+            continue
+        figure = INFRA_FIGURES.get(muni, "")
         if figure:
             body = (f"In {muni}, {figure}. Which approaches would you prioritise to "
                     "address this infrastructure funding gap? Select up to two.")
@@ -1140,13 +1164,13 @@ def expand(final):
             note = (f"FIGURE NEEDED for {muni} - add it to INFRA_FIGURES in finalize.py "
                     "and re-run. This generic version ships in the meantime so the "
                     "municipality is not a question short.")
-        if muni not in HOUSING_TARGETS:
+        if muni in NO_TARGET:
             note = (f"{muni} received no provincial housing target order, so it gets this "
                     "question only - one municipality-specific question rather than two. "
                     + note)
         infra.append(dict(
             ref=f"GOV-03-{muni.replace(' ', '')}", category="Governance",
-            municipality=muni, origins=[o for o in (origin, "FR-35", "FR-53") if o],
+            municipality=muni, origins=["FR-35", "FR-53"],
             question="Municipal asset-management plans have identified substantial gaps "
                      "between current funding and the amount needed to maintain and "
                      "replace roads, water and sewer systems, public buildings and other "
@@ -1156,14 +1180,13 @@ def expand(final):
             why="FR-35 asked for three steps toward 'a firmer financial footing' in a "
                 "blank box; FR-53 ran three commitments together with slashes - raise "
                 "property taxes, follow the asset replacement strategy, accelerate the "
-                "timeline. Both fold into the HFL infrastructure block, which asks the "
-                "same thing with options that can be scored and where FR-53's first "
-                "clause is already option (b).",
+                "timeline. Both ask what HFL's infrastructure block asks, with options "
+                "that can be scored and where FR-53's first clause is already option (b), "
+                "so this carries them for the eight municipalities HFL wrote no "
+                "infrastructure question for. The other five ask it as HFL worded it.",
             note=note,
         ))
 
-    at = next(i for i, r in enumerate(rows) if r["ref"] == "HSG-10") + 1
-    rows[at:at] = housing
     at = next(i for i, r in enumerate(rows) if r["ref"] == "GOV-02") + 1
     rows[at:at] = infra
     return rows
@@ -1247,7 +1270,11 @@ def main():
     args = ap.parse_args()
 
     sh = open_sheet()
-    master = {r[0]: r for r in sh.worksheet(MASTER).get_all_values()[1:] if r[0].strip()}
+    values = sh.worksheet(MASTER).get_all_values()
+    master = {r[0]: r for r in values[1:] if r[0].strip()}
+    # Stand-in for a row with no master origin, so every read below stays uniform instead
+    # of special-casing a late question field by field.
+    blank = [""] * len(values[0])
 
     rows = expand(FINAL)
 
@@ -1255,10 +1282,18 @@ def main():
     if missing:
         sys.exit(f"FATAL: origin IDs not in {MASTER}: {', '.join(missing)}")
 
+    # An origin-less row has no master text to fall back on, so it ships blank rather than
+    # wrong if these are left off.
+    unsourced = [r["ref"] for r in rows
+                 if not r["origins"] and not (r.get("question") and r.get("qtype"))]
+    if unsourced:
+        sys.exit(f"FATAL: these rows have no origin in {MASTER}, so they must carry their "
+                 f"own question and qtype: {', '.join(unsourced)}")
+
     reworded_body, final_body = [], []
     for r in rows:
         origins = r["origins"]
-        src = master[origins[0]]
+        src = master[origins[0]] if origins else blank
         # Falling back to the master keeps every submitter email out of this repo.
         question = r.get("question") or src[3]
         options = r.get("options", src[4]) if "question" in r else src[4]
@@ -1271,8 +1306,10 @@ def main():
             if n and not n.startswith(("Overlaps ", "Duplicate question text")))
         note = " | ".join(n for n in (r.get("note", ""), sheet_note) if n)
         graded = "No" if r.get("graded") is False else "Yes"
-        submitters = " | ".join(dict.fromkeys(master[o][7] for o in origins if master[o][7]))
-        sources = " | ".join(dict.fromkeys(master[o][6] for o in origins))
+        submitters = " | ".join(dict.fromkeys(
+            master[o][7] for o in origins if master[o][7])) or r.get("submitter", "")
+        sources = " | ".join(dict.fromkeys(
+            master[o][6] for o in origins)) or r.get("source", "")
 
         final_body.append([
             r["ref"], r["category"], muni, question, options, qtype,
@@ -1298,6 +1335,8 @@ def main():
     # and a submitter looking for their question needs to find out which happened.
     shipped, absorbed = {}, {}
     for r in rows:
+        if not r["origins"]:
+            continue
         shipped.setdefault(r["origins"][0], r)
         for o in r["origins"][1:]:
             absorbed.setdefault(o, []).append(r)
@@ -1348,7 +1387,10 @@ def main():
     print(f"{region_wide} region-wide questions, {len(MUNICIPALITIES)} municipal branches:")
     for muni in MUNICIPALITIES:
         extra = sum(1 for r in final_body if r[2] == muni)
-        todo = "" if INFRA_FIGURES.get(muni, ("", ""))[0] else "   <- FIGURE NEEDED"
+        # Only the templated eight can be short a figure; HFL's five carry theirs in the
+        # question text they submitted.
+        needed = muni not in HFL_INFRA and not INFRA_FIGURES.get(muni)
+        todo = "   <- FIGURE NEEDED" if needed else ""
         print(f"  {muni:18} {region_wide + extra} questions{todo}")
 
     if args.csv:
