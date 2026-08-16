@@ -583,6 +583,13 @@
   slate: null
 
 # --- Sooke ---
+- name: Susan Belford
+  display_name: "Belford, Susan"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: Sooke Together
+
 - name: Ty Daniels
   display_name: "Daniels, Ty"
   municipality: sooke
@@ -611,6 +618,13 @@
   standing: challenger
   slate: Sooke First
 
+- name: Brian McHattie
+  display_name: "McHattie, Brian"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: Sooke Together
+
 - name: Rob Pearce
   display_name: "Pearce, Rob"
   municipality: sooke
@@ -631,6 +645,20 @@
   office: Councillor
   standing: challenger
   slate: Sooke First
+
+- name: Helen Ritts
+  display_name: "Ritts, Helen"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: Sooke Together
+
+- name: Steve Sorensen
+  display_name: "Sorensen, Steve"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: Sooke Together
 
 - name: Katherine Strongwind
   display_name: "Strongwind, Katherine"
