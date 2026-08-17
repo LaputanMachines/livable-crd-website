@@ -357,28 +357,40 @@ HOUSEKEEPING = [
      '2-2h14a2 2 0 0 1 2 2z"/><path d="M8 9h8M8 13h5"/></svg>'),
 ]
 
-# The info page, distilled to the eight things a candidate needs to know before
-# starting. Wording follows that page; QUESTION_COUNT is stated there too, so it
-# has to be updated by hand when the shipping set changes size.
-QUESTION_COUNT = 70
+# The info page, distilled to the six things a candidate needs to know before
+# starting. Wording follows that page.
+#
+# It was eight. The question count came out because it was a hand-maintained
+# number in a rendered image - the one tile here that silently goes wrong when
+# the shipping set changes size, and it had no way of knowing it had. "Room to
+# elaborate" came out with it: it described the answer fields rather than a rule
+# of the questionnaire, which is the only thing the other five tiles do.
 INFO = [
-    ("%d questions" % QUESTION_COUNT,
-     '<svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13"/>'
-     '<path d="M3.5 6h.01M3.5 12h.01M3.5 18h.01"/></svg>'),
     ("Grouped by category",
      '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/>'
      '<rect x="14" y="3" width="7" height="7" rx="1"/>'
      '<rect x="3" y="14" width="7" height="7" rx="1"/>'
      '<rect x="14" y="14" width="7" height="7" rx="1"/></svg>'),
-    ("Every one optional",
-     '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/>'
-     '<path d="M8.5 12.5l2.5 2.5 4.5-5"/></svg>'),
+    # An asterisk, the mark every form in the world puts beside a required field,
+    # and the reason this tile isn't a ticked circle any more: a tick reads as
+    # "you're fine", which is what the label used to say and is now the opposite
+    # of what it says. The three strokes cross at the centre and the round caps
+    # render_icon adds give it the six blunt points a form asterisk has.
+    #
+    # Drawn to a radius of 9 rather than a typographic asterisk's tighter one, for
+    # the reason `threshold`'s scale gives: at this render size an icon that only
+    # fills the middle of its box reads as a smaller icon, not a different shape,
+    # and the grid and the circle either side of it both run 3 to 21.
+    ("All mandatory",
+     '<svg viewBox="0 0 24 24"><line x1="12" y1="3" x2="12" y2="21"/>'
+     '<line x1="4.2" y1="7.5" x2="19.8" y2="16.5"/>'
+     '<line x1="4.2" y1="16.5" x2="19.8" y2="7.5"/></svg>'),
+    # Kept, and load-bearing now in a way it wasn't: with every question required,
+    # this is the only tile that tells a candidate what to do about a question
+    # they can't answer.
     ("N/A or decline",
      '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/>'
      '<path d="M8 12h8"/></svg>'),
-    ("Room to elaborate",
-     '<svg viewBox="0 0 24 24"><path d="M12 20h9"/>'
-     '<path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>'),
     ("Saved as you go",
      '<svg viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11'
      'a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8"/><path d="M7 3v5h8"/></svg>'),
@@ -392,17 +404,22 @@ INFO = [
 
 # The skipping-and-grades paragraph, which sits inside the same briefing `info`
 # summarises. It gets its own graphic because it's the one paragraph there that
-# costs the candidate something: `info`'s "Every one optional" tile states the
-# permission and stops, and the sentence that follows takes half of it back.
+# costs the candidate something: the permission to skip, and the sentence after it
+# that takes half of that back.
 #
 # Three tiles for the paragraph's three clauses, in its order: the permission, the
 # consequence, the way out. The middle tile is the reason the set exists, so it
 # doesn't get softened - the arrow points down.
+#
+# NOT IN THE FORM. This set and `threshold` below were both pulled on 2026-08-16,
+# when every question became mandatory and `info`'s tile changed to say so. They are
+# kept because they are still the record of how skipping was meant to work, and
+# because the questionnaire has reversed itself on this once already. Anything that
+# puts either graphic back has to reconcile it with that tile first.
 OPTIONAL = [
     # A skip-forward, the one glyph a candidate reads as "move past this" without a
-    # label. `info`'s two adjacent tiles use a ticked circle (every question
-    # optional) and a circle with a minus (N/A or decline); this is the action
-    # rather than the property, so it isn't a third circle.
+    # label. `info`'s "N/A or decline" tile is a circle with a minus in it; this is
+    # the action rather than the property, so it isn't a second circle.
     ("Skip any question",
      '<svg viewBox="0 0 24 24"><path d="M5 4l11 8-11 8z"/>'
      '<line x1="19" y1="4" x2="19" y2="20"/></svg>'),
@@ -491,8 +508,8 @@ GRADING = [
      '<svg viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>'
      '<circle cx="8.5" cy="7" r="4"/><path d="M17 11l2 2 4-4"/></svg>'),
     # Four lines of prose, ragged right: an answer as the candidate typed it, with no
-    # grade attached. Info's question-count tile is also a stack of lines, but that
-    # one is a bulleted list - a numbered set of questions - and this one isn't.
+    # grade attached. It had to be told apart from `info`'s bulleted question-count
+    # tile until that tile was removed; it now stands alone.
     ("Some aren’t graded",
      '<svg viewBox="0 0 24 24"><line x1="21" y1="5" x2="3" y2="5"/>'
      '<line x1="17" y1="10" x2="3" y2="10"/>'
@@ -519,9 +536,9 @@ GRADING = [
 # has to be filled. Struck-through glyphs are `saving`'s and Conduct's.
 THRESHOLD = [
     # A scale with end stops and a marker somewhere along it, off centre. Not a
-    # ticked circle (info's "Every one optional") and not the concentric rings
-    # General uses for "one policy change": the instruction isn't "choose correctly",
-    # it's "choose the point on the scale you actually occupy".
+    # ticked circle and not the concentric rings General uses for "one policy
+    # change": the instruction isn't "choose correctly", it's "choose the point on
+    # the scale you actually occupy".
     #
     # The end stops run nearly the full height of the box on purpose: at the size
     # these render, an icon that only uses the middle third reads as a smaller icon
@@ -546,7 +563,7 @@ THRESHOLD = [
 #
 # The only set here that isn't about the questionnaire's subject matter or its
 # rules, which is why its first tile is progress rather than a topic: a candidate
-# arrives at this page having answered up to 70 questions, and the useful thing to
+# arrives at this page having answered dozens of questions, and the useful thing to
 # say first is that the end is in sight.
 FEEDBACK = [
     # An open ring, the arc nearly closed. It's the same idea as `complete`'s green
@@ -607,7 +624,7 @@ CONDUCT = [
 SETS = {"categories": 5, "complete": 5, "general": 3, "walking": 4,
         "rolling": 4, "transit": 4, "housing": 4, "climate": 3,
         "arts": 3, "healthcare": 2, "reconciliation": 2, "governance": 2,
-        "housekeeping": 3, "info": 4, "optional": 3, "saving": 3,
+        "housekeeping": 3, "info": 3, "optional": 3, "saving": 3,
         "authorship": 2, "grading": 4, "threshold": 2,
         "feedback": 4, "conduct": 5}                            # name -> columns
 

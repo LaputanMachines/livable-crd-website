@@ -259,16 +259,22 @@ a filtered view of the master, so a question left out of both would vanish silen
 #### Questions with no master row
 
 A `FINAL` row may have `origins=[]`. That is for a question that arrived too late to go
-through intake, voting and the master at all — `CLI-12`, added 2026-08-13, is the only one.
-Such a row has to carry its own `question`, `options`, `qtype` and `source`, because there is
-no master row to read them from, and the run aborts if `question` or `qtype` is missing rather
-than shipping a blank cell to candidates. It is ungraded, like the other questions no
-committee member scored, and it appears in no `Excluded Questions` bookkeeping, since it
-displaced nothing.
+through intake, voting and the master at all: `CLI-12`, added 2026-08-13, and `WLK-05` and
+`WLK-06`, added 2026-08-16. Such a row has to carry its own `question`, `options`, `qtype`
+and `source`, because there is no master row to read them from, and the run aborts if
+`question` or `qtype` is missing rather than shipping a blank cell to candidates. It appears
+in no `Excluded Questions` bookkeeping, since it displaced nothing.
 
-The alternative is to put the question through `append.py` so it lands in the master properly.
-That is the better path if more than one late question shows up, or if the committee wants to
-score it: `origins=[]` buys a one-off, not a second intake route.
+`CLI-12` is ungraded, like the other questions no committee member scored. The two walking
+questions are graded anyway, by a decision made off the sheet, so `graded` is the one field
+where the two cases differ.
+
+The alternative is to put the question through `append.py` so it lands in the master properly,
+which is the better path if the committee wants to score it — but it is not currently open to
+a `Form Responses 1` submission. `FR-*` IDs are positional, so a new row anywhere in that tab
+renumbers the block and `append.py`'s prefix check refuses the run; only a tab appended to the
+end of `SOURCES` lands cleanly. Until there is one, `origins=[]` is the only route a late
+question has.
 
 #### Homes for Living ships verbatim
 

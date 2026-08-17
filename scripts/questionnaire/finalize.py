@@ -125,6 +125,18 @@ RESUB = ("Refreshed against the Victori'Us resubmission of 2026-08-09, which arr
          "after voting closed and was not scored. The rewording is the committee's, "
          "carried over from the 2026-08-01 version of the same question.")
 
+# Two walking questions that arrived 2026-08-16, by the same route as CLI-12: straight to
+# the committee, after voting closed and after the master was built. Like CLI-12 they carry
+# their own text rather than an origin, and for the same reason - append.py cannot take
+# them, because a new Form Responses 1 row renumbers every FR-* ID and its prefix check
+# refuses the run. Unlike CLI-12 and the RUSH block they are graded. That is a decision
+# made off the sheet, since no committee member has scored either question, which is the
+# argument that kept the other four late arrivals ungraded.
+LATE_WALKING = ("Submitted 2026-08-16 14:40 PDT, after voting closed and after the master "
+                "was built, so it has no master row behind it and no committee score. "
+                "Ships as submitted and graded; write a scoring guide before it goes out, "
+                "because nothing on the sheet establishes what a strong answer looks like.")
+
 INFRA_OPTIONS = (
     "a) Allow substantially more housing and commercial development to grow the tax base "
     "and help fund infrastructure renewal. "
@@ -140,8 +152,8 @@ INFRA_OPTIONS = (
 #   ref        stable ID for the final questionnaire
 #   origins    the master IDs this row came from; the first is the row we inherit
 #              submitter / source / municipality from. Empty only for a question that
-#              never went through the master at all - see CLI-12 - which then has to
-#              carry its own question, options, qtype and source
+#              never went through the master at all - see CLI-12, WLK-05, WLK-06 - which
+#              then has to carry its own question, options, qtype and source
 #   change     "Unchanged" | "Reworded" | "Merged" | "Reworded + merged" | "Recategorised"
 #   asked_by   who called for the change, from the voter comments
 #   why        the argument for it, condensed from those comments
@@ -240,6 +252,43 @@ FINAL = [
         why="Scoped to Victoria as submitted. 'The downtown area' means something very "
             "different in Sidney or North Saanich, so it is reworded to reach the whole "
             "region.",
+    ),
+    dict(
+        ref="WLK-05", category="Walking", origins=[], municipality=ALL,
+        question="Parents frequently express concerns about safety risks their children "
+                 "experience from motor traffic while walking to school and neighbourhood "
+                 "playgrounds. Dangers of speeding traffic, lack of safe crosswalks, "
+                 "absence of Stop signs, and in some municipalities lack of 30km/hr school "
+                 "zone/playground signage persist. How will you work with parent groups, "
+                 "school staff, and municipal staff to assure that children's safety is "
+                 "prioritized over convenience and flow of motor traffic?",
+        options="", qtype="Long answer (1000 characters)",
+        source="Late submission", change="Unchanged",
+        note=LATE_WALKING + " Overlaps WLK-02, which asks for one concrete first-term "
+             "commitment on pedestrian safety region-wide; this one is narrower (children, "
+             "school and playground routes) and asks about process rather than a "
+             "commitment, so the two are worth asking together, but read them side by side "
+             "before the form is built.",
+    ),
+    dict(
+        ref="WLK-06", category="Walking", origins=[], municipality=ALL,
+        question="The CRD is home to some of the oldest people in Canada. Many of these "
+                 "older adults once drove but now rely on walking to get to their "
+                 "destinations, and very frequently pedestrian conditions are hazardous. "
+                 "Broken and tilting pavement on sidewalks, lips on curb cuts, absent or "
+                 "poorly maintained crosswalks, and lack of engineered traffic calming all "
+                 "increase the risk of falls that threaten the independence of older adults "
+                 "and those living with disabilities. To date, few municipalities have "
+                 "constructed pedestrian infrastructure to make safe and pleasant walking a "
+                 "priority. What will you do, in a 4 year term, to identify, prioritize and "
+                 "set time-lines to assure that pedestrian infrastructure is improved to "
+                 "meet the needs of the older and disabled members of your community?",
+        options="", qtype="Long answer (1000 characters)",
+        source="Late submission", change="Unchanged",
+        note=LATE_WALKING + " Asks for three things at once - identify, prioritise, set "
+             "timelines - so a scoring guide should say whether a candidate who answers "
+             "only the first two can still score full marks. Sits next to WLK-03, which "
+             "asks the budget-share version of the same problem as a single choice.",
     ),
 
     # ------------------------------------------------------ Rolling & cycling
