@@ -27,7 +27,7 @@
   {%- assign entry_url = entry.url | default: "" | strip -%}
   {%- assign entry_org_url = entry.org_url | default: "" | strip -%}
   <aside class="other-scorecard{% if entry_url == '' %} other-scorecard--pending{% endif %}"
-         aria-label="{{ entry.topic }} scorecard from {{ entry.org }}">
+         aria-label="{{ entry.topic }} questionnaire from {{ entry.org }}">
     <p class="other-scorecard__eyebrow">{{ entry.topic }}</p>
     <p class="other-scorecard__title">{{ entry.headline }}</p>
     {%- if entry.note %}
@@ -43,7 +43,7 @@
     {%- endcomment -%}
     <p class="other-scorecard__action">
       {%- if entry_url != "" %}
-      <a class="btn btn-secondary" href="{{ entry_url }}" target="_blank" rel="noopener">View the {{ entry.topic | downcase }} scorecard at {{ entry.org }}</a>
+      <a class="btn btn-secondary" href="{{ entry_url }}" target="_blank" rel="noopener">View the {{ entry.topic | downcase }} questionnaire at {{ entry.org }}</a>
       {%- else %}
       <span class="other-scorecard__status">Not published yet</span>
       {%- comment -%}
