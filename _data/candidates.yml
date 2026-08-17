@@ -309,8 +309,8 @@
   standing: incumbent-councillor
   slate: null
 
-- name: Meagan Braeme
-  display_name: "Braeme, Meagan"
+- name: Meagan Brame
+  display_name: "Brame, Meagan"
   municipality: esquimalt
   office: Councillor
   standing: incumbent-councillor
@@ -325,13 +325,6 @@
 
 - name: Dan Igaz
   display_name: "Igaz, Dan"
-  municipality: esquimalt
-  office: Councillor
-  standing: challenger
-  slate: null
-
-- name: Rob Johnstone
-  display_name: "Johnstone, Rob"
   municipality: esquimalt
   office: Councillor
   standing: challenger
@@ -546,34 +539,55 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Gordon Newton
+  display_name: "Newton, Gordon"
+  municipality: central-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
+- name: Sarah Riddell
+  display_name: "Riddell, Sarah"
+  municipality: central-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
 # --- North Saanich ---
 - name: Kristine Marshall
   display_name: "Marshall, Kristine"
   municipality: north-saanich
-  office: null
+  office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
 
 - name: Jack McClintock
   display_name: "McClintock, Jack"
   municipality: north-saanich
-  office: null
+  office: Mayor
   standing: incumbent-councillor
   slate: null
 
 - name: Irene McConkey
   display_name: "McConkey, Irene"
   municipality: north-saanich
-  office: null
+  office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
 
 - name: Sanjiv Shrivastava
   display_name: "Shrivastava, Sanjiv"
   municipality: north-saanich
-  office: null
+  office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
+
+- name: Celia Stock
+  display_name: "Stock, Celia"
+  municipality: north-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
 
 - name: Jim Woolford
   display_name: "Woolford, Jim"
@@ -582,7 +596,22 @@
   standing: challenger
   slate: null
 
+# --- Sidney ---
+- name: Jamie Wellbourn
+  display_name: "Wellbourn, Jamie"
+  municipality: sidney
+  office: Councillor
+  standing: challenger
+  slate: null
+
 # --- Sooke ---
+- name: Al Beddows
+  display_name: "Beddows, Al"
+  municipality: sooke
+  office: Mayor
+  standing: incumbent-councillor
+  slate: null
+
 - name: Susan Belford
   display_name: "Belford, Susan"
   municipality: sooke
