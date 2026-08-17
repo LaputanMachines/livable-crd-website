@@ -502,6 +502,13 @@
   standing: challenger
   slate: null
 
+- name: Wendy Hobbs
+  display_name: "Hobbs, Wendy"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Mary Wagner
   display_name: "Wagner, Mary"
   municipality: langford
