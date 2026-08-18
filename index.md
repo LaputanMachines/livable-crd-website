@@ -11,7 +11,7 @@ description: >-
 <section class="hero hero--home">
   <div class="hero-inner animate-in">
     <p class="badge">Easy, Informed Election Decisions</p>
-    <h1>A candidate scorecard for livable communities in the Capital Region</h1>
+    <h1>Candidate scorecard for a livable capital region</h1>
     <p class="lead">
       <strong>Livable CRD</strong> is a coalition of community groups preparing a
       transparent scorecard for municipal election candidates across the Capital
