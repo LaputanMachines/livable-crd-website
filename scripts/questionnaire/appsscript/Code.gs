@@ -221,6 +221,13 @@ function payloadAnswers(fields) {
     var match = LABEL_RE.exec(String(field.label || '').trim());
     if (!match) continue;
 
+    // Alongside the consolidated field (options + chosen ids), Tally also sends
+    // one boolean field per option ("HFL-01: ... (Market rate rental housing.)",
+    // value true/false) with no `options` array of its own. The consolidated
+    // field already produces the "Selected:" line, so these carry nothing new -
+    // without this they read as a wall of "Follow-up: false".
+    if (String(field.type || '').toUpperCase() === 'CHECKBOXES' && !isChoiceField(field)) continue;
+
     var fullLabel = match[1];
     var variantMatch = VARIANT_RE.exec(fullLabel);
     var label = variantMatch ? variantMatch[1] : fullLabel;
