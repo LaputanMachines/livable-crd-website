@@ -11,9 +11,9 @@
  *   doPost()       Tally's webhook, ~1s after a candidate submits. Builds the rows
  *                  from the webhook's own JSON, so it never waits on Tally's
  *                  separate write to `Raw Submissions`.
- *   timerSync()    Every 5 minutes: reconciles what the webhook wrote against the
- *                  sheet, and appends anything the webhook missed entirely. Exits
- *                  in well under a second when there is nothing to do.
+ *   timerSync()    Daily: reconciles what the webhook wrote against the sheet,
+ *                  and appends anything the webhook missed entirely. Exits in
+ *                  well under a second when there is nothing to do.
  *   Grading > Sync now   Menu item, for a human who doesn't want to wait.
  *
  * Both paths are append-only: they add rows for (submission, question) pairs that
@@ -137,8 +137,8 @@ function doPost(e) {
  * seconds on every submission.
  *
  * Rows are written with an empty hash, marking them unreconciled. syncAll()
- * recomputes each one from the sheet on its next pass, so the two paths cannot
- * disagree about an answer for longer than five minutes.
+ * recomputes each one from the sheet on its next pass (daily), so the two paths
+ * cannot disagree about an answer for longer than a day.
  */
 function syncFromPayload(data) {
   var lock = LockService.getScriptLock();
@@ -692,7 +692,7 @@ function installTriggers() {
     var fn = existing[i].getHandlerFunction();
     if (fn === 'timerSync' || fn === 'onGradeEdit') ScriptApp.deleteTrigger(existing[i]);
   }
-  ScriptApp.newTrigger('timerSync').timeBased().everyMinutes(5).create();
+  ScriptApp.newTrigger('timerSync').timeBased().everyDays(1).create();
   ScriptApp.newTrigger('onGradeEdit').forSpreadsheet(SpreadsheetApp.getActive()).onEdit().create();
 }
 
