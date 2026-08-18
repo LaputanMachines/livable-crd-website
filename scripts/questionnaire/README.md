@@ -333,6 +333,152 @@ Everything on the tab is a live formula, so it only needs re-running when the
 committee or the question set changes, not to refresh numbers. This is the only
 write script that's safe to run mid-voting: it touches nothing but its own tab.
 
+### `grading_tabs.py` + `appsscript/`: grading the submissions
+
+**A different spreadsheet.** Everything above works on the committee's working sheet
+(`QUESTIONNAIRE_SHEET_ID`). These work on Tally's submission sheet, "Submissions - 2026
+Municipal Elections" (`QUESTIONNAIRE_SUBMISSIONS_SHEET_ID`): one row per candidate, one
+column per form field, 236 columns wide.
+
+Nobody grades in that tab. A multi-select question sprawls across up to 17 columns, and
+Tally rewrites the tab on every submission, so grading happens on separate tabs, one per
+scorecard subject, in long form: **one row per candidate per question**.
+
+```bash
+python3 scripts/questionnaire/grading_tabs.py --dry-run    # preview
+python3 scripts/questionnaire/grading_tabs.py              # create the tabs
+python3 scripts/questionnaire/grading_tabs.py --refresh    # re-read the form's wording
+```
+
+| Tab | Who writes it |
+|---|---|
+| `Raw Submissions` | Tally. Untouched. |
+| `Question Registry` | Generated once, then hand-maintained. |
+| `Grade - <Subject>` | `A-F` and `L` by the Apps Script, `G-I` by graders. Nine of them. |
+| `Sync Log` | The Apps Script. |
+
+#### `Question Registry`
+
+One row per graded question - 55 at present - and the single source of truth for what
+gets graded and what it is worth:
+
+`Label | Category | Question | Type | Graded | Weight | Raw columns | Notes | Owner`
+
+Weight lives here, once per question, rather than repeated on every candidate's row. The
+block at `J1:L` totals the weights per category; each category should reach 100%.
+
+`Category` is why this tab exists rather than a regex over the header row. Prefixes don't
+map onto subjects: `HFL-12` is the infrastructure funding gap, which `finalize.py` grades
+as Governance even though Homes for Living submitted it, and Governance also owns the
+separate `GOV-*` block. `CATEGORY_OVERRIDE` in the script seeds that; the column is
+authoritative afterwards.
+
+`Owner` is who submitted the question, so a grader who needs to check intent knows whom
+to ask. Populated from the `Finalized Questions` tab of the committee sheet, matching on
+question text rather than `Ref`: the Tally form renumbered several questions, so the two
+sheets' refs disagree (the committee sheet's `HFL-09` is the parking-minimums question;
+the form's is non-market housing). Questions that reached the form without going through
+that tab are blank and filled in by hand.
+
+Anything added to this tab goes in column **M or beyond**: `A:I` is the schema both
+scripts read by position, and `J:L` holds the tally block.
+
+`--refresh` rewrites `Question`, `Type`, `Raw columns` and `Notes` from the current form,
+for when wording or columns changed. It never touches `Category`, `Graded`, `Weight` or
+`Owner`.
+
+#### Grading tabs
+
+`Key | Candidate | Municipality | Label | Question | Answer | Owner | Grade | Weight | Rationale | Grader | Graded at | Answer hash`
+
+`A-G` and the hidden hash in `M` are generated and carry an edit warning. Graders fill
+`Grade` (a dropdown of the five grades the site can render), `Rationale`, and nothing else;
+`Grader` / `Graded at` stamp themselves.
+
+`Owner` and `Weight` are `VLOOKUP`s into the registry rather than copies, so correcting
+either there corrects every grading row at once, including rows already graded.
+
+`Key` is `<Submission ID>|<Label>`, and it is what makes the sync safe: rows are matched by
+key, never by position.
+
+#### The Apps Script
+
+`appsscript/Code.gs` runs inside the spreadsheet and fans submissions out into those tabs.
+Three ways in:
+
+- **`doPost`** - Tally's webhook, ~1 second after a candidate submits. It builds the rows
+  from the webhook's own JSON and never reads `Raw Submissions`, because Tally posts the
+  webhook and writes that tab on independent paths: waiting for the row to appear used to
+  cost up to 20 seconds of every submission.
+- **`timerSync`** - every 5 minutes. Reconciles what the webhook wrote against the sheet,
+  and appends anything the webhook missed entirely. Exits in under a second when there is
+  nothing to do, which keeps it inside the 90 min/day trigger runtime a consumer Google
+  account gets.
+- **`Grading > Sync now`** - a menu item, for a human who doesn't want to wait.
+
+#### Why two answer builders, and how they stay agreed
+
+The webhook reads Tally's JSON; the timer reads the spreadsheet. They phrase a few answers
+differently - a multi-select in the sheet repeats the choice in its own column *and* in each
+ticked option column, while the payload states it once - so left alone they would disagree
+forever and the drift check would fire on every row.
+
+The sheet is therefore authoritative, and the hash column says which rows have been checked
+against it:
+
+- The webhook writes its rows with an **empty hash**, meaning *not yet reconciled*.
+- The next sweep recomputes those rows from the sheet, corrects the `Answer` cell silently,
+  and stamps the hash.
+- Only a row that already **has** a hash can be flagged for drift.
+
+So a grader sees the row within a second of submission, and within five minutes it says
+exactly what the spreadsheet says.
+
+A time-driven trigger is unavoidable as the backstop: Tally writes through the Sheets API,
+and API writes never fire `onEdit` or `onChange`.
+
+All three call `syncAll()`, which is **append-only**. It adds rows for (submission,
+question) pairs that have none and never rewrites, reorders or deletes an existing row.
+That is what keeps a typed grade welded to its question as submissions and questions
+arrive. Adding a question mid-grading is the same non-event: a new registry row, and the
+next run appends that question for every candidate already in the sheet.
+
+The one exception is answer drift. If Tally rewrites an answer under a grade already given,
+the sync refreshes the `Answer` cell, highlights it, logs it, and leaves `Grade`,
+`Weight` and `Rationale` alone for a human to re-check. The hidden hash in `M` is how it
+notices, and an empty one means the row is a webhook row still awaiting its first check.
+
+#### Reading an answer
+
+Driven by `Raw columns` in the registry, which covers three shapes:
+
+- **Multi-select**: one column per option, each header being the question's own text with
+  `" (the option)"` appended. Option columns are found by that prefix, not by a trailing
+  parenthesis - option text contains its own brackets ("Small homes (< 500 sq. ft.)").
+- **Question plus follow-up** (`GOV-01`, `CLI-01`, `ART-01`, `ROL-01`): both parts are kept
+  in one cell, because they earn one grade between them.
+- **Municipality variants** (`HFL-11` across ten municipalities, `HFL-12` across five): the
+  candidate answered exactly one, so the sync takes whichever is filled and prefixes the
+  answer with the variant it came from.
+
+#### Deploying it
+
+The running copy lives in the spreadsheet (**Extensions > Apps Script**), so this directory
+is the reviewable copy, not the live one. Paste both files in, or push with `clasp`.
+
+Then, in order:
+
+1. **Grading > Set up** in the spreadsheet menu. It asks for a webhook token
+   (`openssl rand -hex 24`) and installs the two triggers.
+2. **Deploy > New deployment > Web app**, execute as yourself, access "Anyone".
+3. In Tally: **Integrations > Webhooks**, URL `<web app URL>?token=<the token>`.
+4. Send one test submission and check `Sync Log`.
+
+The token in the URL is the whole of the authentication. Apps Script web apps cannot read
+request headers, so Tally's `tally-signature` header is unverifiable from inside the script.
+Treat the deployment URL like `CANDIDATES_CSV_URL`: it is a capability, and it stays out of
+this repo.
+
 ## How committee members vote
 
 Send each person the sheet link and their tab name. In their tab:
