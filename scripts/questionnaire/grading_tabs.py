@@ -39,7 +39,7 @@ import sys
 
 import gspread
 
-RAW_TAB = "Raw Submissions"
+RAW_TAB = "2026 Municipal Elections"
 REGISTRY_TAB = "Question Registry"
 LOG_TAB = "Sync Log"
 GRADE_TAB_PREFIX = "Grade - "

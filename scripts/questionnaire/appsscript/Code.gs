@@ -32,7 +32,7 @@
  * then deploy as a web app and give Tally the URL with ?token=... appended.
  */
 
-var RAW_TAB = 'Raw Submissions';
+var RAW_TAB = '2026 Municipal Elections';
 var REGISTRY_TAB = 'Question Registry';
 var LOG_TAB = 'Sync Log';
 var GRADE_PREFIX = 'Grade - ';
@@ -76,13 +76,17 @@ var DRIFT_COLOR = '#fff2cc';
 
 /** Menu, so graders and admins never need the script editor. */
 function onOpen() {
-  SpreadsheetApp.getUi()
-    .createMenu('Grading')
-    .addItem('Sync now', 'menuSync')
-    .addItem('Check setup', 'menuCheckSetup')
-    .addSeparator()
-    .addItem('Set up (triggers + webhook token)', 'menuSetup')
-    .addToUi();
+  try {
+    SpreadsheetApp.getUi()
+      .createMenu('Grading')
+      .addItem('Sync now', 'menuSync')
+      .addItem('Check setup', 'menuCheckSetup')
+      .addSeparator()
+      .addItem('Set up (triggers + webhook token)', 'menuSetup')
+      .addToUi();
+  } catch (err) {
+    // Menu creation failure shouldn't break the sheet. Log and continue.
+  }
 }
 
 
@@ -518,36 +522,47 @@ function existingRows(sheet) {
  * category, or with Graded set to anything but Yes, are ignored.
  */
 function readRegistry(header) {
-  var sh = sheet(REGISTRY_TAB);
-  var last = sh.getLastRow();
-  if (last < 2) return [];
+  try {
+    var sh = SpreadsheetApp.getActive().getSheetByName(REGISTRY_TAB);
+    if (!sh) {
+      log('system', 'warning', 'Question Registry tab missing — no questions to sync');
+      return [];
+    }
+    var last = sh.getLastRow();
+    if (last < 2) return [];
 
-  var values = sh.getRange(2, 1, last - 1, 8).getValues();
-  var questions = [];
+    var values = sh.getRange(2, 1, last - 1, 8).getValues();
+    var questions = [];
 
-  for (var i = 0; i < values.length; i++) {
-    var label = String(values[i][0] || '').trim();
-    var category = String(values[i][1] || '').trim();
-    var text = String(values[i][2] || '').trim();
-    var graded = String(values[i][4] || '').trim().toLowerCase();
-    var span = String(values[i][6] || '').trim();
-    if (!label || !category || graded !== 'yes' || !span) continue;
+    for (var i = 0; i < values.length; i++) {
+      var label = String(values[i][0] || '').trim();
+      var category = String(values[i][1] || '').trim();
+      var text = String(values[i][2] || '').trim();
+      var graded = String(values[i][4] || '').trim().toLowerCase();
+      var span = String(values[i][6] || '').trim();
+      if (!label || !category || graded !== 'yes' || !span) continue;
 
-    var bounds = span.split('-');
-    var from = parseInt(bounds[0], 10);
-    var to = parseInt(bounds[bounds.length - 1], 10);
-    if (!from || !to) continue;
+      var bounds = span.split('-');
+      var from = parseInt(bounds[0], 10);
+      var to = parseInt(bounds[bounds.length - 1], 10);
+      if (!from || !to) continue;
 
-    questions.push({
-      label: label,
-      category: category,
-      text: text,
-      // The payload path matches on labels and never touches raw columns, so it
-      // passes no header and gets no variant grouping.
-      variants: header ? groupVariants(header, from, to) : []
-    });
+      questions.push({
+        label: label,
+        category: category,
+        text: text,
+        // The payload path matches on labels and never touches raw columns, so it
+        // passes no header and gets no variant grouping.
+        variants: header ? groupVariants(header, from, to) : []
+      });
+    }
+    return questions;
+  } catch (err) {
+    try {
+      SpreadsheetApp.getUi().alert('Question Registry read failed: ' + err);
+    } catch (e2) {}
+    return [];
   }
-  return questions;
 }
 
 
@@ -775,9 +790,11 @@ function sheet(name) {
 
 function log(trigger, event, detail) {
   try {
-    sheet(LOG_TAB).appendRow([new Date(), trigger, event, detail]);
+    var sh = SpreadsheetApp.getActive().getSheetByName(LOG_TAB);
+    if (!sh) return;  // Sync Log missing; don't crash, just skip logging.
+    sh.appendRow([new Date(), trigger, event, detail]);
   } catch (err) {
-    // The log is a convenience; never let it take the sync down with it.
+    // Logging is a convenience; never let it take the sync down with it.
   }
 }
 
