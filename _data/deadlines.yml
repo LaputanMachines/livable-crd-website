@@ -52,7 +52,7 @@
   detail: >-
     Review closes and the question set is locked, ready to go out to every
     confirmed candidate.
-  short: Questionnaires sent
+  short: Questionnaire ready
   brief: The question set is locked and goes out to every candidate.
 
 - id: print-cutoff
