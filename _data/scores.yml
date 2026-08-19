@@ -315,6 +315,96 @@ candidates:
               we need to be careful, as this is not within the local government mandate, so every dollar spent here is taken away from an aspect of our mandated service delivery.
 
               That being said, given the wild success of this model to date we are currently exploring an expansion of this with another clinic being proposed in partnership with SIPCS in Happy Valley.
+  - name: Colin Plant
+    municipality: saanich
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: |-
+              There are so many ideas and options that come to mind when addressing this question but the one I will select and discuss is the renewal of the Gordon Head Recreation Centre and Park area that we refer to as the Gordon Head Campus.
+
+              This is an exciting and unprecedented opportunity in Saanich.
+
+              This very special area is currently in a re-visioning process where we are looking at the future of this space for the next 50 years and looking at how we can ensure the recreational, environmental and athletic needs of our growing community.
+
+              The incoming Council will likely set the direction and budget for any future redevelopment of the campus.  With the acknowledged lack of ice space and swimming pools in our region, it is important that we get it right and yet design a program that is financially viable, attracts partnerships from other orders of government and protects what is already an incredible park area.
+
+              This is an exciting initiative and I hope everyone in Saanich participates in shaping its future.  I chose this example because it is an example of planning for our future and planning to ensure our community remains a healthy place to live!
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Transit
+                amount: 800000
+                display: "$800,000"
+                share: 8
+              - area: Walking Infrastructure
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Roadway Infrastructure
+                amount: 200000
+                display: "$200,000"
+                share: 2
+              - area: Policing
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Fire & Emergency Services"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Parks & Recreation"
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: "Arts & Culture"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Climate Action & Environment"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Unhoused Resident Services
+                amount: 0
+                display: $0
+                share: 0
+              - area: Community-Based Clinics
+                amount: 0
+                display: $0
+                share: 0
+          - label: GEN-GEN
+            answer: |-
+              I think our region is an amazing place that needs to recognize that with our unique governance structure of 13 municipalities and 3 electoral area that we need to work together and look at ways for efficiency, shared services and coordination in the delivery of services.  Continuous improvement is something we should always strive towards.
+
+              I love that our region has both rural and urban areas and that in Saanich we have an Urban Containment Boundary that helps shape our future growth in an identified area.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: |-
+              This is a difficult one for me as I absolutely support the need for more healthcare in Saanich but I am concerned about taking over the responsibility the provincial government has to develop and fund health care services in BC.
+
+              So often municipalities express concerns about downloading from the province but in this situation, I feel it is important to find a positive way forward where we improve our municipal frameworks, work with the province at providing services but also advocate for more funding and investment in healthcare.
+
+              That being said I am open to innovative approaches and how Saanich can contribute to improving municipal frameworks that would see more doctors and health care being provided in Saanich.
   - name: Jeremy Caradonna
     municipality: victoria
     scores:
@@ -607,6 +697,114 @@ candidates:
               We urgently need more medical clinics! Wait times at emergency
               rooms and walk-in clinics have been insufferable for several
               years.
+  - name: Matt Dell
+    municipality: victoria
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: >-
+              I would make more immediate investment in improving our
+              sustainable and public transportation system, to lessen the
+              reliance on personal vehicles. I would invest in more rapid and
+              predicable electric busses, light rail, Handy Dart vans and
+              broaden the AAA bike and roll network. Car-centric cities
+              conflict with human desires for safety, clean air, trees and
+              more diverse and affordable housing. Everyone in the city should
+              have the option to travel quickly and cheaply by public transit
+              or sustainable (bikes, walking etc) transportation. Victoria
+              council has made good progress pursuing this vision this term,
+              but there is a lot more work to do. We approved rapid transit
+              lanes on Douglas, expanded the AAA bike network, funded the bike
+              valet, and created a bike share program, but there is much more
+              to do.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Transit
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Walking Infrastructure
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
+              - area: Roadway Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: Policing
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Fire & Emergency Services"
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: "Parks & Recreation"
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: "Arts & Culture"
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: "Climate Action & Environment"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Unhoused Resident Services
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Community-Based Clinics
+                amount: 500000
+                display: "$500,000"
+                share: 5
+          - label: GEN-GEN
+            answer: >-
+              I believe that Victoria is well-positioned to be a global leader
+              in innovative urban design. This means that Victoria should be a
+              model city that serves as an inspiration to locals and visitors.
+              Victoria should be a leader in how to design a city based around
+              diverse housing options, walkable communities, sustainable
+              transportation, creative and compassionate responses to
+              homelessness and addiction, and innovative ideas on arts and
+              parks. I want people to come to Victoria and say "Wow - this
+              city is amazing, we should bring these ideas to our own city."
+              We need to be taking the best of all ideas from cities and
+              thinkers around the world, and implementing them here.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: >-
+              I recently met a young Family Doctor who was leaving Victoria
+              because housing was too expensive. We need to remember that the
+              housing affordability crisis has a massive impact on the ability
+              to recruit doctors, nurses, and all the other staff that make
+              our health care system work. I would like to see more housing
+              density around our local hospitals, more transportation networks
+              and bike lanes to the hospitals, and city incentives for health
+              care amenities in new developments. I would also support a city
+              project to provide free/subsidized housing for a few years to
+              help recruit new doctors to Victoria.
   - name: Don Brown
     municipality: view-royal
     scores:
