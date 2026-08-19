@@ -263,17 +263,19 @@
 // grade, and a written comment on a graded topic is shown inside that topic on
 // the candidate's own page rather than in a cell with no room for it.
 //
-// The deep ink purple, deliberately from outside the grade palette. It briefly
-// used $grade-a, and green turned out to say the wrong thing: a reader scanning
-// the General column read the best score's colour as a good score on a topic
-// nobody scores. This is the site's structural colour - page headers, table
-// headers - so it reads as "a thing", not as a verdict.
+// The brand purple, deliberately from outside the grade palette. It has been
+// two other things: $grade-a, where green on an ungraded topic read as a good
+// score, and $color-accent-alt, whose near-black sat heavier in the row than any
+// letter did. This one is a colour the site already means "ours" by, which is
+// the right thing to say about a question we ask and do not score.
 //
-// Filled rather than outlined, because unlike the circular arrow beside it this
-// chip promises something to read now rather than something to wait for, and
-// should carry a letter's weight in the table.
+// It is also the circular arrow's colour, and stays distinct from it by weight
+// rather than by hue: that chip is a pale tile with a purple stroke, this one is
+// solid with a white glyph. Filled because unlike the arrow it promises
+// something to read now rather than something to wait for, and should carry a
+// letter's weight in the table.
 .grade--answers {
-  background: $color-accent-alt;
+  background: $color-accent;
   color: #fff;
 }
 
