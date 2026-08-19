@@ -33,7 +33,7 @@
 # subject, which is the order candidates met the questions on the form.
 
 count: 66
-graded_count: 54
+graded_count: 53
 status: published
 items:
   # --- general ---
@@ -473,7 +473,7 @@ items:
       advance walking, rolling, cycling or transit? If you have not, what in
       your record outside of council shows the same commitment?
     type: single
-    graded: true
+    graded: false
     owner: Better Transit YYJ
   - label: ROL-GEN
     subject: rolling-cycling

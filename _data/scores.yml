@@ -143,6 +143,11 @@ candidates:
           - label: TRN-01
             grade: A
             weight: "20%"
+            rationale: >-
+              Backed every fare measure on the list, including free travel for
+              under 19s, cheaper fares for seniors, cheaper fares for people
+              on income or disability assistance, and a lower cost regional
+              monthly pass. That is the full ask with nothing left out.
             selected:
               - Free transit for everyone under 19 years of age.
               - "Free or half-priced fares for seniors, 65+ years of age."
@@ -153,18 +158,34 @@ candidates:
           - label: TRN-02
             grade: A
             weight: "20%"
+            rationale: >-
+              Supports taking general street parking off frequent transit
+              corridors along the whole corridor, not only at peak times. That
+              is the strongest option on offer, and it hands the space to
+              buses, loading, and people walking and cycling.
             answer: "Yes, across the whole corridor."
           - label: TRN-03
             grade: A
             weight: "20%"
+            rationale: >-
+              A clear yes to moving quickly on transit priority, including
+              where it costs parking or a traffic lane. No conditions
+              attached.
             answer: "Yes"
           - label: TRN-04
             grade: A
             weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority. The
+              answer is a plain yes with nothing attached to it.
             answer: "Yes"
           - label: TRN-05
             grade: A
             weight: "20%"
+            rationale: >-
+              Said yes to new bus and bike connections through parks, golf
+              courses and other public land where they would meaningfully
+              shorten trips. Nothing conditional in the answer.
             answer: "Yes"
         unscored:
           - label: TRN-GEN
