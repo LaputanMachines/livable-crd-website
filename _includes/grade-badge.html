@@ -56,45 +56,26 @@
   chip that is not a control. A horizontal ellipsis fails the same way: three
   dots in a row is the overflow-menu icon.
 
-  Filled rather than stroked, unlike the topic icons and the speech bubble. This
-  is the smallest thing on the site, about 10px across in a phone-width matrix
-  cell, and an outline turns to mush at that size. A silhouette keeps its shape.
+  Lucide's stock `hourglass`, unmodified, which is the same set the topic icons
+  in assets/images/icons/ come from. Several hand-drawn attempts preceded it and
+  each failed differently — a bowtie, a goblet, a shape pinched at the waist —
+  which is a good argument for taking the one somebody has already tuned.
 
-  Drawn as sand rather than as glass: a full funnel at the top, a stream, and a
-  pile at the bottom, held between two rounded caps. An outlined glass with sand
-  inside it is the more literal picture and was rejected on size — the outline
-  and the sand end up a pixel apart in a matrix cell and merge into a blob. Mass
-  survives where line weight does not, and two caps over a funnel and a pile
-  are enough to read as an hourglass without drawing the glass at all.
-
-  Two earlier attempts failed on the same axis. Two triangles meeting at a point
-  have a neck of zero width, which disappears below about 20px and leaves a
-  bowtie; squat funnels read as a bowtie however they are capped.
-
-  Everything is drawn heavy, and heavier than looked right in isolation. The
-  caps are 4.6 units deep on a 24 grid and fully rounded, the funnel spans very
-  nearly the full width of the cap above it, and the whole middle - the funnel's
-  neck and the stream below it - is 3.2 wide. The funnel stops at that neck
-  rather than tapering to a point: a shape that narrows to nothing in the middle
-  looks pinched however heavy its ends are.
-
-  Slimmer versions of exactly this shape failed twice over. Thin caps do not
-  look like they could hold anything, and a narrow funnel over a small pile is a
-  stem over a base, which is a goblet. It also has to sit beside the speech
-  bubble, stroked at 3.5, and matching that weight is what keeps the two reading
-  as one set rather than as a bold icon next to a delicate one.
+  Stroked at 2.5 rather than Lucide's default 2: the topic icons render at 28px
+  and this one gets about 13px in a phone-width matrix cell, where a 2-weight
+  stroke thins out. Still lighter than the speech bubble's 3.5, because that
+  glyph is mostly the space it encloses and this one is mostly line.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
   plain black on the leaflet, where the print rules restyle .grade to ink.
 {%- endcomment -%}
 <span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
-  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <rect x="4" y="1.6" width="16" height="4.6" rx="2.3"/>
-    <rect x="4" y="17.8" width="16" height="4.6" rx="2.3"/>
-    <path d="M6.6 6h10.8l-3.8 6.4h-3.2z"/>
-    <rect x="10.4" y="12" width="3.2" height="5.2" rx="1.6"/>
-    <path d="M6.6 18q5.4-6 10.8 0z"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 22h14"/>
+    <path d="M5 2h14"/>
+    <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
+    <path d="M7 2v4.172a2 2 0 0 0 .586 1.414L12 12l4.414-4.414A2 2 0 0 0 17 6.172V2"/>
   </svg>
 </span>
 {% elsif no_grade %}
