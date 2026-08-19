@@ -360,9 +360,16 @@ tr:hover td { background: $color-bg-warm; }
   -webkit-overflow-scrolling: touch;
 }
 
+// Centred over the grades it belongs to, on the scorecard matrix and on a
+// candidate's topic list alike. Both of those are full-width blocks with a
+// border around them, and a key ranged left above one read as a caption that had
+// come loose rather than as the block's own heading. Eight items wrap to two or
+// three rows on a phone, and centred rows stay visibly one group where ragged
+// left-aligned ones do not.
 .scorecard-legend {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: $space-sm $space-md;
   align-items: center;
   margin-top: $space-md;
