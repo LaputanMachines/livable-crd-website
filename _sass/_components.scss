@@ -237,7 +237,7 @@
 //
 // Reads as a chip with something coming rather than an empty slot: the accent
 // border and ink are the page's "active" colour, against the muted grey the
-// pending dash uses, and the ellipsis sits low like a sentence trailing off.
+// pending dash uses.
 .grade--review {
   background: $color-bg-warm;
   color: $color-accent;
@@ -248,10 +248,13 @@
 // content is an icon, so it should track the box it sits in and not the type
 // scale of the letters it stands beside. That is also what lets every one of the
 // chip's six sizes across the site work with no per-context rule.
+//
+// Smaller than the circular arrow this replaced. That glyph was a ring and read
+// as its own outline; a filled hourglass at the same share crowded the chip.
 .grade--review svg {
   display: block;
-  width: 65%;
-  height: 65%;
+  width: 55%;
+  height: 55%;
 }
 
 // "Answered, and nobody grades this topic." The only chip that promises the
@@ -269,9 +272,9 @@
 // letter did. This one is a colour the site already means "ours" by, which is
 // the right thing to say about a question we ask and do not score.
 //
-// It is also the circular arrow's colour, and stays distinct from it by weight
-// rather than by hue: that chip is a pale tile with a purple stroke, this one is
-// solid with a white glyph. Filled because unlike the arrow it promises
+// It is also the hourglass chip's colour, and stays distinct from it by weight
+// rather than by hue: that chip is a pale tile with a purple glyph, this one is
+// solid with a white one. Filled because unlike the hourglass it promises
 // something to read now rather than something to wait for, and should carry a
 // letter's weight in the table.
 .grade--answers {
@@ -288,7 +291,7 @@
   height: 54%;
 }
 
-// Same reasoning as the circular arrow's override below the matrix rule: this
+// Same reasoning as the hourglass's override below the matrix rule: this
 // is the smallest either is ever drawn and the one place they share a column.
 .scorecard-matrix__cell .grade--answers svg {
   width: 66%;
@@ -696,10 +699,10 @@ tr:hover td { background: $color-bg-warm; }
 
 // The one place on the site where this chip and the pending dash sit in the same
 // column, and the smallest either is ever drawn. The icon takes more of its chip
-// here than anywhere else so the arrow still reads as an arrow at ~11px.
+// here than anywhere else so the hourglass still reads as one at ~11px.
 .scorecard-matrix__cell .grade--review svg {
-  width: 78%;
-  height: 78%;
+  width: 70%;
+  height: 70%;
 }
 
 .scorecard-row:hover th,

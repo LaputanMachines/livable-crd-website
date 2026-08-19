@@ -120,7 +120,7 @@ layout: default
     <p>
       <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
       way and nothing has been published yet, so the topics we grade show
-      a circular arrow rather than a letter. Each topic is graded
+      an hourglass rather than a letter. Each topic is graded
       by the coalition organization that wrote its questions and appears here as
       that organization finishes, so they will not all arrive at once. In the
       meantime you can
@@ -132,7 +132,7 @@ layout: default
   <div class="callout candidate-returned">
     <p>
       <strong>{% if awaiting == 1 %}One more topic is{% else %}{{ awaiting }} more topics are{% endif %}
-      still being graded.</strong> A circular arrow means the coalition
+      still being graded.</strong> An hourglass means the coalition
       organization that owns that topic has not finished with it, not that
       {{ c.name }} scored poorly on it; a dash
       (<span aria-hidden="true">—</span>) means a topic we do not assign a letter in.
@@ -164,7 +164,7 @@ layout: default
     {%- assign detail = c.published_subjects[subject.id] %}
     {%- comment -%}
       Same rule as the scorecard matrix: a returned questionnaire waiting on a
-      topic the coalition grades shows the circular arrow; a topic nobody grades
+      topic the coalition grades shows an hourglass; a topic nobody grades
       that the candidate answered shows a speech bubble; everything else stays a
       dash.
     {%- endcomment -%}

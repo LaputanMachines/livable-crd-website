@@ -129,7 +129,7 @@ Having a row on `Category Grades` at all means the candidate returned the questi
 | Shown | Means |
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
-| ↻ | A clockwise circular arrow. The candidate returned the questionnaire and this topic has not been published yet. Says nothing about how it is going. |
+| hourglass | The candidate returned the questionnaire and this topic has not been published yet. Says nothing about how it is going. |
 | speech bubble | The candidate answered and nobody grades this topic, so there is something to read and no letter is coming. |
 | `—` | No completed questionnaire has come back, **or** nothing is published. |
 

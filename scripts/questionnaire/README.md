@@ -488,7 +488,7 @@ website`** checkbox, and that checkbox is the entire publication gate:
 
 | Checkbox | What the site shows for that candidate and subject |
 |---|---|
-| unticked | A circular arrow, meaning "returned the questionnaire, this topic is still being graded". No grade, no answers, no rationale. |
+| unticked | An hourglass, meaning "returned the questionnaire, this topic is still being graded". No grade, no answers, no rationale. |
 | ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
 
 **General** and **Healthcare access** carry a checkbox with no grade column beside it. Nobody

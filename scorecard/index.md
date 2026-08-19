@@ -435,7 +435,7 @@ description: >-
               An ungraded cell is one of three different things, and the table
               has to tell them apart:
 
-                circular arrow  returned, and this topic is being graded
+                hourglass       returned, and this topic is being graded
                 speech bubble   answered, and this topic is never graded, so
                                 there is something to read and no letter coming
                 dash            no reply, or nothing published

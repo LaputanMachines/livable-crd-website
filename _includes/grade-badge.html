@@ -10,7 +10,7 @@
     a letter   the grade the coalition assigned
     N/A        graded, and the answer is that the question does not apply to
                this candidate (ROL-05 asks about a previous term in office)
-    ↻          the candidate returned the questionnaire and this topic has not
+    hourglass  the candidate returned the questionnaire and this topic has not
                been published yet. Passed in as state="review" by the caller,
                which is the only one that knows whether a reply came back.
     speech     the candidate answered and nobody grades this topic, so there is
@@ -34,11 +34,11 @@
 {%- comment -%}
   A speech bubble: there is something written here to read. Deliberately not a
   tick or a dot, which would read as a verdict on a topic nobody scores. Inline
-  rather than an <img> for the same reason as the circular arrow below it: it
-  has to take the chip's colour.
+  rather than an <img> for the same reason as the hourglass below it: it has to
+  take the chip's colour.
 
-  Drawn at stroke-width 3.5 where the arrow uses 2.5. It sits on a filled chip
-  at roughly half the chip's width, and a bubble is mostly the space it encloses,
+  Stroked at 3.5, where the topic icons use 2. It sits on a filled chip at
+  roughly half the chip's width, and a bubble is mostly the space it encloses,
   so a lighter stroke had almost nothing left of it at matrix size.
 {%- endcomment -%}
 <span class="grade grade--answers" title="Answered; this topic is not graded" aria-label="Answered, not graded">
@@ -48,22 +48,29 @@
 </span>
 {% elsif no_grade and include.state == 'review' %}
 {%- comment -%}
-  A clockwise circular arrow: the "in progress" mark, drawn rather than typed.
-  An ellipsis was the obvious character for it and the wrong one — at matrix size
-  three baseline dots sat low in the chip and read as a broken em dash, which is
-  the exact glyph it has to be told apart from.
+  An hourglass: work under way, nothing for the reader to do. Two glyphs were
+  tried and both said the wrong thing. A text ellipsis sat low in the chip and
+  read as a broken em dash, the one mark it has to be distinguished from. A
+  clockwise circular arrow replaced it and read as Reload, because that is what
+  that arrow means everywhere else on the web — an instruction to click, on a
+  chip that is not a control. A horizontal ellipsis fails the same way: three
+  dots in a row is the overflow-menu icon.
+
+  Filled rather than stroked, unlike the topic icons and the speech bubble. This
+  is the smallest thing on the site, about 10px across in a phone-width matrix
+  cell, and an hourglass has enough going on at the waist that a stroked outline
+  turns to mush at that size. A silhouette keeps its shape.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
-  plain black on the leaflet, where the print rules restyle .grade to ink. Same
-  Lucide-style stroke set as the topic icons, at a heavier 2.5: those render at
-  28px and this one gets about 10px in a phone-width matrix cell, where a
-  2-weight stroke thins out to nothing.
+  plain black on the leaflet, where the print rules restyle .grade to ink.
 {%- endcomment -%}
 <span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
-    <path d="M21 3v5h-5"/>
+  <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 2h14v2.6H5z"/>
+    <path d="M5 19.4h14V22H5z"/>
+    <path d="M6.9 4.6h10.2L12 12z"/>
+    <path d="M12 12l5.1 7.4H6.9z"/>
   </svg>
 </span>
 {% elsif no_grade %}
