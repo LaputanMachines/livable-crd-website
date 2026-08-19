@@ -355,6 +355,7 @@ python3 scripts/questionnaire/grading_tabs.py --refresh    # re-read the form's 
 | `Raw Submissions` | Tally. Untouched. |
 | `Question Registry` | Generated once, then hand-maintained. |
 | `Grade - <Subject>` | `A-F` and `L` by the Apps Script, `G-I` by graders. Nine of them. |
+| `Category Grades` | `A-C` by the Apps Script, the rest by graders. One row per candidate; its deploy checkboxes are what publish a subject to the website. |
 | `Sync Log` | The Apps Script. |
 
 #### `Question Registry`
@@ -478,6 +479,55 @@ The token in the URL is the whole of the authentication. Apps Script web apps ca
 request headers, so Tally's `tally-signature` header is unverifiable from inside the script.
 Treat the deployment URL like `CANDIDATES_CSV_URL`: it is a capability, and it stays out of
 this repo.
+
+#### Publishing a graded subject to the website
+
+Grading in this sheet is invisible to the public until somebody says otherwise. The
+`Category Grades` tab pairs every subject column with a **`<Subject> - Deploy to
+website`** checkbox, and that checkbox is the entire publication gate:
+
+| Checkbox | What the site shows for that candidate and subject |
+|---|---|
+| unticked | A circular arrow, meaning "returned the questionnaire, this topic is still being graded". No grade, no answers, no rationale. |
+| ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. |
+
+Unticking it takes the subject back off the site on the next sync. Nothing in the website
+repo overrides this, and nothing else needs editing to publish or unpublish.
+
+Note what the unticked state now says. **Having a row on this tab is itself published**, as
+the fact that the candidate returned the questionnaire — the site draws that differently
+from a candidate who never replied, who gets a plain `—`. It says nothing about how the
+grading is going, only that it is under way. A candidate whose row should not say even that
+needs the row gone, not its boxes cleared.
+
+A candidate with two rows (a resubmission) is fine while at most one of them publishes
+anything; the publishing row wins. Two rows both publishing fails the sync with an error
+naming both, rather than silently picking one.
+
+What reads the box is [`scripts/sync-questionnaire.py`](../sync-questionnaire.py) in the
+website repo, running daily in CI. It writes two files there — `_data/questions.yml` from
+`Question Registry`, and `_data/scores.yml` from `Category Grades` and the `Grade - <Subject>`
+tabs — and commits them only when they changed. Full setup is in that repo's README, under
+"Questionnaire and grade sync".
+
+Three things about this sheet matter to what gets published:
+
+- **`Question Registry` is the published question list.** Every row reaches
+  `/questionnaire/` on the website, whether `Graded` says Yes or No. Wording fixed there
+  is wording fixed on the site the next morning. Questions the registry does not list are
+  not published at all, which currently includes `GEN-01`, `GEN-02` and the per-topic
+  `*-GEN` comment boxes: `grading_tabs.py` skips them as ungraded, so they never got a
+  registry row. Add rows for them if they should appear.
+- **`Owner` is printed on the site**, as the organization that wrote and grades the
+  question. Rows whose `Owner` is a personal email address are dropped with a warning
+  rather than published; several `ROL-*` rows are in that state. Put the organization's
+  name there.
+- **`Grade` accepts `N/A`** as well as the five letters, and it is published as its own
+  badge meaning "does not apply to this candidate" — for `ROL-05`, which asks what
+  somebody did in a previous term, a first-time candidate is `N/A`, not a blank. A blank
+  publishes as "not graded yet".
+
+`Grader` and `Graded at` are never published. Grades go out as the coalition's.
 
 ## How committee members vote
 

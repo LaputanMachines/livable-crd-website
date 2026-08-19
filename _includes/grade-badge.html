@@ -1,8 +1,55 @@
+{%- comment -%}
+  One grade chip. Used by the scorecard matrix, the per-candidate topic rows and
+  the per-question rows inside a published subject, so every grade on the site is
+  rendered by this file and they cannot drift.
+
+  Four states. The last three all look "empty" to a reader and mean different
+  things, so each carries its own glyph and its own border treatment — never
+  colour alone, because the leaflet prints without backgrounds.
+
+    a letter   the grade the coalition assigned
+    N/A        graded, and the answer is that the question does not apply to
+               this candidate (ROL-05 asks about a previous term in office)
+    ↻          the candidate returned the questionnaire and this topic has not
+               been published yet. Passed in as state="review" by the caller,
+               which is the only one that knows whether a reply came back.
+    —          pending: nothing to report. Either no questionnaire came back, or
+               the topic is not one the coalition grades.
+{%- endcomment -%}
 {% assign g = include.grade | default: '' | strip %}
-{% if g == '' or g == 'null' or g == 'PENDING' or g == '—' %}
-<span class="grade grade--pending" aria-label="Grade pending">—</span>
-{% else %}
 {% assign g_upper = g | upcase %}
+{%- comment -%}
+  Named `no_grade` and not `empty` or `blank`: both of those are Liquid's own
+  literals, and assigning over one silently yields a truthy object, so every
+  chip took the first branch regardless of its grade.
+{%- endcomment -%}
+{% assign no_grade = false %}
+{% if g == '' or g_upper == 'NULL' or g_upper == 'PENDING' or g == '—' %}{% assign no_grade = true %}{% endif %}
+{% if no_grade and include.state == 'review' %}
+{%- comment -%}
+  A clockwise circular arrow: the "in progress" mark, drawn rather than typed.
+  An ellipsis was the obvious character for it and the wrong one — at matrix size
+  three baseline dots sat low in the chip and read as a broken em dash, which is
+  the exact glyph it has to be told apart from.
+
+  Inline rather than an <img> from assets/images/icons/, because it has to take
+  the chip's colour: `currentColor` is what makes it accent purple on screen and
+  plain black on the leaflet, where the print rules restyle .grade to ink. Same
+  Lucide-style stroke set as the topic icons, at a heavier 2.5: those render at
+  28px and this one gets about 10px in a phone-width matrix cell, where a
+  2-weight stroke thins out to nothing.
+{%- endcomment -%}
+<span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+    <path d="M21 3v5h-5"/>
+  </svg>
+</span>
+{% elsif no_grade %}
+<span class="grade grade--pending" aria-label="Grade pending">—</span>
+{% elsif g_upper == 'N/A' or g_upper == 'NA' %}
+<span class="grade grade--na" aria-label="Not applicable">N/A</span>
+{% else %}
 {% assign grade_class = g_upper | downcase | replace: '+', '' | replace: ' ', '-' %}
 {% if g_upper == 'C-' or g_upper == 'C−' %}
   {% assign grade_class = 'c-minus' %}

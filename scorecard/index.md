@@ -19,6 +19,9 @@ description: >-
     Regional District. Each candidate is graded across the policy areas the
     coalition evaluates. Search by name or slate, filter by municipality or
     office, or narrow to candidates who meet a minimum grade in a given topic.
+    Every candidate is sent
+    <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>,
+    and a candidate's own page shows how each of their answers was graded.
   </p>
 
   <div class="status-banner">
@@ -47,16 +50,64 @@ description: >-
   {%- endcomment -%}
   {% include other-scorecard-notice.html %}
 
+  {%- comment -%}
+    The two empty states sit in the key next to the letters, because on a table
+    this size most cells are one of them and a reader who cannot tell them apart
+    reads a returned questionnaire as a no-show. Spelled out again under
+    #methodology; this is the version that fits on one line.
+  {%- endcomment -%}
   <div class="scorecard-legend" aria-label="Grading key">
     {% for grade in site.data.grades %}
     <span class="scorecard-legend__item">
       <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
     </span>
     {% endfor %}
+    {%- comment -%}
+      Both empty states come from the include rather than being written out
+      here, so the key cannot end up showing a different mark from the table
+      under it. An empty `grade` is what puts the include in an empty state;
+      `state` picks which of the two.
+    {%- endcomment -%}
     <span class="scorecard-legend__item">
-      <span class="grade grade--pending">—</span>Pending
+      {% include grade-badge.html grade="" state="review" %}Being graded
+    </span>
+    {%- comment -%}
+      "Not graded" rather than "No reply": the dash also stands on topics the
+      coalition does not grade at all, where it is not the candidate's silence
+      being reported. Both readings are true of "not graded", and #methodology
+      separates them.
+    {%- endcomment -%}
+    <span class="scorecard-legend__item">
+      {% include grade-badge.html grade="" %}Not graded
     </span>
   </div>
+
+  {%- comment -%}
+    How far along the whole exercise is, in one line, directly under the key
+    that just introduced the two empty states. Without it a reader scrolling a
+    table of dashes has no way to tell a questionnaire that has barely gone out
+    from one candidates are ignoring. Both counts come from
+    _plugins/questionnaire_scores.rb rather than being counted here, so the
+    sentence cannot disagree with the chips in the table.
+
+    Absent entirely until the first reply comes back: "0 of 66 have returned it"
+    is a true sentence that reads as an accusation, and early in a cycle it says
+    nothing except that we sent the questionnaire out recently.
+  {%- endcomment -%}
+  {%- assign returned_count = site.data.returned_candidate_count | default: 0 %}
+  {%- if returned_count > 0 %}
+  <p class="scorecard-progress">
+    <strong>{{ returned_count }}</strong> of {{ site.data.candidates.size }} candidates
+    {% if returned_count == 1 %}has{% else %}have{% endif %} returned the questionnaire so far.
+    {%- assign published_count = site.data.published_candidate_count | default: 0 %}
+    {%- if published_count > 0 %}
+    {{ published_count }} of them {% if published_count == 1 %}has{% else %}have{% endif %}
+    at least one topic graded and published.
+    {%- else %}
+    No topic has finished grading yet.
+    {%- endif %}
+  </p>
+  {%- endif %}
 
   <div class="scorecard-controls">
     <label for="candidate-search" class="sr-only">Search candidates by name or slate</label>
@@ -370,9 +421,22 @@ description: >-
                 </span>
               </span>
             </th>
+            {%- comment -%}
+              An ungraded cell is one of two different things, and the table has
+              to tell them apart: a candidate who returned the questionnaire and
+              is waiting on a topic being graded, and a candidate who has not
+              replied. The first gets the circular arrow, the second the plain dash.
+
+              Gated on `graded_subjects` — the topics the grading sheet actually
+              has a column for — so a returned candidate does not appear to be
+              waiting on General or Healthcare access, which carry no graded
+              question and are not being graded for anyone.
+            {%- endcomment -%}
             {% for subject in site.data.subjects %}
             {% assign cell = c.scores[subject.id] %}
-            <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell %}</td>
+            {% assign cell_state = "" %}
+            {% if c.questionnaire_returned and site.data.scores.graded_subjects contains subject.id %}{% assign cell_state = "review" %}{% endif %}
+            <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell state=cell_state %}</td>
             {% endfor %}
           </tr>
           {% endfor %}
@@ -435,6 +499,40 @@ description: >-
         Some ratings may use modifiers (for example, <strong>C−</strong>) when a
         candidate's positions fall between two levels.
       </p>
+
+      {%- comment -%}
+        The two empty states, spelled out. The legend at the top of the page has
+        room for two words each; this is where a reader who wants to know what a
+        dash costs a candidate can find out that sometimes it costs them nothing.
+      {%- endcomment -%}
+      <h2>When there is no letter</h2>
+      <dl class="grade-defs">
+        <div class="grade-def">
+          <dt class="grade-def__term">
+            {% include grade-badge.html grade="" state="review" %}
+            <span class="grade-def__label">Being graded</span>
+          </dt>
+          <dd class="grade-def__desc">
+            This candidate returned the questionnaire and this topic has not been
+            published yet. Grading is done by the coalition organization that wrote
+            the topic's questions, and each topic is published as that organization
+            finishes it, so a candidate can show letters in one topic and this in
+            another. It says nothing about how the topic is going.
+          </dd>
+        </div>
+        <div class="grade-def">
+          <dt class="grade-def__term">
+            {% include grade-badge.html grade="" %}
+            <span class="grade-def__label">Not graded</span>
+          </dt>
+          <dd class="grade-def__desc">
+            Either no completed questionnaire has come back from this candidate
+            yet, or the topic is one we do not assign a letter in. A dash is never
+            a bad grade: the grades are <strong>A</strong> through <strong>F</strong>,
+            and a candidate who scores poorly gets a letter saying so.
+          </dd>
+        </div>
+      </dl>
 
       <h2>Questionnaire topics</h2>
       <p>

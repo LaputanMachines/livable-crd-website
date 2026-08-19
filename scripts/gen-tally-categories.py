@@ -66,7 +66,6 @@ SUBJECTS = os.path.join(ROOT, "_data", "subjects.yml")
 CATEGORIES = ["General", "Walking", "Rolling & cycling", "Transit", "Housing",
               "Climate", "Arts", "Healthcare access", "Reconciliation",
               "Governance"]
-LABELS = {"All categories / General": "General"}   # full name is too long to set
 
 # The General block: GEN-01 and GEN-02 in finalize.py. Both are cross-cutting
 # rather than tied to one topic, which is what the first tile says; the other
@@ -891,7 +890,7 @@ def items_for(which):
         s = by_name.get(name)
         if s is None:                       # tolerate "Rolling & cycling" etc.
             s = next(v for k, v in by_name.items() if k.endswith(name))
-        out.append((LABELS.get(s["name"], s["name"]),
+        out.append((s["name"],
                     open(os.path.join(ICON_DIR, s["icon"])).read()))
     return out
 

@@ -137,7 +137,9 @@ description: >-
     <p class="content-follow-up">
       Curious how candidates earn their letter grades? See
       <a href="{{ '/scorecard/#methodology' | relative_url }}">how we grade</a>
-      for our methodology and a breakdown of each topic.
+      for our methodology and a breakdown of each topic, or
+      <a href="{{ '/questionnaire/' | relative_url }}">read the questionnaire</a>
+      itself: every question we put to every candidate, in full.
     </p>
   </div>
 </section>

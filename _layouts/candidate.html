@@ -17,13 +17,34 @@ layout: default
 {%- assign c = page.candidate -%}
 {%- assign subjects = site.data.subjects -%}
 {%- comment -%}
-  Count graded topics up front: the page reads very differently depending on
-  whether anything has come back yet, and right now nothing has for anyone.
+  Counted up front, because the page says something different in each of three
+  situations and the callout at the top has to pick one:
+
+    no reply           nothing has come back from this candidate
+    reply, nothing out they returned it and no topic has been published yet
+    reply, some out    some topics are published and the rest are being graded
+
+  `published` counts topics released with their per-question detail. `awaiting`
+  counts topics the coalition grades that carry no letter yet, which is exactly
+  the number of circular-arrow chips drawn below, so the callout can never claim
+  a count the list does not show. The two differ: a topic can be released with its
+  questions before anyone types its top-level letter, and that topic is
+  published and still awaited at once.
+
+  Both are scoped to the topics the coalition grades at all, which is fewer than
+  the ten shown. General and Healthcare access carry no graded question, so they
+  are nobody's outstanding work and must not be counted as such.
 {%- endcomment -%}
-{%- assign graded = 0 -%}
+{%- assign returned = c.questionnaire_returned -%}
+{%- assign gradable = site.data.scores.graded_subjects -%}
+{%- assign published = 0 -%}
+{%- assign awaiting = 0 -%}
 {%- for subject in subjects -%}
+  {%- if c.published_subjects[subject.id] -%}{%- assign published = published | plus: 1 -%}{%- endif -%}
   {%- assign cell = c.scores[subject.id] | default: "" | strip -%}
-  {%- if cell != "" -%}{%- assign graded = graded | plus: 1 -%}{%- endif -%}
+  {%- if cell == "" and gradable contains subject.id -%}
+    {%- assign awaiting = awaiting | plus: 1 -%}
+  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%}
@@ -76,26 +97,50 @@ layout: default
 </div>
 
 <div class="container page-content candidate-page">
-  {%- if graded == 0 %}
+  {%- comment -%}
+    Three states, and which one this is, is the first thing the page has to
+    settle: a returned questionnaire that nobody has finished grading used to
+    look exactly like no reply at all, which is the one mistake this page cannot
+    afford to make about a candidate who did the work.
+  {%- endcomment -%}
+  {%- unless returned %}
   <div class="callout candidate-pending">
     <p>
-      <strong>Grades pending.</strong> We have not received a completed coalition
-      questionnaire from {{ c.name }} yet, so every topic below shows a dash
+      <strong>No reply yet.</strong> We have not received a completed coalition
+      questionnaire from {{ c.name }}, so every topic below shows a dash
       (<span aria-hidden="true">—</span>) rather than a letter grade. Grades are
-      published here as responses come back.
+      published here as responses come back. You can still
+      <a href="{{ '/questionnaire/' | relative_url }}">read every question they were asked</a>.
       <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
     </p>
   </div>
-  {%- elsif graded < subjects.size %}
-  <div class="callout candidate-pending">
+  {%- else %}
+  {%- if published == 0 %}
+  <div class="callout candidate-returned">
     <p>
-      <strong>Some topics are still pending.</strong> A dash
-      (<span aria-hidden="true">—</span>) means that topic has not been graded
-      yet, not that the candidate scored poorly on it.
+      <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
+      way and nothing has been published yet, so the topics we grade show
+      a circular arrow rather than a letter. Each topic is graded
+      by the coalition organization that wrote its questions and appears here as
+      that organization finishes, so they will not all arrive at once. In the
+      meantime you can
+      <a href="{{ '/questionnaire/' | relative_url }}">read every question they answered</a>.
+      <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
+    </p>
+  </div>
+  {%- elsif awaiting > 0 %}
+  <div class="callout candidate-returned">
+    <p>
+      <strong>{% if awaiting == 1 %}One more topic is{% else %}{{ awaiting }} more topics are{% endif %}
+      still being graded.</strong> A circular arrow means the coalition
+      organization that owns that topic has not finished with it, not that
+      {{ c.name }} scored poorly on it; a dash
+      (<span aria-hidden="true">—</span>) means a topic we do not assign a letter in.
       <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
     </p>
   </div>
   {%- endif %}
+  {%- endunless %}
 
   {%- comment -%}
     One row per topic: icon and name on the left, grade hard right, a dotted
@@ -116,11 +161,134 @@ layout: default
   <ul class="candidate-grades">
     {%- for subject in subjects %}
     {%- assign cell = c.scores[subject.id] %}
-    <li class="candidate-grade" style="--card-accent: {{ subject.accent }}">
-      <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
-      <span class="candidate-grade__name">{{ subject.name }}</span>
-      <span class="candidate-grade__leader" aria-hidden="true"></span>
-      {% include grade-badge.html grade=cell %}
+    {%- assign detail = c.published_subjects[subject.id] %}
+    {%- comment -%}
+      Same rule as the scorecard matrix: a returned questionnaire waiting on a
+      topic the coalition grades shows the circular arrow, and everything else
+      stays a dash.
+    {%- endcomment -%}
+    {%- assign cell_state = "" %}
+    {%- if returned and gradable contains subject.id %}{% assign cell_state = "review" %}{% endif %}
+    <li class="candidate-grade-row" style="--card-accent: {{ subject.accent }}">
+      {%- if detail %}
+      {%- comment -%}
+        Credit the topic to an organization only when every question in it names
+        that same one. Some registry rows have no publishable owner, and naming
+        the organization that happens to own the rest would credit them with
+        grading questions they did not write. Same rule as /questionnaire/.
+      {%- endcomment -%}
+      {%- assign owners = detail.questions | map: "owner" | compact | uniq %}
+      {%- assign owned = detail.questions | where_exp: "q", "q.owner" %}
+      {%- assign credited = false %}
+      {%- if owners.size == 1 and owned.size == detail.questions.size %}{% assign credited = true %}{% endif %}
+      {%- comment -%}
+        A published topic opens in place. The working behind a letter used to
+        live in its own stack of sections further down the page, reached by a
+        jump link; putting it under the row it explains means a reader never
+        loses the grade they are reading about, and the page stops being two
+        lists of the same ten topics in the same order.
+
+        A native <details> rather than a scripted toggle: it is keyboard- and
+        screen-reader-operable with no JavaScript, and this page has to survive
+        without any (see the print button below, which does not).
+      {%- endcomment -%}
+      <details class="candidate-grade__disclosure" id="topic-{{ subject.id }}">
+        <summary class="candidate-grade">
+          <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
+          <span class="candidate-grade__name">{{ subject.name }}</span>
+          <span class="candidate-grade__leader" aria-hidden="true"></span>
+          {% include grade-badge.html grade=cell state=cell_state %}
+          {%- comment -%}
+            The only thing in the row that says it can be opened. Rotates a
+            quarter turn when it is. Decorative: <summary> already announces its
+            own expanded state to a screen reader.
+
+            Every row carries one, including the rows that cannot be opened (see
+            the disabled copy below). Rendering it only where it works pushed
+            those rows' grade chips left by its width, and a column of chips that
+            does not line up costs more than an unused slot does.
+          {%- endcomment -%}
+          <svg class="candidate-grade__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </summary>
+
+        <div class="candidate-grade__detail">
+          <p class="candidate-grade__meta">
+            {{ detail.questions.size }} question{% if detail.questions.size != 1 %}s{% endif %}
+            {%- if credited %} · Graded by {{ owners[0] }}{% endif %}
+            · <a href="{{ '/questionnaire/' | relative_url }}#questions-{{ subject.id }}">See these questions</a>
+          </p>
+
+          {%- if detail.questions.size == 0 %}
+          <p class="candidate-grade__empty">
+            This topic's grade is published, but the per-question breakdown
+            behind it is not available.
+          </p>
+          {%- else %}
+          {%- comment -%}
+            The question ids come from the data (TRN-01), so the list's own
+            numbering would be a second count disagreeing with the first.
+          {%- endcomment -%}
+          <ol class="candidate-answers">
+            {%- for q in detail.questions %}
+            <li class="candidate-answer">
+              <div class="candidate-answer__head">
+                <span class="candidate-answer__label">{{ q.label }}</span>
+                {%- if q.weight %}
+                <span class="candidate-answer__weight">{{ q.weight }} of this topic</span>
+                {%- endif %}
+                <span class="candidate-answer__leader" aria-hidden="true"></span>
+                {% include grade-badge.html grade=q.grade %}
+              </div>
+              <p class="candidate-answer__question">{{ q.question }}</p>
+              {%- if q.rationale %}
+              <p class="candidate-answer__rationale"><strong>Why this grade:</strong> {{ q.rationale }}</p>
+              {%- endif %}
+              {%- if q.answer %}
+              {%- comment -%}
+                Open by default, unlike the topic above it. A reader who has
+                already opened a topic has asked for its detail, and making them
+                click again for every answer inside it is a second gate on
+                something they just asked to see. `newline_to_br` keeps the
+                paragraph breaks a candidate typed; the text is escaped first,
+                because it is submitted content and nothing here should let a
+                candidate inject markup into their own scorecard page.
+              {%- endcomment -%}
+              <div class="candidate-answer__answer">
+                <span class="candidate-answer__answer-label">{{ c.name }}'s answer</span>
+                <div class="candidate-answer__text">{{ q.answer | escape | newline_to_br }}</div>
+              </div>
+              {%- endif %}
+            </li>
+            {%- endfor %}
+          </ol>
+          {%- endif %}
+        </div>
+      </details>
+      {%- else %}
+      {%- comment -%}
+        Nothing published for this topic, so the row is not a control: a plain
+        <div>, not an empty <details>, because a toggle that opens onto nothing
+        is worse than no toggle.
+
+        It still draws the chevron, faded to a disabled state. Two reasons, and
+        the first is the one that matters: without it this row's grade chip sits
+        a chevron's width right of the openable rows' chips, and ten rows of
+        misaligned chips read as a layout fault. The second is that a disabled
+        control is the honest picture of what this is — the topic is being
+        graded, and this row becomes openable when that finishes.
+      {%- endcomment -%}
+      <div class="candidate-grade">
+        <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
+        <span class="candidate-grade__name">{{ subject.name }}</span>
+        <span class="candidate-grade__leader" aria-hidden="true"></span>
+        {% include grade-badge.html grade=cell state=cell_state %}
+        <svg class="candidate-grade__chevron candidate-grade__chevron--disabled" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="m9 18 6-6-6-6"/>
+        </svg>
+      </div>
+      {%- endif %}
     </li>
     {%- endfor %}
   </ul>
@@ -134,6 +302,7 @@ layout: default
     {%- endcomment -%}
     <button type="button" class="btn btn-primary" id="print-scorecard" hidden>Print scorecard</button>
     <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">See the full scorecard</a>
+    <a class="btn btn-secondary" href="{{ '/questionnaire/' | relative_url }}">Read the questionnaire</a>
   </div>
 
   {%- comment -%}

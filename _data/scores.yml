@@ -1,0 +1,102 @@
+# Published questionnaire results, per candidate and per subject.
+#
+# AUTO-GENERATED: do not edit by hand.
+# Regenerated from the "Category Grades" and "Grade - <Subject>" tabs of the
+# candidate submission sheet by scripts/sync-questionnaire.py
+# (CI: .github/workflows/sync-questionnaire.yml).
+# Edit the spreadsheet, not this file; manual changes are overwritten.
+#
+# PUBLICATION IS GATED BY THE SHEET, NOT BY THIS FILE. A subject appears under a
+# candidate only when its "<Subject> - Deploy to website" checkbox is ticked on
+# the Category Grades tab. Grading in progress never reaches the site, and
+# unticking a box removes that subject from the site on the next run. Nothing
+# else in the repo decides what is publishable.
+#
+# EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, including one with
+# nothing ticked at all, whose `subjects` is an empty list. Having a row means
+# the candidate returned the questionnaire, and the site says so: "returned it,
+# still being graded" and "never replied" are different facts about a candidate
+# and the scorecard draws them differently. What it does not say is anything
+# about how a topic is going before it is published.
+#
+# _plugins/questionnaire_scores.rb joins these entries onto _data/candidates.yml
+# by name and municipality at build time, which is why this file is separate:
+# candidates.yml is regenerated from a different spreadsheet on its own
+# schedule, and anything written into it by this script would be overwritten.
+#
+# Top-level:
+#   graded_subjects  Topic ids the Category Grades tab has a column for, in
+#                    _data/subjects.yml order. Narrower than the site's topic
+#                    list: `general` and `healthcare-access` carry no graded
+#                    question, so nobody is grading them and the site must not
+#                    claim a returned candidate's are "still being graded".
+#
+# Fields, per candidate:
+#   name          As written on the Category Grades tab. Matched against
+#                 _data/candidates.yml case- and whitespace-insensitively; a
+#                 candidate with no match there is dropped, because there is no
+#                 scorecard page to show the result on.
+#   municipality  Slug from _data/municipalities.yml.
+#   scores        {subject id: letter}. The top-level grade per published
+#                 subject, which is what the scorecard matrix renders. A subject
+#                 deployed with no top-level letter typed yet is absent here but
+#                 still present under `subjects` with its per-question grades.
+#                 Absent entirely when nothing is published.
+#   subjects      One entry per published subject, in _data/subjects.yml order,
+#                 or an empty list when none is published yet:
+#     id          Topic id.
+#     grade       Top-level letter, or null if not yet assigned.
+#     questions   One entry per graded question, in form order:
+#       label     Joins to _data/questions.yml.
+#       grade     Letter, or null where the question has not been graded yet.
+#       weight    Share of the subject grade. Omitted where the sheet is blank.
+#       rationale The grader's written reasoning. Omitted where blank.
+#       answer    What the candidate submitted, as the sheet records it. Blank
+#                 lines are collapsed and trailing spaces trimmed so the value
+#                 survives a YAML round trip; nothing else is changed.
+#
+# Grader identity and grading timestamps are intentionally not published.
+
+graded_subjects:
+  - transit
+  - housing
+  - climate
+  - arts
+  - rolling-cycling
+  - walking
+  - reconciliation
+  - governance
+
+candidates:
+  - name: Martin Girard
+    municipality: victoria
+    scores:
+      transit: A
+    subjects:
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            answer: >-
+              Selected: Free transit for everyone under 19 years of age.; Free
+              or half-priced fares for seniors, 65+ years of age.; Free or
+              half-priced transit for people receiving income or disability
+              assistance.; Lower-cost regional monthly pass.
+          - label: TRN-02
+            grade: A
+            weight: "20%"
+            answer: "Yes, across the whole corridor."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            answer: "Yes"
+          - label: TRN-05
+            grade: A
+            weight: "20%"
+            answer: "Yes"

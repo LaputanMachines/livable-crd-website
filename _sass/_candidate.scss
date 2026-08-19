@@ -89,10 +89,19 @@
 // Both scoped to .candidate-page purely for specificity: .callout and the base
 // `.page-content > h2:not(:first-child)` rule would otherwise win on source
 // order and pseudo-class weight respectively.
-.candidate-page .candidate-pending {
+.candidate-page .candidate-pending,
+.candidate-page .candidate-returned {
   // .callout already draws the box. This just closes the doubled gap under the
   // hero: the explanation has to be read before the wall of dashes below it.
   margin-top: 0;
+}
+
+// The "returned it, still being graded" note. Same box as the pending one, but
+// its accent edge picks up the brand purple instead of the deep ink: on a page
+// where the difference between "replied" and "did not" is the point, the two
+// notes must not look like the same message twice.
+.candidate-page .candidate-returned {
+  border-left-color: $color-accent;
 }
 
 // One full-width row per topic, in a single framed block: one outer border,
@@ -106,17 +115,76 @@
   border: $border-weight solid $color-text;
 }
 
+// The <li>. It carries the divider and the topic accent, because what sits
+// inside it is either a <summary> (a published topic, which opens) or a plain
+// <div> (one that does not), and both have to draw the same row.
+.candidate-grade-row {
+  border-bottom: $border-weight solid $color-text;
+  // Topic accent on the leading edge, matching the homepage topic cards.
+  border-left: 5px solid var(--card-accent, $color-accent-alt);
+
+  &:last-child { border-bottom: none; }
+}
+
 .candidate-grade {
   display: flex;
   align-items: center;
   gap: $space-sm;
   padding: $space-xs $space-gutter;
-  border-bottom: $border-weight solid $color-text;
-  // Topic accent on the leading edge, matching the homepage topic cards.
-  border-left: 5px solid var(--card-accent, $color-accent-alt);
 }
 
-.candidate-grades .candidate-grade:last-child { border-bottom: none; }
+// A <summary> is `display: list-item` with a disclosure triangle the browser
+// draws itself. Both have to go: the row is a flex layout, and it carries its
+// own chevron on the right where the triangle cannot reach.
+summary.candidate-grade {
+  cursor: pointer;
+  list-style: none;
+
+  &::-webkit-details-marker { display: none; }
+
+  &:hover { background: $color-bg-warm; }
+
+  // The whole row is the control, so the ring belongs around the whole row.
+  // `-webkit-focus-ring-color` is not available here, so use the accent.
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: -3px;
+  }
+}
+
+// Rotates to point down when the topic is open. The only thing in the row
+// saying it can be opened at all.
+//
+// Present on every row, openable or not. Rendering it only where it works meant
+// the rows that could not open had no chevron to make room for, so their grade
+// chips sat that much further right than the rest, and a column of ten chips
+// that does not line up looks like a bug rather than like two kinds of row.
+.candidate-grade__chevron {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  color: $color-muted;
+  transition: transform 0.15s ease;
+}
+
+// The copy on a row with nothing to open. Faint enough to read as unavailable
+// rather than as a control worth trying, and still there, holding the column.
+// Not `visibility: hidden`, because this is a real state: the topic is being
+// graded and the row becomes openable when it is published.
+.candidate-grade__chevron--disabled {
+  opacity: 0.22;
+}
+
+// Scoped to this disclosure rather than to `details[open]` generally: an
+// unrelated <details> nested in a topic's body would otherwise turn its own
+// summary's chevron, if it ever had one.
+.candidate-grade__disclosure[open] > summary > .candidate-grade__chevron {
+  transform: rotate(90deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .candidate-grade__chevron { transition: none; }
+}
 
 // The dotted leader between the topic name and its grade. It is the only child
 // that grows, so it swallows whatever slack the topic name leaves and every
@@ -136,8 +204,8 @@
 
 .candidate-grade__icon {
   display: block;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.5rem;
+  height: 1.5rem;
   flex-shrink: 0;
 }
 
@@ -146,15 +214,18 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   line-height: 1.2;
 }
 
-// The whole point of the page: chips large enough to read in a screenshot.
+// Big enough to read in a screenshot, which is what this page is for, but no
+// bigger: the row is now a control that opens onto the working behind the
+// letter, so the chip shares the page with something rather than being the
+// whole of it.
 .candidate-grade .grade {
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: 1.15rem;
 }
 
 // Pending is the state every chip is in until the questionnaires come back, so
@@ -162,10 +233,16 @@
 // own background reads as "nothing here yet"; the filled pale square it used to
 // be just looked like a grade that failed to load.
 .candidate-grade .grade--pending {
-  font-size: 1.25rem;
+  font-size: 1rem;
   background: none;
   border: 2px dashed $color-border;
   color: $color-muted;
+}
+
+// See the note on .grade--na in _components.scss: filled where pending is
+// outlined, because a decision was made here and none has been there.
+.candidate-grade .grade--na {
+  font-size: 0.8rem;
 }
 
 .candidate-actions {
@@ -177,11 +254,158 @@
 .candidate-print-mast { display: none; }
 
 @media (min-width: 720px) {
-  .candidate-grade { padding: $space-sm $space-gutter; }
-  .candidate-grade__icon { width: 2rem; height: 2rem; }
-  .candidate-grade__name { font-size: 1.1rem; }
-  .candidate-grade .grade { width: 3.5rem; height: 3.5rem; font-size: 1.75rem; }
-  .candidate-grade .grade--pending { font-size: 1.5rem; }
+  .candidate-grade { padding: $space-xs $space-gutter; }
+  .candidate-grade__icon { width: 1.75rem; height: 1.75rem; }
+  .candidate-grade__name { font-size: 0.95rem; }
+  .candidate-grade .grade { width: 2.5rem; height: 2.5rem; font-size: 1.25rem; }
+  .candidate-grade .grade--pending { font-size: 1.1rem; }
+  .candidate-grade .grade--na { font-size: 0.85rem; }
+}
+
+// --- The working behind a grade ---
+// Revealed under the topic row it explains: every question the coalition asked
+// in that topic, this candidate's answer, the grade it earned, and the grader's
+// reasoning where one was written. Markup in _layouts/candidate.html; only
+// topics the grading sheet has released render it at all.
+//
+// Hidden on the print leaflet. The leaflet is one page by design and this is the
+// opposite of one page.
+
+// Set on the tinted ground rather than the row's own, so an open topic reads as
+// a panel that belongs to the row above it and not as more rows.
+.candidate-grade__detail {
+  padding: $space-sm $space-gutter $space-md;
+  background: $color-bg-warm;
+  border-top: 1px dashed rgba($color-border, 0.4);
+}
+
+.candidate-grade__meta {
+  margin: 0 0 $space-sm;
+  font-size: 0.85rem;
+  color: $color-muted;
+}
+
+.candidate-grade__empty {
+  margin: 0;
+  color: $color-muted;
+  font-size: 0.95rem;
+}
+
+// The question numbers come from the data (TRN-01), so the list's own numbering
+// would be a second, disagreeing count down the same column.
+.candidate-answers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// No horizontal padding: the panel around it already indents to the page
+// gutter, and a second indent set the questions in from their own topic.
+.candidate-answer {
+  padding: $space-sm 0;
+  border-bottom: 1px solid rgba($color-border, 0.25);
+
+  &:first-child { padding-top: 0; }
+  &:last-child { border-bottom: none; padding-bottom: 0; }
+}
+
+.candidate-answer__head {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  margin-bottom: 0.4rem;
+}
+
+.candidate-answer__label {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: $color-muted;
+}
+
+.candidate-answer__weight {
+  font-size: 0.75rem;
+  color: $color-muted;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid rgba($color-border, 0.35);
+  border-radius: $radius;
+  white-space: nowrap;
+}
+
+.candidate-answer__leader {
+  flex: 1 1 auto;
+  min-width: $space-xs;
+  align-self: center;
+  border-bottom: 2px dotted rgba($color-border, 0.35);
+}
+
+// Deliberately smaller than the topic chips above: these are the components of
+// a grade, not the grade, and chips at summary size would compete with the one
+// the reader came for.
+.candidate-answer .grade {
+  width: 2rem;
+  height: 2rem;
+  font-size: 1rem;
+}
+
+.candidate-answer .grade--pending,
+.candidate-answer .grade--na {
+  font-size: 0.7rem;
+}
+
+.candidate-answer__question {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+// The grader's own words, marked off from the question above it by a rule
+// rather than by italics: several rationales run to a paragraph, and a
+// paragraph of italics is hard going.
+.candidate-answer__rationale {
+  margin: 0.5rem 0 0;
+  padding-left: $space-sm;
+  border-left: 3px solid var(--card-accent, #{$color-accent});
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: $color-muted;
+
+  strong { color: $color-text; }
+}
+
+// The answer, laid out rather than hidden behind a second toggle: opening the
+// topic is the reader asking for its detail, and a click per answer after that
+// is a gate on what they just asked to see.
+.candidate-answer__answer {
+  margin-top: 0.5rem;
+}
+
+.candidate-answer__answer-label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $color-muted;
+}
+
+.candidate-answer__text {
+  margin-top: 0.4rem;
+  padding: $space-xs $space-sm;
+  background: $color-bg;
+  border: 1px solid rgba($color-border, 0.3);
+  border-radius: $radius;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  // Answers are candidate-submitted and occasionally arrive as one long
+  // unbroken string (a pasted URL, a run-on list). Without this the box widens
+  // past the page instead of wrapping.
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 720px) {
+  .candidate-answer__question { font-size: 1rem; }
 }
 
 // --- Print: the one-page door-to-door leaflet ---
@@ -261,6 +485,15 @@
     .candidate-hero__back,
     .candidate-actions { display: none; }
 
+    // The per-question breakdown, and the chevron that opens it. Both belong on
+    // the page and not on the sheet: the leaflet is one page of grades handed to
+    // a stranger at a door, and the working behind them runs to several. Dropped
+    // unconditionally rather than left to the reader's open topics, so the
+    // leaflet is the same one page whatever state the page was in when they hit
+    // Print, and so the chevron does not print as an arrow pointing at nothing.
+    .candidate-grade__detail,
+    .candidate-grade__chevron { display: none; }
+
     // A leaflet handed to a stranger has to identify itself, and the site header
     // that normally does that is hidden above. Brand hard left, URL hard right,
     // rule underneath: the two are the masthead's opposite ends, not a pair of
@@ -332,7 +565,8 @@
     .container { max-width: none; padding: 0; }
     .page-content { padding: 0; }
 
-    .candidate-pending {
+    .candidate-pending,
+    .candidate-returned {
       margin: 4mm 0 0;
       padding: 2mm 3mm;
       background: none;
@@ -351,16 +585,19 @@
       border: 1pt solid #000;
     }
 
-    .candidate-grade {
+    .candidate-grade-row {
       // Keep a row from straddling the fold: the leaflet fits one page at
       // default settings, but a reader printing at 110% should still get whole
       // rows rather than a topic name sliced in half.
       break-inside: avoid;
+      border-bottom: 0.5pt solid #000;
+      border-left: 0; // the accent edge is colour only, so it prints as nothing useful
+    }
+
+    .candidate-grade {
       gap: 3mm;
       padding: 1.5mm 3mm;
       background: none;
-      border-bottom: 0.5pt solid #000;
-      border-left: 0; // the accent edge is colour only, so it prints as nothing useful
     }
 
     // Dots survive print where a colour rule would not, so the leader stays:

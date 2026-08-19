@@ -1,0 +1,94 @@
+name: Sync questionnaire and grades from Google Sheet
+
+# Pulls the candidate grading sheet daily, regenerates _data/questions.yml (the
+# published question set) and _data/scores.yml (per-candidate results the
+# coalition has ticked as ready to publish), and — only if either changed —
+# commits to main and redeploys. Mirrors sync-candidates.yml, which does the same
+# for the candidate list from a different spreadsheet.
+#
+# The bot commit uses GITHUB_TOKEN, which does NOT re-trigger jekyll.yml's
+# `on: push`, so we deploy explicitly via the reusable workflow.
+#
+# Runs after sync-candidates.yml's slot, not before: scores.yml drops results for
+# anyone missing from _data/candidates.yml, so a candidate confirmed the same
+# morning should be in that file before this job looks for them.
+#
+# SETUP (once):
+#   1. Create a Google Cloud service account and download its JSON key.
+#   2. Share the grading spreadsheet with the service account's email address.
+#      Viewer is enough; this workflow only reads.
+#   3. Add two repository secrets:
+#        GOOGLE_SERVICE_ACCOUNT_JSON          the key file's entire contents
+#        QUESTIONNAIRE_SUBMISSIONS_SHEET_ID   the spreadsheet id from its URL
+#
+# The service account can read candidate email addresses and every submitted
+# answer, because they live on other tabs of the same spreadsheet. The script
+# never opens those tabs, but the credential's access is not that narrow: treat
+# the secret accordingly, and revoke the key rather than un-sharing the sheet if
+# it ever needs withdrawing.
+
+on:
+  schedule:
+    - cron: "47 13 * * *" # daily ~06:47 America/Vancouver (13:47 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: write # commit the regenerated data files to main
+  pages: write # for the reusable deploy
+  id-token: write # for the reusable deploy
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # Unlike sync-candidates.py, this one talks to the Sheets API rather than
+      # a public CSV export, because the grading sheet is not public and must
+      # not become public.
+      - name: Install dependencies
+        run: pip install -r scripts/questionnaire/requirements.txt
+
+      - name: Regenerate questions.yml and scores.yml from the sheet
+        run: python3 scripts/sync-questionnaire.py
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          QUESTIONNAIRE_SUBMISSIONS_SHEET_ID: ${{ secrets.QUESTIONNAIRE_SUBMISSIONS_SHEET_ID }}
+
+      - name: Detect change
+        id: diff
+        run: |
+          if git diff --quiet -- _data/questions.yml _data/scores.yml; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "No change to the questionnaire or the published grades."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit & push
+        if: steps.diff.outputs.changed == 'true'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _data/questions.yml _data/scores.yml
+          git commit -m "data: sync questionnaire and published grades from sheet [skip ci]"
+          git push origin HEAD:main
+
+  deploy:
+    needs: sync
+    if: needs.sync.outputs.changed == 'true'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    # Build the tip of main (the commit the sync job just pushed), not the
+    # stale SHA this run started on.
+    uses: ./.github/workflows/deploy.yml
+    with:
+      ref: main

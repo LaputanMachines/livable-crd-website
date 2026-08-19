@@ -1,5 +1,549 @@
-status: drafting
-note: >-
-  Participating organizations are developing a shared questionnaire.
-  Questions will be published here before candidates are surveyed.
-items: []
+# Every question on the coalition candidate questionnaire.
+#
+# AUTO-GENERATED: do not edit by hand.
+# Regenerated from the "Question Registry" tab of the candidate submission sheet
+# by scripts/sync-questionnaire.py (CI: .github/workflows/sync-questionnaire.yml).
+# Edit the spreadsheet, not this file; manual changes are overwritten.
+#
+# This is the published questionnaire: /questionnaire/ renders it in full, and
+# each candidate's scorecard page renders the same list with that candidate's
+# grades attached. Questions appear here whether or not they are graded, because
+# the point of the page is to show what candidates were asked.
+#
+# Fields:
+#   label     Question id as printed on the form ("TRN-01"). Stable, and the key
+#             the per-candidate grades in _data/scores.yml join on.
+#   subject   Topic id from _data/subjects.yml.
+#   question  The question as candidates read it on the form.
+#   type      Answer shape: single, multi, pair, variant, or a comma-joined
+#             combination. `type_label` is the same thing spelled out for a
+#             reader; absent when the combination has no wording yet.
+#   graded    Whether the question carries a grade. An ungraded question is
+#             published unscored: it was asked, and the answer informs the
+#             coalition, but no letter is assigned to it.
+#   weight    This question's share of its subject's grade, as written in the
+#             registry ("20%"). Omitted where the registry leaves it blank,
+#             which is most of them: weighting is set per subject by the
+#             partner organization that owns it, and several have not.
+#   owner     The coalition organization that submitted the question and grades
+#             the answers to it. Omitted where the registry names an individual
+#             rather than an organization.
+#
+# Order matches _data/subjects.yml, then the registry's own order within a
+# subject, which is the order candidates met the questions on the form.
+
+count: 55
+graded_count: 54
+status: published
+items:
+  # --- transit ---
+  - label: TRN-01
+    subject: transit
+    question: >-
+      Which fare measures would you actively advocate for at the VRTC? Select
+      all that apply.
+    type: multi
+    graded: true
+    weight: "20%"
+    owner: Better Transit YYJ
+  - label: TRN-02
+    subject: transit
+    question: >-
+      Do you support removing general on-street parking (excluding accessible
+      parking spaces) from frequent transit corridors and main arterial
+      streets in your municipality, and reallocating that space to bus lanes,
+      loading zones, and walking and cycling infrastructure?
+    type: single
+    graded: true
+    weight: "20%"
+    owner: Better Transit YYJ
+  - label: TRN-03
+    subject: transit
+    question: >-
+      Do you support rapid deployment of transit priority measures on frequent
+      transit corridors, even where this requires removing on-street parking
+      or a general-purpose traffic lane?
+    type: single
+    graded: true
+    weight: "20%"
+    owner: Better Transit YYJ
+  - label: TRN-04
+    subject: transit
+    question: Do you support the creation of a regional transportation authority?
+    type: single
+    graded: true
+    weight: "20%"
+    owner: Better Transit YYJ
+  - label: TRN-05
+    subject: transit
+    question: >-
+      Do you support building new bus-only and bike-only connections through
+      parks, golf courses or public land when doing so would substantially
+      shorten transit and cycling trips?
+    type: single
+    graded: true
+    weight: "20%"
+    owner: Better Transit YYJ
+  # --- housing ---
+  - label: HFL-01
+    subject: housing
+    question: >-
+      What kinds of housing could your municipality use more of? Select all
+      that apply.
+    type: multi
+    graded: true
+    owner: Homes for Living
+  - label: HFL-02
+    subject: housing
+    question: >-
+      Which of the following items do you support to minimize tenant
+      displacement and maintain/grow the supply of affordable housing? Select
+      up all that apply.
+    type: multi
+    graded: true
+    owner: Homes for Living
+  - label: HFL-03
+    subject: housing
+    question: >-
+      Do you think your municipality should have target approval times for
+      multifamily housing?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-04
+    subject: housing
+    question: >-
+      If there was a type of housing you wanted to see more of (e.g.,
+      affordable, non-market, family-sized, townhouses, etc.), what do you
+      think are effective methods of getting more of it? Select all that
+      apply.
+    type: multi
+    graded: true
+    owner: Homes for Living
+  - label: HFL-05
+    subject: housing
+    question: >-
+      Do you believe that the municipality should pre-zone to the uses,
+      heights and densities outlined in the Official Community Plan, so that
+      OCP-compliant projects can be built without rezoning or public hearing?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-06
+    subject: housing
+    question: >-
+      Beyond the three to four units Bill 44 already requires, what is the
+      most housing you think should be legal to build by-right (i.e. without
+      rezoning) in traditional single-family areas of your municipality?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-07
+    subject: housing
+    question: >-
+      A housing proposal has been reviewed by staff and they recommend
+      approval. It requires rezoning because the existing zoning has not been
+      updated. If it faces substantial neighbourhood opposition, how would you
+      generally vote?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-08
+    subject: housing
+    question: >-
+      Do you support eliminating minimum parking requirements for new
+      developments or suites?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-09
+    subject: housing
+    question: >-
+      Non-market housing often faces additional challenges getting approved.
+      Which of the following measures do you support to improve the prospects
+      for below-market housing construction? Select all that apply.
+    type: multi
+    graded: true
+    owner: Homes for Living
+  - label: HFL-10
+    subject: housing
+    question: >-
+      If elected, what do you hope to have accomplished on the housing file at
+      the end of your first year, and end of your four-year term?
+    type: single
+    graded: true
+    owner: Homes for Living
+  - label: HFL-11
+    subject: housing
+    question: >-
+      The BC government set a housing target for Victoria at 4,902 homes over
+      five years, which represents 75% of the estimated housing need for that
+      period. Regardless of provincial requirements or penalties, do you
+      believe the city should strive to build:
+    type: variant
+    type_label: Asked separately for each municipality
+    graded: true
+    owner: Homes for Living
+  # --- climate ---
+  - label: CLI-01
+    subject: climate
+    question: >-
+      Would you support ending fossil fuel advertising and sponsorship on
+      property, media and events controlled by your municipality, to the
+      extent the law allows? And would you advocate for the same at the
+      Victoria Regional Transit Commission for BC Transit vehicles and
+      shelters?
+    type: pair
+    type_label: Answer plus a written follow-up
+    graded: true
+    owner: Climate Justice Victoria
+  - label: CLI-02
+    subject: climate
+    question: >-
+      The Capital Regional District declared a climate emergency in 2019. How
+      should your municipality treat climate action in its next four-year
+      plan?
+    type: single
+    graded: true
+    owner: Climate Justice Victoria
+  - label: CLI-03
+    subject: climate
+    question: >-
+      Will you pledge to never take meetings from fossil fuel company
+      lobbyists?
+    type: single
+    graded: true
+    owner: Common Horizon Victoria
+  - label: CLI-04
+    subject: climate
+    question: >-
+      Climate-related damage and adaptation costs increasingly fall on
+      municipal budgets. Would you vote to have your municipality join other
+      BC local governments in legal action to recover a share of those costs
+      from major fossil fuel producers?
+    type: single
+    graded: true
+    owner: Common Horizon Victoria
+  - label: CLI-05
+    subject: climate
+    question: >-
+      Will you support a zoning bylaw amendment that prohibits the approval of
+      any new or expanded commercial gas stations within municipal boundaries?
+    type: single
+    graded: true
+    owner: Common Horizon Victoria
+  - label: CLI-06
+    subject: climate
+    question: >-
+      Extreme heat, wildfire smoke and wildfire risk all affect people living
+      in existing homes. What would you have your municipality do to protect
+      them? Select all you support.
+    type: multi
+    graded: true
+    owner: Climate Justice Victoria
+  - label: CLI-07
+    subject: climate
+    question: >-
+      Are you supportive of phasing out fossil fuel powered tools such as leaf
+      blowers (following the lead of Oak Bay and other municipalities across
+      the country)?
+    type: single
+    graded: true
+    owner: Common Horizon Victoria
+  - label: CLI-08
+    subject: climate
+    question: >-
+      Large data centres can add substantial electricity and water demand.
+      Under what conditions, if any, would you support a new data centre in
+      your municipality?
+    type: single
+    graded: true
+    owner: Common Horizon Victoria
+  - label: CLI-09
+    subject: climate
+    question: >-
+      What are the primary climate risk(s) facing your community, and what
+      actions would you take to support adaptation and resilience in your
+      community?
+    type: single
+    graded: true
+    owner: RUSH
+  - label: CLI-10
+    subject: climate
+    question: >-
+      Ensuring ecosystem connectivity is an important adaptation strategy for
+      climate change. How do you plan to maintain or increase ecosystem
+      features across the urban landscape?
+    type: single
+    graded: true
+    owner: RUSH
+  - label: CLI-11
+    subject: climate
+    question: >-
+      Do you see development as an opportunity to increase resilience to
+      climate-related events, and if so, how?
+    type: single
+    graded: true
+    owner: RUSH
+  - label: CLI-12
+    subject: climate
+    question: >-
+      The UBCM passed several resolutions saying municipalities should be able
+      to have climate action lens and climate considerations in development
+      and housing mandates. Do you support blue-green infrastructure upgrades
+      as a requirement of developments for climate readiness?
+    type: single
+    graded: true
+    owner: RUSH
+  # --- arts ---
+  - label: ART-01
+    subject: arts
+    question: >-
+      Do you consider arts and culture to be a core part of your
+      municipality's economic development strategy?
+    type: pair
+    type_label: Answer plus a written follow-up
+    graded: true
+    owner: "Victori'us"
+  - label: ART-02
+    subject: arts
+    question: >-
+      If elected, what specific action will you commit to in your first year
+      to strengthen your municipality's arts and cultural sector, and what
+      measurable outcome should residents expect by the end of your four-year
+      term?
+    type: single
+    graded: true
+    owner: "Victori'us"
+  - label: ART-03
+    subject: arts
+    question: >-
+      Cultural strategies are often adopted and then not implemented. Would
+      you support a cultural space implementation framework with defined
+      tools, timelines and public reporting? Select up to three components you
+      would prioritize. Select your top three options.
+    type: multi
+    type_label: Select all that apply
+    graded: true
+    owner: "Victori'us"
+  - label: ART-04
+    subject: arts
+    question: >-
+      Arts organizations and event producers identify permitting, zoning and
+      regulatory requirements as barriers to cultural activity. What would you
+      commit to? Select all that apply.
+    type: multi
+    graded: true
+    owner: "Victori'us"
+  - label: ART-05
+    subject: arts
+    question: >-
+      If preserving and securing long-term cultural space requires additional
+      municipal support, which approaches would you support? Select up to
+      five.
+    type: multi
+    type_label: Select all that apply
+    graded: true
+    owner: "Victori'us"
+  - label: ART-06
+    subject: arts
+    question: >-
+      Municipal budgets require difficult choices. Would you support
+      maintaining arts and culture investment alongside other core municipal
+      services?
+    type: single
+    graded: true
+    owner: "Victori'us"
+  - label: ART-07
+    subject: arts
+    question: >-
+      When a major development project affects an existing cultural space,
+      what should your municipality prioritize?
+    type: single
+    graded: true
+    owner: "Victori'us"
+  - label: ART-08
+    subject: arts
+    question: >-
+      Would you support municipal incentives to encourage private property
+      owners and developers to provide affordable community & cultural space
+      for nonprofits? Select all that apply.
+    type: multi
+    graded: true
+    owner: "Victori'us"
+  # --- rolling-cycling ---
+  - label: ROL-01
+    subject: rolling-cycling
+    question: >-
+      Will you commit to funding and completing at least one 'missing link' in
+      your municipality's Active Transportation Plan during your four-year
+      term? If yes, which one would you prioritize?
+    type: pair
+    type_label: Answer plus a written follow-up
+    graded: true
+  - label: ROL-02
+    subject: rolling-cycling
+    question: >-
+      Will you commit (or continue to commit) to physical protection (not
+      paint alone) as the standard for all new and upgraded cycling
+      infrastructure on busy streets in your municipality?
+    type: single
+    graded: true
+  - label: ROL-03
+    subject: rolling-cycling
+    question: >-
+      Will you oppose efforts (current and future) to remove, narrow or
+      downgrade existing protected bike lanes and other all-ages-and-abilities
+      (AAA) cycling infrastructure in your municipality during your term?
+    type: single
+    graded: true
+  - label: ROL-04
+    subject: rolling-cycling
+    question: >-
+      What is the most important active transportation project in the
+      municipality that you will be focused on progressing? Please provide
+      your reasoning.
+    type: single
+    graded: true
+  - label: ROL-05
+    subject: rolling-cycling
+    question: >-
+      If you have previously served in local government, what did you do to
+      advance walking, rolling, cycling or transit? If you have not, what in
+      your record outside of council shows the same commitment?
+    type: single
+    graded: true
+    owner: Better Transit YYJ
+  # --- walking ---
+  - label: WLK-01
+    subject: walking
+    question: >-
+      Municipalities, the CRD and the Province have all adopted targets to
+      shift trips away from driving. Do you support meeting your
+      municipality's adopted mode-shift targets, and would you vote for the
+      necessary street-space and budgetary changes?
+    type: single
+    graded: true
+    owner: Todd Litman
+  - label: WLK-02
+    subject: walking
+    question: >-
+      Which pedestrian safety problem in your municipality concerns you most,
+      and what is the one change you would commit to in your first term to
+      make walking safer and more attractive than driving for short trips?
+    type: single
+    graded: true
+    owner: Better Transit YYJ
+  - label: WLK-03
+    subject: walking
+    question: >-
+      Sidewalk construction and maintenance is chronically underfunded across
+      the region. Would you vote to increase the share of your municipality's
+      transportation capital budget dedicated to pedestrian infrastructure?
+    type: single
+    graded: true
+    owner: Better Transit YYJ
+  - label: WLK-04
+    subject: walking
+    question: >-
+      Do you support expanding pedestrian-priority and car-free streets in
+      your municipality's downtown, main street or village centre?
+    type: single
+    graded: true
+    owner: Better Transit YYJ
+  - label: WLK-05
+    subject: walking
+    question: >-
+      How will you work with parent groups, school staff, and municipal staff
+      to assure that children’s safety is prioritized over convenience and
+      flow of motor traffic?
+    type: single
+    graded: true
+    owner: "Walk On, Victoria"
+  - label: WLK-06
+    subject: walking
+    question: >-
+      What will you do, in a 4 year term, to identify, prioritize and set
+      time-lines to assure that pedestrian infrastructure is improved to meet
+      the needs of the older and disabled members of your community?
+    type: single
+    graded: true
+    owner: "Walk On, Victoria"
+  # --- healthcare-access ---
+  - label: HLT-01
+    subject: healthcare-access
+    question: >-
+      What role should your municipality play in establishing new primary care
+      clinics?
+    type: single
+    graded: false
+    owner: Family Doctors For Saanich
+  # --- reconciliation ---
+  - label: REC-01
+    subject: reconciliation
+    question: >-
+      Do you support ensuring that local First Nations are represented in
+      transit governance, such as on the Victoria Regional Transit Commission
+      and the CRD Transportation Commission?
+    type: single
+    graded: true
+    weight: "50%"
+    owner: Better Transit YYJ
+  - label: REC-02
+    subject: reconciliation
+    question: >-
+      Concerning our municipal government’s First Nations’ reconciliation and
+      consultation practices, I support:
+    type: single
+    graded: true
+    weight: "50%"
+    owner: Todd Litman
+  # --- governance ---
+  - label: GOV-01
+    subject: governance
+    question: >-
+      Do you support expanding shared or regional delivery of municipal
+      services in the Capital Region?
+    type: pair
+    type_label: Answer plus a written follow-up
+    graded: true
+    owner: Strong Towns Victoria
+  - label: GOV-02
+    subject: governance
+    question: >-
+      Do you support creating a regional service that designs, builds and
+      maintains local municipal infrastructure shared across Capital Region
+      municipalities?
+    type: single
+    graded: true
+    owner: Better Transit YYJ
+  - label: GOV-03
+    subject: governance
+    question: >-
+      If elected, what three steps would you take to put your region or
+      municipality on a firmer financial footing?
+    type: single
+    graded: true
+    owner: Strong Towns Victoria
+  - label: GOV-04
+    subject: governance
+    question: >-
+      Do you commit to eliminating mandatory parking minimums for all land
+      uses in your municipality by 2030?
+    type: single
+    graded: true
+    owner: Strong Towns Victoria
+  - label: HFL-12
+    subject: governance
+    question: >-
+      Municipal asset-management plans have identified substantial gaps
+      between current funding and the amount needed to maintain and replace
+      roads, water and sewer systems, public buildings, and other
+      infrastructure. In Victoria, the 2024 Corporate Asset Management
+      Strategy identified $570 million worth of infrastructure in poor or very
+      poor condition. Which approaches would you prioritize to address this
+      infrastructure problem? Select up to two.
+    type: "variant,multi"
+    type_label: Asked separately for each municipality; select all that apply
+    graded: true
+    owner: Homes for Living

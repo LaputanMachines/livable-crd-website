@@ -1,0 +1,206 @@
+@use "variables" as *;
+
+// --- The questionnaire page (/questionnaire/) ---
+// Markup: questionnaire/index.md, rendered from _data/questions.yml.
+//
+// The page is one long read: 55 questions in nine sections, and most visitors
+// want one section. Everything here serves finding your section and then
+// reading it — the jump bar at the top, the accent edge that tells sections
+// apart while scrolling, and question text set at reading size rather than at
+// the small-print size a "list of questions" would tempt.
+
+.questionnaire-summary {
+  p { margin-bottom: 0; }
+}
+
+// A single wrapping row of pills rather than a sidebar or a sticky bar: nine
+// links fit on two lines at phone width, and a sticky element would eat the
+// screen height the questions need.
+.questionnaire-jump {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: $space-xs;
+  margin: $space-lg 0;
+}
+
+.questionnaire-jump__label {
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8rem;
+  color: $color-muted;
+}
+
+.questionnaire-jump__list {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin: 0;
+  padding: 0;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.6rem;
+    border: 2px solid $color-border;
+    // The topic's own accent, so the pill matches the section it lands on and
+    // the two are recognisably the same thing.
+    border-left: 5px solid var(--card-accent, #{$color-accent});
+    border-radius: $radius;
+    background: $color-bg-warm;
+    color: $color-text;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      background: var(--card-accent, #{$color-accent});
+      border-color: var(--card-accent, #{$color-accent});
+      color: #fff;
+    }
+  }
+}
+
+.questionnaire-jump__count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.questionnaire-section {
+  margin-top: $space-xl;
+  // Clears the sticky site header when a jump link lands here.
+  scroll-margin-top: 5.5rem;
+}
+
+.questionnaire-section__head {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding-bottom: $space-xs;
+  border-bottom: 3px solid var(--card-accent, #{$color-accent});
+}
+
+.questionnaire-section__icon {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.questionnaire-section__titles {
+  min-width: 0;
+
+  h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    line-height: 1.2;
+    scroll-margin-top: 5.5rem;
+  }
+}
+
+.questionnaire-section__meta {
+  margin: 0.15rem 0 0;
+  font-size: 0.85rem;
+  color: $color-muted;
+}
+
+.questionnaire-section__desc {
+  margin: $space-sm 0 0;
+  color: $color-muted;
+}
+
+// The question ids are printed on each item, so the list's own numbering would
+// be a second count disagreeing with the first.
+.questionnaire-list {
+  list-style: none;
+  margin: $space-sm 0 0;
+  padding: 0;
+}
+
+.questionnaire-item {
+  padding: $space-sm 0;
+  border-bottom: 1px solid rgba($color-border, 0.25);
+
+  &:last-child { border-bottom: none; }
+}
+
+// An ungraded question is still part of the questionnaire and still worth
+// reading, so it is set back rather than set apart: same size, lighter ink, and
+// a tag saying so. Greying it out would read as "skip this".
+.questionnaire-item--ungraded .questionnaire-item__question {
+  color: $color-muted;
+}
+
+.questionnaire-item__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-xs;
+  margin-bottom: 0.35rem;
+}
+
+.questionnaire-item__label {
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  color: var(--card-accent, #{$color-accent});
+}
+
+.questionnaire-item__tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: $color-muted;
+  padding: 0.1rem 0.4rem;
+  border: 1px solid rgba($color-border, 0.35);
+  border-radius: $radius;
+}
+
+.questionnaire-item__tag--weight {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.questionnaire-item__question {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+}
+
+.questionnaire-item__meta {
+  margin: 0.3rem 0 0;
+  font-size: 0.8rem;
+  color: $color-muted;
+}
+
+.questionnaire-cta {
+  margin-top: $space-xl;
+
+  h2 { margin-top: 0; }
+}
+
+@media (min-width: 720px) {
+  .questionnaire-section__titles h2 { font-size: 1.6rem; }
+  .questionnaire-item__question { font-size: 1.05rem; }
+}
+
+// On paper the jump bar is a list of links nobody can follow, and the call to
+// action is two buttons that do nothing. The questions themselves print fine,
+// which is the point: this is the one page a partner organization might
+// reasonably want on a desk.
+@media print {
+  .questionnaire-jump,
+  .questionnaire-cta { display: none; }
+
+  .questionnaire-section { break-inside: auto; }
+  .questionnaire-item { break-inside: avoid; }
+}

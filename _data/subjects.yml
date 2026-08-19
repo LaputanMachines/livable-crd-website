@@ -4,7 +4,7 @@
 # topics whose `short` would otherwise stretch its column. Full name is always
 # available via the header tooltip and to screen readers.
 - id: general
-  name: All categories / General
+  name: General
   short: General
   icon: general.svg
   accent: "#5b5169"
