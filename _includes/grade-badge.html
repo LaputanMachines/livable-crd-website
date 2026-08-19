@@ -64,7 +64,7 @@
   pile at the bottom, held between two rounded caps. An outlined glass with sand
   inside it is the more literal picture and was rejected on size — the outline
   and the sand end up a pixel apart in a matrix cell and merge into a blob. Mass
-  survives where line weight does not, and the two caps plus a tapering funnel
+  survives where line weight does not, and two caps over a funnel and a pile
   are enough to read as an hourglass without drawing the glass at all.
 
   Two earlier attempts failed on the same axis. Two triangles meeting at a point
@@ -73,12 +73,16 @@
 
   Everything is drawn heavy, and heavier than looked right in isolation. The
   caps are 4.6 units deep on a 24 grid and fully rounded, the funnel spans very
-  nearly the full width of the cap above it, and the stream is 2.2 wide. A
-  slimmer version of exactly this shape read as a goblet: thin caps do not look
-  like they could hold anything, and a narrow funnel over a small pile is a
-  stem over a base. It also has to sit beside the speech bubble, which is
-  stroked at 3.5, and matching that weight is what keeps the two looking like
-  one set.
+  nearly the full width of the cap above it, and the whole middle - the funnel's
+  neck and the stream below it - is 3.2 wide. The funnel stops at that neck
+  rather than tapering to a point: a shape that narrows to nothing in the middle
+  looks pinched however heavy its ends are.
+
+  Slimmer versions of exactly this shape failed twice over. Thin caps do not
+  look like they could hold anything, and a narrow funnel over a small pile is a
+  stem over a base, which is a goblet. It also has to sit beside the speech
+  bubble, stroked at 3.5, and matching that weight is what keeps the two reading
+  as one set rather than as a bold icon next to a delicate one.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
@@ -88,8 +92,8 @@
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <rect x="4" y="1.6" width="16" height="4.6" rx="2.3"/>
     <rect x="4" y="17.8" width="16" height="4.6" rx="2.3"/>
-    <path d="M6.6 6h10.8L12 12.8z"/>
-    <rect x="10.9" y="12.2" width="2.2" height="5" rx="1.1"/>
+    <path d="M6.6 6h10.8l-3.8 6.4h-3.2z"/>
+    <rect x="10.4" y="12" width="3.2" height="5.2" rx="1.6"/>
     <path d="M6.6 18q5.4-6 10.8 0z"/>
   </svg>
 </span>
