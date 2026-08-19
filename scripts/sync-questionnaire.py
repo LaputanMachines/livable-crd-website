@@ -823,6 +823,12 @@ SELECTED_PREFIX = "Selected: "
 SELECTED_JOIN = "; "
 
 
+def _alnum(text):
+    """Letters and digits only, lowercased, for comparing two renderings of the
+    same content without caring how either one punctuated it."""
+    return re.sub(r"[^a-z0-9]", "", (text or "").lower())
+
+
 def split_selections(answer):
     """(prose, [ticked options]) for one answer cell.
 
@@ -846,7 +852,25 @@ def split_selections(answer):
             )
         else:
             prose.append(line)
-    return "\n".join(prose).strip(), selected
+
+    text = "\n".join(prose).strip()
+
+    # Drop a prose line that is only the ticked options run together again.
+    #
+    # A multi-select reaches the Answer cell twice over. The webhook writes one
+    # "Selected: " line from the payload; the timer sync then rewrites the cell
+    # from the spreadsheet, which is authoritative, and the sheet stores the same
+    # options a second time in the question's own column, comma-joined. Left
+    # alone, the site prints the run-on line and the tidy list one above the
+    # other, which is worse than the run-on line was on its own.
+    #
+    # Compared on letters and digits only, so it holds whatever separator either
+    # side happens to use. A prose part that says anything the options do not -
+    # a written follow-up alongside the ticks - will not match and is kept.
+    if selected and _alnum(text) == _alnum("".join(selected)):
+        text = ""
+
+    return text, selected
 
 
 def grade_or_none(value, where, warnings):
