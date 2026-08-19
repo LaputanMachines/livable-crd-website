@@ -253,8 +253,8 @@
 // as its own outline; a filled hourglass at the same share crowded the chip.
 .grade--review svg {
   display: block;
-  width: 55%;
-  height: 55%;
+  width: 62%;
+  height: 62%;
 }
 
 // "Answered, and nobody grades this topic." The only chip that promises the
@@ -701,8 +701,8 @@ tr:hover td { background: $color-bg-warm; }
 // column, and the smallest either is ever drawn. The icon takes more of its chip
 // here than anywhere else so the hourglass still reads as one at ~11px.
 .scorecard-matrix__cell .grade--review svg {
-  width: 70%;
-  height: 70%;
+  width: 80%;
+  height: 80%;
 }
 
 .scorecard-row:hover th,
