@@ -143,6 +143,11 @@ candidates:
           - label: TRN-01
             grade: A
             weight: "20%"
+            answer: >-
+              Free transit for everyone under 19 years of age., Free or
+              half-priced fares for seniors, 65+ years of age., Free or
+              half-priced transit for people receiving income or disability
+              assistance., Lower-cost regional monthly pass.
             selected:
               - Free transit for everyone under 19 years of age.
               - "Free or half-priced fares for seniors, 65+ years of age."
@@ -184,3 +189,6 @@ candidates:
               We urgently need more medical clinics! Wait times at emergency
               rooms and walk-in clinics have been insufferable for several
               years.
+  - name: Don Brown
+    municipality: view-royal
+    subjects: []
