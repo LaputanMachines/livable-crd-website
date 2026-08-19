@@ -170,10 +170,21 @@
   font-weight: 500;
 }
 
+// Capped at a readable measure. The page is a full-width container because the
+// jump bar and the section heads want the room, but a 55-question read at that
+// width puts well over a hundred characters on a line and the eye loses its
+// place returning to the left edge. Left-aligned rather than centred: the label
+// pills above each question start at the same edge.
 .questionnaire-item__question {
   margin: 0;
+  max-width: 68ch;
   font-size: 1rem;
   line-height: 1.55;
+}
+
+// Same reason, and the same measure, for the topic blurb under each heading.
+.questionnaire-section__desc {
+  max-width: 68ch;
 }
 
 // GEN-02's twelve line items. Set as a wrapping row of pills rather than a
