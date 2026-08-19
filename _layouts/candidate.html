@@ -300,9 +300,15 @@ layout: default
               {%- assign asked = site.data.questions.items | where: "label", q.label | first %}
               {%- if asked == nil %}{% continue %}{% endif %}
               <li class="candidate-answer">
+                {%- comment -%}
+                  Status first, then the question id. The id is a reference for
+                  looking a question up on /questionnaire/; whether it carries a
+                  grade is what a reader actually needs before reading the
+                  answer under it, so it leads.
+                {%- endcomment -%}
                 <div class="candidate-answer__head">
-                  <span class="candidate-answer__label">{{ q.label }}</span>
                   <span class="candidate-answer__weight">Not graded</span>
+                  <span class="candidate-answer__label">{{ q.label }}</span>
                 </div>
                 <p class="candidate-answer__question">{{ asked.question }}</p>
                 {%- if q.allocation.size > 0 %}
