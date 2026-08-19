@@ -17,34 +17,27 @@ layout: default
 {%- assign c = page.candidate -%}
 {%- assign subjects = site.data.subjects -%}
 {%- comment -%}
-  Counted up front, because the page says something different in each of three
-  situations and the callout at the top has to pick one:
+  Counted up front, because the callout at the top has two things it can say and
+  has to pick one:
 
     no reply           nothing has come back from this candidate
     reply, nothing out they returned it and no topic has been published yet
-    reply, some out    some topics are published and the rest are being graded
 
-  `published` counts topics released with their per-question detail. `awaiting`
-  counts topics the coalition grades that carry no letter yet, which is exactly
-  the number of circular-arrow chips drawn below, so the callout can never claim
-  a count the list does not show. The two differ: a topic can be released with its
-  questions before anyone types its top-level letter, and that topic is
-  published and still awaited at once.
+  There used to be a third, for a candidate with some topics published and the
+  rest outstanding, which counted the outstanding ones and explained what the
+  hourglass and the dash meant. The grading key now sits directly above those
+  chips and says the same thing for every candidate, so the callout was a second
+  key in front of the first, restating it in prose.
 
-  Both are scoped to the topics the coalition grades at all, which is fewer than
-  the ten shown. General and Healthcare access carry no graded question, so they
-  are nobody's outstanding work and must not be counted as such.
+  `published` counts topics released with their per-question detail, which is
+  not the same as topics carrying a letter: a topic can be released with its
+  questions before anyone types its top-level grade.
 {%- endcomment -%}
 {%- assign returned = c.questionnaire_returned -%}
 {%- assign gradable = site.data.scores.graded_subjects -%}
 {%- assign published = 0 -%}
-{%- assign awaiting = 0 -%}
 {%- for subject in subjects -%}
   {%- if c.published_subjects[subject.id] -%}{%- assign published = published | plus: 1 -%}{%- endif -%}
-  {%- assign cell = c.scores[subject.id] | default: "" | strip -%}
-  {%- if cell == "" and gradable contains subject.id -%}
-    {%- assign awaiting = awaiting | plus: 1 -%}
-  {%- endif -%}
 {%- endfor -%}
 
 {%- comment -%}
@@ -125,17 +118,6 @@ layout: default
       that organization finishes, so they will not all arrive at once. In the
       meantime you can
       <a href="{{ '/questionnaire/' | relative_url }}">read every question they answered</a>.
-      <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
-    </p>
-  </div>
-  {%- elsif awaiting > 0 %}
-  <div class="callout candidate-returned">
-    <p>
-      <strong>{% if awaiting == 1 %}One more topic is{% else %}{{ awaiting }} more topics are{% endif %}
-      still being graded.</strong> An hourglass means the coalition
-      organization that owns that topic has not finished with it, not that
-      {{ c.name }} scored poorly on it; a dash
-      (<span aria-hidden="true">—</span>) means a topic we do not assign a letter in.
       <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
     </p>
   </div>
