@@ -24,8 +24,6 @@ description: >-
     and a candidate's own page shows how each of their answers was graded.
   </p>
 
-  {% include icon-key.html %}
-
   {%- comment -%}
     One line, and it is a request rather than an announcement: the only thing
     this band is for is catching the errors a reader can see and we cannot.
@@ -183,6 +181,14 @@ description: >-
   </div>
 
   <p class="scorecard-count" id="candidate-count" role="status" aria-live="polite"></p>
+
+  {%- comment -%}
+    Directly above the table rather than up with the intro. Both marks it
+    explains only ever appear in the grid below it, and a key read several
+    screens earlier is a key nobody has in mind by the time they meet the thing
+    it describes.
+  {%- endcomment -%}
+  {% include icon-key.html %}
 
   <div class="table-scroll scorecard-matrix-scroll">
     <table class="scorecard-matrix" id="candidate-grid">
