@@ -411,38 +411,68 @@ summary.candidate-grade {
 // GEN-02's twelve amounts. A table and not a chart component: the figures are
 // the answer, the bars only rank them at a glance, and a reader on paper or
 // with a screen reader gets the whole thing from the two text columns.
+//
+// Almost everything here is undoing the site-wide table styling in
+// _components.scss, which paints every `th` as a page-header block: dark
+// background, white uppercase text, heavy padding. That is right for a table
+// with a header row and wrong for one whose `th` is a row label, which came out
+// as a slab of near-black down the left of the panel.
 .candidate-allocation {
   width: 100%;
-  margin-top: 0.5rem;
+  margin: 0.5rem 0 0;
   border-collapse: collapse;
+  border: $border-weight solid $color-border;
+  border-radius: $radius;
+  overflow: hidden;
+  background: $color-surface;
   font-size: 0.85rem;
 
   th,
   td {
-    padding: 0.2rem 0;
+    padding: 0.3rem $space-sm;
     border: 0;
+    border-bottom: 1px solid rgba($color-border, 0.15);
     vertical-align: middle;
   }
 
+  tr:last-child th,
+  tr:last-child td { border-bottom: none; }
+
+  // Not a header: a row label. Back to body text on the table's own ground.
   th {
+    background: none;
+    color: $color-text;
+    font-family: $font-display;
     font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: none;
+    letter-spacing: 0;
     text-align: left;
     white-space: nowrap;
-    padding-right: $space-xs;
+    width: 1%; // shrink-to-fit, so the bar column takes the rest
   }
+
+  // The rows are data, not controls, so the site-wide row hover is noise here.
+  tr:hover td,
+  tr:hover th { background: none; }
 }
 
-// Takes the slack between the label and the figure, the same job the dotted
-// leader does in a topic row. Its width is set inline from a share the sync
-// script computed, so nothing here has to do arithmetic.
 .candidate-allocation__bar {
   width: 100%;
+}
 
-  span {
+// The rail behind the fill. Without it a $0 allocation has nothing to draw and
+// the row reads as a rendering fault rather than as a deliberate zero.
+.candidate-allocation__track {
+  display: block;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba($color-border, 0.08);
+
+  > span {
     display: block;
-    height: 0.55rem;
-    min-width: 2px;
-    border-radius: 2px;
+    height: 100%;
+    border-radius: 999px;
     background: var(--card-accent, #{$color-accent});
   }
 }
@@ -450,8 +480,8 @@ summary.candidate-grade {
 .candidate-allocation__amount {
   text-align: right;
   white-space: nowrap;
-  padding-left: $space-xs;
   font-variant-numeric: tabular-nums;
+  font-weight: 600;
 }
 
 .candidate-answer__answer-label {
