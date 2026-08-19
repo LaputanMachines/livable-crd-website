@@ -370,14 +370,14 @@ tr:hover td { background: $color-bg-warm; }
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.6rem 1.1rem;
+  gap: 0.7rem 1.25rem;
   align-items: center;
   margin-top: $space-md;
   font-family: $font-display;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.72rem;
+  font-size: 0.76rem;
 }
 
 .scorecard-legend__item {
@@ -389,10 +389,10 @@ tr:hover td { background: $color-bg-warm; }
   // at the size of the real thing it competes with the grades below it for the
   // reader's eye instead of pointing at them.
   .grade {
-    width: 1.4rem;
-    height: 1.4rem;
-    font-size: 0.78rem;
-    border-width: 1.5px;
+    width: 1.55rem;
+    height: 1.55rem;
+    font-size: 0.86rem;
+    border-width: 1.75px;
   }
 }
 
