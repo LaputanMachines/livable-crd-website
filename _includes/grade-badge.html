@@ -71,10 +71,14 @@
   have a neck of zero width, which disappears below about 20px and leaves a
   bowtie; squat funnels read as a bowtie however they are capped.
 
-  The stream is the one piece of fine detail, about half a pixel wide in a
-  phone-width matrix cell. It is drawn to merge into the neck and the pile at
-  that size rather than to survive as a separate line, so it thickens the waist
-  instead of vanishing.
+  Everything is drawn heavy, and heavier than looked right in isolation. The
+  caps are 4.6 units deep on a 24 grid and fully rounded, the funnel spans very
+  nearly the full width of the cap above it, and the stream is 2.2 wide. A
+  slimmer version of exactly this shape read as a goblet: thin caps do not look
+  like they could hold anything, and a narrow funnel over a small pile is a
+  stem over a base. It also has to sit beside the speech bubble, which is
+  stroked at 3.5, and matching that weight is what keeps the two looking like
+  one set.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
@@ -82,11 +86,11 @@
 {%- endcomment -%}
 <span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <rect x="4.2" y="1.8" width="15.6" height="3.4" rx="1.7"/>
-    <rect x="4.2" y="18.8" width="15.6" height="3.4" rx="1.7"/>
-    <path d="M7.2 5.8h9.6L12 12.6z"/>
-    <rect x="11.2" y="12.2" width="1.6" height="4.6" rx="0.8"/>
-    <path d="M7.4 18.2q4.6-5.4 9.2 0z"/>
+    <rect x="4" y="1.6" width="16" height="4.6" rx="2.3"/>
+    <rect x="4" y="17.8" width="16" height="4.6" rx="2.3"/>
+    <path d="M6.6 6h10.8L12 12.8z"/>
+    <rect x="10.9" y="12.2" width="2.2" height="5" rx="1.1"/>
+    <path d="M6.6 18q5.4-6 10.8 0z"/>
   </svg>
 </span>
 {% elsif no_grade %}
