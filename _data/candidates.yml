@@ -203,6 +203,13 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Shona Dion
+  display_name: "Dion, Shona"
+  municipality: victoria
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Jerry Garcia
   display_name: "Garcia, Jerry"
   municipality: victoria
@@ -366,6 +373,13 @@
   slate: null
 
 # --- Oak Bay ---
+- name: Hazel Braithwaite
+  display_name: "Braithwaite, Hazel"
+  municipality: oak-bay
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
 - name: Will Moore
   display_name: "Moore, Will"
   municipality: oak-bay
@@ -546,19 +560,33 @@
   standing: incumbent-councillor
   slate: null
 
-- name: Gordon Newton
-  display_name: "Newton, Gordon"
+- name: David Lawson
+  display_name: "Lawson, David"
   municipality: central-saanich
   office: Councillor
-  standing: incumbent-councillor
-  slate: null
+  standing: challenger
+  slate: Sustain Our Central Saanich
 
-- name: Sarah Riddell
-  display_name: "Riddell, Sarah"
+- name: Anny Scoones
+  display_name: "Scoones, Anny"
   municipality: central-saanich
   office: Councillor
-  standing: incumbent-councillor
-  slate: null
+  standing: challenger
+  slate: Sustain Our Central Saanich
+
+- name: Susan Zedel
+  display_name: "Zedel, Susan"
+  municipality: central-saanich
+  office: Councillor
+  standing: challenger
+  slate: Sustain Our Central Saanich
+
+- name: Kathleen Zimmerman
+  display_name: "Zimmerman, Kathleen"
+  municipality: central-saanich
+  office: Councillor
+  standing: challenger
+  slate: Sustain Our Central Saanich
 
 # --- North Saanich ---
 - name: Kristine Marshall
