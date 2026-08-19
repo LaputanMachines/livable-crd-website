@@ -149,18 +149,16 @@ description: >-
       {%- for q in subject_questions %}
       <li class="questionnaire-item{% unless q.graded %} questionnaire-item--ungraded{% endunless %}" id="question-{{ q.label | downcase }}">
         {%- comment -%}
-          Pills first, then the question id, matching a candidate's page. The id
+          Pill first, then the question id, matching a candidate's page. The id
           is a reference for citing a question or looking it up; whether it
-          carries a grade, and what it is worth, is what a reader wants before
-          reading the question itself.
+          carries a grade at all is the one thing that changes how the question
+          itself is read, so it goes above it. What the question is worth and
+          who grades it are facts about the answer, and sit below in the foot.
         {%- endcomment -%}
         <div class="questionnaire-item__head">
           {%- unless q.graded %}
           <span class="questionnaire-item__tag">Not graded</span>
           {%- endunless %}
-          {%- if q.weight %}
-          <span class="questionnaire-item__tag questionnaire-item__tag--weight">{{ q.weight }} of this topic's grade</span>
-          {%- endif %}
           <span class="questionnaire-item__label">{{ q.label }}</span>
         </div>
         <p class="questionnaire-item__question">{{ q.question }}</p>
@@ -178,11 +176,31 @@ description: >-
           {%- endfor %}
         </ul>
         {%- endif %}
-        {%- if q.type_label or credited == false %}
-        <p class="questionnaire-item__meta">
-          {%- if q.type_label %}{{ q.type_label }}{% endif %}
-          {%- if q.owner and credited == false %}{% if q.type_label %} · {% endif %}{% if q.graded %}Written and graded by{% else %}Written by{% endif %} {{ q.owner }}{% endif %}
-        </p>
+        {%- comment -%}
+          The answer's shape stays a plain line: it is a description of the form
+          a candidate filled in, and reads as a sentence rather than a label.
+        {%- endcomment -%}
+        {%- if q.type_label %}
+        <p class="questionnaire-item__meta">{{ q.type_label }}</p>
+        {%- endif %}
+        {%- comment -%}
+          The foot: what the question is worth, and — where the section head
+          could not credit the whole policy area to one organization — who wrote
+          and grades this one. Both are pills, because both are the same kind of
+          fact as the "Not graded" tag above and a reader picks them out of the
+          page rather than reading them in sequence.
+        {%- endcomment -%}
+        {%- assign show_owner = false -%}
+        {%- if q.owner and credited == false %}{% assign show_owner = true %}{% endif -%}
+        {%- if q.weight or show_owner %}
+        <div class="questionnaire-item__foot">
+          {%- if q.weight %}
+          <span class="questionnaire-item__tag questionnaire-item__tag--weight">{{ q.weight }} of this topic's grade</span>
+          {%- endif %}
+          {%- if show_owner %}
+          <span class="questionnaire-item__tag questionnaire-item__tag--owner">{% if q.graded %}Written and graded by{% else %}Written by{% endif %} {{ q.owner }}</span>
+          {%- endif %}
+        </div>
         {%- endif %}
       </li>
       {%- endfor %}

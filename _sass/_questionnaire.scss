@@ -148,13 +148,13 @@
 .questionnaire-item__label {
   font-family: $font-display;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   letter-spacing: 0.06em;
   color: var(--card-accent, #{$color-accent});
 }
 
 .questionnaire-item__tag {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -164,10 +164,25 @@
   border-radius: $radius;
 }
 
-.questionnaire-item__tag--weight {
+// Weight and owner are phrases, not labels: "20% of this topic's grade" set in
+// spaced uppercase reads as shouting a sentence.
+.questionnaire-item__tag--weight,
+.questionnaire-item__tag--owner {
   text-transform: none;
   letter-spacing: 0;
   font-weight: 500;
+}
+
+// Under the question rather than over it: what an answer is worth and who marks
+// it are facts about the answer, and putting them first made a reader parse two
+// pills of grading admin before reaching the question they came for. "Not
+// graded" stays above, because that one changes how the question itself reads.
+.questionnaire-item__foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-xs;
+  margin-top: 0.5rem;
 }
 
 // Capped at a readable measure. The page is a full-width container because the
