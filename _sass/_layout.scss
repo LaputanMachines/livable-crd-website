@@ -25,6 +25,17 @@
   }
 }
 
+// Height of the sticky site header, published so anything that wants to stick
+// below it (the scorecard matrix's topic header row) has an offset to sit at
+// rather than sliding underneath. The value here is only the starting point:
+// nothing about this header is a fixed height, since the nav wraps and every
+// part of it is sized in rem, so assets/js/scorecard.js measures the real one
+// and overwrites this. What is declared here is what that page gets before the
+// script runs, and if it never does.
+:root {
+  --site-header-h: 74px;
+}
+
 .site-header {
   background: $color-surface;
   border-bottom: $border-weight-heavy solid $color-text;

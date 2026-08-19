@@ -24,6 +24,23 @@
   var table = document.getElementById('candidate-grid');
   if (!table) return;
 
+  // The matrix's topic header row sticks below the site header (see the
+  // min-width: 60rem block in _components.scss), so it needs that header's
+  // height as an offset. It is not a constant worth hardcoding: the nav wraps
+  // at some widths and every part of it is sized in rem, so a literal drifts
+  // the moment either changes and leaves either a strip of rows above the
+  // stuck header or a gap of page showing through under it. Measure it, and
+  // remeasure whenever it changes size.
+  var siteHeader = document.querySelector('.site-header');
+  if (siteHeader) {
+    var publishHeaderHeight = function () {
+      var h = Math.round(siteHeader.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--site-header-h', h + 'px');
+    };
+    publishHeaderHeight();
+    if (window.ResizeObserver) new ResizeObserver(publishHeaderHeight).observe(siteHeader);
+  }
+
   var search = document.getElementById('candidate-search');
   var count = document.getElementById('candidate-count');
   var empty = document.getElementById('candidate-empty');

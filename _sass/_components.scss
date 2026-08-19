@@ -758,6 +758,46 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
 }
 
+// Sticky topic header. Which topic a column holds is the first thing a reader
+// loses: the grid runs 99 rows, so a few municipalities down the icons are off
+// screen and every chip below is unlabelled.
+//
+// Desktop only, and the reason is the wrapper. A sticky cell can only stick
+// inside its nearest scroll container, and .table-scroll's `overflow-x: auto`
+// makes the wrapper one on both axes (a single `auto` axis makes the other
+// compute to `auto` too). Stuck to a box that never scrolls vertically, the
+// header just hangs one offset down from the top of the table, on top of the
+// first rows, which is what it did here before this rule moved.
+//
+// The wrapper only ever has anything to scroll while the table's 55rem
+// min-width is wider than the space it has. That stops being true at 60rem:
+// 55rem of table plus the container's two 1.25rem gutters is 57.5rem, so there
+// is 2.5rem of slack. The query is in rem for that reason too, so the two
+// widths keep their relationship when the reader scales text up. Above it the
+// wrapper can stop being a scroll container and the header sticks to the
+// viewport; below it the sideways scroll is worth more than a sticky header.
+@media (min-width: 60rem) {
+  .scorecard-matrix-scroll {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .scorecard-matrix thead th {
+    position: sticky;
+    // Below the site header, which is itself sticky at top: 0. Measured and
+    // republished by assets/js/scorecard.js; see :root in _layout.scss for
+    // what the fallback is.
+    top: var(--site-header-h, 74px);
+    z-index: 3; // over the municipality bands and name cells it scrolls past
+    // Under border-collapse the borders belong to the table, not to the cell,
+    // so the 2px bottom rule set above is painted with the rows and gets left
+    // behind once the header detaches. This shadow is drawn by the cell and
+    // travels with it, in the same place and colour, so the two are
+    // indistinguishable while the header is still in the flow.
+    box-shadow: inset 0 -2px 0 $color-text;
+  }
+}
+
 .scorecard-cta {
   margin-top: $space-xl;
 
