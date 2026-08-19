@@ -197,6 +197,124 @@ candidates:
               necessary would be a closer examination of the success of the
               Colwood model, and the determination of barriers that might
               exist.
+  - name: Keith Yacucha
+    municipality: langford
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: |-
+              Parks and recreation.
+
+              Due to a long history of contracting out services and relying on public private partnerships, the City of Langford has an extremely small parks and recreation department.
+
+              This has resulted in plenty of Pay to Play scenarios. Lacking a city owned and operated recreational facility greatly hampers our ability to offer affordable recreational programming right in our city.
+
+              Fortunately as a owner of Westshore Parks and Recreation (WSPR), we have built a plan to expand this society to provide greater public access, but to date, these facilities are largely located outside of Langford, and any expansion will not be built or active for years.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 3000000
+                display: "$3,000,000"
+                share: 30
+              - area: Transit
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Walking Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: Roadway Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: Policing
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: "Fire & Emergency Services"
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Parks & Recreation"
+                amount: 3000000
+                display: "$3,000,000"
+                share: 30
+              - area: "Arts & Culture"
+                amount: 3000000
+                display: "$3,000,000"
+                share: 30
+              - area: "Climate Action & Environment"
+                amount: 0
+                display: $0
+                share: 0
+              - area: Unhoused Resident Services
+                amount: 0
+                display: $0
+                share: 0
+              - area: Community-Based Clinics
+                amount: 300000
+                display: "$300,000"
+                share: 3
+          - label: GEN-GEN
+            answer: |-
+              With respect to the previous question (How would you allocate $10 million), while $10 million is a significant amount of money, it also isn't if the intent is to make a meaningful movement of the needle.
+
+              Thus, while there is a part of me that would want to allocate the $10 million between the listed services in such a way that represents my ranked value for the importance of each service, I have instead allocated the resources towards the area's I think it would make the largest immediate impact - That is focusing on benefit per dollar.
+
+              As a result, a low, or $0 ranking in any one category should not be taken as I do not believe in such an area, but rather, I believe that greater impact per dollar could be had else where, or regulatory changes (within our authority under the community charter) are better served to achieve those goals.
+
+              One of the additional big assumptions is that this is a one time grant - thus anything funded by this either (a) needs to be completed in that amount or (b) if needs to continue to be funded would need increased future funding from other sources (IE Taxation)
+
+              For Example:
+
+              Housing: $3,000,000 Contributing towards affordable housing grants for partnerships with organizations like Habitat for humanity to get new affordable home built, this is vitally important given the need for affordable housing and Senior levels of government cutting their own grants. This ensures these dollars go further than what the municipality could do on its own. Included in this would be a trial position for a housing and development coordinator - positions to (a) assist those in need of finding housing, to find housing and (b) to assist developers of all size (from non-profit to mom & pop) to navigate the city hall process to be able to build as needed. This would be a operational cost, thus the position is piloted from these funds, then would need to be funded through other sources if proven successful.
+
+              Transit: $500,000 While I would love to see vast improvement to the transit system, or even the introduction of light rail or train, that is not possible with this budget. $500,000 (based on my back of the envelope math) should be sufficient to provide free bus passes to all youth under 19 and seniors in Langford.  This would be an ongoing operational cost, thus would be funded this first year through this grant as a pilot, then would need to be funded through other sources if successful.
+
+              Walking Infrastructure: Controversially I will be assigning $0 to this despite it being vitally important. The rationale being is that sidewalk infrastructure is exceptionally expensive, and other funding and grant sources already exist to fund this. So while I would love to expand this infrastructure further, there are other listed area's which are not eligible for external grants which would provide larger benefit per dollar.
+
+              Rolling & Cycling Infrastructure: $50,000. Again, like with Walking infrastructure this appears to go against my values of providing increased safe choice and access to transportation. Again the reason behind this is because many existing grants exist to fund and build out such networks, further more, for the ($) value provided, relatively little infrastructure could be built. Thus my allocation here would be $100,000 towards a micro-mobility (E-scooter, E-bike) rebate to help assist the cost of obtaining a E-bike or E-scooter to increase access to the existing and expanding networks.
+
+              Roadway Infrastructure: Again stays at zero, despite being one of the largest issues we face on the Westshore - the rationale is given the exorbitant cost of roadway upgrades (think ball park $250,000 for a traffic light for example) these funds could have significantly more impact allocated else where. further between provincial, ICBC, and development funds there are many more sources available to fund these improvements than almost any other on the list.
+
+              Policing (Public Safety): At a cost of approximately $250,000/yr for us to add an additional officer to the city, this is one of the municipalities largest operational costs. My allocation of $100,000 would be towards continued funding of a public safety plan that supports our RCMP to do what they were hired to do (deal with criminal activity) while empowering other services and bylaw to deal with non-criminal issues which attribute to a sense of diminished public safety. We have already started this process, this would need to be an ongoing cost (thus operations and needing other funding sources in future) but would be piloted for success first with these funds.
+
+              Fire & Emergency Services: This is surprisingly a $0, despite having been a focus of the past term. The rationale being is that much of the increase still needed for this department would be operational in nature, thus a recurring annual cost that a one time lump sum would not solve. At this time I am un aware of any pressing capital needs for the department which are not yet committed to being funded. I could potentially ear-mark a portion of this to provide funding for continued Firesmart staffing (as this has been hugely successful) but we are currently receiving (stable to date) funding for this program. Thus would rather see these funds go to other places rather than duplicating funding that already exists.
+
+              Parks & Recreation: This has been an area identified as being in tremendous need. the full $10m grant could go to this and still not provide a new recreational centre. Thus in conjunction with the funding sources we already have in place I would like to see $3m go towards acquisition of additional park space in our equity deserving area's as identified in the parks and trails masterplan.
+
+              Arts & Culture: I will link together both Arts & Culture as well as economic development here as the recipient of $3m of this grant. While it has long been identified that a performing arts centre is long over due in the Westshore, parts of this grant could assist in bringing this to reality (although significantly more funding would still need to be provided as well). Further, given the huge success of the FIFA watch party, not to mention all the other summer festivities we have hosted that not only worked to increase a sense of community, but also kept people here and drew in new people, spending money locally and supporting our local small businesses.
+
+              Climate Action & Environment - This is a zero, not because it is a zero but because we already have operational funding in place for this and there are grants available which are already being accessed. Much of the other impacts of this are achievable through regulatory changes and the way we engage in transportation (over 50% of emissions) and housing (Close to 30% of emissions) thus internal work flows and actions taken in these regards will have far greater impacts than any lump sums spent here.
+
+              Unhoused Resident Services: This is again and zero not zero because this was already captured in the funding allocation for the housing category.
+
+              Community-Based Clinics: One of the largest successes this term was partnering with SIPCS to create a space for new doctors which were able to attach 12,500 people to a family doctor in the region. This is entirely a capital expense to acquire land and engage in improvement for the site for the clinic which has had tremendous impact. Importantly though this is outside of the municipal mandate, so while it has tremendous impact and we should be evaluating it, we also need to ensure that we are focusing on our mandate for local government and not taking on too many extra downloaded responsibilities.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: |-
+              Our partnership with SIPCS to bring doctors to City Hall and the Bryn Maur clinic has been wildly successful with about 12,500 people attached to a family doctor.
+
+              we need to be careful, as this is not within the local government mandate, so every dollar spent here is taken away from an aspect of our mandated service delivery.
+
+              That being said, given the wild success of this model to date we are currently exploring an expansion of this with another clinic being proposed in partnership with SIPCS in Happy Valley.
   - name: Jeremy Caradonna
     municipality: victoria
     scores:
