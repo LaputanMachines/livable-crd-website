@@ -725,6 +725,57 @@ tr:hover td { background: $color-bg-warm; }
 .scorecard-row:hover th,
 .scorecard-row:hover td { background: $color-bg-warm; }
 
+// Sticky topic header. Which topic a column holds is the first thing a reader
+// loses: the grid runs 99 rows, so a few municipalities down the icons are off
+// screen and every chip below is unlabelled.
+//
+// A sticky cell can only stick inside its nearest scroll container, and
+// .table-scroll's `overflow-x: auto` makes the wrapper one on both axes (a
+// single `auto` axis makes the other compute to `auto` too). Stuck to a box
+// that never scrolls vertically, the header just hangs one offset down from the
+// top of the table, on top of the first rows. So the header can only stick at a
+// width where the wrapper has nothing to scroll sideways and can give up being
+// a scroll container at all, which is true at both ends of the range and false
+// in the middle:
+//
+//   below 720px   The table is `width: 100%` with no min-width. Icon-only
+//                 headers, a 7rem name column and compact chips are sized to
+//                 fit a phone, so there is nothing to scroll and the wrapper's
+//                 overflow-x is doing no work.
+//   720px-60rem   The table takes the 55rem min-width set in the 720px block,
+//                 which is wider than the space it has until 60rem (55rem of
+//                 table plus the container's two 1.25rem gutters is 57.5rem).
+//                 Here the sideways scroll is worth more than a sticky header.
+//   60rem+        Room for the whole table again, so it sticks again.
+//
+// Hence the shape below: stuck by default, unstuck inside the 720px block, and
+// stuck again at 60rem. Written as a mixin because the first and last of those
+// are the same declarations, and two copies would drift.
+@mixin sticky-topic-header {
+  .scorecard-matrix-scroll {
+    overflow-x: visible;
+    overflow-y: visible;
+  }
+
+  .scorecard-matrix thead th {
+    position: sticky;
+    // Below the site header, which is itself sticky at top: 0 at every width.
+    // Measured and republished by assets/js/scorecard.js; see :root in
+    // _layout.scss for what the fallback is.
+    top: var(--site-header-h, 74px);
+    z-index: 3; // over the municipality bands and name cells it scrolls past
+    // Under border-collapse the borders belong to the table, not to the cell,
+    // so the 2px bottom rule set above is painted with the rows and gets left
+    // behind once the header detaches. This shadow is drawn by the cell and
+    // travels with it, in the same place and colour, so the two are
+    // indistinguishable while the header is still in the flow.
+    box-shadow: inset 0 -2px 0 $color-text;
+  }
+}
+
+// Phones, where the table fits and the wrapper has nothing to scroll.
+@include sticky-topic-header;
+
 // Roomier layout once there's width: show text labels, larger chips.
 @media (min-width: 720px) {
   .scorecard-matrix-scroll {
@@ -742,6 +793,18 @@ tr:hover td { background: $color-bg-warm; }
     font-size: 0.95rem;
     min-width: 55rem;
   }
+  // That min-width is wider than the viewport up to 60rem, so the wrapper has
+  // to go back to being a horizontal scroll container - and a scroll container
+  // on one axis is one on both, which is what a sticky header cannot survive.
+  // Undone again by the 60rem block below, where the table fits once more.
+  .scorecard-matrix-scroll {
+    overflow-x: auto;
+    overflow-y: visible;
+  }
+  .scorecard-matrix thead th {
+    position: static;
+    box-shadow: none;
+  }
   .scorecard-matrix th,
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
   .scorecard-matrix .scorecard-matrix__name-h { width: 14rem; }
@@ -758,44 +821,8 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
 }
 
-// Sticky topic header. Which topic a column holds is the first thing a reader
-// loses: the grid runs 99 rows, so a few municipalities down the icons are off
-// screen and every chip below is unlabelled.
-//
-// Desktop only, and the reason is the wrapper. A sticky cell can only stick
-// inside its nearest scroll container, and .table-scroll's `overflow-x: auto`
-// makes the wrapper one on both axes (a single `auto` axis makes the other
-// compute to `auto` too). Stuck to a box that never scrolls vertically, the
-// header just hangs one offset down from the top of the table, on top of the
-// first rows, which is what it did here before this rule moved.
-//
-// The wrapper only ever has anything to scroll while the table's 55rem
-// min-width is wider than the space it has. That stops being true at 60rem:
-// 55rem of table plus the container's two 1.25rem gutters is 57.5rem, so there
-// is 2.5rem of slack. The query is in rem for that reason too, so the two
-// widths keep their relationship when the reader scales text up. Above it the
-// wrapper can stop being a scroll container and the header sticks to the
-// viewport; below it the sideways scroll is worth more than a sticky header.
 @media (min-width: 60rem) {
-  .scorecard-matrix-scroll {
-    overflow-x: visible;
-    overflow-y: visible;
-  }
-
-  .scorecard-matrix thead th {
-    position: sticky;
-    // Below the site header, which is itself sticky at top: 0. Measured and
-    // republished by assets/js/scorecard.js; see :root in _layout.scss for
-    // what the fallback is.
-    top: var(--site-header-h, 74px);
-    z-index: 3; // over the municipality bands and name cells it scrolls past
-    // Under border-collapse the borders belong to the table, not to the cell,
-    // so the 2px bottom rule set above is painted with the rows and gets left
-    // behind once the header detaches. This shadow is drawn by the cell and
-    // travels with it, in the same place and colour, so the two are
-    // indistinguishable while the header is still in the flow.
-    box-shadow: inset 0 -2px 0 $color-text;
-  }
+  @include sticky-topic-header;
 }
 
 .scorecard-cta {
