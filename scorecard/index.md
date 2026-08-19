@@ -24,6 +24,8 @@ description: >-
     and a candidate's own page shows how each of their answers was graded.
   </p>
 
+  {% include icon-key.html %}
+
   {%- comment -%}
     One line, and it is a request rather than an announcement: the only thing
     this band is for is catching the errors a reader can see and we cannot.

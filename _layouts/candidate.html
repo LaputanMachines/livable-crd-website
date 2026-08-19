@@ -158,6 +158,8 @@ layout: default
     short, and a lazy image that has not loaded when the reader hits Print
     leaves a blank square on the leaflet.
   {%- endcomment -%}
+  {% include icon-key.html %}
+
   <ul class="candidate-grades">
     {%- for subject in subjects %}
     {%- assign cell = c.scores[subject.id] %}
