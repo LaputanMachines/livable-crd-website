@@ -70,6 +70,8 @@ graded_subjects:
 candidates:
   - name: Robb Johnstone
     municipality: esquimalt
+    scores:
+      transit: A
     subjects:
       - id: general
         grade: null
@@ -131,6 +133,53 @@ candidates:
                 amount: 0
                 display: $0
                 share: 0
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Backed free travel for under 19s and a lower cost regional
+              monthly pass, but left the fare measures for seniors and for
+              people on income or disability assistance unticked. Half the
+              list, and the half that misses the riders least able to pay.
+            selected:
+              - Lower-cost regional monthly pass.
+              - Free transit for everyone under 19 years of age.
+          - label: TRN-02
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Would clear general street parking off transit corridors only
+              where a specific project calls for it, so nothing changes
+              corridor wide and every removal has to be won one at a time.
+              That is partial support for the right change, which is why it
+              lands below a full yes.
+            answer: "Kind of, only when a specific project requires it."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to rolling out transit priority quickly on frequent
+              corridors, parking and a general traffic lane included. Nothing
+              held back in the answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority. A plain
+              yes, with no conditions set on it.
+            answer: "Yes"
+          - label: TRN-05
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Said yes to new bus only and bike only links through parks, golf
+              courses and other public land where they would substantially
+              shorten trips. No conditions placed on it.
+            answer: "Yes"
       - id: healthcare-access
         grade: null
         questions: []
@@ -148,6 +197,161 @@ candidates:
               necessary would be a closer examination of the success of the
               Colwood model, and the determination of barriers that might
               exist.
+  - name: Jeremy Caradonna
+    municipality: victoria
+    scores:
+      transit: A
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: |-
+              This is a great and challenging question, as it could be answered in any number of ways. Prior to this year, I might have answered "the Crystal Pool," which is the most important municipal asset that needs replacing in Victoria. Now that this project is underway, I would narrow in on the "feature" aspect of this question, and specifically unsheltered homelessness, street disorder, and community safety.
+
+              Community safety is probably the #1 issue in this election. While the City has made huge strides in winding down encampments in parks, by getting people housed (mainly in supportive housing), the City is overwhelmed with the scale of the challenge before it.
+
+              To truly solve the issue would require a large and sustained investment by the Province to supply the sheltering, housing, and treatment spaces required to address the crisis on our streets and make the city a safer place for everyone.
+
+              If re-elected, I would continue to do my part to wind down encampments and get people inside, but the heavy lifting must be done by senior governments that are in charge of these issues.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Transit
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: Walking Infrastructure
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 1250000
+                display: "$1,250,000"
+                share: 12
+              - area: Roadway Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: Policing
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Fire & Emergency Services"
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Parks & Recreation"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Arts & Culture"
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: "Climate Action & Environment"
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
+              - area: Unhoused Resident Services
+                amount: 1750000
+                display: "$1,750,000"
+                share: 18
+              - area: Community-Based Clinics
+                amount: 0
+                display: $0
+                share: 0
+          - label: GEN-GEN
+            answer: |-
+              I'll take the opportunity to reflect upon the previous question, which is fascinating and challenging to answer.
+
+              In a hypothetical scenario in which the City were given $10m in unrestricted funds, I would spend those funds thusly: $2m for housing, $1m for parks and rec, $750k for transit, $750k for arts and culture, $1.25m for rolling and cycling infrastructure, $1m for walking infrastructure, $1.5m for climate action, and $1.75m for unhoused resident services.
+
+              I would not put the $10m into roads, policing, clinics, or emergency services, not because they aren't important services, but rather because they either 1) already possess stable funding streams, or 2) a few million dollars wouldn't move the needle enough to make it worthwhile, or 3) the funding they require is ongoing operational costing rather than one-time capital grants.
+
+              The $2m for housing would go into the Housing Reserve Fund, which is used for co-investing in affordable housing projects. The $1m for walking and $1.25m for active transportation would go into specific capital projects meant to make it safer for people to get around Victoria. The $1m for parks and rec would go towards any number of stalled projects that are meant to improve the lives of Victoria families, and could include a splash park, new swimming features in the Gorge, sport courts, or even reducing some of the borrowing costs of the Crystal Pool. The $750k for arts and culture would go towards the acquisition of a decommodified arts and music space for local artists. The $1.5m for climate action would become part of a fund to offset the costs of deep retrofits in apartments that badly need heat pumps to decarbonize and create cooling systems for vulnerable tenants. The $1.75m for unhoused residents would go towards programs that help flow people up from shelters into housing, which I'd seek to pair with funding from the Province for the same. The $750k for transit would likely go towards infrastructure upgrades for transit priority.
+
+              This is a great thought experiment because it reminds us that cities must always do more than one thing at a time, and that there's no easy answers when it comes to resource allocation and competing priorities.
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Ticked every fare measure the question listed: free travel for
+              under 19s, cheaper fares for seniors, cheaper fares for people
+              on income or disability assistance, and a lower cost regional
+              monthly pass. Nothing left off the list.
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+              - Lower-cost regional monthly pass.
+          - label: TRN-02
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports taking general street parking off frequent transit
+              corridors along their whole length, not only at peak hours. That
+              is the strongest option the question offered, and it turns the
+              space over to bus lanes, loading, and people walking and
+              cycling.
+            answer: "Yes, across the whole corridor."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to deploying transit priority fast on frequent
+              corridors, even where parking or a general traffic lane has to
+              go. Nothing attached to the answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority, with
+              nothing qualifying the yes.
+            answer: "Yes"
+          - label: TRN-05
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Said yes to new bus and bike connections cut through parks, golf
+              courses and public land where they would substantially shorten
+              trips. No conditions on the answer.
+            answer: "Yes"
+        unscored:
+          - label: TRN-GEN
+            answer: |-
+              Where to begin!
+
+              In addition to being a Victoria City Councillor, I have also had the pleasure of serving as a CRD Director on the Transportation Committee and as a Victoria Regional Transit Commissioner, all of which places me at the centre of the rapidly shifting transportation reality that we find ourselves in.
+
+              At a high level, the problem is that all aspects of transportation governance have been balkanized and siloed for many years. Even the fact that the CRD and the VRTC have their own transportation plans is, in my view, a problem. Too much of the authority is divided between local governments, the CRD, the VRTC, the Province, and even the Reconciliation Corridor Steering Committee and Island Corridor Foundation. It is a confused transportation situation at the moment.
+
+              I support the fusing of authorities between the CRD (Transportation Committee) and the VRTC into a unified Transportation Commission. This process is in the early stages of development and advocacy has begun.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: |-
+              I am interested both in the Colwood model and in the model used elsewhere in the region. Victoria still has a major shortage of family doctors and my own mother took years to find a regular physician. The main issue I hear about is lack of affordable space, but also a lack of affordable housing to retain doctors and staff.
+
+              There are tremendous opportunities to build turn-key healthcare facilities that attract and retain medical talent. The new Community Safety and Wellbeing Plan, in fact, commits to doing so, and this will be a priority for the next term.
   - name: Martin Girard
     municipality: victoria
     scores:
