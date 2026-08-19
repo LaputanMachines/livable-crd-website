@@ -158,7 +158,12 @@ layout: default
     short, and a lazy image that has not loaded when the reader hits Print
     leaves a blank square on the leaflet.
   {%- endcomment -%}
-  {% include icon-key.html %}
+  {%- comment -%}
+    The same key the scorecard matrix carries, above the same chips. A reader
+    arriving here from a search result rather than from the table has not seen
+    it, and three of the five states this page can draw are not letters.
+  {%- endcomment -%}
+  {% include grade-legend.html %}
 
   <ul class="candidate-grades">
     {%- for subject in subjects %}

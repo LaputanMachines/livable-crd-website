@@ -58,45 +58,9 @@ description: >-
   {% include other-scorecard-notice.html %}
 
   {%- comment -%}
-    The two empty states sit in the key next to the letters, because on a table
-    this size most cells are one of them and a reader who cannot tell them apart
-    reads a returned questionnaire as a no-show. Spelled out again under
-    #methodology; this is the version that fits on one line.
-  {%- endcomment -%}
-  <div class="scorecard-legend" aria-label="Grading key">
-    {% for grade in site.data.grades %}
-    <span class="scorecard-legend__item">
-      <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
-    </span>
-    {% endfor %}
-    {%- comment -%}
-      Both empty states come from the include rather than being written out
-      here, so the key cannot end up showing a different mark from the table
-      under it. An empty `grade` is what puts the include in an empty state;
-      `state` picks which of the two.
-    {%- endcomment -%}
-    <span class="scorecard-legend__item">
-      {% include grade-badge.html grade="" state="review" %}Being graded
-    </span>
-    <span class="scorecard-legend__item">
-      {% include grade-badge.html grade="" state="answers" %}Answered, not graded
-    </span>
-    {%- comment -%}
-      "Not graded" rather than "No reply": the dash also stands on topics the
-      coalition does not grade at all, where it is not the candidate's silence
-      being reported. Both readings are true of "not graded", and #methodology
-      separates them.
-    {%- endcomment -%}
-    <span class="scorecard-legend__item">
-      {% include grade-badge.html grade="" %}Not graded
-    </span>
-  </div>
-
-  {%- comment -%}
-    How far along the whole exercise is, in one line, directly under the key
-    that just introduced the two empty states. Without it a reader scrolling a
-    table of dashes has no way to tell a questionnaire that has barely gone out
-    from one candidates are ignoring. Both counts come from
+    How far along the whole exercise is, in one line. Without it a reader
+    scrolling a table of dashes has no way to tell a questionnaire that has
+    barely gone out from one candidates are ignoring. Both counts come from
     _plugins/questionnaire_scores.rb rather than being counted here, so the
     sentence cannot disagree with the chips in the table.
 
@@ -183,12 +147,12 @@ description: >-
   <p class="scorecard-count" id="candidate-count" role="status" aria-live="polite"></p>
 
   {%- comment -%}
-    Directly above the table rather than up with the intro. Both marks it
-    explains only ever appear in the grid below it, and a key read several
-    screens earlier is a key nobody has in mind by the time they meet the thing
-    it describes.
+    Directly above the grid rather than up near the intro. Most cells in the
+    table are one of the three states that are not letters, and a key read
+    several screens earlier is a key nobody still has in mind by the time they
+    reach the thing it describes.
   {%- endcomment -%}
-  {% include icon-key.html %}
+  {% include grade-legend.html %}
 
   <div class="table-scroll scorecard-matrix-scroll">
     <table class="scorecard-matrix" id="candidate-grid">

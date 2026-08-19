@@ -1,0 +1,37 @@
+{%- comment -%}
+  The grading key: five letters and the three states that are not letters.
+  Rendered directly above the grades it explains, on the scorecard matrix and on
+  every candidate page.
+
+  A shared include rather than the same markup in two places. The two empty
+  states are the ones a reader most easily misreads — a returned questionnaire
+  drawn like a no-show — and a key that says one thing on the scorecard and
+  another on a candidate page is worse than one key in one place.
+
+  Every chip comes from grade-badge.html, the same call the table and the topic
+  rows make, so the key cannot end up showing a mark the grades below it do not.
+  An empty `grade` is what puts that include into an empty state; `state` picks
+  which of the three.
+{%- endcomment -%}
+<div class="scorecard-legend" aria-label="Grading key">
+  {% for grade in site.data.grades %}
+  <span class="scorecard-legend__item">
+    <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
+  </span>
+  {% endfor %}
+  <span class="scorecard-legend__item">
+    {% include grade-badge.html grade="" state="review" %}Being graded
+  </span>
+  <span class="scorecard-legend__item">
+    {% include grade-badge.html grade="" state="answers" %}Answered, not graded
+  </span>
+  {%- comment -%}
+    "Not graded" rather than "No reply": the dash also stands on topics the
+    coalition does not grade at all, where it is not the candidate's silence
+    being reported. Both readings are true of "not graded", and #methodology
+    separates them.
+  {%- endcomment -%}
+  <span class="scorecard-legend__item">
+    {% include grade-badge.html grade="" %}Not graded
+  </span>
+</div>
