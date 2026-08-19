@@ -207,6 +207,8 @@ candidates:
               years.
   - name: Don Brown
     municipality: view-royal
+    scores:
+      transit: A
     subjects:
       - id: general
         grade: null
@@ -272,6 +274,62 @@ candidates:
             answer: >-
               We have great parks and green spaces. We need to preserve and
               add to these areas. We need to increase our urban forest canopy.
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Backed free travel for under 19s, and cheaper fares for both
+              seniors and people on income or disability assistance. The one
+              measure left unticked was the lower cost regional monthly pass,
+              so every group the question named is covered.
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+          - label: TRN-02
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Supports clearing general street parking from transit corridors
+              only at peak hours, so the bus lanes and the space for walking
+              and cycling would come and go through the day. That is partial
+              support for the right change, which is why it sits below a full
+              yes.
+            answer: "Yes, only during peak hours."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to fast transit priority work, including where
+              parking or a traffic lane has to go. Nothing conditional in the
+              answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority, with no
+              qualifiers on the answer.
+            answer: "Yes"
+          - label: TRN-05
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Supports new bus and bike connections through parks and public
+              land, but only where construction takes no mature trees. That
+              condition would rule out many of the routes the question is
+              about, so it falls short of a full yes.
+            answer: "Yes, if no mature trees are lost during construction."
+        unscored:
+          - label: TRN-GEN
+            answer: >-
+              Anything we can do to take vehicles off the road and reduce
+              traffic congestion would be supported by me.
       - id: healthcare-access
         grade: null
         questions: []
