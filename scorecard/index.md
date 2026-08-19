@@ -32,7 +32,7 @@ description: >-
     linked from the deadlines FAQ and still reachable by its own heading.
   {%- endcomment -%}
   <div class="status-banner">
-    <p>Someone missing or listed incorrectly? <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a>.</p>
+    <p>Someone missing or listed incorrectly? <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a> by emailing {{ site.email }}.</p>
   </div>
 
   {%- comment -%}
