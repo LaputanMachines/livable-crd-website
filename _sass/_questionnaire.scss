@@ -224,6 +224,38 @@
   .questionnaire-item__question { font-size: 1.05rem; }
 }
 
+// Two columns once there is room for them. A question is one or two sentences,
+// so on a wide screen the single column left most of the line empty and made a
+// section of six questions six screens tall — the page read as far longer than
+// it is.
+//
+// Columns rather than a two-track grid: the questions vary from one line to a
+// dozen, and grid rows would size to the tallest item on each row and leave a
+// hole beside every short one. Columns balance the two sides instead.
+@media screen and (min-width: 900px) {
+  // Guarded on there being a second question: a one-question section split into
+  // columns is a half-width item with an empty half beside it. No section is
+  // that short today, but the list comes from the grading sheet and can be.
+  .questionnaire-list:has(> li:nth-child(2)) {
+    columns: 2;
+    column-gap: $space-xl;
+    column-rule: 1px solid rgba($color-border, 0.25);
+
+    // A question that straddled the column break would be read as two.
+    .questionnaire-item {
+      break-inside: avoid;
+    }
+
+    // The rule under each question is the list's separator, and dropping it from
+    // the last item only tidies the foot of the second column — the first column
+    // keeps a rule hanging under its last question. Uniform is the tidy version
+    // here: both columns end on one.
+    .questionnaire-item:last-child {
+      border-bottom: 1px solid rgba($color-border, 0.25);
+    }
+  }
+}
+
 // On paper the jump bar is a list of links nobody can follow, and the call to
 // action is two buttons that do nothing. The questions themselves print fine,
 // which is the point: this is the one page a partner organization might
