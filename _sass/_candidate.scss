@@ -100,7 +100,12 @@
 // its accent edge picks up the brand purple instead of the deep ink: on a page
 // where the difference between "replied" and "did not" is the point, the two
 // notes must not look like the same message twice.
+//
+// Dashed rather than solid, matching the scorecard's own status banner: what it
+// says is provisional, and a solid box drew it with the same finality as the
+// grades underneath it.
 .candidate-page .candidate-returned {
+  border-style: dashed;
   border-left-color: $color-accent;
 }
 

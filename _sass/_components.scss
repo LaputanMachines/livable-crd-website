@@ -1004,10 +1004,12 @@ $category-colors: (
   box-shadow: none;
 }
 
+// No max-width: the banner holds two short sentences now, and capping the
+// measure at 42ch left them wrapped into a narrow column with the dashed box
+// stretched empty either side of it.
 .status-banner p {
-  margin: 0 auto;
+  margin: 0;
   color: $color-text;
-  max-width: 42ch;
   font-weight: 700;
   font-family: $font-display;
   text-transform: uppercase;
