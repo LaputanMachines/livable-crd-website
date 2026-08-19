@@ -238,8 +238,15 @@
 // Reads as a chip with something coming rather than an empty slot: the accent
 // border and ink are the page's "active" colour, against the muted grey the
 // pending dash uses.
+//
+// White ground, not $color-bg-warm. It shared that colour with the pending dash,
+// which is the one chip it most needs telling apart from, and on a candidate
+// page the panel behind it is $color-bg-warm too, so the tile sank into its own
+// background and only the border held it. White separates it from both without
+// making it a filled chip - that treatment belongs to the speech bubble, where
+// solid-versus-outlined is what says "ready to read" against "still coming".
 .grade--review {
-  background: $color-bg-warm;
+  background: $color-surface;
   color: $color-accent;
   border: 2px solid rgba($color-accent, 0.55);
 }
