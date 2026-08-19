@@ -60,16 +60,21 @@
   is the smallest thing on the site, about 10px across in a phone-width matrix
   cell, and an outline turns to mush at that size. A silhouette keeps its shape.
 
-  Three things make the silhouette read as an hourglass rather than a bowtie,
-  and the first attempt had none of them:
+  Drawn as sand rather than as glass: a full funnel at the top, a stream, and a
+  pile at the bottom, held between two rounded caps. An outlined glass with sand
+  inside it is the more literal picture and was rejected on size — the outline
+  and the sand end up a pixel apart in a matrix cell and merge into a blob. Mass
+  survives where line weight does not, and the two caps plus a tapering funnel
+  are enough to read as an hourglass without drawing the glass at all.
 
-    a waist with width. Two triangles meeting at a point have a neck of zero,
-    which disappears below about 20px and leaves two solid triangles.
-    portrait proportions. The glass is 10 wide by 15 tall, a ratio of 0.66; the
-    first version was 10 by 7 per funnel and read as a bowtie however it was
-    capped.
-    caps that overhang a little, not a lot. 1.5 units of overhang reads as a
-    frame around the glass; the 4 units it had read as a separate shape.
+  Two earlier attempts failed on the same axis. Two triangles meeting at a point
+  have a neck of zero width, which disappears below about 20px and leaves a
+  bowtie; squat funnels read as a bowtie however they are capped.
+
+  The stream is the one piece of fine detail, about half a pixel wide in a
+  phone-width matrix cell. It is drawn to merge into the neck and the pile at
+  that size rather than to survive as a separate line, so it thickens the waist
+  instead of vanishing.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
@@ -77,9 +82,11 @@
 {%- endcomment -%}
 <span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
   <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5.5 2h13v2.4h-13z"/>
-    <path d="M5.5 19.6h13V22h-13z"/>
-    <path d="M7 4.4h10l-4.35 7.2v.8l4.35 7.2H7l4.35-7.2v-.8z"/>
+    <rect x="4.2" y="1.8" width="15.6" height="3.4" rx="1.7"/>
+    <rect x="4.2" y="18.8" width="15.6" height="3.4" rx="1.7"/>
+    <path d="M7.2 5.8h9.6L12 12.6z"/>
+    <rect x="11.2" y="12.2" width="1.6" height="4.6" rx="0.8"/>
+    <path d="M7.4 18.2q4.6-5.4 9.2 0z"/>
   </svg>
 </span>
 {% elsif no_grade %}
