@@ -68,6 +68,86 @@ graded_subjects:
   - governance
 
 candidates:
+  - name: Robb Johnstone
+    municipality: esquimalt
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: >-
+              I would like to see our share of the Victoria Police Department
+              budget re-examined and re-assessed. Currently, we do not appear
+              to be getting fair value for our contribution, although it does
+              seem to be improving with recent changes at VicPD.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 1
+                display: $1
+                share: 17
+              - area: Transit
+                amount: 1
+                display: $1
+                share: 17
+              - area: Walking Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 0
+                display: $0
+                share: 0
+              - area: Roadway Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: Policing
+                amount: 2
+                display: $2
+                share: 33
+              - area: "Fire & Emergency Services"
+                amount: 1
+                display: $1
+                share: 17
+              - area: "Parks & Recreation"
+                amount: 1
+                display: $1
+                share: 17
+              - area: "Arts & Culture"
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Climate Action & Environment"
+                amount: 0
+                display: $0
+                share: 0
+              - area: Unhoused Resident Services
+                amount: 0
+                display: $0
+                share: 0
+              - area: Community-Based Clinics
+                amount: 0
+                display: $0
+                share: 0
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Colwood Model) Municipality is the clinic operator, GPs , NPs &
+              support staff are all municipal employees.
+          - label: HLT-GEN
+            answer: >-
+              Esquimalt should conduct a feasibility study to determine if the
+              Colwood model would work in our community. We should also work
+              with other municipalities to determine if some functions (e.g.,
+              diagnostic centres) could provide service to Esquimalt. Also
+              necessary would be a closer examination of the success of the
+              Colwood model, and the determination of barriers that might
+              exist.
   - name: Martin Girard
     municipality: victoria
     scores:
