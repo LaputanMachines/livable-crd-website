@@ -56,22 +56,26 @@
   chip that is not a control. A horizontal ellipsis fails the same way: three
   dots in a row is the overflow-menu icon.
 
-  Lucide's stock `hourglass`, unmodified, which is the same set the topic icons
-  in assets/images/icons/ come from. Several hand-drawn attempts preceded it and
+  Lucide's stock `hourglass`, geometry unchanged, from the same set the topic icons
+  in assets/images/icons/ use. Several hand-drawn attempts preceded it and
   each failed differently — a bowtie, a goblet, a shape pinched at the waist —
   which is a good argument for taking the one somebody has already tuned.
 
-  Stroked at 2.5 rather than Lucide's default 2: the topic icons render at 28px
+  Stroked at 3.5 rather than Lucide's default 2. The topic icons render at 28px
   and this one gets about 13px in a phone-width matrix cell, where a 2-weight
-  stroke thins out. Still lighter than the speech bubble's 3.5, because that
-  glyph is mostly the space it encloses and this one is mostly line.
+  stroke thins to nothing, and it sits directly beside the speech bubble - also
+  3.5 - where a lighter line read as a delicate icon next to a bold one.
+
+  That is about as heavy as this particular glyph takes. Its cap corners are
+  2-unit arcs on a 24 grid, so past roughly 3.5 the stroke is wider than the
+  radius it is drawn around and the corners fill in solid.
 
   Inline rather than an <img> from assets/images/icons/, because it has to take
   the chip's colour: `currentColor` is what makes it accent purple on screen and
   plain black on the leaflet, where the print rules restyle .grade to ink.
 {%- endcomment -%}
 <span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 22h14"/>
     <path d="M5 2h14"/>
     <path d="M17 22v-4.172a2 2 0 0 0-.586-1.414L12 12l-4.414 4.414A2 2 0 0 0 7 17.828V22"/>
