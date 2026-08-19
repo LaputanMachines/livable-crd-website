@@ -370,14 +370,14 @@ tr:hover td { background: $color-bg-warm; }
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: $space-sm $space-md;
+  gap: 0.6rem 1.1rem;
   align-items: center;
   margin-top: $space-md;
   font-family: $font-display;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  font-size: 0.8rem;
+  font-size: 0.72rem;
 }
 
 .scorecard-legend__item {
@@ -385,12 +385,15 @@ tr:hover td { background: $color-bg-warm; }
   align-items: center;
   gap: 0.45rem;
 
+  // Smaller than the chips it describes, deliberately. A key is a caption, and
+  // at the size of the real thing it competes with the grades below it for the
+  // reader's eye instead of pointing at them.
   .grade {
-    width: 1.75rem;
-    height: 1.75rem;
-    font-size: 0.95rem;
+    width: 1.4rem;
+    height: 1.4rem;
+    font-size: 0.78rem;
+    border-width: 1.5px;
   }
-
 }
 
 // How many candidates have replied, immediately under the key that just
