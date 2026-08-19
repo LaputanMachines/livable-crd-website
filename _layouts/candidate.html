@@ -215,10 +215,26 @@ layout: default
             panel with no grade chips in it invites a reader to go looking for
             letters that are never coming.
           {%- endcomment -%}
+          {%- comment -%}
+            Rationale and weight are both optional on a grading row and most
+            rows carry neither: weighting is set per topic by the partner
+            organization that owns it, and several have not, and a grader can
+            record a grade without writing up why.
+
+            Their absence needs no handling per question - the pill and the
+            "Why this grade" line are each guarded, and the dotted leader takes
+            up the slack so the chip still lands hard right. What does need
+            saying is at topic level: a reader looking at graded questions with
+            no reasoning under any of them cannot tell whether none was written
+            or the page is not showing it. Said once here rather than repeated
+            under all eleven questions, which would be a wall of apology.
+          {%- endcomment -%}
+          {%- assign reasoned = detail.questions | where_exp: "q", "q.rationale" %}
           <p class="candidate-grade__meta">
             {%- if detail.questions.size > 0 %}
             {{ detail.questions.size }} graded question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Graded by {{ owners[0] }}{% endif %}
+            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
             {%- else %}
             {{ detail.unscored.size }} answer{% if detail.unscored.size != 1 %}s{% endif %} · Not graded
