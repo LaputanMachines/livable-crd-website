@@ -39,12 +39,10 @@ WHAT IS DELIBERATELY NOT PUBLISHED
     individual's address instead. Those are dropped, with a warning, rather than
     printed on a public page.
 
-Auth, in order of preference:
-  GOOGLE_SERVICE_ACCOUNT_JSON  the JSON key itself (CI: a repo secret). The
-                               spreadsheet must be shared with the service
-                               account's address, read access is enough.
-  gspread.oauth()              the interactive local flow the rest of
-                               scripts/questionnaire/ uses.
+Reads the spreadsheet a tab at a time over HTTP, no client library and no
+credentials, the same shape as scripts/sync-candidates.py. The sheet id is the
+only input; it is a capability and stays out of source, in $QUESTIONNAIRE_
+SUBMISSIONS_SHEET_ID locally and a repo secret in CI.
 
 Usage:
   python3 scripts/sync-questionnaire.py --dry-run     # print, write nothing
@@ -52,11 +50,15 @@ Usage:
 """
 
 import argparse
+import csv
 import importlib.util
-import json
+import io
 import os
 import re
 import sys
+import urllib.error
+import urllib.parse
+import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "_data")
@@ -396,16 +398,18 @@ def emit(lines, indent, key, value):
 
 
 # --- Sheet readers -----------------------------------------------------------
+# One tab at a time over HTTP, no client library and no credentials, the same
+# shape as scripts/sync-candidates.py. The sheet id is the only input.
 
-def open_sheet(sheet_id):
-    import gspread
+GVIZ = "https://docs.google.com/spreadsheets/d/{id}/gviz/tq"
 
-    raw = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
-    if raw:
-        client = gspread.service_account_from_dict(json.loads(raw))
-    else:
-        client = gspread.oauth()
-    return client.open_by_key(sheet_id)
+# First header cell of each tab, used to check that the response is the tab that
+# was asked for. See fetch_tab() on why that check is not optional.
+TAB_FIRST_HEADER = {
+    REGISTRY_TAB: "Label",
+    CATEGORY_TAB: "Key",
+    RAW_TAB: "Submission ID",
+}
 
 
 def a1(col_index):
@@ -418,18 +422,51 @@ def a1(col_index):
     return letters
 
 
-def worksheet(sh, title):
-    import gspread
+def fetch_tab(sheet_id, title, expect=None, select=None, header_only=False, timeout=60):
+    """One tab as a list of rows, or None if it is not there.
+
+    `select` is a gviz column list ("A, D, E") limiting what comes back, so a
+    236-column tab can be read four columns wide. `header_only` limits it the
+    other way, to the header row and no data, for when all that is wanted is
+    what the columns are called.
+
+    `expect` is the tab's first header cell, and checking it is the whole
+    difference between this being safe and not. Asking gviz for a tab that does
+    not exist does not fail: it answers 200 with the spreadsheet's *first* sheet
+    instead, which here is the raw dump of every candidate's contact details and
+    answers. A renamed tab would therefore feed 236 columns of the wrong data
+    into a parser expecting nine, rather than reporting anything wrong. Any
+    response whose first header cell is not the one asked for is treated as a
+    missing tab.
+    """
+    params = {"tqx": "out:csv", "sheet": title}
+    query = ("select " + select) if select else ""
+    if header_only:
+        # Returns the header row and no data rows at all. The point on the raw
+        # tab, where "no data rows" means no email addresses.
+        query = (query + " limit 0").strip()
+    if query:
+        params["tq"] = query
+    url = GVIZ.format(id=sheet_id) + "?" + urllib.parse.urlencode(params)
 
     try:
-        return sh.worksheet(title)
-    except gspread.WorksheetNotFound:
+        with urllib.request.urlopen(url, timeout=timeout) as response:
+            body = response.read().decode("utf-8")
+    except urllib.error.HTTPError as e:
+        if e.code in (401, 403, 404):
+            return None
+        raise
+
+    rows = list(csv.reader(io.StringIO(body)))
+    if not rows:
         return None
+    if expect and tidy(rows[0][0] if rows[0] else "") != expect:
+        return None
+    return rows
 
 
-def tab_values(sh, title):
-    ws = worksheet(sh, title)
-    return None if ws is None else ws.get_all_values()
+def tab_values(sheet_id, title, expect=None):
+    return fetch_tab(sheet_id, title, expect=expect)
 
 
 # --- Ungraded questions, which live only on the raw tab ---------------------
@@ -536,33 +573,32 @@ def allocation_question(header, errors):
     }
 
 
-def raw_answers(sh, questions, warnings):
+def raw_answers(sheet_id, questions, warnings):
     """{submission id: {label: answer}} for the ungraded questions.
 
-    Fetches the identity columns and the question columns by name and nothing
-    else. The raw tab is 236 columns wide and holds every candidate's email
-    address; pulling the whole thing and picking through it in memory would make
-    the module docstring's claim that this script never reads those columns
-    untrue in the only way that matters.
+    Asks for the identity columns and the question columns and nothing else, via
+    a gviz column select. The raw tab is 236 columns wide and holds every
+    candidate's email address; pulling the whole thing and picking through it in
+    memory would make the module docstring's claim that this script never reads
+    those columns untrue in the only way that matters.
     """
-    ws = worksheet(sh, RAW_TAB)
-    if ws is None:
-        warnings.append(f"{RAW_TAB}: tab missing, no ungraded answers published")
-        return {}
-
     wanted = [RAW_SUBMISSION_ID, RAW_FIRST_NAME, RAW_LAST_NAME, RAW_MUNICIPALITY]
     for q in questions:
         wanted.extend(q["columns"])
     wanted = sorted(set(wanted))
 
-    fetched = ws.batch_get([f"{a1(c)}2:{a1(c)}" for c in wanted])
-    # batch_get returns a ragged list of rows per range; flatten each to a plain
-    # column of strings so every column is the same length and indexable by row.
-    depth = max((len(col) for col in fetched), default=0)
-    columns = {}
-    for c, col in zip(wanted, fetched):
-        flat = [(row[0] if row else "") for row in col]
-        columns[c] = flat + [""] * (depth - len(flat))
+    rows = fetch_tab(sheet_id, RAW_TAB, expect=TAB_FIRST_HEADER[RAW_TAB],
+                     select=", ".join(a1(c) for c in wanted))
+    if rows is None:
+        warnings.append(f"{RAW_TAB}: tab missing, no ungraded answers published")
+        return {}
+
+    # gviz returns the selected columns in the order they were asked for, so the
+    # sheet's own indices have to be mapped onto positions in the response.
+    at = {c: i for i, c in enumerate(wanted)}
+    columns = {c: [(row[at[c]] if at[c] < len(row) else "") for row in rows[1:]]
+               for c in wanted}
+    depth = len(rows) - 1
 
     answers = {}
     for r in range(depth):
@@ -818,11 +854,11 @@ def ticked_subjects(category):
     return sorted(names)
 
 
-def load_grade_rows(sh, subject_names, warnings):
+def load_grade_rows(sheet_id, subject_names, warnings):
     """{(submission key, subject display name): [row, ...]} in sheet order."""
     rows = {}
     for name in subject_names:
-        values = tab_values(sh, GRADE_TAB_PREFIX + name)
+        values = tab_values(sheet_id, GRADE_TAB_PREFIX + name, expect="Key")
         if values is None:
             warnings.append(f"{GRADE_TAB_PREFIX}{name}: tab missing, no sub-grades published")
             continue
@@ -1125,9 +1161,8 @@ def main(argv=None):
     _, muni_lookup = load_municipalities(MUNI_YML)
     candidates = load_candidate_index(CANDIDATES_YML)
 
-    sh = open_sheet(args.sheet_id)
-
-    registry = tab_values(sh, REGISTRY_TAB)
+    registry = tab_values(args.sheet_id, REGISTRY_TAB,
+                          expect=TAB_FIRST_HEADER[REGISTRY_TAB])
     if registry is None:
         print(f"error: no '{REGISTRY_TAB}' tab in that spreadsheet", file=sys.stderr)
         return 1
@@ -1135,13 +1170,17 @@ def main(argv=None):
                      if r and tidy(r[R_LABEL]) and norm(r[R_GRADED] if R_GRADED < len(r) else "")
                      in {"yes", "true", "y"}}
 
-    raw = worksheet(sh, RAW_TAB)
-    if raw is None:
+    # The header carries the wording of every ungraded question, and locating
+    # them needs every column's name, so this one read is necessarily the full
+    # width. raw_answers() below then asks for only the columns it needs.
+    raw_header = fetch_tab(args.sheet_id, RAW_TAB, expect=TAB_FIRST_HEADER[RAW_TAB],
+                           header_only=True)
+    if raw_header is None:
         warnings.append(f"{RAW_TAB}: tab missing, no ungraded questions published")
         ungraded = []
     else:
         ungraded = ungraded_questions(
-            raw.row_values(1), graded_labels, subject_order, warnings, errors)
+            raw_header[0], graded_labels, subject_order, warnings, errors)
 
     questions = build_questions(registry, ungraded, subject_order, warnings, errors)
     question_labels = {q["label"] for q in questions}
@@ -1154,14 +1193,15 @@ def main(argv=None):
     graded_subjects = [sid for sid in subject_order
                        if any(q["graded"] and q["subject"] == sid for q in questions)]
 
-    category = tab_values(sh, CATEGORY_TAB)
+    category = tab_values(args.sheet_id, CATEGORY_TAB,
+                          expect=TAB_FIRST_HEADER[CATEGORY_TAB])
     if category is None:
         warnings.append(f"{CATEGORY_TAB}: tab missing, no candidate results published")
         records = []
     else:
-        answers = raw_answers(sh, ungraded, warnings) if ungraded else {}
+        answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
         records = build_scores(
-            category, load_grade_rows(sh, ticked_subjects(category), warnings),
+            category, load_grade_rows(args.sheet_id, ticked_subjects(category), warnings),
             answers, ungraded, subject_order, muni_lookup, candidates,
             question_labels, warnings, errors)
 

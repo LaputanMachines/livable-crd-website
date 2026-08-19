@@ -159,23 +159,19 @@ A grade of `N/A` is published as its own badge, meaning "graded, and this questi
 
 ### One-time setup
 
-The grading sheet is not public and must not become public, so this job authenticates rather than fetching a CSV. Create a Google Cloud service account, download its JSON key, share the grading spreadsheet with the service account's email address (Viewer is enough), and add two repository secrets:
-
-- `GOOGLE_SERVICE_ACCOUNT_JSON` — the key file's entire contents
-- `QUESTIONNAIRE_SUBMISSIONS_SHEET_ID` — the spreadsheet id from its URL
-
-The credential can read candidate emails and every submitted answer, because they live on other tabs of the same spreadsheet. The script never opens those tabs, but the credential's access is not that narrow. To withdraw it, revoke the key.
+Add the repository secret `QUESTIONNAIRE_SUBMISSIONS_SHEET_ID`, set to the spreadsheet id from its URL. Same arrangement as `CANDIDATES_CSV_URL` above and treated the same way: the id is a capability, so it stays in a secret and out of source.
 
 ### Running it locally
 
-Falls back to the same interactive Google auth the rest of [`scripts/questionnaire/`](scripts/questionnaire/) uses when `GOOGLE_SERVICE_ACCOUNT_JSON` is unset:
+Stdlib-only, no dependencies to install:
 
 ```bash
-pip install -r scripts/questionnaire/requirements.txt
 QUESTIONNAIRE_SUBMISSIONS_SHEET_ID="…" python3 scripts/sync-questionnaire.py --dry-run
 ```
 
-The run **fails without writing either file** if a registry category maps to no subject in [`_data/subjects.yml`](_data/subjects.yml), or if the `Category Grades` tab has no `<Subject> - Deploy to website` column pairs. Anything recoverable — an unmatched candidate, an unknown grade, an email-shaped owner — warns and is skipped.
+The run **fails without writing either file** if a registry category maps to no subject in [`_data/subjects.yml`](_data/subjects.yml), if the `Category Grades` tab has no `<Subject> - Deploy to website` columns, or if GEN-02's twelve line-item columns are not all present and adjacent. Anything recoverable — an unmatched candidate, an unknown grade, an email-shaped owner — warns and is skipped.
+
+Each tab is checked against its expected first header before being parsed. Asking for a tab that does not exist does not fail: the spreadsheet answers with its *first* sheet instead, so a renamed tab would otherwise feed 236 columns of the wrong data into a parser expecting nine. A mismatch is treated as a missing tab.
 
 ## Questionnaire committee tooling
 

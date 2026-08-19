@@ -1,5 +1,5 @@
-# Needed by everything in this directory and by scripts/sync-questionnaire.py,
-# which is the one CI job that talks to the Sheets API rather than to a public
-# CSV export. The rest of scripts/ is stdlib-only.
+# Needed by everything in this directory, all of which writes to the sheet and
+# so needs an authenticated client. The rest of scripts/ only reads, and is
+# stdlib-only.
 gspread>=6.2
 google-auth>=2.0
