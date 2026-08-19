@@ -20,6 +20,11 @@ Tabs created:
                       question is worth.
   Grade - <Subject>   One per scorecard subject. A-G generated and protected,
                       H-J typed by graders, M a hidden drift hash.
+  Category Grades     One row per candidate, one column per graded subject
+                      (Healthcare access excluded - its only question is
+                      ungraded). Each cell starts as a weighted rollup of that
+                      subject's question grades; a partner org can type their
+                      own top-level letter over it.
   Sync Log            What the Apps Script did, and what it refused to do.
 
 Idempotent: existing tabs are left alone, and the registry only gains rows for
@@ -43,6 +48,7 @@ RAW_TAB = "2026 Municipal Elections"
 REGISTRY_TAB = "Question Registry"
 LOG_TAB = "Sync Log"
 GRADE_TAB_PREFIX = "Grade - "
+CATEGORY_TAB = "Category Grades"
 
 # Letter grades the site can render. Mirrors VALID_GRADES in
 # scripts/sync-candidates.py and the .grade-* classes in _sass/_components.scss.
@@ -145,6 +151,19 @@ GRADE_COLUMN_WIDTHS = [
 ]
 
 GRADE_TAB_ROWS = 2000
+
+# Category Grades: Key/Candidate/Municipality are written once by Code.gs, same
+# as a grading tab's generated columns. The category columns after them start
+# with a computed rollup but are meant to be typed over with a partner org's own
+# call, so - unlike GENERATED_COLUMNS above - they carry no edit-warning protection.
+CATEGORY_GENERATED_COLUMNS = (0, 3)
+
+# Each category column is immediately followed by a checkbox column with this
+# suffix, gating publication of that category's top-level grade and detailed
+# scoring on the website. Code.gs matches on the same suffix to tell a grade
+# column (gets a rollup formula) from a deploy-gate column (defaults to
+# unchecked) when it appends a new candidate's row.
+CATEGORY_DEPLOY_SUFFIX = " - Deploy to website"
 
 
 def is_graded(label):
@@ -394,6 +413,70 @@ def grade_tab_requests(sheet_id, row_count):
     return requests
 
 
+def graded_categories(registry_values):
+    """Categories with a Graded=Yes row, in CATEGORY_ORDER.
+
+    Reads the registry as it actually stands, not the freshly-derived rows
+    registry_rows() would propose: a category whose only question has since
+    been hand-marked ungraded (Healthcare access, today) drops out here even
+    though registry_rows() still calls it "Yes" for a from-scratch bootstrap.
+    Code.gs's readRegistry() applies the same Graded=="yes" filter at sync
+    time, so the two stay in agreement as the registry is hand-edited.
+    """
+    have = set()
+    for r in registry_values:
+        if len(r) >= 5 and str(r[1]).strip() and str(r[4]).strip().lower() == "yes":
+            have.add(str(r[1]).strip())
+    return [c for c in CATEGORY_ORDER if c in have]
+
+
+def category_tab_requests(sheet_id, row_count, categories):
+    """Widths and the identity-column edit warning.
+
+    Category columns are deliberately left unprotected: a partner org
+    overriding the computed rollup is the point, not a mistake to warn about.
+    Each category is immediately followed by its own "<Category> - Deploy to
+    website" checkbox, which gates publication of that category's top-level
+    grade and detailed scoring - unchecked by default, flipped by hand.
+
+    No checkbox validation is set here, and row_count is unused: applying a
+    BOOLEAN rule to Google Sheets' still-empty template rows makes it
+    auto-fill every one of them with FALSE, which corrupts getLastRow() into
+    reporting the sheet as fully populated. ensureCategoryRows() in Code.gs
+    applies the checkbox rule to only the exact rows it just wrote instead.
+    """
+    requests = [
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 0, "endIndex": 1},
+            "properties": {"pixelSize": 150}, "fields": "pixelSize"}},
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 1, "endIndex": 2},
+            "properties": {"pixelSize": 170}, "fields": "pixelSize"}},
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 2, "endIndex": 3},
+            "properties": {"pixelSize": 130}, "fields": "pixelSize"}},
+        {"addProtectedRange": {
+            "protectedRange": {
+                "range": {"sheetId": sheet_id,
+                          "startColumnIndex": CATEGORY_GENERATED_COLUMNS[0],
+                          "endColumnIndex": CATEGORY_GENERATED_COLUMNS[1]},
+                "description": "Written by the sync script. Edits are overwritten.",
+                "warningOnly": True}}},
+    ]
+    for i in range(len(categories)):
+        grade_col = 3 + 2 * i
+        deploy_col = grade_col + 1
+        requests.append({"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS",
+                      "startIndex": grade_col, "endIndex": grade_col + 1},
+            "properties": {"pixelSize": 100}, "fields": "pixelSize"}})
+        requests.append({"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS",
+                      "startIndex": deploy_col, "endIndex": deploy_col + 1},
+            "properties": {"pixelSize": 70}, "fields": "pixelSize"}})
+    return requests
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__,
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -427,7 +510,7 @@ def main():
         print(f"  UNMAPPED: {', '.join(unmapped)} - fix PREFIX_CATEGORY or set by hand")
 
     existing = {ws.title for ws in sh.worksheets()}
-    wanted = [REGISTRY_TAB] + [GRADE_TAB_PREFIX + c for c in categories] + [LOG_TAB]
+    wanted = [REGISTRY_TAB] + [GRADE_TAB_PREFIX + c for c in categories] + [CATEGORY_TAB, LOG_TAB]
     missing = [t for t in wanted if t not in existing]
     print(f"\nTabs: {len(wanted)} wanted, {len(wanted) - len(missing)} present, "
           f"{len(missing)} to create")
@@ -490,6 +573,23 @@ def main():
         sh.batch_update({"requests": header_row_requests(ws.id, GRADE_HEADERS)
                          + grade_tab_requests(ws.id, GRADE_TAB_ROWS)})
         print(f"{title}: created")
+
+    # Read back what the registry actually says now (including any hand edits,
+    # e.g. Healthcare access marked ungraded) to decide which categories a
+    # partner org gets a top-level grade column for.
+    cg_categories = graded_categories(registry.get_values("A2:E"))
+    cg = sheet_by_title(sh, CATEGORY_TAB)
+    if cg is None:
+        cg_headers = ["Key", "Candidate", "Municipality"]
+        for c in cg_categories:
+            cg_headers += [c, c + CATEGORY_DEPLOY_SUFFIX]
+        cg = sh.add_worksheet(CATEGORY_TAB, rows=GRADE_TAB_ROWS, cols=len(cg_headers))
+        sh.batch_update({"requests": header_row_requests(cg.id, cg_headers)
+                         + category_tab_requests(cg.id, GRADE_TAB_ROWS, cg_categories)})
+        print(f"{CATEGORY_TAB}: created with columns {', '.join(cg_categories)} "
+              "(each with a Deploy to website checkbox)")
+    else:
+        print(f"{CATEGORY_TAB}: already exists, left alone")
 
     log = sheet_by_title(sh, LOG_TAB)
     if log is None:

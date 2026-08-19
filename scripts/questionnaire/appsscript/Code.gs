@@ -28,6 +28,15 @@
  * the sheet, corrects the cell and stamps the hash. Only a row with a hash is
  * eligible for drift flagging, so reconciliation is silent and drift is not.
  *
+ * Both paths also keep `Category Grades` current: one row per candidate (not
+ * per question), added the first time any of their answers sync in. Each
+ * category is a (grade, deploy checkbox) pair of columns: the grade cell
+ * starts as a weighted-average rollup of that category's question-level
+ * grades, which a partner org can type a letter over to record their own
+ * top-level call instead; the checkbox starts unchecked and gates that
+ * category's grade and detailed scoring going out to the website (see
+ * ensureCategoryRows/categoryFormula).
+ *
  * Setup: run Grading > Set up (installs triggers, prompts for the webhook token),
  * then deploy as a web app and give Tally the URL with ?token=... appended.
  */
@@ -36,6 +45,17 @@ var RAW_TAB = '2026 Municipal Elections';
 var REGISTRY_TAB = 'Question Registry';
 var LOG_TAB = 'Sync Log';
 var GRADE_PREFIX = 'Grade - ';
+var CATEGORY_TAB = 'Category Grades';
+
+// Category Grades columns, 1-based: identity, then a (grade, deploy checkbox)
+// pair per category in whatever order grading_tabs.py wrote the header - read
+// from the sheet itself rather than hardcoded, so a category added or dropped
+// there needs no script change here.
+var CG_KEY = 1, CG_CANDIDATE = 2, CG_MUNICIPALITY = 3;
+
+// Suffix marking a header cell as a deploy-gate checkbox rather than a grade
+// column. grading_tabs.py writes the same suffix.
+var CATEGORY_DEPLOY_SUFFIX = ' - Deploy to website';
 
 // Raw-sheet columns identifying the candidate, 1-based. grading_tabs.py repeats
 // these; change both together.
@@ -118,7 +138,8 @@ function doPost(e) {
     var result = syncFromPayload(data);
     log('webhook', 'synced', result.submissionId + ': ' + result.appended +
         ' row(s) appended across ' + result.tabs + ' tab(s)' +
-        (result.skipped ? ', ' + result.skipped + ' already present' : ''));
+        (result.skipped ? ', ' + result.skipped + ' already present' : '') +
+        (result.category ? ', category row added' : ''));
     return json({ ok: true, appended: result.appended });
   } catch (err) {
     // Always log the failure: a webhook that dies silently looks identical to one
@@ -194,7 +215,13 @@ function syncFromPayload(data) {
       tabs++;
     }
     if (appended) PropertiesService.getScriptProperties().setProperty(PROP_PENDING, '1');
-    return { submissionId: submissionId, appended: appended, tabs: tabs, skipped: skipped };
+
+    var categoryRow = ensureCategoryRows(ss, [
+      { key: submissionId, candidate: candidate.name, municipality: candidate.municipality }
+    ], 'webhook');
+
+    return { submissionId: submissionId, appended: appended, tabs: tabs, skipped: skipped,
+             category: categoryRow };
   } finally {
     lock.releaseLock();
   }
@@ -463,17 +490,35 @@ function syncAll(trigger) {
       flushAnswers(byTab[name].sheet, byTab[name].drift, DRIFT_COLOR);
     }
 
+    // One row per submission, not per question - collect distinct submissions
+    // once rather than re-deriving them inside the per-question loop above.
+    var submissions = [], seenSubs = {};
+    for (var s = 1; s < rawValues.length; s++) {
+      var srow = rawValues[s];
+      var subId = String(srow[COL_SUBMISSION_ID - 1] || '').trim();
+      if (!subId || seenSubs[subId]) continue;
+      seenSubs[subId] = true;
+      submissions.push({
+        key: subId,
+        candidate: candidateName(srow),
+        municipality: String(srow[COL_MUNICIPALITY - 1] || '').trim()
+      });
+    }
+    var categoryRows = ensureCategoryRows(ss, submissions, trigger);
+
     var props = PropertiesService.getScriptProperties();
     props.setProperty(PROP_LAST_ROW, String(raw.getLastRow()));
     // Rows appended by this sweep already carry their hash, so the only thing
     // still awaiting reconciliation is whatever the webhook writes next.
     props.setProperty(PROP_PENDING, '0');
 
-    if (appended || drifted || reconciled) {
+    if (appended || drifted || reconciled || categoryRows) {
       log(trigger, 'synced', appended + ' row(s) appended across ' + tabs +
-          ' tab(s); ' + reconciled + ' reconciled; ' + drifted + ' answer(s) changed');
+          ' tab(s); ' + reconciled + ' reconciled; ' + drifted + ' answer(s) changed; ' +
+          categoryRows + ' category row(s) added');
     }
-    return { appended: appended, tabs: tabs, drifted: drifted, reconciled: reconciled };
+    return { appended: appended, tabs: tabs, drifted: drifted, reconciled: reconciled,
+             category: categoryRows };
   } finally {
     lock.releaseLock();
   }
@@ -516,6 +561,118 @@ function existingRows(sheet) {
     };
   }
   return out;
+}
+
+
+/**
+ * Append one Category Grades row per submission that doesn't have one yet.
+ *
+ * One row per candidate, not per question: a partner org's top-level grade for
+ * a whole category, separate from (and starting from a rollup of) the
+ * per-question grades in that category's Grade tab. Which categories get a
+ * pair of columns, and in what order, is read from the tab's own header
+ * rather than hardcoded - grading_tabs.py owns that list, built from which
+ * categories currently have a Graded=Yes registry row.
+ *
+ * Each category is a pair of columns: the grade itself, then a
+ * "<Category> - Deploy to website" checkbox gating publication of that
+ * category's top-level grade and its detailed scoring. A header cell is told
+ * apart as one or the other by CATEGORY_DEPLOY_SUFFIX, not position, so a
+ * category inserted or reordered in the sheet needs no script change.
+ *
+ * Both kinds of cell are written once. A partner typing a letter over the
+ * rollup formula, or checking the box, replaces that for good - that is the
+ * intended override, not a bug, so nothing here ever re-touches an existing
+ * cell.
+ */
+function ensureCategoryRows(ss, submissions, trigger) {
+  var sheet = ss.getSheetByName(CATEGORY_TAB);
+  if (!sheet) {
+    log(trigger, 'skipped', 'no tab "' + CATEGORY_TAB + '"');
+    return 0;
+  }
+
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 4) return 0;  // header has no category columns yet
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  var existing = {};
+  var lastRow = sheet.getLastRow();
+  if (lastRow >= 2) {
+    var keys = sheet.getRange(2, CG_KEY, lastRow - 1, 1).getValues();
+    for (var i = 0; i < keys.length; i++) {
+      var k = String(keys[i][0] || '').trim();
+      if (k) existing[k] = true;
+    }
+  }
+
+  var toAdd = [];
+  for (var s = 0; s < submissions.length; s++) {
+    var sub = submissions[s];
+    if (existing[sub.key]) continue;
+    existing[sub.key] = true;  // guard duplicates within this same batch
+    toAdd.push(sub);
+  }
+  if (!toAdd.length) return 0;
+
+  var first = Math.max(sheet.getLastRow() + 1, 2);
+  var values = toAdd.map(function (sub, i) {
+    var line = first + i;
+    var out = new Array(lastCol).fill('');
+    out[CG_KEY - 1] = sub.key;
+    out[CG_CANDIDATE - 1] = sub.candidate;
+    out[CG_MUNICIPALITY - 1] = sub.municipality;
+    for (var c = 4; c <= lastCol; c++) {
+      var label = String(header[c - 1] || '').trim();
+      if (!label) continue;
+      if (label.endsWith(CATEGORY_DEPLOY_SUFFIX)) {
+        out[c - 1] = false;  // unchecked until a partner org signs off
+      } else {
+        out[c - 1] = categoryFormula(label, line);
+      }
+    }
+    return out;
+  });
+  sheet.getRange(first, 1, values.length, lastCol).setValues(values);
+
+  // Checkbox rendering is applied only to the rows just written, never to a
+  // wide empty range: Sheets auto-fills a BOOLEAN-validated range with FALSE
+  // the moment the rule is set, even where nothing was written, which is
+  // exactly what corrupted getLastRow() into thinking this tab ran 2000 rows
+  // deep the first time this was tried tab-wide from grading_tabs.py.
+  var checkboxRule = SpreadsheetApp.newDataValidation().requireCheckbox().build();
+  for (var dc = 4; dc <= lastCol; dc++) {
+    if (String(header[dc - 1] || '').trim().endsWith(CATEGORY_DEPLOY_SUFFIX)) {
+      sheet.getRange(first, dc, values.length, 1).setDataValidation(checkboxRule);
+    }
+  }
+
+  return values.length;
+}
+
+
+/**
+ * Weighted-average letter grade for one candidate's category, from the graded
+ * question rows in that category's Grade tab. Question grades map onto an
+ * even 0-4 scale (F=0 ... A=4); the weighted average rounds to the nearest
+ * whole point and back to a letter. Ungraded rows (blank Grade cell) drop out
+ * of both the numerator and the weight used to normalise it, so a
+ * partly-graded candidate isn't pulled toward F by the questions nobody has
+ * graded yet.
+ */
+function categoryFormula(category, row) {
+  var tab = "'" + GRADE_PREFIX + category + "'";
+  var scale = '{"F","C-","C","B","A"}';
+  var candidateCol = tab + '!$B$2:$B', municipalityCol = tab + '!$C$2:$C';
+  var gradeCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
+
+  var filter = '(' + candidateCol + '=$B' + row + ')*(' + municipalityCol + '=$C' + row + ')*(' +
+      gradeCol + '<>"")';
+  var value = 'IFERROR(MATCH(' + gradeCol + ',' + scale + ',0)-1,0)';
+  var numerator = 'SUMPRODUCT(' + filter + '*' + value + '*' + weightCol + ')';
+  var denominator = 'SUMPRODUCT(' + filter + '*' + weightCol + ')';
+
+  return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},ROUND(' + numerator + '/' + denominator + ',0)+1),"")';
 }
 
 
@@ -732,8 +889,10 @@ function menuCheckSetup() {
     if (total !== 1) problems.push(c + ' weights total ' + Math.round(total * 100) + '%, not 100%.');
   }
 
+  if (!ss.getSheetByName(CATEGORY_TAB)) problems.push('No tab "' + CATEGORY_TAB + '".');
+
   var triggers = ScriptApp.getProjectTriggers().map(function (t) { return t.getHandlerFunction(); });
-  if (triggers.indexOf('timerSync') === -1) problems.push('No 5-minute timer (Grading > Set up).');
+  if (triggers.indexOf('timerSync') === -1) problems.push('No daily timer (Grading > Set up).');
   if (triggers.indexOf('onGradeEdit') === -1) problems.push('No grader-stamp trigger (Grading > Set up).');
 
   SpreadsheetApp.getUi().alert(problems.length
