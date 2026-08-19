@@ -186,4 +186,83 @@ candidates:
               years.
   - name: Don Brown
     municipality: view-royal
-    subjects: []
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: >-
+              I would love to have a bandshell in one of our community parks
+              where a society could organize and run free concerts similar to
+              what other municipalities are doing (Colwood, Langford, Sidney
+              and Saanich as examples).
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 1000000
+                display: "$1,000,000"
+                share: 11
+              - area: Transit
+                amount: 300000
+                display: "$300,000"
+                share: 3
+              - area: Walking Infrastructure
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: Roadway Infrastructure
+                amount: 1000000
+                display: "$1,000,000"
+                share: 11
+              - area: Policing
+                amount: 500000
+                display: "$500,000"
+                share: 6
+              - area: "Fire & Emergency Services"
+                amount: 1500000
+                display: "$1,500,000"
+                share: 17
+              - area: "Parks & Recreation"
+                amount: 1500000
+                display: "$1,500,000"
+                share: 17
+              - area: "Arts & Culture"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 11
+              - area: "Climate Action & Environment"
+                amount: 500000
+                display: "$500,000"
+                share: 6
+              - area: Unhoused Resident Services
+                amount: 500000
+                display: "$500,000"
+                share: 6
+              - area: Community-Based Clinics
+                amount: 1000000
+                display: "$1,000,000"
+                share: 11
+          - label: GEN-GEN
+            answer: >-
+              We have great parks and green spaces. We need to preserve and
+              add to these areas. We need to increase our urban forest canopy.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: >-
+              We have 3,000 View Royal residents who do not have a family
+              doctor. We are in the process of supporting a clinic at Eagle
+              Ridge Mall to help with this. This is coming very soon!!!
