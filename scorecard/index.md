@@ -71,6 +71,9 @@ description: >-
     <span class="scorecard-legend__item">
       {% include grade-badge.html grade="" state="review" %}Being graded
     </span>
+    <span class="scorecard-legend__item">
+      {% include grade-badge.html grade="" state="answers" %}Answered, not graded
+    </span>
     {%- comment -%}
       "Not graded" rather than "No reply": the dash also stands on topics the
       coalition does not grade at all, where it is not the candidate's silence
@@ -422,20 +425,34 @@ description: >-
               </span>
             </th>
             {%- comment -%}
-              An ungraded cell is one of two different things, and the table has
-              to tell them apart: a candidate who returned the questionnaire and
-              is waiting on a topic being graded, and a candidate who has not
-              replied. The first gets the circular arrow, the second the plain dash.
+              An ungraded cell is one of three different things, and the table
+              has to tell them apart:
 
-              Gated on `graded_subjects` — the topics the grading sheet actually
-              has a column for — so a returned candidate does not appear to be
-              waiting on General or Healthcare access, which carry no graded
-              question and are not being graded for anyone.
+                circular arrow  returned, and this topic is being graded
+                speech bubble   answered, and this topic is never graded, so
+                                there is something to read and no letter coming
+                dash            no reply, or nothing published
+
+              Which of the first two applies is decided by `graded_subjects`,
+              the topics that carry a graded question at all. General and
+              Healthcare access do not, so a returned candidate never appears to
+              be waiting on them; what they can carry is a written answer, and
+              that is what the bubble points at.
+
+              The bubble is checked second on purpose. A graded topic keeps its
+              arrow even when the candidate also wrote a comment on it, because
+              the grade is the thing that is coming; the comment shows inside
+              that topic on the candidate's own page, where it has room.
             {%- endcomment -%}
             {% for subject in site.data.subjects %}
             {% assign cell = c.scores[subject.id] %}
             {% assign cell_state = "" %}
-            {% if c.questionnaire_returned and site.data.scores.graded_subjects contains subject.id %}{% assign cell_state = "review" %}{% endif %}
+            {% if site.data.scores.graded_subjects contains subject.id %}
+              {% if c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
+            {% else %}
+              {% assign published = c.published_subjects[subject.id] %}
+              {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
+            {% endif %}
             <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell state=cell_state %}</td>
             {% endfor %}
           </tr>
@@ -518,6 +535,21 @@ description: >-
             the topic's questions, and each topic is published as that organization
             finishes it, so a candidate can show letters in one topic and this in
             another. It says nothing about how the topic is going.
+          </dd>
+        </div>
+        <div class="grade-def">
+          <dt class="grade-def__term">
+            {% include grade-badge.html grade="" state="answers" %}
+            <span class="grade-def__label">Answered, not graded</span>
+          </dt>
+          <dd class="grade-def__desc">
+            The candidate answered, and this is a topic we do not assign a letter
+            in. Two of them work this way: <strong>General</strong>, which asks
+            what a candidate would change and how they would split a budget, and
+            <strong>Healthcare access</strong>, which asks one question about
+            primary care clinics. The coalition puts them to every candidate
+            because the answers are worth reading, not because we score them.
+            Open the candidate's page to read what they wrote.
           </dd>
         </div>
         <div class="grade-def">

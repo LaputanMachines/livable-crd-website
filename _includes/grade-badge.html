@@ -3,7 +3,7 @@
   the per-question rows inside a published subject, so every grade on the site is
   rendered by this file and they cannot drift.
 
-  Four states. The last three all look "empty" to a reader and mean different
+  Five states. The last four all look "empty" to a reader and mean different
   things, so each carries its own glyph and its own border treatment — never
   colour alone, because the leaflet prints without backgrounds.
 
@@ -13,6 +13,11 @@
     ↻          the candidate returned the questionnaire and this topic has not
                been published yet. Passed in as state="review" by the caller,
                which is the only one that knows whether a reply came back.
+    speech     the candidate answered and nobody grades this topic, so there is
+               something to read and there will never be a letter. Passed in as
+               state="answers". Only General and Healthcare access can reach it:
+               every other topic carries a grade, and a written comment on a
+               graded topic shows inside that topic rather than in its cell.
     —          pending: nothing to report. Either no questionnaire came back, or
                the topic is not one the coalition grades.
 {%- endcomment -%}
@@ -25,7 +30,23 @@
 {%- endcomment -%}
 {% assign no_grade = false %}
 {% if g == '' or g_upper == 'NULL' or g_upper == 'PENDING' or g == '—' %}{% assign no_grade = true %}{% endif %}
-{% if no_grade and include.state == 'review' %}
+{% if no_grade and include.state == 'answers' %}
+{%- comment -%}
+  A speech bubble: there is something written here to read. Deliberately not a
+  tick or a dot, which would read as a verdict on a topic nobody scores. Inline
+  rather than an <img> for the same reason as the circular arrow below it: it
+  has to take the chip's colour.
+
+  Drawn at stroke-width 3.5 where the arrow uses 2.5. It sits on a filled chip
+  at roughly half the chip's width, and a bubble is mostly the space it encloses,
+  so a lighter stroke had almost nothing left of it at matrix size.
+{%- endcomment -%}
+<span class="grade grade--answers" title="Answered; this topic is not graded" aria-label="Answered, not graded">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</span>
+{% elsif no_grade and include.state == 'review' %}
 {%- comment -%}
   A clockwise circular arrow: the "in progress" mark, drawn rather than typed.
   An ellipsis was the obvious character for it and the wrong one — at matrix size

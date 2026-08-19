@@ -26,6 +26,10 @@ $border-weight-heavy: 4px;
 
 // Letter-grade colours stay semantic (green→good … red→poor) so the scorecard
 // remains legible at a glance; they convey data, not brand identity.
+//
+// Nothing that is not a grade may borrow one of them. The "answered, not graded"
+// chip briefly used $grade-a and had to be moved off it: on a topic the coalition
+// does not score, the best score's green read as a good score.
 $grade-a: #1b7a3d;
 $grade-b: #2d6a9f;
 $grade-c: #b8860b;

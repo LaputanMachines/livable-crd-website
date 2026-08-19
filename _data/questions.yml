@@ -32,10 +32,48 @@
 # Order matches _data/subjects.yml, then the registry's own order within a
 # subject, which is the order candidates met the questions on the form.
 
-count: 55
+count: 66
 graded_count: 54
 status: published
 items:
+  # --- general ---
+  - label: GEN-01
+    subject: general
+    question: >-
+      If you could change one policy, bylaw, feature, or municipal asset (i.e,
+      facility or infrastructure) in your municipality, what would it be and
+      why?
+    type: text
+    graded: false
+  - label: GEN-02
+    subject: general
+    question: >-
+      Your municipality has received $10 million in new annual funding and
+      must spend all of it. How would you allocate it across the following
+      areas? Your answers must total $10 million.
+    type: allocation
+    type_label: Split $10 million across twelve areas
+    graded: false
+    areas:
+      - Housing
+      - Transit
+      - Walking Infrastructure
+      - "Rolling & Cycling Infrastructure"
+      - Roadway Infrastructure
+      - Policing
+      - "Fire & Emergency Services"
+      - "Parks & Recreation"
+      - "Arts & Culture"
+      - "Climate Action & Environment"
+      - Unhoused Resident Services
+      - Community-Based Clinics
+  - label: GEN-GEN
+    subject: general
+    question: >-
+      If you have anything you'd like to communicate about your region,
+      generally, feel free to share your thoughts here.
+    type: text
+    graded: false
   # --- transit ---
   - label: TRN-01
     subject: transit
@@ -84,6 +122,13 @@ items:
     graded: true
     weight: "20%"
     owner: Better Transit YYJ
+  - label: TRN-GEN
+    subject: transit
+    question: >-
+      If you have anything you'd like to add in regards to transit in your
+      region, feel free to share your thoughts below.
+    type: text
+    graded: false
   # --- housing ---
   - label: HFL-01
     subject: housing
@@ -295,6 +340,14 @@ items:
     type: single
     graded: true
     owner: RUSH
+  - label: CLI-GEN
+    subject: climate
+    question: >-
+      If you have anything you'd like to add in regards to climate concerns
+      with respect to your municipality or the region as a whole, feel free to
+      share your thoughts below.
+    type: text
+    graded: false
   # --- arts ---
   - label: ART-01
     subject: arts
@@ -371,6 +424,14 @@ items:
     type: multi
     graded: true
     owner: "Victori'us"
+  - label: ART-GEN
+    subject: arts
+    question: >-
+      If you have anything you'd like to add in regards to the arts in your
+      municipality or the region as a whole, feel free to share your thoughts
+      below.
+    type: text
+    graded: false
   # --- rolling-cycling ---
   - label: ROL-01
     subject: rolling-cycling
@@ -414,6 +475,14 @@ items:
     type: single
     graded: true
     owner: Better Transit YYJ
+  - label: ROL-GEN
+    subject: rolling-cycling
+    question: >-
+      If you have anything you'd like to add in regards to the rolling and
+      cycling in your municipality or the region as a whole, feel free to
+      share your thoughts below.
+    type: text
+    graded: false
   # --- walking ---
   - label: WLK-01
     subject: walking
@@ -469,6 +538,14 @@ items:
     type: single
     graded: true
     owner: "Walk On, Victoria"
+  - label: WLK-GEN
+    subject: walking
+    question: >-
+      If you have anything you'd like to add in regards to walking or
+      pedestrian activity in your municipality, feel free to share your
+      thoughts below.
+    type: text
+    graded: false
   # --- healthcare-access ---
   - label: HLT-01
     subject: healthcare-access
@@ -478,6 +555,13 @@ items:
     type: single
     graded: false
     owner: Family Doctors For Saanich
+  - label: HLT-GEN
+    subject: healthcare-access
+    question: |-
+      If you have anything you'd like to add in regards to healthcare in your municipality, feel free to share your
+      thoughts below.
+    type: text
+    graded: false
   # --- reconciliation ---
   - label: REC-01
     subject: reconciliation
@@ -498,6 +582,14 @@ items:
     graded: true
     weight: "50%"
     owner: Todd Litman
+  - label: REC-GEN
+    subject: reconciliation
+    question: >-
+      If you have anything you'd like to add in regards to First Nation
+      transit governance or consultation practices, feel free to share your
+      thoughts below.
+    type: text
+    graded: false
   # --- governance ---
   - label: GOV-01
     subject: governance
@@ -547,3 +639,11 @@ items:
     type_label: Asked separately for each municipality; select all that apply
     graded: true
     owner: Homes for Living
+  - label: GOV-GEN
+    subject: governance
+    question: >-
+      If you have anything you'd like to add in regards to governance, shared
+      services, and municipal infrastructure, feel free to share your thoughts
+      below.
+    type: text
+    graded: false

@@ -158,6 +158,20 @@ description: >-
           {%- endif %}
         </div>
         <p class="questionnaire-item__question">{{ q.question }}</p>
+        {%- if q.areas %}
+        {%- comment -%}
+          GEN-02's twelve line items. Listed here because the question on its
+          own ("how would you allocate it across the following areas?") names
+          none of them, and the areas are most of what the question actually
+          asks: which twelve things a candidate is made to trade off against
+          each other is the whole design of it.
+        {%- endcomment -%}
+        <ul class="questionnaire-item__areas">
+          {%- for area in q.areas %}
+          <li>{{ area }}</li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
         {%- if q.type_label or credited == false %}
         <p class="questionnaire-item__meta">
           {%- if q.type_label %}{{ q.type_label }}{% endif %}

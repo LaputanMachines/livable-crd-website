@@ -164,11 +164,16 @@ layout: default
     {%- assign detail = c.published_subjects[subject.id] %}
     {%- comment -%}
       Same rule as the scorecard matrix: a returned questionnaire waiting on a
-      topic the coalition grades shows the circular arrow, and everything else
-      stays a dash.
+      topic the coalition grades shows the circular arrow; a topic nobody grades
+      that the candidate answered shows a speech bubble; everything else stays a
+      dash.
     {%- endcomment -%}
     {%- assign cell_state = "" %}
-    {%- if returned and gradable contains subject.id %}{% assign cell_state = "review" %}{% endif %}
+    {%- if gradable contains subject.id %}
+      {%- if returned %}{% assign cell_state = "review" %}{% endif %}
+    {%- elsif detail.unscored.size > 0 %}
+      {%- assign cell_state = "answers" %}
+    {%- endif %}
     <li class="candidate-grade-row" style="--card-accent: {{ subject.accent }}">
       {%- if detail %}
       {%- comment -%}
@@ -214,18 +219,30 @@ layout: default
         </summary>
 
         <div class="candidate-grade__detail">
+          {%- comment -%}
+            The meta line describes what is actually in the panel. A topic with
+            graded questions counts those and names its grader; a topic nobody
+            grades counts its answers and says so, because "3 questions" over a
+            panel with no grade chips in it invites a reader to go looking for
+            letters that are never coming.
+          {%- endcomment -%}
           <p class="candidate-grade__meta">
-            {{ detail.questions.size }} question{% if detail.questions.size != 1 %}s{% endif %}
+            {%- if detail.questions.size > 0 %}
+            {{ detail.questions.size }} graded question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Graded by {{ owners[0] }}{% endif %}
+            {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
+            {%- else %}
+            {{ detail.unscored.size }} answer{% if detail.unscored.size != 1 %}s{% endif %} · Not graded
+            {%- endif %}
             · <a href="{{ '/questionnaire/' | relative_url }}#questions-{{ subject.id }}">See these questions</a>
           </p>
 
-          {%- if detail.questions.size == 0 %}
+          {%- if detail.questions.size == 0 and detail.unscored.size == 0 %}
           <p class="candidate-grade__empty">
             This topic's grade is published, but the per-question breakdown
             behind it is not available.
           </p>
-          {%- else %}
+          {%- elsif detail.questions.size > 0 %}
           {%- comment -%}
             The question ids come from the data (TRN-01), so the list's own
             numbering would be a second count disagreeing with the first.
@@ -263,6 +280,62 @@ layout: default
             </li>
             {%- endfor %}
           </ol>
+          {%- endif %}
+
+          {%- if detail.unscored.size > 0 %}
+          {%- comment -%}
+            The answers nobody grades: the per-topic "anything to add" box on
+            every topic, and on General and Healthcare access the questions
+            themselves. Set apart from the graded list above rather than mixed
+            into it, and labelled, because a run of answers with no grade chip
+            beside them otherwise reads as grading that has not happened yet.
+            It has not and it will not, and saying so is the point of the block.
+          {%- endcomment -%}
+          <div class="candidate-unscored">
+            <h4 class="candidate-unscored__head">
+              {%- if detail.questions.size > 0 %}Also shared, ungraded{% else %}What {{ c.name }} said{% endif %}
+            </h4>
+            <ol class="candidate-answers">
+              {%- for q in detail.unscored %}
+              {%- assign asked = site.data.questions.items | where: "label", q.label | first %}
+              {%- if asked == nil %}{% continue %}{% endif %}
+              <li class="candidate-answer">
+                <div class="candidate-answer__head">
+                  <span class="candidate-answer__label">{{ q.label }}</span>
+                  <span class="candidate-answer__weight">Not graded</span>
+                </div>
+                <p class="candidate-answer__question">{{ asked.question }}</p>
+                {%- if q.allocation.size > 0 %}
+                {%- comment -%}
+                  GEN-02 is twelve amounts, not a sentence, so it is laid out as
+                  a table rather than run together as text. The bar is a CSS
+                  width off the share, which is why the figure is printed beside
+                  it and not only drawn: a bar alone is unreadable on the
+                  leaflet and to a screen reader.
+                {%- endcomment -%}
+                <table class="candidate-allocation">
+                  <caption class="sr-only">{{ c.name }}'s allocation of ten million dollars</caption>
+                  <tbody>
+                    {%- for line in q.allocation %}
+                    <tr>
+                      <th scope="row">{{ line.area }}</th>
+                      <td class="candidate-allocation__bar">
+                        <span style="width: {{ line.share }}%" aria-hidden="true"></span>
+                      </td>
+                      <td class="candidate-allocation__amount">{{ line.display }}</td>
+                    </tr>
+                    {%- endfor %}
+                  </tbody>
+                </table>
+                {%- elsif q.answer %}
+                <div class="candidate-answer__answer">
+                  <div class="candidate-answer__text">{{ q.answer | escape | newline_to_br }}</div>
+                </div>
+                {%- endif %}
+              </li>
+              {%- endfor %}
+            </ol>
+          </div>
           {%- endif %}
         </div>
       </details>

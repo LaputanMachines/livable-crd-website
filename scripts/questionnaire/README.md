@@ -489,7 +489,13 @@ website`** checkbox, and that checkbox is the entire publication gate:
 | Checkbox | What the site shows for that candidate and subject |
 |---|---|
 | unticked | A circular arrow, meaning "returned the questionnaire, this topic is still being graded". No grade, no answers, no rationale. |
-| ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. |
+| ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
+
+**General** and **Healthcare access** carry a checkbox with no grade column beside it. Nobody
+grades either, so there is nothing to roll up, but their answers (`GEN-01`, `GEN-02`,
+`HLT-01` and both comment boxes) are published verbatim and still need somebody to release
+them. A ticked box there puts a speech-bubble mark in that column on the scorecard, meaning
+"answered, not graded, readable".
 
 Unticking it takes the subject back off the site on the next sync. Nothing in the website
 repo overrides this, and nothing else needs editing to publish or unpublish.
@@ -512,12 +518,12 @@ tabs — and commits them only when they changed. Full setup is in that repo's R
 
 Three things about this sheet matter to what gets published:
 
-- **`Question Registry` is the published question list.** Every row reaches
+- **`Question Registry` is the published list of graded questions.** Every row reaches
   `/questionnaire/` on the website, whether `Graded` says Yes or No. Wording fixed there
-  is wording fixed on the site the next morning. Questions the registry does not list are
-  not published at all, which currently includes `GEN-01`, `GEN-02` and the per-topic
-  `*-GEN` comment boxes: `grading_tabs.py` skips them as ungraded, so they never got a
-  registry row. Add rows for them if they should appear.
+  is wording fixed on the site the next morning. The questions it does not list -
+  `GEN-01`, `GEN-02` and the per-topic `*-GEN` comment boxes - are published too, read
+  straight off the raw tab's own column headers, so they need no registry row and adding
+  one would duplicate them.
 - **`Owner` is printed on the site**, as the organization that wrote and grades the
   question. Rows whose `Owner` is a personal email address are dropped with a warning
   rather than published; several `ROL-*` rows are in that state. Put the organization's

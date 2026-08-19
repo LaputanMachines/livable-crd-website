@@ -176,6 +176,26 @@
   line-height: 1.55;
 }
 
+// GEN-02's twelve line items. Set as a wrapping row of pills rather than a
+// bulleted list: the point is how many things are being traded off against each
+// other, which a reader takes in from one block and not from twelve rows.
+.questionnaire-item__areas {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+
+  li {
+    padding: 0.1rem 0.45rem;
+    border: 1px solid rgba($color-border, 0.35);
+    border-radius: $radius;
+    background: $color-bg-warm;
+    font-size: 0.8rem;
+  }
+}
+
 .questionnaire-item__meta {
   margin: 0.3rem 0 0;
   font-size: 0.8rem;

@@ -73,6 +73,70 @@ candidates:
     scores:
       transit: A
     subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: >-
+              I would repurpose the so-called "street sweeps" by replacing a
+              couple bylaw officer with outreach workers, to help the unhoused
+              get back on their feet and also to keep bylaw officers honest.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 2500000
+                display: "$2,500,000"
+                share: 25
+              - area: Transit
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Walking Infrastructure
+                amount: 250000
+                display: "$250,000"
+                share: 2
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Roadway Infrastructure
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Policing
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Fire & Emergency Services"
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: "Parks & Recreation"
+                amount: 250000
+                display: "$250,000"
+                share: 2
+              - area: "Arts & Culture"
+                amount: 250000
+                display: "$250,000"
+                share: 2
+              - area: "Climate Action & Environment"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Unhoused Resident Services
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Community-Based Clinics
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+          - label: GEN-GEN
+            answer: >-
+              I would actually subtract from policing budget and spend it on
+              addressing poverty crime at the source, such as lowering the
+              cost of living and improving access to health care.
       - id: transit
         grade: A
         questions:
@@ -100,3 +164,21 @@ candidates:
             grade: A
             weight: "20%"
             answer: "Yes"
+        unscored:
+          - label: TRN-GEN
+            answer: I support universal free public transit.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: >-
+              We urgently need more medical clinics! Wait times at emergency
+              rooms and walk-in clinics have been insufferable for several
+              years.

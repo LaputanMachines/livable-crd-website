@@ -254,6 +254,45 @@
   height: 65%;
 }
 
+// "Answered, and nobody grades this topic." The only chip that promises the
+// reader something to read rather than something to wait for, so it is the one
+// that has to look least like a placeholder: a solid chip, white on colour,
+// carrying the same weight in the table as a letter does.
+//
+// Only General and Healthcare access ever reach it. Every other topic carries a
+// grade, and a written comment on a graded topic is shown inside that topic on
+// the candidate's own page rather than in a cell with no room for it.
+//
+// The deep ink purple, deliberately from outside the grade palette. It briefly
+// used $grade-a, and green turned out to say the wrong thing: a reader scanning
+// the General column read the best score's colour as a good score on a topic
+// nobody scores. This is the site's structural colour - page headers, table
+// headers - so it reads as "a thing", not as a verdict.
+//
+// Filled rather than outlined, because unlike the circular arrow beside it this
+// chip promises something to read now rather than something to wait for, and
+// should carry a letter's weight in the table.
+.grade--answers {
+  background: $color-accent-alt;
+  color: #fff;
+}
+
+// Smaller than the arrow and drawn heavier. A bubble is mostly enclosed
+// whitespace, so at the arrow's size it crowded the chip's edges, and at the
+// arrow's stroke weight its outline thinned to nothing once scaled down.
+.grade--answers svg {
+  display: block;
+  width: 54%;
+  height: 54%;
+}
+
+// Same reasoning as the circular arrow's override below the matrix rule: this
+// is the smallest either is ever drawn and the one place they share a column.
+.scorecard-matrix__cell .grade--answers svg {
+  width: 66%;
+  height: 66%;
+}
+
 // "Graded, and the question does not apply to this candidate" — distinct from
 // pending, which is "not graded yet". Both are quiet, because neither is a
 // judgement, but this one is a filled chip like a real grade: a decision was

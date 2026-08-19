@@ -20,11 +20,13 @@ Tabs created:
                       question is worth.
   Grade - <Subject>   One per scorecard subject. A-G generated and protected,
                       H-J typed by graders, M a hidden drift hash.
-  Category Grades     One row per candidate, one column per graded subject
-                      (Healthcare access excluded - its only question is
-                      ungraded). Each cell starts as a weighted rollup of that
-                      subject's question grades; a partner org can type their
-                      own top-level letter over it.
+  Category Grades     One row per candidate. One column per graded subject,
+                      each starting as a weighted rollup of that subject's
+                      question grades which a partner org can type their own
+                      top-level letter over, and each followed by a checkbox
+                      gating publication on the website. General and Healthcare
+                      access have no graded question and so no grade column,
+                      but do get a gate: their answers are published verbatim.
   Sync Log            What the Apps Script did, and what it refused to do.
 
 Idempotent: existing tabs are left alone, and the registry only gains rows for
@@ -105,6 +107,19 @@ CATEGORY_ORDER = [
     "Housing", "Transit", "Walking", "Rolling & cycling", "Climate",
     "Arts", "Governance", "Reconciliation", "Healthcare access",
 ]
+
+# Categories the questionnaire asks about but nobody grades: General is only the
+# GEN-* free-text questions, and Healthcare access's one question is marked
+# ungraded in the registry. They still need a publication gate, because their
+# answers are published on the website verbatim, so Category Grades carries a
+# deploy checkbox for each.
+#
+# A checkbox and NO grade column beside it, unlike every other category. There
+# is nothing to roll up, and a grade column here would point categoryFormula()
+# at a Grade tab with no graded rows in it. Code.gs tells the two kinds of
+# header apart by CATEGORY_DEPLOY_SUFFIX rather than by position, so a lone gate
+# column needs no change there.
+UNGRADED_GATES = ["General", "Healthcare access"]
 
 # Owner is hand-maintained and sits after the generated columns: who submitted
 # the question, so a grader knows whom to ask. The script writes its header on a
@@ -430,6 +445,102 @@ def graded_categories(registry_values):
     return [c for c in CATEGORY_ORDER if c in have]
 
 
+def category_headers(categories):
+    """The full Category Grades header row.
+
+    Graded categories get a (grade, deploy) pair; the ungraded ones get a lone
+    deploy checkbox, appended last so adding them never shifts a column that
+    already holds data.
+    """
+    headers = ["Key", "Candidate", "Municipality"]
+    for c in categories:
+        headers += [c, c + CATEGORY_DEPLOY_SUFFIX]
+    for c in UNGRADED_GATES:
+        headers.append(c + CATEGORY_DEPLOY_SUFFIX)
+    return headers
+
+
+def missing_category_headers(existing, wanted):
+    """Headers in `wanted` that `existing` does not already carry, in order.
+
+    Compared by exact header text, which is what both Code.gs and
+    sync-questionnaire.py match on. Only ever used to append: a header the sheet
+    has and this script does not know about is somebody's own column and is left
+    where it is.
+    """
+    have = {str(h).strip() for h in existing}
+    return [h for h in wanted if h not in have]
+
+
+def append_category_gates(sh, sheet, headers):
+    """Add any missing Category Grades columns to a tab that already exists.
+
+    The tab is created once, on the first run, and every run after that used to
+    leave it alone entirely. That was fine while the column set was fixed, and
+    stopped being fine the moment General and Healthcare access needed gates of
+    their own: the tab was already full of graded rows, so recreating it was not
+    an option and the columns had to arrive beside them.
+
+    Additive only. Existing columns are never moved, renamed or removed, so a
+    grade already typed and a box already ticked keep both their meaning and
+    their position.
+    """
+    existing = sheet.row_values(1)
+    missing = missing_category_headers(existing, headers)
+    if not missing:
+        print(f"{CATEGORY_TAB}: already has every column, left alone")
+        return
+
+    start = len(existing)
+    if start + len(missing) > sheet.col_count:
+        sheet.add_cols(start + len(missing) - sheet.col_count)
+
+    sheet.update(
+        [missing],
+        f"{a1(start)}1:{a1(start + len(missing) - 1)}1",
+        value_input_option="RAW",
+    )
+
+    requests = [{
+        "repeatCell": {
+            "range": {"sheetId": sheet.id, "startRowIndex": 0, "endRowIndex": 1,
+                      "startColumnIndex": start, "endColumnIndex": start + len(missing)},
+            "cell": {"userEnteredFormat": HEADER_FORMAT},
+            "fields": "userEnteredFormat.backgroundColor,userEnteredFormat.textFormat,"
+                      "userEnteredFormat.wrapStrategy",
+        }
+    }]
+    for i, header in enumerate(missing):
+        width = 70 if header.endswith(CATEGORY_DEPLOY_SUFFIX) else 100
+        requests.append({"updateDimensionProperties": {
+            "range": {"sheetId": sheet.id, "dimension": "COLUMNS",
+                      "startIndex": start + i, "endIndex": start + i + 1},
+            "properties": {"pixelSize": width}, "fields": "pixelSize"}})
+
+    # Backfill the candidates already on the tab. Code.gs only ever writes a row
+    # it has not seen before, so without this the new gates would sit blank and
+    # unrendered on every existing row: an empty cell reads as unpublished, which
+    # is right, but there would be no checkbox to tick to change that.
+    #
+    # Scoped to exactly the rows that hold a key, for the same reason Code.gs
+    # scopes its own checkbox rule: a BOOLEAN rule applied to empty rows makes
+    # Sheets auto-fill every one with FALSE and corrupts getLastRow().
+    filled = len([k for k in sheet.col_values(1)[1:] if str(k).strip()])
+    for i, header in enumerate(missing):
+        if not header.endswith(CATEGORY_DEPLOY_SUFFIX) or not filled:
+            continue
+        requests.append({"repeatCell": {
+            "range": {"sheetId": sheet.id, "startRowIndex": 1, "endRowIndex": 1 + filled,
+                      "startColumnIndex": start + i, "endColumnIndex": start + i + 1},
+            "cell": {"userEnteredValue": {"boolValue": False},
+                     "dataValidation": {"condition": {"type": "BOOLEAN"}}},
+            "fields": "userEnteredValue,dataValidation"}})
+
+    sh.batch_update({"requests": requests})
+    print(f"{CATEGORY_TAB}: appended {', '.join(missing)}"
+          + (f", unchecked on {filled} existing row(s)" if filled else ""))
+
+
 def category_tab_requests(sheet_id, row_count, categories):
     """Widths and the identity-column edit warning.
 
@@ -517,6 +628,20 @@ def main():
     for t in missing:
         print(f"  + {t}")
 
+    # Column-level preview for a tab that already exists. Without this the whole
+    # Category Grades migration is invisible to --dry-run, which returns below
+    # long before the code that would run it, and the one thing worth previewing
+    # about a write to a tab full of grades is which columns it adds.
+    cg_preview = sheet_by_title(sh, CATEGORY_TAB)
+    cg_registry = sheet_by_title(sh, REGISTRY_TAB)
+    if cg_preview is not None and cg_registry is not None:
+        pending = missing_category_headers(
+            cg_preview.row_values(1),
+            category_headers(graded_categories(cg_registry.get_values("A2:E"))))
+        print(f"\n{CATEGORY_TAB}: "
+              + (f"{len(pending)} column(s) to append: {', '.join(pending)}"
+                 if pending else "every column already present"))
+
     if args.dry_run:
         print("\n--dry-run: nothing written.")
         return
@@ -578,18 +703,17 @@ def main():
     # e.g. Healthcare access marked ungraded) to decide which categories a
     # partner org gets a top-level grade column for.
     cg_categories = graded_categories(registry.get_values("A2:E"))
+    cg_headers = category_headers(cg_categories)
     cg = sheet_by_title(sh, CATEGORY_TAB)
     if cg is None:
-        cg_headers = ["Key", "Candidate", "Municipality"]
-        for c in cg_categories:
-            cg_headers += [c, c + CATEGORY_DEPLOY_SUFFIX]
         cg = sh.add_worksheet(CATEGORY_TAB, rows=GRADE_TAB_ROWS, cols=len(cg_headers))
         sh.batch_update({"requests": header_row_requests(cg.id, cg_headers)
                          + category_tab_requests(cg.id, GRADE_TAB_ROWS, cg_categories)})
         print(f"{CATEGORY_TAB}: created with columns {', '.join(cg_categories)} "
-              "(each with a Deploy to website checkbox)")
+              f"(each with a Deploy to website checkbox), plus a gate for "
+              f"{', '.join(UNGRADED_GATES)}")
     else:
-        print(f"{CATEGORY_TAB}: already exists, left alone")
+        append_category_gates(sh, cg, cg_headers)
 
     log = sheet_by_title(sh, LOG_TAB)
     if log is None:

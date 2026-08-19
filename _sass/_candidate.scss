@@ -381,6 +381,74 @@ summary.candidate-grade {
   margin-top: 0.5rem;
 }
 
+// --- The answers nobody grades ---
+// The per-topic "anything to add" box on every topic, and on General and
+// Healthcare access the questions themselves. Marked off from the graded list
+// above it, because a run of answers with no grade chip beside them otherwise
+// reads as grading that has not happened yet rather than as grading that is
+// never going to.
+.candidate-unscored {
+  margin-top: $space-md;
+  padding-top: $space-sm;
+  border-top: 1px dashed rgba($color-border, 0.4);
+}
+
+.candidate-unscored__head {
+  margin: 0 0 $space-xs;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.75rem;
+  color: $color-muted;
+}
+
+// GEN-02's twelve amounts. A table and not a chart component: the figures are
+// the answer, the bars only rank them at a glance, and a reader on paper or
+// with a screen reader gets the whole thing from the two text columns.
+.candidate-allocation {
+  width: 100%;
+  margin-top: 0.5rem;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+
+  th,
+  td {
+    padding: 0.2rem 0;
+    border: 0;
+    vertical-align: middle;
+  }
+
+  th {
+    font-weight: 600;
+    text-align: left;
+    white-space: nowrap;
+    padding-right: $space-xs;
+  }
+}
+
+// Takes the slack between the label and the figure, the same job the dotted
+// leader does in a topic row. Its width is set inline from a share the sync
+// script computed, so nothing here has to do arithmetic.
+.candidate-allocation__bar {
+  width: 100%;
+
+  span {
+    display: block;
+    height: 0.55rem;
+    min-width: 2px;
+    border-radius: 2px;
+    background: var(--card-accent, #{$color-accent});
+  }
+}
+
+.candidate-allocation__amount {
+  text-align: right;
+  white-space: nowrap;
+  padding-left: $space-xs;
+  font-variant-numeric: tabular-nums;
+}
+
 .candidate-answer__answer-label {
   display: block;
   font-size: 0.75rem;

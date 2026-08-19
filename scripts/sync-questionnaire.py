@@ -4,26 +4,34 @@
 Source is Tally's submission spreadsheet ("Submissions - 2026 Municipal
 Elections", `QUESTIONNAIRE_SUBMISSIONS_SHEET_ID`), the same sheet
 scripts/questionnaire/grading_tabs.py bootstraps and appsscript/Code.gs keeps
-current. Three tabs matter here:
+current. Four tabs matter here:
 
-  Question Registry     One row per question the coalition asked. Published in
-                        full as the questionnaire page: it is the list of what
-                        candidates were asked, graded or not.
-  Category Grades       One row per candidate, one column per subject, each
-                        followed by a "<Subject> - Deploy to website" checkbox.
-                        The checkbox is the publication gate: a subject is only
-                        published for a candidate once it is ticked.
+  Question Registry     One row per question the coalition grades. Published in
+                        full: it is most of the list of what candidates were
+                        asked, and the source for every graded question.
+  Category Grades       One row per candidate, one column per graded subject,
+                        each followed by a "<Subject> - Deploy to website"
+                        checkbox. General and Healthcare access have a checkbox
+                        and no grade column: nobody grades them, but their
+                        answers are published and still need releasing.
   Grade - <Subject>     One row per candidate per question, carrying the answer,
                         the grade, the weight and the grader's rationale. These
                         are the sub-grades shown under a published subject.
+  2026 Municipal ...    Tally's raw dump, and the only home of the questions
+                        nobody grades: GEN-01, GEN-02, and the per-topic
+                        "anything to add" boxes. They never reached the registry,
+                        which lists what gets graded, so both their wording and
+                        the answers to them are read from the form's own columns.
 
 Nothing here decides what is publishable. The checkbox does. An unticked subject
-is not written to _data/scores.yml at all, so a grade in progress cannot reach
-the site by accident, and unticking one removes it on the next run.
+is not written to _data/scores.yml at all, so neither a grade in progress nor an
+unreviewed free-text answer can reach the site by accident, and unticking one
+removes it on the next run.
 
 WHAT IS DELIBERATELY NOT PUBLISHED
-  - Candidate email addresses and every other identity column from the raw Tally
-    tab. This script never opens that tab.
+  - Candidate email addresses and the rest of the raw tab's contact columns. The
+    tab is 236 columns wide and this script fetches four identity columns and
+    the ungraded question columns by name; it never pulls the sheet wholesale.
   - The grader's name and the grading timestamp. Who graded a response is
     internal; the coalition publishes grades as the coalition's.
   - An `Owner` that looks like an email address. Question ownership is published
@@ -61,6 +69,47 @@ SCORES_OUT = os.path.join(DATA, "scores.yml")
 REGISTRY_TAB = "Question Registry"
 CATEGORY_TAB = "Category Grades"
 GRADE_TAB_PREFIX = "Grade - "
+RAW_TAB = "2026 Municipal Elections"
+
+# Raw-tab columns, 0-based. Mirrors COL_* in grading_tabs.py, which numbers them
+# from 1. These four and the ungraded question columns are the only ones this
+# script ever fetches: the tab is 236 columns wide and the rest of it is the
+# candidate's contact details and their graded answers, neither of which belongs
+# in a generated data file.
+RAW_SUBMISSION_ID = 0
+RAW_FIRST_NAME = 3
+RAW_LAST_NAME = 4
+RAW_MUNICIPALITY = 7
+
+# Header prefix of a question column: "GEN-01: ...", "TRN-GEN: ...". Same
+# pattern as grading_tabs.py's LABEL_RE; change both together.
+LABEL_RE = re.compile(r"^([A-Z]{2,4}-(?:\d{2}|GEN)(?:-[A-Za-z]+)?):\s*(.*)$", re.S)
+
+# One question asked once per municipality ("HFL-11-Victoria"), of which a
+# candidate answers exactly one. The registry lists the collapsed form, so a
+# variant has to be folded back to it before asking whether the registry knows
+# the question - otherwise all fifteen variants look like questions the registry
+# never listed, which is to say ungraded, which they are not. Mirrors
+# grading_tabs.py's VARIANT_RE. The "-GEN" suffix is deliberately not matched:
+# GEN is not two digits, so a comment box never collapses into anything.
+VARIANT_RE = re.compile(r"^([A-Z]{2,4}-\d{2})-[A-Za-z]+$")
+
+# Label prefix -> subject id. grading_tabs.py has the same map keyed to the
+# registry's category names; this one is keyed to _data/subjects.yml ids,
+# because ungraded questions never reach the registry and so have no category
+# cell to read. General is here and absent there for exactly that reason.
+PREFIX_SUBJECT = {
+    "GEN": "general",
+    "HFL": "housing",
+    "TRN": "transit",
+    "WLK": "walking",
+    "ROL": "rolling-cycling",
+    "CLI": "climate",
+    "ART": "arts",
+    "GOV": "governance",
+    "REC": "reconciliation",
+    "HLT": "healthcare-access",
+}
 
 # Mirrors CATEGORY_DEPLOY_SUFFIX in scripts/questionnaire/grading_tabs.py and
 # appsscript/Code.gs. Change all three together.
@@ -120,6 +169,9 @@ TYPE_LABELS = {
     "variant": "Asked separately for each municipality",
     "variant,multi": "Asked separately for each municipality; select all that apply",
     "multi,pair": "Select all that apply, plus a written follow-up",
+    # The two shapes only ungraded questions come in. "text" gets no label for
+    # the same reason "single" gets none: an open box is what a reader assumes.
+    "allocation": "Split $10 million across twelve areas",
 }
 
 # Most multi-select questions say "Select all that apply" in their own wording,
@@ -132,6 +184,38 @@ SELECT_ALL_CUES = ("select all", "check all", "all that apply")
 # An `Owner` naming a person's inbox rather than an organization. See the module
 # docstring: these are dropped, not published.
 EMAILISH = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+
+# GEN-02, the budget trade-off. Alone among the questions it reaches the raw tab
+# with no "GEN-02:" prefix on any of its columns: Tally exports an allocation
+# grid as one bare column per line item, so there is nothing for LABEL_RE to
+# match and nothing that named the question. Both have to be supplied here.
+#
+# Matched on the exact twelve headers below, which must appear once each and
+# next to each other. That is the header-guessing the Question Registry exists
+# to avoid, so it fails the run rather than warning: a silently missed line item
+# would publish an allocation that does not add up, and a silently matched wrong
+# column would publish a number that is not an allocation at all. Prefixing
+# these columns with "GEN-02:" in the form would retire this whole block.
+GEN02_LABEL = "GEN-02"
+GEN02_QUESTION = (
+    "Your municipality has received $10 million in new annual funding and must "
+    "spend all of it. How would you allocate it across the following areas? "
+    "Your answers must total $10 million."
+)
+GEN02_AREAS = [
+    "Housing",
+    "Transit",
+    "Walking Infrastructure",
+    "Rolling & Cycling Infrastructure",
+    "Roadway Infrastructure",
+    "Policing",
+    "Fire & Emergency Services",
+    "Parks & Recreation",
+    "Arts & Culture",
+    "Climate Action & Environment",
+    "Unhoused Resident Services",
+    "Community-Based Clinics",
+]
 
 QUESTIONS_HEADER = """\
 # Every question on the coalition candidate questionnaire.
@@ -324,13 +408,181 @@ def open_sheet(sheet_id):
     return client.open_by_key(sheet_id)
 
 
-def tab_values(sh, title):
+def a1(col_index):
+    """0-based column index to its A1 letters. Mirrors grading_tabs.py's a1()."""
+    letters = ""
+    n = col_index + 1
+    while n:
+        n, rem = divmod(n - 1, 26)
+        letters = chr(65 + rem) + letters
+    return letters
+
+
+def worksheet(sh, title):
     import gspread
 
     try:
-        return sh.worksheet(title).get_all_values()
+        return sh.worksheet(title)
     except gspread.WorksheetNotFound:
         return None
+
+
+def tab_values(sh, title):
+    ws = worksheet(sh, title)
+    return None if ws is None else ws.get_all_values()
+
+
+# --- Ungraded questions, which live only on the raw tab ---------------------
+# The Question Registry lists what gets graded, so the free-text questions never
+# reached it: GEN-01, the per-topic "anything to add" boxes, and GEN-02. They
+# were still asked, and the answers are still worth publishing, so they are read
+# from the form's own columns instead. HLT-01 is the exception in the other
+# direction: it does have a registry row, hand-marked Graded=No, and is
+# published from there like any other registry question.
+
+def ungraded_questions(header, graded_labels, subject_order, warnings, errors):
+    """Ungraded questions on the raw tab, in form order.
+
+    Returns [{label, subject, question, columns, kind, areas}] where `columns`
+    are 0-based indices into a raw row and `kind` is "text" or "allocation".
+
+    Keyed on the *graded* labels, not on every label the registry lists. HLT-01
+    is the reason: it has a registry row, hand-marked Graded=No, so the Apps
+    Script never fanned it out to a grading tab and its answer exists nowhere but
+    here. Skipping every registry label would publish the question and silently
+    drop the answer to it. build_questions() still takes HLT-01's wording from
+    the registry, which is the hand-editable copy; only the answer comes from
+    these columns.
+    """
+    found = []
+    for i, cell in enumerate(header):
+        m = LABEL_RE.match((cell or "").strip())
+        if not m:
+            continue
+        variant = VARIANT_RE.match(m.group(1))
+        label = variant.group(1) if variant else m.group(1)
+        # A graded question's answer comes off its Grade tab, where it sits
+        # beside the grade it earned. Everything else is read here.
+        if label in graded_labels:
+            continue
+
+        subject = PREFIX_SUBJECT.get(label.split("-")[0])
+        if not subject:
+            errors.append(
+                f"{RAW_TAB} column {i + 1} ({label}): prefix maps to no subject. "
+                f"Add it to PREFIX_SUBJECT."
+            )
+            continue
+        if subject not in subject_order:
+            errors.append(
+                f"{RAW_TAB} column {i + 1} ({label}): subject {subject!r} is not in "
+                f"_data/subjects.yml."
+            )
+            continue
+
+        # A question already seen is a multi-select's option column: same label,
+        # further right. Ungraded questions are all free text, so this should not
+        # happen, and if the form ever grows one the extra columns are ignored
+        # rather than published as separate questions.
+        if any(q["label"] == label for q in found):
+            continue
+
+        found.append({
+            "label": label,
+            "subject": subject,
+            "question": clean_text(m.group(2)),
+            "columns": [i],
+            "kind": "text",
+            "areas": [],
+        })
+
+    allocation = allocation_question(header, errors)
+    if allocation:
+        found.append(allocation)
+        found.sort(key=lambda q: q["columns"][0])
+    return found
+
+
+def allocation_question(header, errors):
+    """GEN-02's block, located by its twelve bare line-item headers."""
+    tidied = [tidy(h) for h in header]
+    columns = []
+    for area in GEN02_AREAS:
+        hits = [i for i, h in enumerate(tidied) if h == area]
+        if len(hits) != 1:
+            errors.append(
+                f"{RAW_TAB}: expected exactly one column headed {area!r} for "
+                f"{GEN02_LABEL}, found {len(hits)}. Fix GEN02_AREAS, or prefix the "
+                f"allocation columns with '{GEN02_LABEL}:' so they need no guessing."
+            )
+            return None
+        columns.append(hits[0])
+
+    if columns != list(range(columns[0], columns[0] + len(columns))):
+        errors.append(
+            f"{RAW_TAB}: the {GEN02_LABEL} line-item columns are not contiguous "
+            f"(found {columns}). Something else now sits between them, so matching "
+            f"them by header name is no longer safe."
+        )
+        return None
+
+    return {
+        "label": GEN02_LABEL,
+        "subject": PREFIX_SUBJECT[GEN02_LABEL.split("-")[0]],
+        "question": GEN02_QUESTION,
+        "columns": columns,
+        "kind": "allocation",
+        "areas": list(GEN02_AREAS),
+    }
+
+
+def raw_answers(sh, questions, warnings):
+    """{submission id: {label: answer}} for the ungraded questions.
+
+    Fetches the identity columns and the question columns by name and nothing
+    else. The raw tab is 236 columns wide and holds every candidate's email
+    address; pulling the whole thing and picking through it in memory would make
+    the module docstring's claim that this script never reads those columns
+    untrue in the only way that matters.
+    """
+    ws = worksheet(sh, RAW_TAB)
+    if ws is None:
+        warnings.append(f"{RAW_TAB}: tab missing, no ungraded answers published")
+        return {}
+
+    wanted = [RAW_SUBMISSION_ID, RAW_FIRST_NAME, RAW_LAST_NAME, RAW_MUNICIPALITY]
+    for q in questions:
+        wanted.extend(q["columns"])
+    wanted = sorted(set(wanted))
+
+    fetched = ws.batch_get([f"{a1(c)}2:{a1(c)}" for c in wanted])
+    # batch_get returns a ragged list of rows per range; flatten each to a plain
+    # column of strings so every column is the same length and indexable by row.
+    depth = max((len(col) for col in fetched), default=0)
+    columns = {}
+    for c, col in zip(wanted, fetched):
+        flat = [(row[0] if row else "") for row in col]
+        columns[c] = flat + [""] * (depth - len(flat))
+
+    answers = {}
+    for r in range(depth):
+        key = tidy(columns[RAW_SUBMISSION_ID][r])
+        if not key:
+            continue
+        row = {}
+        for q in questions:
+            if q["kind"] == "allocation":
+                amounts = [(area, tidy(columns[c][r]))
+                           for area, c in zip(q["areas"], q["columns"])]
+                if any(amount for _, amount in amounts):
+                    row[q["label"]] = amounts
+            else:
+                value = clean_text(columns[q["columns"][0]][r])
+                if value:
+                    row[q["label"]] = value
+        if row:
+            answers[key] = row
+    return answers
 
 
 def load_subject_order(path):
@@ -367,8 +619,14 @@ def load_candidate_index(path):
 
 # --- Questions ---------------------------------------------------------------
 
-def build_questions(registry, subject_order, warnings, errors):
-    """One published entry per registry row, in subjects.yml order."""
+def build_questions(registry, extra, subject_order, warnings, errors):
+    """Every published question, in subjects.yml order.
+
+    Registry rows first within a subject, then the ungraded ones the registry
+    never listed, which is the order a candidate met them on the form: the
+    per-topic "anything to add" box always sits at the end of its topic's block,
+    and General's two questions precede its box.
+    """
     rows = registry[1:] if registry else []
     by_subject = {}
     for i, row in enumerate(rows, start=2):
@@ -422,6 +680,29 @@ def build_questions(registry, subject_order, warnings, errors):
             "owner": owner,
         })
 
+    # The ungraded ones carry no weight and no owner: nobody grades them, so
+    # there is no share of a grade to state and no organization to name as the
+    # grader. `type` says what shape the answer takes, which is the one thing
+    # about them a reader still benefits from knowing.
+    listed = {q["label"] for qs in by_subject.values() for q in qs}
+    for q in extra:
+        # HLT-01 arrives from both sources: the registry names and describes it,
+        # the raw tab holds the answer. The registry copy wins, because it is
+        # the one a human can correct.
+        if q["label"] in listed:
+            continue
+        by_subject.setdefault(q["subject"], []).append({
+            "label": q["label"],
+            "subject": q["subject"],
+            "question": q["question"],
+            "type": q["kind"],
+            "type_label": TYPE_LABELS.get(q["kind"], ""),
+            "graded": False,
+            "weight": "",
+            "owner": "",
+            "areas": q["areas"],
+        })
+
     return [q for sid in subject_order for q in by_subject.get(sid, [])]
 
 
@@ -458,27 +739,40 @@ def render_questions(items, subject_order):
             parts.append(f"    weight: {scalar(q['weight'])}")
         if q["owner"]:
             parts.append(f"    owner: {scalar(q['owner'])}")
+        # GEN-02's line items, so /questionnaire/ can show what the allocation is
+        # split across without a candidate having answered it.
+        if q.get("areas"):
+            parts.append("    areas:")
+            parts.extend(f"      - {scalar(area)}" for area in q["areas"])
     return "\n".join(parts) + "\n"
 
 
 # --- Scores ------------------------------------------------------------------
 
-def deployed_columns(header):
-    """[(subject display name, grade column, deploy column)] from Category Grades.
+def deploy_gates(header):
+    """[(subject display name, grade column or None, deploy column)].
 
-    A grade column is one immediately followed by its own deploy checkbox; that
-    pairing is what Code.gs writes and what tells a grade column from anything
-    else somebody adds to the right of the tab.
+    Keyed off the deploy columns rather than off (grade, deploy) pairs, because
+    the two ungraded subjects have a gate and no grade column beside it: nobody
+    grades General or Healthcare access, so there is nothing to roll up, but
+    their answers are published verbatim and still need releasing. Code.gs tells
+    the two kinds of header apart by the same suffix.
     """
-    pairs = []
+    index = {}
     for i, cell in enumerate(header):
         name = tidy(cell)
-        if not name or name.endswith(DEPLOY_SUFFIX) or i < 3:
+        if name and name not in index:
+            index[name] = i
+
+    gates = []
+    for i, cell in enumerate(header):
+        name = tidy(cell)
+        if not name.endswith(DEPLOY_SUFFIX):
             continue
-        gate = i + 1
-        if gate < len(header) and tidy(header[gate]) == name + DEPLOY_SUFFIX:
-            pairs.append((name, i, gate))
-    return pairs
+        subject = name[: -len(DEPLOY_SUFFIX)]
+        if subject:
+            gates.append((subject, index.get(subject), i))
+    return gates
 
 
 def is_ticked(value):
@@ -509,10 +803,14 @@ def ticked_subjects(category):
     job shares with everything else touching the spreadsheet, and early in a
     cycle that is every tab.
     """
-    columns = deployed_columns(category[0])
+    gates = deploy_gates(category[0])
     names = set()
     for row in category[1:]:
-        for name, _, gate in columns:
+        for name, grade_col, gate in gates:
+            # An ungraded subject has no Grade tab worth opening: its answers
+            # come off the raw tab, not out of a per-question grading sheet.
+            if grade_col is None:
+                continue
             if gate < len(row) and is_ticked(row[gate]):
                 names.add(name)
     # Sorted, so the warnings a run emits come out in the same order every time
@@ -536,16 +834,61 @@ def load_grade_rows(sh, subject_names, warnings):
     return rows
 
 
-def build_scores(category, grade_rows, subject_order, muni_lookup, candidates,
-                 question_labels, warnings, errors):
+def allocation_lines(pairs, where, warnings):
+    """[(area, amount, display, share)] for one candidate's GEN-02 answer.
+
+    The share and the thousands-separated figure are computed here rather than
+    in the template because Liquid has neither integer division that rounds the
+    way a percentage should nor a delimiter filter, and a bar chart whose widths
+    are worked out in a template is a bar chart nobody can test.
+    """
+    amounts = []
+    for area, raw in pairs:
+        cleaned = raw.replace("$", "").replace(",", "").strip()
+        if not cleaned:
+            continue
+        try:
+            amounts.append((area, int(float(cleaned))))
+        except ValueError:
+            warnings.append(
+                f"{where}: {area!r} is {raw!r}, which is not a number, so the "
+                f"allocation is not published"
+            )
+            return []
+
+    total = sum(amount for _, amount in amounts)
+    return [
+        (area, amount, f"${amount:,}", round(amount * 100 / total) if total else 0)
+        for area, amount in amounts
+    ]
+
+
+def unscored_answers(answers, subject_id, ungraded, candidate, warnings):
+    """This candidate's ungraded answers for one subject, in form order."""
+    out = []
+    for q in ungraded:
+        if q["subject"] != subject_id or q["label"] not in answers:
+            continue
+        value = answers[q["label"]]
+        if q["kind"] == "allocation":
+            lines = allocation_lines(value, f"{RAW_TAB} ({candidate}, {q['label']})", warnings)
+            if lines:
+                out.append({"label": q["label"], "answer": "", "allocation": lines})
+        else:
+            out.append({"label": q["label"], "answer": value, "allocation": []})
+    return out
+
+
+def build_scores(category, grade_rows, answers, ungraded, subject_order,
+                 muni_lookup, candidates, question_labels, warnings, errors):
     header = category[0]
-    columns = deployed_columns(header)
-    if not columns:
-        errors.append(f"{CATEGORY_TAB}: no '<Subject>{DEPLOY_SUFFIX}' column pairs found.")
+    gates = deploy_gates(header)
+    if not gates:
+        errors.append(f"{CATEGORY_TAB}: no '<Subject>{DEPLOY_SUFFIX}' columns found.")
         return [], []
 
     subject_ids = {}
-    for name, _, _ in columns:
+    for name, _, _ in gates:
         sid = SUBJECT_FOR_CATEGORY.get(norm(name))
         if not sid:
             errors.append(f"{CATEGORY_TAB}: column {name!r} maps to no subject id.")
@@ -577,19 +920,29 @@ def build_scores(category, grade_rows, subject_order, muni_lookup, candidates,
             continue
 
         published = []
-        for subject_name, grade_col, gate_col in columns:
+        for subject_name, grade_col, gate_col in gates:
             if subject_name not in subject_ids:
                 continue
             if not is_ticked(row[gate_col] if gate_col < len(row) else ""):
                 continue
+            subject_id = subject_ids[subject_name]
             where = f"{CATEGORY_TAB} row {i} ({name}, {subject_name})"
+            grade = None
+            if grade_col is not None:
+                grade = grade_or_none(row[grade_col] if grade_col < len(row) else "",
+                                      where, warnings)
             published.append({
-                "id": subject_ids[subject_name],
-                "grade": grade_or_none(row[grade_col] if grade_col < len(row) else "",
-                                       where, warnings),
+                "id": subject_id,
+                "grade": grade,
                 "questions": subject_questions(
                     grade_rows.get((key, subject_name), []), name, subject_name,
                     question_labels, warnings),
+                # The ungraded answers for this subject, released by the same
+                # checkbox as its grades. A per-topic "anything to add" box only
+                # goes public once its topic does, so nothing a candidate wrote
+                # about transit appears before the transit section is signed off.
+                "unscored": unscored_answers(
+                    answers.get(key, {}), subject_id, ungraded, name, warnings),
             })
 
         # Deliberately kept even with nothing published. Having a row on this tab
@@ -634,13 +987,7 @@ def build_scores(category, grade_rows, subject_order, muni_lookup, candidates,
             seen[identity] = (where, i)
 
     records.sort(key=lambda r: (r["municipality"], norm(r["name"])))
-    # The subjects this sheet grades at all, which is not the same as the site's
-    # topic list: `general` and `healthcare-access` have no column here because
-    # neither carries a graded question. The site needs the distinction to say
-    # "still being graded" about the right topics and stay quiet about the ones
-    # nobody is grading.
-    graded = sorted(dict.fromkeys(subject_ids.values()), key=subject_order.index)
-    return graded, records
+    return records
 
 
 def subject_questions(rows, candidate, subject_name, question_labels, warnings):
@@ -707,18 +1054,38 @@ def render_scores(graded_subjects, records):
         for subject in record["subjects"]:
             parts.append(f"      - id: {subject['id']}")
             parts.append(f"        grade: {subject['grade'] or 'null'}")
-            if not subject["questions"]:
+
+            if subject["questions"]:
+                parts.append("        questions:")
+                for q in subject["questions"]:
+                    parts.append(f"          - label: {scalar(q['label'])}")
+                    parts.append(f"            grade: {q['grade'] or 'null'}")
+                    if q["weight"]:
+                        parts.append(f"            weight: {scalar(q['weight'])}")
+                    if q["rationale"]:
+                        parts.append(f"            rationale: {text_value(q['rationale'], 14)}")
+                    if q["answer"]:
+                        parts.append(f"            answer: {text_value(q['answer'], 14)}")
+            else:
                 parts.append("        questions: []")
+
+            # Answers to the questions nobody grades. Kept in their own list
+            # rather than mixed into `questions` with a null grade: a reader
+            # meeting a run of blank grade chips reads them as ungraded-yet, and
+            # these will never carry one. The site labels the block as such.
+            if not subject["unscored"]:
                 continue
-            parts.append("        questions:")
-            for q in subject["questions"]:
+            parts.append("        unscored:")
+            for q in subject["unscored"]:
                 parts.append(f"          - label: {scalar(q['label'])}")
-                parts.append(f"            grade: {q['grade'] or 'null'}")
-                if q["weight"]:
-                    parts.append(f"            weight: {scalar(q['weight'])}")
-                if q["rationale"]:
-                    parts.append(f"            rationale: {text_value(q['rationale'], 14)}")
-                if q["answer"]:
+                if q["allocation"]:
+                    parts.append("            allocation:")
+                    for area, amount, display, share in q["allocation"]:
+                        parts.append(f"              - area: {scalar(area)}")
+                        parts.append(f"                amount: {amount}")
+                        parts.append(f"                display: {scalar(display)}")
+                        parts.append(f"                share: {share}")
+                elif q["answer"]:
                     parts.append(f"            answer: {text_value(q['answer'], 14)}")
     return "\n".join(parts) + "\n"
 
@@ -764,17 +1131,39 @@ def main(argv=None):
     if registry is None:
         print(f"error: no '{REGISTRY_TAB}' tab in that spreadsheet", file=sys.stderr)
         return 1
-    questions = build_questions(registry, subject_order, warnings, errors)
+    graded_labels = {tidy(r[R_LABEL]) for r in registry[1:]
+                     if r and tidy(r[R_LABEL]) and norm(r[R_GRADED] if R_GRADED < len(r) else "")
+                     in {"yes", "true", "y"}}
+
+    raw = worksheet(sh, RAW_TAB)
+    if raw is None:
+        warnings.append(f"{RAW_TAB}: tab missing, no ungraded questions published")
+        ungraded = []
+    else:
+        ungraded = ungraded_questions(
+            raw.row_values(1), graded_labels, subject_order, warnings, errors)
+
+    questions = build_questions(registry, ungraded, subject_order, warnings, errors)
     question_labels = {q["label"] for q in questions}
+
+    # Which subjects carry a grade at all, read off the questions rather than off
+    # the Category Grades columns. Those columns now include gates for General
+    # and Healthcare access, which have a publication gate and no grade; asking
+    # the questions instead keeps "being graded" off the two topics nobody
+    # grades, whatever columns the sheet happens to have grown.
+    graded_subjects = [sid for sid in subject_order
+                       if any(q["graded"] and q["subject"] == sid for q in questions)]
 
     category = tab_values(sh, CATEGORY_TAB)
     if category is None:
         warnings.append(f"{CATEGORY_TAB}: tab missing, no candidate results published")
-        graded_subjects, records = [], []
+        records = []
     else:
-        graded_subjects, records = build_scores(
+        answers = raw_answers(sh, ungraded, warnings) if ungraded else {}
+        records = build_scores(
             category, load_grade_rows(sh, ticked_subjects(category), warnings),
-            subject_order, muni_lookup, candidates, question_labels, warnings, errors)
+            answers, ungraded, subject_order, muni_lookup, candidates,
+            question_labels, warnings, errors)
 
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)

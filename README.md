@@ -130,9 +130,22 @@ Having a row on `Category Grades` at all means the candidate returned the questi
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | ↻ | A clockwise circular arrow. The candidate returned the questionnaire and this topic has not been published yet. Says nothing about how it is going. |
-| `—` | No completed questionnaire has come back, **or** the topic is not one we grade. |
+| speech bubble | The candidate answered and nobody grades this topic, so there is something to read and no letter is coming. |
+| `—` | No completed questionnaire has come back, **or** nothing is published. |
 
-The arrow is scoped to the topics the grading sheet actually has a column for — `graded_subjects` at the top of `scores.yml`. `general` and `healthcare-access` carry no graded question, so a returned candidate is never shown as waiting on them.
+The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.
+
+### The questions nobody grades
+
+Three kinds, and none of them reaches the Question Registry, which lists what gets graded:
+
+- **`GEN-01`** — one policy, bylaw or asset the candidate would change.
+- **`GEN-02`** — a $10 million budget split across twelve areas, rendered as a small allocation table. Alone among the questions it arrives with no `GEN-02:` prefix on any column, because Tally exports an allocation grid as one bare column per line item. `sync-questionnaire.py` matches it on the twelve exact headers in `GEN02_AREAS` and **fails the run** if they are not all present and contiguous; prefixing those columns in the form would retire that block.
+- **`<TOPIC>-GEN`** — the "anything you'd like to add" box at the end of each topic. Eight of them; Housing has none.
+
+`HLT-01` is the exception in the other direction: it *is* in the registry, hand-marked `Graded=No`, so its wording comes from there and only its answer is read off the raw tab.
+
+All of them are gated exactly like grades. General and Healthcare access have their own `- Deploy to website` checkbox on `Category Grades` with no grade column beside it; a `<TOPIC>-GEN` comment rides its topic's existing checkbox, so nothing a candidate wrote about transit appears before the transit section is signed off.
 
 Before this, a candidate who filled the questionnaire in and a candidate who ignored it were drawn identically, which was the one thing the scorecard could not afford to get wrong about somebody who did the work.
 
