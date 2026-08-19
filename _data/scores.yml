@@ -143,11 +143,13 @@ candidates:
           - label: TRN-01
             grade: A
             weight: "20%"
-            answer: >-
-              Selected: Free transit for everyone under 19 years of age.; Free
-              or half-priced fares for seniors, 65+ years of age.; Free or
-              half-priced transit for people receiving income or disability
-              assistance.; Lower-cost regional monthly pass.
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+              - Lower-cost regional monthly pass.
           - label: TRN-02
             grade: A
             weight: "20%"

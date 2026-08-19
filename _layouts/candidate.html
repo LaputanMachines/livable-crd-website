@@ -282,6 +282,24 @@ layout: default
                 <div class="candidate-answer__text">{{ q.answer | escape | newline_to_br }}</div>
               </div>
               {%- endif %}
+              {%- if q.selected.size > 0 %}
+              {%- comment -%}
+                A multi-select's ticked options, as a list. The sheet stores them
+                run together on one "Selected: a; b; c" line, which at four
+                options is a paragraph of semicolons nobody reads to the end.
+                Split in sync-questionnaire.py, not here.
+              {%- endcomment -%}
+              <div class="candidate-answer__answer">
+                <span class="candidate-answer__answer-label">
+                  {{ c.name }} selected {{ q.selected.size }} of these
+                </span>
+                <ul class="candidate-answer__options">
+                  {%- for option in q.selected %}
+                  <li>{{ option }}</li>
+                  {%- endfor %}
+                </ul>
+              </div>
+              {%- endif %}
             </li>
             {%- endfor %}
           </ol>
@@ -345,10 +363,19 @@ layout: default
                     {%- endfor %}
                   </tbody>
                 </table>
-                {%- elsif q.answer %}
+                {%- else %}
+                {%- if q.answer %}
                 <div class="candidate-answer__answer">
                   <div class="candidate-answer__text">{{ q.answer | escape | newline_to_br }}</div>
                 </div>
+                {%- endif %}
+                {%- if q.selected.size > 0 %}
+                <ul class="candidate-answer__options">
+                  {%- for option in q.selected %}
+                  <li>{{ option }}</li>
+                  {%- endfor %}
+                </ul>
+                {%- endif %}
                 {%- endif %}
               </li>
               {%- endfor %}

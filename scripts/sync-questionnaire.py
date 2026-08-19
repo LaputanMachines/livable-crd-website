@@ -815,6 +815,40 @@ def is_ticked(value):
     return norm(value) in {"true", "yes", "checked", "1"}
 
 
+# How Code.gs writes a multi-select answer: the written parts on their own
+# lines, then every ticked option on one "Selected: " line joined by "; ". Both
+# the webhook and the timer build it this way, so it is the shape every answer
+# cell arrives in and the only thing that has to be agreed on to take it apart.
+SELECTED_PREFIX = "Selected: "
+SELECTED_JOIN = "; "
+
+
+def split_selections(answer):
+    """(prose, [ticked options]) for one answer cell.
+
+    Run together on one line, a dozen ticked options are a paragraph of
+    semicolons that nobody reads to the end; as a list they are scannable. The
+    split happens here rather than in the template because it is parsing, and a
+    template that parses is a template that fails silently.
+
+    Split on the exact separator Code.gs joins with, not on a bare semicolon: an
+    option is a full sentence and several end in one. An option containing "; "
+    internally would still split wrongly, but none does, and the alternative -
+    matching against the registry's own option lists - is a great deal of
+    machinery for a case that has not happened.
+    """
+    prose, selected = [], []
+    for line in (answer or "").split("\n"):
+        if line.startswith(SELECTED_PREFIX):
+            selected.extend(
+                part.strip() for part in line[len(SELECTED_PREFIX):].split(SELECTED_JOIN)
+                if part.strip()
+            )
+        else:
+            prose.append(line)
+    return "\n".join(prose).strip(), selected
+
+
 def grade_or_none(value, where, warnings):
     letter = tidy(value).upper().replace("−", "-")
     if not letter:
@@ -911,7 +945,9 @@ def unscored_answers(answers, subject_id, ungraded, candidate, warnings):
             if lines:
                 out.append({"label": q["label"], "answer": "", "allocation": lines})
         else:
-            out.append({"label": q["label"], "answer": value, "allocation": []})
+            prose, selected = split_selections(value)
+            out.append({"label": q["label"], "answer": prose,
+                        "selected": selected, "allocation": []})
     return out
 
 
@@ -1040,12 +1076,14 @@ def subject_questions(rows, candidate, subject_name, question_labels, warnings):
             )
             continue
         where = f"{GRADE_TAB_PREFIX}{subject_name} ({candidate}, {label})"
+        prose, selected = split_selections(clean_text(row[G_ANSWER] if G_ANSWER < len(row) else ""))
         out.append({
             "label": label,
             "grade": grade_or_none(row[G_GRADE] if G_GRADE < len(row) else "", where, warnings),
             "weight": cell(G_WEIGHT),
             "rationale": clean_text(row[G_RATIONALE] if G_RATIONALE < len(row) else ""),
-            "answer": clean_text(row[G_ANSWER] if G_ANSWER < len(row) else ""),
+            "answer": prose,
+            "selected": selected,
         })
     return out
 
@@ -1102,6 +1140,10 @@ def render_scores(graded_subjects, records):
                         parts.append(f"            rationale: {text_value(q['rationale'], 14)}")
                     if q["answer"]:
                         parts.append(f"            answer: {text_value(q['answer'], 14)}")
+                    if q["selected"]:
+                        parts.append("            selected:")
+                        for option in q["selected"]:
+                            parts.append(f"              - {text_value(option, 16)}")
             else:
                 parts.append("        questions: []")
 
@@ -1121,8 +1163,13 @@ def render_scores(graded_subjects, records):
                         parts.append(f"                amount: {amount}")
                         parts.append(f"                display: {scalar(display)}")
                         parts.append(f"                share: {share}")
-                elif q["answer"]:
-                    parts.append(f"            answer: {text_value(q['answer'], 14)}")
+                else:
+                    if q["answer"]:
+                        parts.append(f"            answer: {text_value(q['answer'], 14)}")
+                    if q["selected"]:
+                        parts.append("            selected:")
+                        for option in q["selected"]:
+                            parts.append(f"              - {text_value(option, 16)}")
     return "\n".join(parts) + "\n"
 
 

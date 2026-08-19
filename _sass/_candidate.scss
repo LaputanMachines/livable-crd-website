@@ -493,6 +493,44 @@ summary.candidate-grade {
   color: $color-muted;
 }
 
+// A multi-select's ticked options. Boxed like a written answer, because it is
+// one: same ground, same border, so a question answered by ticking and a
+// question answered by typing read as the same kind of thing.
+//
+// Marked with a tick rather than a bullet, and the marker sits outside the text
+// so a wrapped option lines up under its own first word instead of under the
+// mark.
+.candidate-answer__options {
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: $space-xs $space-sm;
+  background: $color-bg;
+  border: 1px solid rgba($color-border, 0.3);
+  border-radius: $radius;
+  font-size: 0.9rem;
+  line-height: 1.5;
+
+  li {
+    position: relative;
+    padding-left: 1.25rem;
+    margin: 0;
+
+    + li { margin-top: 0.3rem; }
+
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0.15rem;
+      top: 0.42em;
+      width: 0.45rem;
+      height: 0.22rem;
+      border-left: 2px solid var(--card-accent, #{$color-accent});
+      border-bottom: 2px solid var(--card-accent, #{$color-accent});
+      transform: rotate(-45deg);
+    }
+  }
+}
+
 .candidate-answer__text {
   margin-top: 0.4rem;
   padding: $space-xs $space-sm;
