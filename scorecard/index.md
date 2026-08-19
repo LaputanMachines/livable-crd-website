@@ -25,13 +25,14 @@ description: >-
   </p>
 
   {%- comment -%}
-    Two sentences: what the list is, and what to do when it is wrong. The longer
-    version explained our volunteers' tracking process, which is our problem and
-    not the reader's; #how-candidates-are-added still carries all of it for
-    anyone who wants it.
+    One line, and it is a request rather than an announcement: the only thing
+    this band is for is catching the errors a reader can see and we cannot.
+    Everything it used to say about how the list is built lives in the
+    #how-candidates-are-added block at the foot of the page, which is still
+    linked from the deadlines FAQ and still reachable by its own heading.
   {%- endcomment -%}
   <div class="status-banner">
-    <p><strong>This list grows as candidates come forward.</strong> Someone missing or listed incorrectly? <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a>, or read <a href="#how-candidates-are-added">how candidates get added</a>.</p>
+    <p>Someone missing or listed incorrectly? <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a>.</p>
   </div>
 
   {%- comment -%}
