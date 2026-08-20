@@ -420,10 +420,27 @@ summary.candidate-grade {
 .candidate-allocation {
   width: 100%;
   margin: 0.5rem 0 0;
-  border-collapse: collapse;
+  // `separate`, not `collapse`, and the reason is WebKit. Under `collapse` the
+  // table's own border is not drawn by the table: it is handed to the edge
+  // cells by the border-collapsing algorithm, and Safari then loses it
+  // entirely against the `border-radius` and `overflow: hidden` this panel
+  // needs for its rounded corners. The result there was twelve rows of figures
+  // with no outline around them at all, while every other engine drew the
+  // border and hid the bug.
+  //
+  // Nothing in here wanted collapsing in the first place. The only cell border
+  // is a bottom rule and the last row drops even that, so with `border-spacing`
+  // at zero no two borders ever meet and there is nothing for `collapse` to
+  // merge. The rendering is identical in the engines that were already correct.
+  border-collapse: separate;
+  border-spacing: 0;
   border: $border-weight solid $color-border;
   border-radius: $radius;
-  overflow: hidden;
+  // Cell backgrounds are all `none` (the ground is the table's own, set
+  // below), so with `separate` the radius clips the only painted background
+  // there is and the corners come out round without this. Kept off rather than
+  // kept: `overflow` on a table box is exactly what Safari mishandled above,
+  // and there is no longer anything for it to clip.
   background: $color-surface;
   font-size: 0.85rem;
 
