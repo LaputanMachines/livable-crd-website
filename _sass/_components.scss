@@ -339,7 +339,20 @@ table {
   background: $color-surface;
   border: $border-weight solid $color-text;
   border-radius: 0;
-  overflow: hidden;
+  // No `overflow: hidden` here, deliberately. It clipped nothing: the radius
+  // on the line above is zero, so there were never rounded corners for it to
+  // cut the cell backgrounds to. What it did do was break Safari, twice.
+  //
+  // WebKit honours overflow on a table box where Chrome and Firefox ignore it,
+  // and the consequences both landed on this site. A sticky cell inside a
+  // table that has it does not stick: the scorecard matrix's topic header came
+  // out neither stuck nor in the flow, painted on top of the favourites band
+  // and the first candidate under it. And a table that has it alongside a
+  // radius loses its own border, which is what left the GEN-02 allocation
+  // panel with no outline around its twelve rows.
+  //
+  // A table that does want to clip to a radius should say so itself rather
+  // than have it applied to every table on the site.
   box-shadow: none;
 }
 
