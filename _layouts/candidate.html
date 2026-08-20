@@ -112,10 +112,10 @@ layout: default
   <div class="callout candidate-returned">
     <p>
       <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
-      way and nothing has been published yet, so the topics we grade show
-      an hourglass rather than a letter. Each topic is graded
-      by the coalition organization that wrote its questions and appears here as
-      that organization finishes, so they will not all arrive at once. In the
+      way and nothing has been published yet, so every topic below shows
+      an hourglass rather than a letter or their answers. Each topic we grade is
+      handled by the coalition organization that wrote its questions and appears
+      here as that organization finishes, so they will not all arrive at once. In the
       meantime you can
       <a href="{{ '/questionnaire/' | relative_url }}">read every question they answered</a>.
       <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
@@ -152,17 +152,17 @@ layout: default
     {%- assign cell = c.scores[subject.id] %}
     {%- assign detail = c.published_subjects[subject.id] %}
     {%- comment -%}
-      Same rule as the scorecard matrix: a returned questionnaire waiting on a
-      topic the coalition grades shows an hourglass; a topic nobody grades
-      that the candidate answered shows a speech bubble; everything else stays a
-      dash.
+      Same rule as the scorecard matrix: a returned questionnaire shows an
+      hourglass on every topic still waiting on us, graded or not; one of the two
+      ungraded topics shows a speech bubble once its answers are published, since
+      there is then something to read and nothing to wait for; everything else
+      stays a dash.
     {%- endcomment -%}
     {%- assign cell_state = "" %}
-    {%- if gradable contains subject.id %}
-      {%- if returned %}{% assign cell_state = "review" %}{% endif %}
-    {%- elsif detail.unscored.size > 0 %}
-      {%- assign cell_state = "answers" %}
-    {%- endif %}
+    {%- unless gradable contains subject.id %}
+      {%- if detail.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
+    {%- endunless %}
+    {%- if cell_state == "" and returned %}{% assign cell_state = "review" %}{% endif %}
     <li class="candidate-grade-row" style="--card-accent: {{ subject.accent }}">
       {%- if detail %}
       {%- comment -%}

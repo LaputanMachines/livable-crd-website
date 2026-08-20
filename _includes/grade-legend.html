@@ -19,17 +19,23 @@
     <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
   </span>
   {% endfor %}
+  {%- comment -%}
+    "Not published yet" rather than "Being graded": the hourglass is now the
+    default on every topic a returned candidate is waiting on, and two of those
+    topics are never graded — their answers are simply held back until the sheet
+    releases them. One label has to be true of both.
+  {%- endcomment -%}
   <span class="scorecard-legend__item">
-    {% include grade-badge.html grade="" state="review" %}Being graded
+    {% include grade-badge.html grade="" state="review" %}Not published yet
   </span>
   <span class="scorecard-legend__item">
     {% include grade-badge.html grade="" state="answers" %}Answered, not graded
   </span>
   {%- comment -%}
-    "Not graded" rather than "No reply": the dash also stands on topics the
-    coalition does not grade at all, where it is not the candidate's silence
-    being reported. Both readings are true of "not graded", and #methodology
-    separates them.
+    "Not graded" rather than "No reply": on these two pages the dash now means a
+    questionnaire that never came back, since a returned one puts an hourglass or
+    a bubble on every topic — but the same chip stands elsewhere for a topic
+    nobody grades, and "not graded" is true of both. #methodology separates them.
   {%- endcomment -%}
   <span class="scorecard-legend__item">
     {% include grade-badge.html grade="" %}Not graded

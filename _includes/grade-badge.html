@@ -12,14 +12,19 @@
                this candidate (ROL-05 asks about a previous term in office)
     hourglass  the candidate returned the questionnaire and this topic has not
                been published yet. Passed in as state="review" by the caller,
-               which is the only one that knows whether a reply came back.
+               which is the only one that knows whether a reply came back. It is
+               the default for a returned candidate on every topic, including
+               the two nobody grades: their answers are held back by the same
+               deploy checkbox as a letter, so "not published yet" is the true
+               statement about all ten.
     speech     the candidate answered and nobody grades this topic, so there is
                something to read and there will never be a letter. Passed in as
-               state="answers". Only General and Healthcare access can reach it:
-               every other topic carries a grade, and a written comment on a
-               graded topic shows inside that topic rather than in its cell.
-    —          pending: nothing to report. Either no questionnaire came back, or
-               the topic is not one the coalition grades.
+               state="answers". Only General and Healthcare access can reach it,
+               and only once their answers are published; every other topic
+               carries a grade, and a written comment on a graded topic shows
+               inside that topic rather than in its cell.
+    —          pending: nothing to report. In practice, no questionnaire came
+               back.
 {%- endcomment -%}
 {% assign g = include.grade | default: '' | strip %}
 {% assign g_upper = g | upcase %}
@@ -74,7 +79,7 @@
   the chip's colour: `currentColor` is what makes it accent purple on screen and
   plain black on the leaflet, where the print rules restyle .grade to ink.
 {%- endcomment -%}
-<span class="grade grade--review" title="Questionnaire returned; this topic is still being graded" aria-label="Returned, still being graded">
+<span class="grade grade--review" title="Questionnaire returned; this topic has not been published yet" aria-label="Returned, not published yet">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 22h14"/>
     <path d="M5 2h14"/>

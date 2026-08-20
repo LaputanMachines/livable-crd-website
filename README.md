@@ -129,9 +129,9 @@ Having a row on `Category Grades` at all means the candidate returned the questi
 | Shown | Means |
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
-| hourglass | The candidate returned the questionnaire and this topic has not been published yet. Says nothing about how it is going. |
-| speech bubble | The candidate answered and nobody grades this topic, so there is something to read and no letter is coming. |
-| `—` | No completed questionnaire has come back, **or** nothing is published. |
+| hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
+| speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
+| `—` | No completed questionnaire has come back. |
 
 The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.
 

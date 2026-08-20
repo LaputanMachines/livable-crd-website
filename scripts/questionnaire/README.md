@@ -488,14 +488,15 @@ website`** checkbox, and that checkbox is the entire publication gate:
 
 | Checkbox | What the site shows for that candidate and subject |
 |---|---|
-| unticked | An hourglass, meaning "returned the questionnaire, this topic is still being graded". No grade, no answers, no rationale. |
+| unticked | An hourglass, meaning "returned the questionnaire, this topic is not published yet". No grade, no answers, no rationale. |
 | ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
 
 **General** and **Healthcare access** carry a checkbox with no grade column beside it. Nobody
 grades either, so there is nothing to roll up, but their answers (`GEN-01`, `GEN-02`,
 `HLT-01` and both comment boxes) are published verbatim and still need somebody to release
-them. A ticked box there puts a speech-bubble mark in that column on the scorecard, meaning
-"answered, not graded, readable".
+them. Until that box is ticked they show the same hourglass as everything else — the
+candidate answered and the site is holding their answers back — and ticking it swaps in a
+speech-bubble mark, meaning "answered, not graded, readable".
 
 Unticking it takes the subject back off the site on the next sync. Nothing in the website
 repo overrides this, and nothing else needs editing to publish or unpublish.

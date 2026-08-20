@@ -286,7 +286,11 @@ SCORES_HEADER = """\
 #                    _data/subjects.yml order. Narrower than the site's topic
 #                    list: `general` and `healthcare-access` carry no graded
 #                    question, so nobody is grading them and the site must not
-#                    claim a returned candidate's are "still being graded".
+#                    promise a letter is coming for either. A returned candidate
+#                    still shows an hourglass on them until their answers are
+#                    deployed, which is the truthful "not published yet"; what
+#                    this list decides is what replaces it — a letter for a
+#                    graded topic, a speech bubble for these two.
 #
 # Fields, per candidate:
 #   name          As written on the Category Grades tab. Matched against

@@ -412,26 +412,29 @@ description: >-
                                 there is something to read and no letter coming
                 dash            no reply, or nothing published
 
-              Which of the first two applies is decided by `graded_subjects`,
-              the topics that carry a graded question at all. General and
-              Healthcare access do not, so a returned candidate never appears to
-              be waiting on them; what they can carry is a written answer, and
-              that is what the bubble points at.
+              A returned questionnaire means every topic is waiting on us, so
+              the hourglass is the default for all ten of them, not only the
+              ones that carry a letter. General and Healthcare access are not
+              graded, but their answers are still unpublished until the sheet
+              deploys them, and a dash there read as "nothing came back" for a
+              candidate who had in fact answered.
 
-              The bubble is checked second on purpose. A graded topic keeps its
-              arrow even when the candidate also wrote a comment on it, because
-              the grade is the thing that is coming; the comment shows inside
-              that topic on the candidate's own page, where it has room.
+              The bubble wins wherever it applies, which is only those two
+              topics and only once their answers are published: at that point
+              there is something to read and nothing left to wait for. A graded
+              topic keeps its hourglass even when the candidate also wrote a
+              comment on it, because the grade is the thing that is coming; the
+              comment shows inside that topic on the candidate's own page, where
+              it has room.
             {%- endcomment -%}
             {% for subject in site.data.subjects %}
             {% assign cell = c.scores[subject.id] %}
             {% assign cell_state = "" %}
-            {% if site.data.scores.graded_subjects contains subject.id %}
-              {% if c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
-            {% else %}
+            {% unless site.data.scores.graded_subjects contains subject.id %}
               {% assign published = c.published_subjects[subject.id] %}
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
-            {% endif %}
+            {% endunless %}
+            {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
             <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell state=cell_state %}</td>
             {% endfor %}
           </tr>
@@ -506,14 +509,17 @@ description: >-
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" state="review" %}
-            <span class="grade-def__label">Being graded</span>
+            <span class="grade-def__label">Not published yet</span>
           </dt>
           <dd class="grade-def__desc">
             This candidate returned the questionnaire and this topic has not been
             published yet. Grading is done by the coalition organization that wrote
             the topic's questions, and each topic is published as that organization
             finishes it, so a candidate can show letters in one topic and this in
-            another. It says nothing about how the topic is going.
+            another. The two topics we do not grade —
+            <strong>General</strong> and <strong>Healthcare access</strong> — show
+            it too until their answers are released. It says nothing about how the
+            topic is going.
           </dd>
         </div>
         <div class="grade-def">
@@ -522,13 +528,14 @@ description: >-
             <span class="grade-def__label">Answered, not graded</span>
           </dt>
           <dd class="grade-def__desc">
-            The candidate answered, and this is a topic we do not assign a letter
-            in. Two of them work this way: <strong>General</strong>, which asks
-            what a candidate would change and how they would split a budget, and
-            <strong>Healthcare access</strong>, which asks one question about
-            primary care clinics. The coalition puts them to every candidate
-            because the answers are worth reading, not because we score them.
-            Open the candidate's page to read what they wrote.
+            The candidate answered, this is a topic we do not assign a letter in,
+            and their answers are published. Two topics work this way:
+            <strong>General</strong>, which asks what a candidate would change and
+            how they would split a budget, and <strong>Healthcare access</strong>,
+            which asks one question about primary care clinics. The coalition puts
+            them to every candidate because the answers are worth reading, not
+            because we score them. Open the candidate's page to read what they
+            wrote.
           </dd>
         </div>
         <div class="grade-def">
@@ -537,9 +544,10 @@ description: >-
             <span class="grade-def__label">Not graded</span>
           </dt>
           <dd class="grade-def__desc">
-            Either no completed questionnaire has come back from this candidate
-            yet, or the topic is one we do not assign a letter in. A dash is never
-            a bad grade: the grades are <strong>A</strong> through <strong>F</strong>,
+            No completed questionnaire has come back from this candidate yet, so
+            there is nothing to publish in any topic — a candidate who has replied
+            carries an hourglass or a speech bubble instead. A dash is never a bad
+            grade: the grades are <strong>A</strong> through <strong>F</strong>,
             and a candidate who scores poorly gets a letter saying so.
           </dd>
         </div>
