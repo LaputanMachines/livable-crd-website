@@ -202,6 +202,57 @@
   max-width: 68ch;
 }
 
+// The answer choices. Deliberately not the pill treatment used for GEN-02's
+// areas below: an area is a two-word noun and a choice is a full sentence
+// ("Free or half-priced transit for people receiving income or disability
+// assistance."), which has to be read one per line to be compared against the
+// one under it. The measure matches the question above so the two columns of
+// text share an edge.
+//
+// Each choice carries the control the form draws beside it — a circle to pick
+// one of, a square to tick several of. Bullets would say "list" and a rule down
+// the side said "quotation"; neither says "these are the answers, and you get
+// one". The shape also states the question's type before a word of it is read,
+// which is the thing a candidate briefing a team needs first.
+//
+// Drawn empty, and never as a real input. Nothing here is fillable: the form is
+// where a candidate answers, and a checkbox that cannot be ticked is worse than
+// no checkbox at all.
+.questionnaire-item__options {
+  list-style: none;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  max-width: 68ch;
+
+  li {
+    position: relative;
+    padding-left: 1.75rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+
+    + li { margin-top: 0.4rem; }
+
+    // Sized in em so the control tracks the text it sits beside, and nudged
+    // down to sit on the first line's centre rather than its top.
+    &::before {
+      content: "";
+      position: absolute;
+      left: 0.25rem;
+      top: 0.3em;
+      width: 0.85em;
+      height: 0.85em;
+      border: 1.5px solid rgba($color-border, 0.5);
+      background: $color-surface;
+    }
+  }
+}
+
+// One answer: the form shows a radio.
+.questionnaire-item__options--single li::before { border-radius: 50%; }
+
+// Several: the form shows a checkbox.
+.questionnaire-item__options--multi li::before { border-radius: 2px; }
+
 // GEN-02's twelve line items. Set as a wrapping row of pills rather than a
 // bulleted list: the point is how many things are being traded off against each
 // other, which a reader takes in from one block and not from twelve rows.
@@ -226,6 +277,12 @@
   margin: 0.3rem 0 0;
   font-size: 0.8rem;
   color: $color-muted;
+}
+
+// The selection cap reads as a footnote to the list above it, so it lines up
+// with the choices' text rather than back out to the question's left edge.
+.questionnaire-item__meta--limit {
+  padding-left: 1.75rem;
 }
 
 .questionnaire-cta {
@@ -281,4 +338,19 @@
 
   .questionnaire-section { break-inside: auto; }
   .questionnaire-item { break-inside: avoid; }
+
+  // Printing is the whole reason the choices are on the page: a candidate is
+  // taking this to a table to work through with their team. ART-05 lists
+  // sixteen of them, which is taller than what break-inside can honour on its
+  // own, so the list is allowed to split while the question stays with at least
+  // the first of its options.
+  .questionnaire-item:has(.questionnaire-item__options li:nth-child(12)) {
+    break-inside: auto;
+  }
+
+  .questionnaire-item__options {
+    break-before: avoid;
+
+    li { break-inside: avoid; }
+  }
 }

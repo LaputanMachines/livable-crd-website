@@ -53,6 +53,7 @@ import argparse
 import csv
 import importlib.util
 import io
+import json
 import os
 import re
 import sys
@@ -162,26 +163,57 @@ SUBJECT_FOR_CATEGORY = {
 }
 
 # Registry `Type` values, expanded for a reader who has never seen the sheet.
-# An unrecognized type publishes no label rather than the raw token, and neither
-# does `single`: "one answer" is what a reader already assumes a question wants,
-# so printing it under 39 of the 55 is noise standing where information should.
+# An unrecognized type publishes no label rather than the raw token.
+#
+# `single` and `text` used to publish no label either, on the argument that "one
+# answer" is what a reader already assumes and printing it under 39 of the 55 is
+# noise. That was right for a reader skimming the page and wrong for the reader
+# it turned out to have: candidates asked for this page so they could work the
+# questionnaire through with their team before opening the form, and a team
+# drafting answers offline needs to know a box wants a sentence and not an essay
+# before it starts writing one. Every question states its shape now.
 TYPE_LABELS = {
+    "single": "One answer",
+    "text": "Written answer",
     "multi": "Select all that apply",
     "pair": "Answer plus a written follow-up",
     "variant": "Asked separately for each municipality",
     "variant,multi": "Asked separately for each municipality; select all that apply",
     "multi,pair": "Select all that apply, plus a written follow-up",
-    # The two shapes only ungraded questions come in. "text" gets no label for
-    # the same reason "single" gets none: an open box is what a reader assumes.
     "allocation": "Split $10 million across twelve areas",
 }
 
-# Most multi-select questions say "Select all that apply" in their own wording,
-# because that is how the form asks them. Repeating it underneath is a caption
-# restating the sentence above it, so the label is dropped where the question has
-# already said it. Matched loosely: the form is not consistent about whether it
-# says "select", "check", or just "all that apply".
-SELECT_ALL_CUES = ("select all", "check all", "all that apply")
+# Most multi-select questions state their own selection rule, because that is how
+# the form asks them. Repeating it underneath is a caption restating the sentence
+# above it, so the clause is dropped where the question has already said it.
+# Matched loosely: the form is not consistent about whether it says "select",
+# "check", or just "all that apply".
+#
+# The capped ones matter more than the redundancy does. ART-05 asks candidates to
+# "Select up to five" and HFL-12 "Select up to two", and a label underneath them
+# reading "select all that apply" is not a repetition but a contradiction - one
+# that got easy to miss while the label sat alone and impossible to miss now that
+# it sits under the sixteen options it is describing.
+SELECTION_RULE_CUES = (
+    "select all", "check all", "all that apply",
+) + ("select up to", "choose up to", "select at most")
+
+# The subset of those that state a cap. A question saying "Select up to five"
+# has already published its own `option_limit` in words, so printing the number
+# under its list is the same sentence twice. "Select all that apply" has not:
+# TRN-01 says it and the form still stops a candidate at four of the six, which
+# is the sort of thing worth finding out before the form is open, not after.
+SELECTION_CAP_CUES = ("select up to", "choose up to", "select at most", "maximum of")
+
+# What each label says once its selection clause is dropped. A multi-select whose
+# question states its own rule is still worth labelling for everything else the
+# label carries: HFL-12 is asked once per municipality, and that is not something
+# the question text says anywhere.
+WITHOUT_SELECTION_CLAUSE = {
+    "multi": "",
+    "variant,multi": "Asked separately for each municipality",
+    "multi,pair": "Answer plus a written follow-up",
+}
 
 # An `Owner` naming a person's inbox rather than an organization. See the module
 # docstring: these are dropped, not published.
@@ -240,6 +272,13 @@ QUESTIONS_HEADER = """\
 #   type      Answer shape: single, multi, pair, variant, or a comma-joined
 #             combination. `type_label` is the same thing spelled out for a
 #             reader; absent when the combination has no wording yet.
+#   options   What the question offers to pick from, in form order. Present only
+#             on multi-select questions: the raw tab names every option of one
+#             in a column header, picked or not, while a single-choice question
+#             exports as one column holding whichever answer came back. So the
+#             absence of `options` on a single-choice question means the option
+#             set is not recoverable from the spreadsheet, not that the question
+#             has none.
 #   graded    Whether the question carries a grade. An ungraded question is
 #             published unscored: it was asked, and the answer informs the
 #             coalition, but no letter is assigned to it.
@@ -473,6 +512,86 @@ def tab_values(sheet_id, title, expect=None):
     return fetch_tab(sheet_id, title, expect=expect)
 
 
+# --- Answer choices ---------------------------------------------------------
+# What a question offers to pick from, which the Question Registry does not
+# record and the site had no way to publish. Two sources, and they are not
+# interchangeable:
+#
+#   The Tally form   Every question, in the order and wording a candidate reads
+#                    them, plus the selection cap and character limits. Needs an
+#                    API key, so it is the source that can be missing.
+#   The raw tab      Multi-selects only, because Tally exports one column per
+#                    checkbox option and names each in the header. Free, always
+#                    available, and the independent check on the other one.
+#
+# The form wins where both know a question: it is what candidates actually see,
+# and the raw tab's column order was frozen whenever those columns were created.
+# A disagreement about *which* options exist is still worth saying out loud.
+
+def split_options(texts):
+    """(non-option columns, [option texts]) for one question's columns.
+
+    Mirrors split_options() in scripts/questionnaire/grading_tabs.py, inlined
+    rather than imported because that module pulls in gspread at import time and
+    this script deliberately has no dependencies. Change both together.
+
+    Tally exports a checkbox question as one column holding the question, plus
+    one column per option repeating the question with " (the option)" appended.
+    So the shortest text is the question and anything extending it is an option.
+    A column that extends nothing is a written follow-up part (GOV-01, CLI-01,
+    ART-01), returned with the question.
+    """
+    base = min(texts, key=len)
+    options, plain = [], []
+    for text in texts:
+        if text != base and text.startswith(base) and text.rstrip().endswith(")"):
+            options.append(text[len(base):].strip().strip("()").strip())
+        else:
+            plain.append(text)
+    return plain, options
+
+
+def header_options(header):
+    """{label: [option, ...]} for every multi-select question on the form.
+
+    The one place the full option set of a question is recoverable without
+    asking Tally: the raw tab names every option in a column header whether or
+    not a candidate ever picked it. Single-choice questions export as one column
+    holding the chosen value, so they are absent here and their options have to
+    come from the form itself.
+
+    Municipality variants are collapsed to the label the registry lists, the
+    same fold ungraded_questions() does. HFL-12 asks the same six options of
+    five municipalities; publishing them once is the whole point of collapsing.
+    A variant whose options differ from its siblings' is reported rather than
+    silently resolved, because there is no honest way to print one list for it.
+    """
+    grouped = {}
+    for cell in header:
+        m = LABEL_RE.match((cell or "").strip())
+        if not m:
+            continue
+        grouped.setdefault(m.group(1), []).append(" ".join(cell.split()))
+
+    collapsed = {}
+    for full_label, texts in grouped.items():
+        _, options = split_options(texts)
+        if not options:
+            continue
+        variant = VARIANT_RE.match(full_label)
+        label = variant.group(1) if variant else full_label
+        collapsed.setdefault(label, {})[full_label] = options
+
+    out, conflicts = {}, []
+    for label, per_variant in collapsed.items():
+        distinct = {tuple(options) for options in per_variant.values()}
+        if len(distinct) > 1:
+            conflicts.append(label)
+            continue
+        out[label] = list(next(iter(distinct)))
+    return out, conflicts
+
+
 # --- Ungraded questions, which live only on the raw tab ---------------------
 # The Question Registry lists what gets graded, so the free-text questions never
 # reached it: GEN-01, the per-topic "anything to add" boxes, and GEN-02. They
@@ -480,6 +599,162 @@ def tab_values(sheet_id, title, expect=None):
 # from the form's own columns instead. HLT-01 is the exception in the other
 # direction: it does have a registry row, hand-marked Graded=No, and is
 # published from there like any other registry question.
+
+TALLY_FORM_URL = "https://api.tally.so/forms/{id}"
+
+# Blocks that hold one selectable option, and the ones that take an answer but
+# offer nothing to list.
+TALLY_OPTION_BLOCKS = {"MULTIPLE_CHOICE_OPTION", "CHECKBOX"}
+TALLY_WRITTEN_BLOCKS = {"TEXTAREA", "INPUT_TEXT"}
+TALLY_ANSWER_BLOCKS = TALLY_OPTION_BLOCKS | TALLY_WRITTEN_BLOCKS | {
+    "INPUT_NUMBER", "LINEAR_SCALE",
+}
+
+
+def fetch_form(form_id, api_key, timeout=60):
+    """The Tally form definition, or None if it cannot be read.
+
+    Returns None rather than raising on a credential or lookup failure, so a
+    missing key degrades to publishing multi-select options from the raw tab
+    instead of stopping a run that also publishes grades.
+    """
+    request = urllib.request.Request(
+        TALLY_FORM_URL.format(id=form_id),
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Accept": "application/json",
+            # Cloudflare fronts api.tally.so and refuses the stdlib default
+            # ("Python-urllib/3.x") with error 1010, browser_signature_banned.
+            "User-Agent": "livablecrd-website-sync/1.0 (+https://livablecrd.ca)",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return json.load(response)
+    except urllib.error.HTTPError as e:
+        if e.code in (401, 403, 404):
+            return None
+        raise
+
+
+def block_text(payload):
+    """The visible text of a Tally rich-text block.
+
+    `safeHTMLSchema` is a list of runs, each `[text]` or `[text, [[attr, value],
+    ...]]` where the attributes carry styling and links. Only the text matters
+    here; a link's href is part of the question a candidate reads on the form,
+    not part of the question this site publishes.
+    """
+    runs = (payload or {}).get("safeHTMLSchema") or []
+    return " ".join("".join(
+        run[0] for run in runs if run and isinstance(run[0], str)
+    ).split())
+
+
+def form_options(blocks):
+    """({label: {options, limit}}, [conflicting label, ...]) from a Tally form.
+
+    Blocks are a flat list in form order. A question opens with a TITLE block in
+    the QUESTION group and owns every answer block after it until the next one,
+    so the label parsed off that title names the options that follow.
+
+    Municipality variants are collapsed the same way header_options() collapses
+    them, and on the same test: the same options, not the same ordering. HFL-11
+    asks ten municipalities about their own housing target and Colwood's copy
+    lists two of the four answers the other way round, which is a fact about how
+    the form was typed rather than a different question being asked.
+    """
+    by_label, current = {}, None
+    for block in blocks:
+        payload = block.get("payload") or {}
+        if block.get("type") == "TITLE" and block.get("groupType") == "QUESTION":
+            m = LABEL_RE.match(block_text(payload))
+            current = m.group(1) if m else None
+            if current:
+                by_label.setdefault(current, [])
+            continue
+        if current and block.get("type") in TALLY_ANSWER_BLOCKS:
+            by_label[current].append((block["type"], payload))
+
+    collapsed = {}
+    for full_label, blocks_for_label in by_label.items():
+        if not blocks_for_label:
+            continue
+        variant = VARIANT_RE.match(full_label)
+        label = variant.group(1) if variant else full_label
+        picked = [p for kind, p in blocks_for_label if kind in TALLY_OPTION_BLOCKS]
+        written = [p for kind, p in blocks_for_label if kind in TALLY_WRITTEN_BLOCKS]
+        limits = [p["maxCharacters"] for p in written if p.get("hasMaxCharacters")]
+        collapsed.setdefault(label, {})[full_label] = {
+            # "Other, I have another idea!" is a choice a candidate can pick and
+            # a column on the raw tab, so it is listed like any other.
+            "options": [" ".join((p.get("text") or "").split()) for p in picked],
+            "limit": picked[0].get("maxChoices") if picked and picked[0].get("hasMaxChoices") else None,
+            # A question that takes writing and offers nothing to pick. The
+            # registry cannot see this: it infers a question's shape by counting
+            # the columns Tally exports for it, and a text box and a
+            # single-choice question are one column each. Eleven questions the
+            # registry calls `single` are 2000-character essay boxes.
+            "written_only": bool(written) and not picked,
+            "max_characters": max(limits) if limits else None,
+        }
+
+    out, conflicts = {}, []
+    for label, per_variant in collapsed.items():
+        distinct = {frozenset(v["options"]) for v in per_variant.values()}
+        if len(distinct) > 1:
+            conflicts.append(label)
+            continue
+        # The first variant in form order. Where variants disagree about
+        # ordering they still offer the same options, so any of them is true of
+        # the question; taking the first keeps the choice deterministic and
+        # keeps it to an order some candidate actually reads.
+        out[label] = next(iter(per_variant.values()))
+    return out, conflicts
+
+
+def reconcile_options(from_form, from_header, warnings):
+    """{label: record} to publish, the form's reading first.
+
+    The raw tab knows only multi-selects, so it covers a third of the questions
+    and agreeing with it is the only independent evidence the form was read
+    correctly. Where the two disagree about which options exist, the form is
+    published and the disagreement is reported: the form is what a candidate is
+    looking at, and a sync that refused to run over it would take the grades
+    down with it.
+
+    Ordering disagreements are not reported. Two questions list their last two
+    options the other way round on the tab, because a column's position was
+    fixed when that column was created and the form has been edited since. The
+    form's order is the order a candidate reads, so it wins quietly.
+    """
+    merged = {label: {"options": options, "limit": None,
+                      "written_only": False, "max_characters": None}
+              for label, options in from_header.items()}
+
+    for label, record in from_form.items():
+        checked = from_header.get(label)
+        if checked and not record["options"]:
+            # The form says this question offers nothing to pick and the tab
+            # named columns for it. Trusting the form here would silently drop a
+            # list the tab can prove exists, so keep it and say so.
+            warnings.append(
+                f"{label}: the {RAW_TAB} names option columns for this question "
+                f"and the Tally form reports none. Keeping the tab's list."
+            )
+            merged[label].update({k: v for k, v in record.items() if k != "options"})
+            continue
+        if checked is not None and set(checked) != set(record["options"]):
+            only_form = [o for o in record["options"] if o not in checked]
+            only_sheet = [o for o in checked if o not in record["options"]]
+            warnings.append(
+                f"{label}: the Tally form and the {RAW_TAB} columns list different "
+                f"options. Publishing the form's. Only on the form: {only_form or 'none'}. "
+                f"Only on the tab: {only_sheet or 'none'}."
+            )
+        merged[label] = record
+    return merged
+
 
 def ungraded_questions(header, graded_labels, subject_order, warnings, errors):
     """Ungraded questions on the raw tab, in form order.
@@ -659,7 +934,47 @@ def load_candidate_index(path):
 
 # --- Questions ---------------------------------------------------------------
 
-def build_questions(registry, extra, subject_order, warnings, errors):
+def unstated_limit(limit, question):
+    """The selection cap, unless the question has already spelled it out."""
+    if not limit or any(cue in question.lower() for cue in SELECTION_CAP_CUES):
+        return None
+    return limit
+
+
+def form_corrected_kind(kind, choice):
+    """The registry's answer shape, corrected against the form where it is wrong.
+
+    The registry infers a question's shape by counting the columns Tally exports
+    for it (see describe() in scripts/questionnaire/grading_tabs.py), and a text
+    box and a single-choice question are one column each. Eleven questions are
+    2000-character essay boxes filed as `single`, which published as "One
+    answer" over a box wanting several paragraphs - the opposite of what a
+    candidate drafting with their team needs to know.
+
+    Only this one correction is made. The registry's other types carry knowledge
+    the form's flat block list does not: `variant` knows ten municipality copies
+    are one question, and `pair` knows a follow-up asked under its own title
+    belongs to the question above it.
+    """
+    if kind == "single" and choice.get("written_only"):
+        return "text"
+    return kind
+
+
+def with_character_limit(type_label, kind, choice):
+    """"Written answer" plus the cap, where the form sets one.
+
+    The difference between a 500-character answer and a 2000-character one is
+    the difference between a sentence and an argument, and it is the kind of
+    thing a team splitting up drafting work needs before it starts writing.
+    """
+    limit = choice.get("max_characters")
+    if not (type_label and limit and kind == "text"):
+        return type_label
+    return f"{type_label}, up to {limit:,} characters"
+
+
+def build_questions(registry, extra, choices, subject_order, warnings, errors):
     """Every published question, in subjects.yml order.
 
     Registry rows first within a subject, then the ungraded ones the registry
@@ -704,10 +1019,13 @@ def build_questions(registry, extra, subject_order, warnings, errors):
             )
             owner = ""
 
+        choice = choices.get(label, {})
+        kind = form_corrected_kind(kind, choice)
         type_label = TYPE_LABELS.get(kind, "")
-        if type_label.startswith("Select all") and \
-                any(cue in question.lower() for cue in SELECT_ALL_CUES):
-            type_label = ""
+        if kind in WITHOUT_SELECTION_CLAUSE and \
+                any(cue in question.lower() for cue in SELECTION_RULE_CUES):
+            type_label = WITHOUT_SELECTION_CLAUSE[kind]
+        type_label = with_character_limit(type_label, kind, choice)
 
         by_subject.setdefault(subject, []).append({
             "label": label,
@@ -718,6 +1036,8 @@ def build_questions(registry, extra, subject_order, warnings, errors):
             "graded": norm(cell(R_GRADED)) in {"yes", "true", "y"},
             "weight": cell(R_WEIGHT),
             "owner": owner,
+            "options": choice.get("options") or [],
+            "option_limit": unstated_limit(choice.get("limit"), question),
         })
 
     # The ungraded ones carry no weight and no owner: nobody grades them, so
@@ -740,6 +1060,8 @@ def build_questions(registry, extra, subject_order, warnings, errors):
             "graded": False,
             "weight": "",
             "owner": "",
+            "options": choices.get(q["label"], {}).get("options") or [],
+            "option_limit": choices.get(q["label"], {}).get("limit"),
             "areas": q["areas"],
         })
 
@@ -779,6 +1101,15 @@ def render_questions(items, subject_order):
             parts.append(f"    weight: {scalar(q['weight'])}")
         if q["owner"]:
             parts.append(f"    owner: {scalar(q['owner'])}")
+        # What the question offers to pick from, so a candidate can work through
+        # the questionnaire with their team before opening the form.
+        if q.get("options"):
+            parts.append("    options:")
+            parts.extend(f"      - {scalar(option)}" for option in q["options"])
+            # How many of them may be picked, where the form caps it. ART-05
+            # allows five of sixteen, which changes what the list means.
+            if q.get("option_limit"):
+                parts.append(f"    option_limit: {q['option_limit']}")
         # GEN-02's line items, so /questionnaire/ can show what the allocation is
         # split across without a candidate having answered it.
         if q.get("areas"):
@@ -1224,6 +1555,10 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--sheet-id", default=os.environ.get("QUESTIONNAIRE_SUBMISSIONS_SHEET_ID", ""),
                         help="Submission spreadsheet id (default: $QUESTIONNAIRE_SUBMISSIONS_SHEET_ID)")
+    parser.add_argument("--form-id", default=os.environ.get("TALLY_FORM_ID", ""),
+                        help="Tally form id (default: $TALLY_FORM_ID)")
+    parser.add_argument("--api-key", default=os.environ.get("TALLY_API_KEY", ""),
+                        help="Tally API key (default: $TALLY_API_KEY)")
     parser.add_argument("--dry-run", action="store_true", help="Report what would change, write nothing")
     args = parser.parse_args(argv)
 
@@ -1252,12 +1587,53 @@ def main(argv=None):
                            header_only=True)
     if raw_header is None:
         warnings.append(f"{RAW_TAB}: tab missing, no ungraded questions published")
-        ungraded = []
+        ungraded, options = [], {}
     else:
         ungraded = ungraded_questions(
             raw_header[0], graded_labels, subject_order, warnings, errors)
+        options, conflicts = header_options(raw_header[0])
+        for label in sorted(conflicts):
+            warnings.append(
+                f"{RAW_TAB} ({label}): municipality variants offer different "
+                f"options, so no single list is true of the question. Published "
+                f"without options."
+            )
 
-    questions = build_questions(registry, ungraded, subject_order, warnings, errors)
+    # What the raw tab alone can say: the multi-selects' options, and nothing
+    # about a selection cap or a character limit, neither of which reaches a
+    # column header. The form fills the rest in below.
+    choices = {label: {"options": found, "limit": None,
+                       "written_only": False, "max_characters": None}
+               for label, found in options.items()}
+
+    # The form covers the questions the raw tab cannot: a single-choice question
+    # exports as one column holding whichever answer came back, so its options
+    # exist nowhere but here.
+    if not (args.form_id and args.api_key):
+        warnings.append(
+            "no Tally credentials (TALLY_FORM_ID / TALLY_API_KEY), so only "
+            "multi-select questions are published with their answer choices"
+        )
+    else:
+        form = fetch_form(args.form_id, args.api_key)
+        if form is None:
+            warnings.append(
+                f"Tally form {args.form_id} could not be read: check the id and "
+                f"that the key is still valid. Answer choices fall back to the "
+                f"multi-selects the {RAW_TAB} columns name."
+            )
+        else:
+            from_form, form_conflicts = form_options(form.get("blocks") or [])
+            for label in sorted(form_conflicts):
+                warnings.append(
+                    f"Tally form ({label}): municipality variants offer different "
+                    f"options, so no single list is true of the question. Published "
+                    f"without options."
+                )
+            choices = reconcile_options(from_form, options, warnings)
+
+    questions = build_questions(registry, ungraded, choices, subject_order,
+                                warnings, errors)
     question_labels = {q["label"] for q in questions}
 
     # Which subjects carry a grade at all, read off the questions rather than off

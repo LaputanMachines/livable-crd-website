@@ -162,6 +162,58 @@ description: >-
           <span class="questionnaire-item__label">{{ q.label }}</span>
         </div>
         <p class="questionnaire-item__question">{{ q.question }}</p>
+        {%- comment -%}
+          The answer's shape stays a plain line: it is a description of the form
+          a candidate filled in, and reads as a sentence rather than a label. It
+          sits above the choices rather than below them because it is the thing
+          that tells a reader how to read the list underneath — whether they are
+          picking one of these or as many as they like.
+
+          Absent on the ten multi-selects whose own wording already says "select
+          all that apply" or "select up to five", which is the same sentence one
+          line higher up. See SELECTION_RULE_CUES in sync-questionnaire.py.
+        {%- endcomment -%}
+        {%- if q.type_label %}
+        <p class="questionnaire-item__meta">{{ q.type_label }}</p>
+        {%- endif %}
+        {%- if q.options %}
+        {%- comment -%}
+          The answer choices, which are the reason this page exists in the shape
+          it does: candidates asked to work the questionnaire through with their
+          team before opening the form, and half of these questions are a choice
+          between options they could not read anywhere until now.
+
+          Only multi-selects carry them today. The raw tab names every option of
+          a multi-select in a column header whether or not anyone picked it,
+          while a single-choice question exports as one column holding whatever
+          answer came back, so its full option set is recoverable only from the
+          form itself. A question with no list here has options; the site does
+          not yet know them.
+        {%- endcomment -%}
+        {%- comment -%}
+          Drawn as the control the form draws: a circle where a candidate picks
+          one, a square where they pick several. The shape is doing the work the
+          question's wording otherwise has to — a reader knows which kind of
+          question they are looking at before reading a word of it, and a list
+          of full sentences stops reading as a paragraph.
+        {%- endcomment -%}
+        {%- if q.type contains "multi" %}{% assign option_control = "multi" %}{% else %}{% assign option_control = "single" %}{% endif -%}
+        <ul class="questionnaire-item__options questionnaire-item__options--{{ option_control }}">
+          {%- for option in q.options %}
+          <li>{{ option }}</li>
+          {%- endfor %}
+        </ul>
+        {%- comment -%}
+          The cap, where the form sets one the question does not mention. TRN-01
+          reads "select all that apply" and stops a candidate at four of its six
+          — worth knowing while a team is still deciding which four. Suppressed
+          on the questions that state their own ("Select up to five"); see
+          SELECTION_CAP_CUES in sync-questionnaire.py.
+        {%- endcomment -%}
+        {%- if q.option_limit %}
+        <p class="questionnaire-item__meta questionnaire-item__meta--limit">Up to {{ q.option_limit }} may be selected.</p>
+        {%- endif %}
+        {%- endif %}
         {%- if q.areas %}
         {%- comment -%}
           GEN-02's twelve line items. Listed here because the question on its
@@ -169,19 +221,15 @@ description: >-
           none of them, and the areas are most of what the question actually
           asks: which twelve things a candidate is made to trade off against
           each other is the whole design of it.
+
+          A different thing from the options above and styled differently: these
+          are twelve budgets to fill in, not a list to pick from.
         {%- endcomment -%}
         <ul class="questionnaire-item__areas">
           {%- for area in q.areas %}
           <li>{{ area }}</li>
           {%- endfor %}
         </ul>
-        {%- endif %}
-        {%- comment -%}
-          The answer's shape stays a plain line: it is a description of the form
-          a candidate filled in, and reads as a sentence rather than a label.
-        {%- endcomment -%}
-        {%- if q.type_label %}
-        <p class="questionnaire-item__meta">{{ q.type_label }}</p>
         {%- endif %}
         {%- comment -%}
           The foot: what the question is worth, and — where the section head

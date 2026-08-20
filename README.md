@@ -153,6 +153,31 @@ Deliberately **not** published: candidate email addresses and the rest of Tally'
 
 A grade of `N/A` is published as its own badge, meaning "graded, and this question does not apply to this candidate" (`ROL-05` asks about a previous term in office). It is distinct from a blank, which means not graded yet and renders as `—`.
 
+### Answer choices
+
+Candidates asked to work the questionnaire through with their team before opening the form, which means the published page has to say what each question offers to pick from, not just what it asks. `_data/questions.yml` carries an `options` list for that, plus `option_limit` where the form caps how many may be picked, and `/questionnaire/` prints both under the question. All 44 choice questions have their options; the other 22 are free-text boxes and GEN-02's allocation, which offer nothing to list.
+
+They come from **two sources, and the difference matters if either ever disagrees**:
+
+| Source | Covers | Needs |
+|---|---|---|
+| The Tally form (`TALLY_FORM_ID`, `TALLY_API_KEY`) | Every question, in the wording and order a candidate reads, plus selection caps and character limits | An API key |
+| The `2026 Municipal Elections` tab | Multi-selects only — Tally exports one column per checkbox option and names each in the header | Nothing extra |
+
+The form wins where both know a question, because it is what a candidate is looking at and a column's position was fixed whenever that column was created. `reconcile_options()` reports a disagreement about *which* options exist as a warning rather than an error: the form is the better authority, and a sync that refused to run over a mismatch would take the grades down with it. Ordering disagreements are resolved silently in the form's favour — two questions currently list their last two options the other way round on the tab.
+
+Cross-checking against the tab is the only independent evidence the form is being read correctly, and it is worth keeping for that alone. As of writing, all 11 multi-selects agree on the option set exactly.
+
+**Without the Tally secrets the sync still runs**, warns, and publishes only the multi-selects' options. It does not fail: answer choices are not worth blocking a grade release over.
+
+`HFL-11` and `HFL-12` are asked once per municipality, and their variants are collapsed to one list on the test of offering the same options, not of listing them in the same order — Colwood's copy of `HFL-11` happens to list two of its four answers the other way round. If two variants ever offer genuinely different options, the question is published without them and the run warns, because no single list would be true of it.
+
+### What the form knows that the registry cannot
+
+The registry infers a question's answer shape by counting the columns Tally exports for it (`describe()` in [`scripts/questionnaire/grading_tabs.py`](scripts/questionnaire/grading_tabs.py)), and a text box and a single-choice question are one column each. Eleven questions are essay boxes filed as `single`, which the site published as "One answer" over a box wanting several paragraphs. `form_corrected_kind()` corrects exactly those, using the form's block type, and nothing else: the registry's other types carry knowledge the form's flat block list does not, since `variant` knows ten municipality copies are one question and `pair` knows a follow-up asked under its own title belongs to the question above it.
+
+Every question also states its answer shape (`type_label`: "One answer", "Written answer, up to 2,000 characters", "Select all that apply"), except the ten multi-selects whose own wording already says it — see `SELECTION_RULE_CUES`. That exception exists because `ART-05` says "Select up to five" and `HFL-12` "Select up to two", and a label underneath them reading "select all that apply" would contradict the question rather than repeat it. `option_limit` is suppressed on those same questions and kept everywhere else: `TRN-01` reads "select all that apply" and the form still stops a candidate at four of its six.
+
 ### How it joins to the candidate list
 
 `scores.yml` is a separate file from `candidates.yml` because the two come from different spreadsheets on different schedules, and anything written into `candidates.yml` would be overwritten by the nightly candidate sync. [`_plugins/questionnaire_scores.rb`](_plugins/questionnaire_scores.rb) joins them at build time, matching on name and municipality. A result for somebody not listed as a confirmed candidate is dropped by the script (with a warning) — there is no page to show it on.
