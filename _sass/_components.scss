@@ -219,6 +219,18 @@
   font-family: $font-display;
   color: #fff;
   flex-shrink: 0;
+  // Every chip is inline-level, so in a table cell or a run of text its
+  // vertical position comes from its own baseline - and an inline-flex box
+  // takes that from its content. A chip holding a letter reports the letter's
+  // baseline, which sits well inside the box, while a chip holding an SVG has
+  // no baseline to report and falls back to its bottom edge. Aligning those two
+  // to the same line drops the lettered chip by the distance between them,
+  // which is what put the grades a couple of pixels below the hourglasses
+  // beside them in the matrix. `middle` ignores the content and aligns the box,
+  // so all five states line up whatever is inside them. A no-op wherever a chip
+  // is a flex item (the legend, the candidate rows), which is every other place
+  // it appears.
+  vertical-align: middle;
 }
 
 .grade--pending {
