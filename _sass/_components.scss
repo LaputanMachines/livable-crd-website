@@ -573,7 +573,23 @@ tr:hover td { background: $color-bg-warm; }
   width: 100%;
   margin: 0;
   border: none;
-  border-collapse: collapse;
+  // `separate`, not `collapse`, because of the sticky topic header below.
+  // WebKit does not position a sticky cell correctly inside a table whose
+  // borders are collapsed: instead of tracking the viewport the row holds its
+  // offset from the top of the table, sitting permanently on top of the
+  // favourites band and the first candidate under it. Chrome fixed the same
+  // fault years ago and Firefox never had it, which is why this looked correct
+  // everywhere but Safari, on desktop and iOS alike.
+  //
+  // The cost is that borders no longer merge: two that meet are now drawn one
+  // after the other rather than resolved into the heavier of the pair. Only
+  // .scorecard-matrix__group-head's top rule ever meets another (the faint
+  // row separator above it, or the header's own rule where it leads the
+  // table), so a municipality band's top edge draws a little heavier than it
+  // did. That is the whole of the visual difference, and it is worth a header
+  // that works in every engine.
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.9rem;
   // Fixed at every width, not just desktop. Under the default `auto` layout the
   // name column grows to fit the longest name it contains and the ten grade
@@ -777,12 +793,11 @@ tr:hover td { background: $color-bg-warm; }
     // painted over and costs nothing.
     top: calc(var(--site-header-h, 74px) - 1px);
     z-index: 3; // over the municipality bands and name cells it scrolls past
-    // Under border-collapse the borders belong to the table, not to the cell,
-    // so the 2px bottom rule set above is painted with the rows and gets left
-    // behind once the header detaches. This shadow is drawn by the cell and
-    // travels with it, in the same place and colour, so the two are
-    // indistinguishable while the header is still in the flow.
-    box-shadow: inset 0 -2px 0 $color-text;
+    // No shadow standing in for the bottom rule here any more. That was needed
+    // while the table's borders were collapsed and so belonged to the table
+    // rather than to the cell, which left the rule behind with the rows the
+    // moment the header detached. Under `separate` the 2px border set on
+    // `thead th` above is the cell's own and travels with it.
   }
 }
 
@@ -816,7 +831,6 @@ tr:hover td { background: $color-bg-warm; }
   }
   .scorecard-matrix thead th {
     position: static;
-    box-shadow: none;
   }
   .scorecard-matrix th,
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
