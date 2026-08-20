@@ -13,6 +13,14 @@
   p { margin-bottom: 0; }
 }
 
+// .callout carries a margin-top and no margin-bottom, so a button group placed
+// under one sits directly on its border. Matched to the callout's own top
+// margin rather than picked by eye, so the summary and the button read as two
+// items on the same vertical rhythm.
+.questionnaire-actions {
+  margin-top: $space-md;
+}
+
 // A single wrapping row of pills rather than a sidebar or a sticky bar: nine
 // links fit on two lines at phone width, and a sticky element would eat the
 // screen height the questions need.
@@ -328,29 +336,169 @@
   }
 }
 
-// On paper the jump bar is a list of links nobody can follow, and the call to
-// action is two buttons that do nothing. The questions themselves print fine,
-// which is the point: this is the one page a partner organization might
-// reasonably want on a desk.
+// The masthead is print-only; the site header does this job on screen.
+.print-mast { display: none; }
+
+// --- The printed questionnaire ---
+// Candidates asked for paper: a copy they can put on a table and work through
+// with their team before anybody opens the form. So this is not "the web page,
+// printed" but the questionnaire as a worksheet — every question, every choice,
+// nothing that only works with a cursor.
+//
+// Sizes in mm/pt rather than rem, the same reasoning as the candidate leaflet:
+// rem is a screen decision and paper is measured against a physical sheet.
 @media print {
+  // Why zero: browsers draw their own header and footer — document title, URL,
+  // page number, timestamp — into the page margin. No CSS turns that chrome off
+  // directly, but with no margin box there is nowhere to draw it, and Chromium
+  // and Firefox both drop it. Named so it stays scoped to this page: an unnamed
+  // @page would take the browser chrome off every printed page on the site.
+  //
+  // Caveats, in order of likelihood:
+  //   - Browser behaviour, not a guarantee. Safari may still print the chrome,
+  //     and any reader can force it back by choosing Default margins in the
+  //     print dialog.
+  //   - Named pages need Chrome 85+ / Firefox 110+. Where unsupported the rule
+  //     is ignored and the sheet prints with the browser's default margin and
+  //     its chrome: degraded, not broken.
+  @page questionnaire {
+    size: portrait;
+    margin: 0;
+  }
+
+  .page-questionnaire { page: questionnaire; }
+
+  // With no page margin the safe area has to come from the content, and this is
+  // where a multi-page document parts company with the one-page leaflet in
+  // _sass/_candidate.scss. Padding on the body applies once, to the first sheet
+  // only, so the horizontal inset goes on the blocks that repeat down the
+  // document and the vertical inset goes on each question.
+  //
+  // That makes every question carry its own top and bottom safe area, so
+  // whichever one happens to land at the top of sheet four is inset from the
+  // paper edge by its own padding rather than by a margin the page box no
+  // longer has. 6mm rather than a full 14mm: it is paid 66 times, and a
+  // worksheet wants the questions close enough together to compare.
+  // Inline-axis padding applies to every fragment of a block, so one rule on the
+  // container insets all nine sheets. Block-axis padding is the half that only
+  // lands once, which is why the vertical inset is on each question below and
+  // not here.
+  .page-questionnaire .page-header,
+  .page-questionnaire .page-content {
+    padding-left: 12mm;
+    padding-right: 12mm;
+  }
+
+  .questionnaire-item {
+    padding-top: 7mm;
+    padding-bottom: 5mm;
+  }
+
+  // Nothing on paper that needs a cursor: navigation, the jump bar, the two
+  // buttons that do nothing, and the print button itself, which would otherwise
+  // print as an instruction to do the thing already done.
+  .page-questionnaire .site-header,
+  .page-questionnaire .site-footer,
   .questionnaire-jump,
+  .questionnaire-actions,
   .questionnaire-cta { display: none; }
 
-  .questionnaire-section { break-inside: auto; }
-  .questionnaire-item { break-inside: avoid; }
+  // The page header is white text on inky purple with a texture overlay. With
+  // backgrounds off that is white text on white paper.
+  .page-questionnaire .page-header {
+    padding-top: 0;
+    padding-bottom: 4mm;
+    background: none;
+    color: #000;
+    // The masthead directly above already draws a rule; two is a box.
+    border-bottom: 0;
 
-  // Printing is the whole reason the choices are on the page: a candidate is
-  // taking this to a table to work through with their team. ART-05 lists
-  // sixteen of them, which is taller than what break-inside can honour on its
-  // own, so the list is allowed to split while the question stays with at least
-  // the first of its options.
-  .questionnaire-item:has(.questionnaire-item__options li:nth-child(12)) {
-    break-inside: auto;
+    h1 { color: #000; }
+
+    // navy-surface-texture() paints a dot pattern and a wash through these two.
+    // Backgrounds are usually off at print time, but "usually" is not a reason
+    // to leave a full-bleed overlay sitting over the title.
+    &::before,
+    &::after { display: none; }
   }
+
+  // Brand hard left, URL hard right, rule underneath: the two are the
+  // masthead's opposite ends, not a pair of items sitting next to each other.
+  // padding-top, not margin-top: with no page margin this is the first box on
+  // the sheet, and it is the only thing standing between the masthead and the
+  // paper edge.
+  .print-mast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4mm;
+    margin: 0 12mm 4mm;
+    padding-top: 12mm;
+    padding-bottom: 2mm;
+    border-bottom: 1pt solid #000;
+  }
+
+  .print-mast__brand {
+    display: flex;
+    align-items: center;
+    gap: 2.5mm;
+  }
+
+  .print-mast__logo {
+    width: auto;
+    height: 7mm;
+  }
+
+  .print-mast__name,
+  .print-mast__url {
+    font-family: $font-display;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 12pt;
+    line-height: 1;
+  }
+
+  // A policy area opens on its own sheet. Nine sections is nine sheets minimum
+  // against maybe seven if they run together, and it buys a team the ability to
+  // hand Housing to one person and Transit to another.
+  .questionnaire-section {
+    break-inside: auto;
+    break-before: page;
+    // Every sheet but the first opens with one of these, so this is that
+    // sheet's top margin. Without it the section heading printed hard against
+    // the paper edge — the same bug the masthead had on sheet one, in the place
+    // it is easiest to miss, because it only shows up on sheet two onwards.
+    padding-top: 14mm;
+  }
+
+  // The first section follows the masthead and the title on sheet one, which
+  // have already set the top of the page.
+  .questionnaire-section:first-of-type {
+    break-before: avoid;
+    padding-top: 0;
+  }
+
+  // Never split a question away from the choices it offers. This is the rule the
+  // 6mm padding above depends on: if no question is ever cut in half, every
+  // sheet begins with a whole one, and every sheet therefore begins with that
+  // question's own padding rather than hard against the paper edge. ART-05 is
+  // the tallest at sixteen choices and clears a full-height page comfortably.
+  .questionnaire-item { break-inside: avoid; }
 
   .questionnaire-item__options {
     break-before: avoid;
 
     li { break-inside: avoid; }
+  }
+
+  // The choices are drawn with a border and an explicit white fill, so they
+  // survive a print with backgrounds off. Forced on regardless: an empty box to
+  // tick is the whole point of the worksheet.
+  .questionnaire-item__options li::before {
+    border-color: #000;
+    background: #fff;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }

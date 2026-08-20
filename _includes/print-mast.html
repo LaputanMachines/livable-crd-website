@@ -1,0 +1,22 @@
+{%- comment -%}
+  Print-only masthead. Include it first in a page's markup so the printed sheet
+  opens with it: the site header is navigation and print drops it, but paper
+  handed to somebody has to say who produced it before it says anything else.
+  Hidden on screen, where the real site header is doing this job.
+
+  The mark plus the title as text, mirroring _includes/header.html, rather than
+  the logo-dark.svg lockup: that file is a near-square stacked badge, so at a
+  masthead's height it came out tiny and sat awkwardly beside the URL.
+
+  Styles live with the page that uses it, because the page owns the decision to
+  print at all. _layouts/candidate.html has its own copy of this markup under
+  .candidate-print-mast, written before this include existed; the two are the
+  same masthead and are worth unifying next time either is touched.
+{%- endcomment -%}
+<div class="print-mast" aria-hidden="true">
+  <span class="print-mast__brand">
+    <img class="print-mast__logo" src="{{ '/assets/images/brand/logo-mark.svg' | relative_url }}" alt="" width="80" height="36">
+    <span class="print-mast__name">{{ site.title }}</span>
+  </span>
+  <span class="print-mast__url">{{ site.url | remove: 'https://' | remove: 'http://' }}</span>
+</div>

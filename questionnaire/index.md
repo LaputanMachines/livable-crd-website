@@ -6,6 +6,7 @@ description: >-
   Every question the Livable CRD coalition put to Capital Regional District
   municipal election candidates, grouped by policy area, with the organization
   that wrote each one.
+body_class: page-questionnaire
 ---
 
 {%- comment -%}
@@ -22,6 +23,8 @@ description: >-
 {%- endcomment -%}
 {%- assign questions = site.data.questions -%}
 {%- assign items = questions.items -%}
+
+{% include print-mast.html %}
 
 <div class="page-header">
   <div class="container">
@@ -71,6 +74,20 @@ description: >-
       {%- endif %}
       <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
     </p>
+  </div>
+
+  {%- comment -%}
+    The print button sits with the summary rather than at the foot, because a
+    candidate who has come here to work the questionnaire through with their
+    team wants the paper before they read 66 questions on a screen, not after.
+
+    Hidden until assets/js/questionnaire.js unhides it: the printed sheet is
+    pure CSS, so without scripting the button would be a control that does
+    nothing, worse than no control at all. Readers without JS still get the
+    sheet from their browser's own print command.
+  {%- endcomment -%}
+  <div class="btn-group questionnaire-actions">
+    <button type="button" class="btn btn-primary" id="print-questionnaire" hidden>Print the questionnaire</button>
   </div>
 
   {%- comment -%}
@@ -271,3 +288,5 @@ description: >-
   </div>
   {%- endif %}
 </div>
+
+<script src="{{ '/assets/js/questionnaire.js' | asset_url }}" defer></script>
