@@ -632,6 +632,13 @@
   slate: null
 
 # --- Sidney ---
+- name: Scott Garnett
+  display_name: "Garnett, Scott"
+  municipality: sidney
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+
 - name: Jamie Wellbourn
   display_name: "Wellbourn, Jamie"
   municipality: sidney
