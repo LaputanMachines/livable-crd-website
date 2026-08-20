@@ -199,6 +199,8 @@ candidates:
               exist.
   - name: Keith Yacucha
     municipality: langford
+    scores:
+      transit: A
     subjects:
       - id: general
         grade: null
@@ -298,6 +300,62 @@ candidates:
               Unhoused Resident Services: This is again and zero not zero because this was already captured in the funding allocation for the housing category.
 
               Community-Based Clinics: One of the largest successes this term was partnering with SIPCS to create a space for new doctors which were able to attach 12,500 people to a family doctor in the region. This is entirely a capital expense to acquire land and engage in improvement for the site for the clinic which has had tremendous impact. Importantly though this is outside of the municipal mandate, so while it has tremendous impact and we should be evaluating it, we also need to ensure that we are focusing on our mandate for local government and not taking on too many extra downloaded responsibilities.
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Backed free travel for under 19s, cheaper fares for seniors, and
+              cheaper fares for people on income or disability assistance.
+              Only the lower cost regional monthly pass went unticked, so
+              every group of riders the question named is covered.
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+          - label: TRN-02
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Would take general street parking off transit corridors only
+              where a particular project needs it, so the corridor as a whole
+              stays as it is and each removal has to be argued on its own.
+              That is partial support for the right change, which is why it
+              sits below a full yes.
+            answer: "Kind of, only when a specific project requires it."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to deploying transit priority quickly on frequent
+              corridors, parking and a general traffic lane included. No
+              conditions on the answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority. A plain
+              yes with nothing attached to it.
+            answer: "Yes"
+          - label: TRN-05
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Said yes to new bus and bike connections through parks, golf
+              courses and other public land where they would substantially
+              shorten trips. Nothing conditional in the answer.
+            answer: "Yes"
+        unscored:
+          - label: TRN-GEN
+            answer: >-
+              Our first ever Transportation master plan identifies many of
+              these suggestions as priorities and has been adopted and
+              endorsed by council
       - id: healthcare-access
         grade: null
         questions: []
@@ -317,6 +375,8 @@ candidates:
               That being said, given the wild success of this model to date we are currently exploring an expansion of this with another clinic being proposed in partnership with SIPCS in Happy Valley.
   - name: Colin Plant
     municipality: saanich
+    scores:
+      transit: A
     subjects:
       - id: general
         grade: null
@@ -388,6 +448,67 @@ candidates:
               I think our region is an amazing place that needs to recognize that with our unique governance structure of 13 municipalities and 3 electoral area that we need to work together and look at ways for efficiency, shared services and coordination in the delivery of services.  Continuous improvement is something we should always strive towards.
 
               I love that our region has both rural and urban areas and that in Saanich we have an Urban Containment Boundary that helps shape our future growth in an identified area.
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Backed free travel for under 19s, cheaper fares for seniors, and
+              cheaper fares for people on income or disability assistance. The
+              lower cost regional monthly pass was the only measure left off,
+              so every group the question named is covered.
+            selected:
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - Free transit for everyone under 19 years of age.
+          - label: TRN-02
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Supports clearing general street parking from frequent transit
+              corridors at peak hours only, so the bus lanes and the space for
+              walking and cycling would appear and disappear through the day.
+              That is partial support for the right change, which is why it
+              sits below a full yes.
+            answer: "Yes, only during peak hours."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to moving fast on transit priority along frequent
+              corridors, even where parking or a general traffic lane has to
+              go. Nothing conditional in the answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority, with no
+              conditions set on the yes.
+            answer: "Yes"
+          - label: TRN-05
+            grade: B
+            weight: "20%"
+            rationale: >-
+              Supports new bus and bike connections through parks, golf
+              courses and public land, but only where no mature trees are lost
+              building them. That condition would rule out many of the routes
+              the question is about, so it falls short of a full yes.
+            answer: "Yes, if no mature trees are lost during construction."
+        unscored:
+          - label: TRN-GEN
+            answer: |-
+              I think BC Transit Governance in the CRD needs to be moved from the Victoria Regional Transit Commission to the CRD Transportation Service.
+
+              I think the province and VRTC (eventually CRD) should expand fare-free transit for youth in our region by adding a year of eligibility each year (13, 14, 15, 16, 17, 18 years etc) to provide a fiscally realistic way of expanding the fare-free program.   This can be paid for by the province expanding as well as a potential CRD requisition increase.
+
+              We need to create life-long transit users.
+
+              We need to continue to both grow the service and keep costs as low as possible.
       - id: healthcare-access
         grade: null
         questions: []
@@ -699,6 +820,8 @@ candidates:
               years.
   - name: Matt Dell
     municipality: victoria
+    scores:
+      transit: A
     subjects:
       - id: general
         grade: null
@@ -783,6 +906,69 @@ candidates:
               city is amazing, we should bring these ideas to our own city."
               We need to be taking the best of all ideas from cities and
               thinkers around the world, and implementing them here.
+      - id: transit
+        grade: A
+        questions:
+          - label: TRN-01
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Ticked every fare measure on the list: free travel for under
+              19s, cheaper fares for seniors, cheaper fares for people on
+              income or disability assistance, and a lower cost regional
+              monthly pass. Nothing left out.
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - Lower-cost regional monthly pass.
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+          - label: TRN-02
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports taking general street parking off frequent transit
+              corridors along the whole corridor rather than at peak hours
+              alone. That is the strongest option the question offered, and
+              the space goes to bus lanes, loading, and people walking and
+              cycling.
+            answer: "Yes, across the whole corridor."
+          - label: TRN-03
+            grade: A
+            weight: "20%"
+            rationale: >-
+              A clear yes to rapid transit priority work on frequent
+              corridors, including where it costs on-street parking or a
+              general traffic lane. Nothing attached to the answer.
+            answer: "Yes"
+          - label: TRN-04
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Supports creating a regional transportation authority. The
+              answer is a plain yes with no qualifiers on it.
+            answer: "Yes"
+          - label: TRN-05
+            grade: A
+            weight: "20%"
+            rationale: >-
+              Said yes to new bus only and bike only links through parks, golf
+              courses and public land where they would substantially shorten
+              trips. No conditions placed on it.
+            answer: "Yes"
+        unscored:
+          - label: TRN-GEN
+            answer: >-
+              Modernizing our transportation network is one of the biggest and
+              most critical projects for Victoria's future. We cannot continue
+              to build a car-centric city - it's bad for people, bad for the
+              environment, and hurts other goals such as building more housing
+              and planting trees. We need to ensure that everyone has access
+              to rapid public transit, great pedestrian networks, and
+              excellent AAA bike/roll networks. All people, especially
+              children and seniors, should be able to use a bike, e-bike,
+              scooter, or mobility scooter to travel to anywhere in the city.
       - id: healthcare-access
         grade: null
         questions: []

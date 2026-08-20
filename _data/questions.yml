@@ -442,6 +442,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
+    owner: Rob Bernhardt
   - label: ROL-02
     subject: rolling-cycling
     question: >-
@@ -450,6 +451,8 @@ items:
       infrastructure on busy streets in your municipality?
     type: single
     graded: true
+    weight: "33%"
+    owner: Rob Bernhardt
   - label: ROL-03
     subject: rolling-cycling
     question: >-
@@ -458,6 +461,8 @@ items:
       (AAA) cycling infrastructure in your municipality during your term?
     type: single
     graded: true
+    weight: "33%"
+    owner: Rob Bernhardt
   - label: ROL-04
     subject: rolling-cycling
     question: >-
@@ -466,6 +471,8 @@ items:
       your reasoning.
     type: single
     graded: true
+    weight: "33%"
+    owner: Rob Bernhardt
   - label: ROL-05
     subject: rolling-cycling
     question: >-
