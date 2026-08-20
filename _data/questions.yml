@@ -442,6 +442,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
+    weight: "25%"
     owner: Rob Bernhardt
   - label: ROL-02
     subject: rolling-cycling
@@ -451,7 +452,7 @@ items:
       infrastructure on busy streets in your municipality?
     type: single
     graded: true
-    weight: "33%"
+    weight: "25%"
     owner: Rob Bernhardt
   - label: ROL-03
     subject: rolling-cycling
@@ -461,7 +462,7 @@ items:
       (AAA) cycling infrastructure in your municipality during your term?
     type: single
     graded: true
-    weight: "33%"
+    weight: "25%"
     owner: Rob Bernhardt
   - label: ROL-04
     subject: rolling-cycling
@@ -471,7 +472,7 @@ items:
       your reasoning.
     type: single
     graded: true
-    weight: "33%"
+    weight: "25%"
     owner: Rob Bernhardt
   - label: ROL-05
     subject: rolling-cycling
@@ -481,6 +482,7 @@ items:
       your record outside of council shows the same commitment?
     type: single
     graded: false
+    weight: "0%"
     owner: Better Transit YYJ
   - label: ROL-GEN
     subject: rolling-cycling
@@ -500,6 +502,7 @@ items:
       necessary street-space and budgetary changes?
     type: single
     graded: true
+    weight: "10%"
     owner: Todd Litman
   - label: WLK-02
     subject: walking
@@ -509,6 +512,7 @@ items:
       make walking safer and more attractive than driving for short trips?
     type: single
     graded: true
+    weight: "20%"
     owner: Better Transit YYJ
   - label: WLK-03
     subject: walking
@@ -518,6 +522,7 @@ items:
       transportation capital budget dedicated to pedestrian infrastructure?
     type: single
     graded: true
+    weight: "10%"
     owner: Better Transit YYJ
   - label: WLK-04
     subject: walking
@@ -526,6 +531,7 @@ items:
       your municipality's downtown, main street or village centre?
     type: single
     graded: true
+    weight: "20%"
     owner: Better Transit YYJ
   - label: WLK-05
     subject: walking
@@ -535,6 +541,7 @@ items:
       flow of motor traffic?
     type: single
     graded: true
+    weight: "20%"
     owner: "Walk On, Victoria"
   - label: WLK-06
     subject: walking
@@ -544,6 +551,7 @@ items:
       the needs of the older and disabled members of your community?
     type: single
     graded: true
+    weight: "20%"
     owner: "Walk On, Victoria"
   - label: WLK-GEN
     subject: walking
@@ -561,6 +569,7 @@ items:
       clinics?
     type: single
     graded: false
+    weight: "0%"
     owner: Family Doctors For Saanich
   - label: HLT-GEN
     subject: healthcare-access
@@ -606,6 +615,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
+    weight: "20%"
     owner: Strong Towns Victoria
   - label: GOV-02
     subject: governance
@@ -615,6 +625,7 @@ items:
       municipalities?
     type: single
     graded: true
+    weight: "20%"
     owner: Better Transit YYJ
   - label: GOV-03
     subject: governance
@@ -623,6 +634,7 @@ items:
       municipality on a firmer financial footing?
     type: single
     graded: true
+    weight: "20%"
     owner: Strong Towns Victoria
   - label: GOV-04
     subject: governance
@@ -631,6 +643,7 @@ items:
       uses in your municipality by 2030?
     type: single
     graded: true
+    weight: "20%"
     owner: Strong Towns Victoria
   - label: HFL-12
     subject: governance
@@ -645,6 +658,7 @@ items:
     type: "variant,multi"
     type_label: Asked separately for each municipality; select all that apply
     graded: true
+    weight: "20%"
     owner: Homes for Living
   - label: GOV-GEN
     subject: governance
