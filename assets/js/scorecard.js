@@ -34,7 +34,13 @@
   var siteHeader = document.querySelector('.site-header');
   if (siteHeader) {
     var publishHeaderHeight = function () {
-      var h = Math.round(siteHeader.getBoundingClientRect().height);
+      // Floored, not rounded. The height is fractional (the nav is sized in
+      // rem, and a fractional device pixel ratio makes it fractional in CSS
+      // pixels too), and rounding it up puts the stuck row a fraction below
+      // the header with the page showing through the seam. Floor errs the
+      // other way, into an overlap the header paints over. The -1px in the
+      // CSS covers the rest of it.
+      var h = Math.floor(siteHeader.getBoundingClientRect().height);
       document.documentElement.style.setProperty('--site-header-h', h + 'px');
     };
     publishHeaderHeight();

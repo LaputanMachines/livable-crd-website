@@ -755,6 +755,12 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix-scroll {
     overflow-x: visible;
     overflow-y: visible;
+    // Set with the overflow on .table-scroll, and turned off with it here.
+    // WebKit gives a box carrying this its own accelerated scrolling layer,
+    // and a sticky descendant of that layer does not stick. There is nothing
+    // to scroll at these widths, so there is nothing for it to do but break
+    // the header.
+    -webkit-overflow-scrolling: auto;
   }
 
   .scorecard-matrix thead th {
@@ -762,7 +768,14 @@ tr:hover td { background: $color-bg-warm; }
     // Below the site header, which is itself sticky at top: 0 at every width.
     // Measured and republished by assets/js/scorecard.js; see :root in
     // _layout.scss for what the fallback is.
-    top: var(--site-header-h, 74px);
+    //
+    // Minus a pixel so the two overlap rather than meet. The measured height
+    // is fractional and the stuck row's own position is subject to the same
+    // rounding, so an exact offset leaves a hairline of page showing through
+    // between the header and this row on some zoom levels and pixel ratios.
+    // The header is z-index 100 against this row's 3, so the overlap is
+    // painted over and costs nothing.
+    top: calc(var(--site-header-h, 74px) - 1px);
     z-index: 3; // over the municipality bands and name cells it scrolls past
     // Under border-collapse the borders belong to the table, not to the cell,
     // so the 2px bottom rule set above is painted with the rows and gets left
