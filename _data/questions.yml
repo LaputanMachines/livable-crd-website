@@ -706,7 +706,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
-    weight: "25%"
+    weight: "15%"
     owner: Rob Bernhardt
     options:
       - "Yes"
@@ -722,7 +722,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "25%"
+    weight: "15%"
     owner: Rob Bernhardt
     options:
       - "Yes"
@@ -739,7 +739,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "25%"
+    weight: "15%"
     owner: Rob Bernhardt
     options:
       - "Yes"
@@ -756,7 +756,7 @@ items:
     type: text
     type_label: Written answer
     graded: true
-    weight: "25%"
+    weight: "20%"
     owner: Rob Bernhardt
   - label: ROL-05
     subject: rolling-cycling
@@ -767,7 +767,7 @@ items:
     type: text
     type_label: Written answer
     graded: false
-    weight: "0%"
+    weight: "35%"
     owner: Better Transit YYJ
   - label: ROL-GEN
     subject: rolling-cycling
