@@ -26,6 +26,50 @@ body_class: page-questionnaire
 
 {% include print-mast.html %}
 
+{%- comment -%}
+  The candidate popup.
+
+  This page is the read-only question set, not the form. Candidates keep
+  arriving here expecting to answer, because it is the page that turns up when
+  you search for the questionnaire, and there is nothing on it that would get
+  them the form.
+
+  A <dialog> rather than a band across the top: the band said this to every
+  visitor on every visit, and the great majority of them are voters and
+  journalists who are on exactly the page they wanted. The popup asks the
+  question once, takes a dismissal, and never asks that browser again.
+
+  Native <dialog> and not a hand-rolled overlay: Esc closes it, the backdrop
+  comes free, focus is trapped inside it while it is open and returns to where
+  it was on close. Nothing here reimplements any of that badly.
+
+  It ships closed and inert. assets/js/questionnaire.js opens it, which means a
+  reader without scripting never sees it at all — hence the plain sentence in
+  the body copy below, which is always there for them and for anybody who has
+  already dismissed this.
+{%- endcomment -%}
+<dialog class="candidate-modal" id="candidate-modal" aria-labelledby="candidate-modal-title">
+  <div class="candidate-modal__body">
+    <h2 class="candidate-modal__title" id="candidate-modal-title">Wait &mdash; are you a candidate?</h2>
+    <p class="candidate-modal__lead">
+      This page is the questionnaire as a read-only reference. It is not the
+      form. Email us and we will send you the link to your fillable
+      questionnaire.
+    </p>
+    <p class="candidate-modal__action">
+      <a href="mailto:{{ site.email }}?subject=Questionnaire%20link">{{ site.email }}</a>
+    </p>
+    <p class="candidate-modal__note">
+      The questions are published here so voters, journalists and partner
+      organizations can read exactly what every candidate was asked &mdash; and
+      so candidates can prepare their answers before they open the form.
+    </p>
+    <div class="btn-group candidate-modal__actions">
+      <button type="button" class="btn btn-primary" data-candidate-modal-close>Got it &mdash; read the questions</button>
+    </div>
+  </div>
+</dialog>
+
 <div class="page-header">
   <div class="container">
     <h1>The questionnaire</h1>
@@ -38,6 +82,20 @@ body_class: page-questionnaire
     same questionnaire. This is it, in full. Each policy area's questions were
     written by the coalition organization working on that area, and, where a
     question carries a grade, that same organization grades the answers to it.
+  </p>
+
+  {%- comment -%}
+    The candidate line, in the body copy where it always is.
+
+    The popup above says the same thing more loudly, but it only ever fires
+    once per browser and never at all without scripting. This is the copy that
+    is here on the tenth visit, and it is the one a candidate can link a
+    colleague to.
+  {%- endcomment -%}
+  <p class="questionnaire-candidate-note">
+    <strong>Are you a candidate?</strong> This page is a reference, not the form.
+    Email <a href="mailto:{{ site.email }}?subject=Questionnaire%20link">{{ site.email }}</a>
+    for the link to your fillable questionnaire.
   </p>
 
   {%- if items == nil or items.size == 0 %}
@@ -88,6 +146,48 @@ body_class: page-questionnaire
   {%- endcomment -%}
   <div class="btn-group questionnaire-actions">
     <button type="button" class="btn btn-primary" id="print-questionnaire" hidden>Print the questionnaire</button>
+    {%- comment -%}
+      Where the answers end up, as a link rather than as the closing block this
+      page used to carry. A reader who wants the grades wants them from here,
+      not after sixty-six questions, and the print button already put the pair
+      of things you can do with this page at the top.
+
+      Not hidden like its neighbour: it is an ordinary link and works with
+      scripting off.
+    {%- endcomment -%}
+    <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">See candidate scores and submissions</a>
+  </div>
+
+  {%- comment -%}
+    Search, over the questions already on the page: sixty-six questions in nine
+    sections is past the size where a reader can be expected to find the one
+    about bike lanes by scrolling, and the alternative — a reader using the
+    browser's own find — matches one question at a time and leaves the other
+    sixty-five in the way.
+
+    .scorecard-controls / .scorecard-search rather than a second set of classes:
+    this is the same control the scorecard puts above its candidate list, and
+    two search boxes that look like two different features is the site telling
+    the reader something untrue about itself. One definition, in _components.scss.
+
+    Labelled by the placeholder plus an .sr-only label, again as on the
+    scorecard. No clear button — type=search draws its own, and Escape clears.
+
+    Ships hidden and is revealed by assets/js/questionnaire.js, the same way the
+    print button is: a search field that does nothing without scripting is worse
+    than no field. There is nothing to fall back to and nothing lost — the whole
+    question set is on the page either way, and the browser's find still works.
+  {%- endcomment -%}
+  <div class="scorecard-controls questionnaire-search" id="questionnaire-search" hidden>
+    <label for="questionnaire-search-input" class="sr-only">Search the questions</label>
+    <input
+      type="search"
+      id="questionnaire-search-input"
+      class="scorecard-search"
+      placeholder="Search the questions&hellip;"
+      autocomplete="off"
+      spellcheck="false"
+      aria-describedby="questionnaire-search-status">
   </div>
 
   {%- comment -%}
@@ -96,23 +196,48 @@ body_class: page-questionnaire
     questions are skipped rather than linked to an empty section — "General" has
     none, because the general comment boxes on the form are free text nobody
     grades.
+
+    Built out of the scorecard's filter-group parts — the small uppercase label
+    over a wrapping row of .filter-pill — because that is what the reader has
+    already learned to use one page over, and the count in parentheses is that
+    page's idiom too (its municipality pills read "Saanich (24)").
+
+    They are links, not filters, and a <ul> in a <nav> says so. .scorecard-filters
+    supplies the row; the list reset for it lives in _questionnaire.scss.
   {%- endcomment -%}
-  <nav class="questionnaire-jump" aria-label="Jump to a policy area">
-    <span class="questionnaire-jump__label">Jump to</span>
-    <ul class="questionnaire-jump__list">
+  <nav class="scorecard-filtergroup questionnaire-jump" aria-label="Jump to a policy area">
+    <span class="scorecard-filtergroup__label">Jump to</span>
+    <ul class="scorecard-filters questionnaire-jump__list">
       {%- for subject in site.data.subjects %}
       {%- assign subject_questions = items | where: "subject", subject.id %}
       {%- if subject_questions.size > 0 %}
       <li>
-        <a href="#questions-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
+        <a class="filter-pill" href="#questions-{{ subject.id }}">
           {{ subject.short | default: subject.name }}
-          <span class="questionnaire-jump__count">{{ subject_questions.size }}</span>
+          <span class="questionnaire-jump__count">({{ subject_questions.size }})</span>
         </a>
       </li>
       {%- endif %}
       {%- endfor %}
     </ul>
   </nav>
+
+  {%- comment -%}
+    The count, under the controls and directly above the questions they filter,
+    which is where the scorecard puts the same line (#candidate-count, below its
+    filter bar). A tally of results belongs against the results.
+
+    .scorecard-count is that page's class, borrowed rather than restyled.
+
+    role="status" so the number is announced as it changes. Sighted readers get
+    the same sentence: filtering a long page silently leaves somebody who
+    mistyped staring at nine collapsed sections with no idea why.
+
+    Empty in the markup and filled by assets/js/questionnaire.js on load, again
+    as on the scorecard: a reader without scripting has no filter to describe,
+    and an empty <p> takes no room.
+  {%- endcomment -%}
+  <p class="scorecard-count questionnaire-search__status" id="questionnaire-search-status" role="status" aria-live="polite"></p>
 
   {%- for subject in site.data.subjects %}
   {%- assign subject_questions = items | where: "subject", subject.id %}
@@ -273,19 +398,6 @@ body_class: page-questionnaire
   </section>
   {%- endfor %}
 
-  <div class="callout questionnaire-cta">
-    <h2>Where the answers go</h2>
-    <p>
-      Answers come back to the coalition and are graded by the organization that
-      wrote the questions. A policy area is published on a candidate's page only
-      once that organization has finished grading it, so a candidate may show
-      grades in one area and nothing in another for a while.
-    </p>
-    <div class="btn-group">
-      <a class="btn btn-primary" href="{{ '/scorecard/' | relative_url }}">See the scorecard</a>
-      <a class="btn btn-secondary" href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>
-    </div>
-  </div>
   {%- endif %}
 </div>
 

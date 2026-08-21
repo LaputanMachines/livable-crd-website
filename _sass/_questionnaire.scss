@@ -9,6 +9,163 @@
 // apart while scrolling, and question text set at reading size rather than at
 // the small-print size a "list of questions" would tempt.
 
+// --- The candidate popup ----------------------------------------------------
+// Markup: the <dialog> above .page-header in questionnaire/index.md.
+// Script: assets/js/questionnaire.js opens it and records the dismissal.
+//
+// Replaces a full-width band that ran across the top of the page. The band was
+// loud at every visitor forever; this asks once and then gets out of the way.
+// A <dialog> a browser does not implement is an unknown inline element, which
+// renders its contents as ordinary page text with no way to close them. Tag
+// selectors match unknown elements, so this one rule keeps the popup's copy off
+// the page there, and it is what assets/js/questionnaire.js leans on when it
+// finds no showModal().
+.candidate-modal:not([open]) {
+  display: none;
+}
+
+.candidate-modal {
+  // A dialog's default box is a shrink-to-fit block with a 1px border and a
+  // browser margin: auto. Everything below re-lays it as a card the site could
+  // have drawn itself.
+  width: min(34rem, calc(100vw - #{$space-md * 2}));
+  max-width: none;
+  padding: 0;
+  border: $border-weight-heavy solid $color-text;
+  border-radius: $radius;
+  background: $color-surface;
+  color: $color-text;
+  // Native centring. `margin: auto` on a modal dialog centres it in the
+  // viewport on both axes, which is the one job the UA stylesheet does well.
+  margin: auto;
+  // No drop shadow: $shadow is `none` site-wide, and the heavy border plus the
+  // dimmed backdrop already lift the card off the page.
+
+  // The top edge in Kwetlal, kept from the band it replaces: the card is white
+  // on a dimmed page and wants one stripe of brand on it to not read as a
+  // browser chrome prompt.
+  border-top: $space-xs solid $color-warm;
+
+  &::backdrop {
+    // The page behind stays readable through it. This interrupts a reader; it
+    // should not pretend the thing it interrupted has gone away.
+    background: rgba($inky-purple, 0.55);
+  }
+}
+
+// Movement, so the popup reads as something that arrived rather than as a
+// screen that was always there and only now got painted. Small: it lands in
+// under a quarter-second, from a hand's width below centre.
+//
+// Keyframes on [open] rather than a transition: a <dialog> goes from
+// display:none to displayed, and a plain transition has nothing to run on
+// across that. The close half is driven by .is-closing from
+// assets/js/questionnaire.js, which holds the dialog open long enough for it.
+@keyframes candidate-modal-in {
+  from { opacity: 0; transform: translateY(1.5rem) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes candidate-modal-out {
+  from { opacity: 1; transform: translateY(0) scale(1); }
+  to   { opacity: 0; transform: translateY(0.75rem) scale(0.98); }
+}
+
+@keyframes candidate-modal-backdrop-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+// Easing written out rather than taken from $transition-med: that variable is a
+// full `0.25s ease` shorthand, so dropping it into an `animation` value lands as
+// a 250ms delay and the popup stalls a quarter-second before it appears.
+.candidate-modal[open] {
+  animation: candidate-modal-in 0.24s ease-out;
+
+  // The dim comes up with the card, not before it. A backdrop that lands first
+  // reads as the page being taken away; landing together reads as the card
+  // arriving on top of it.
+  &::backdrop {
+    animation: candidate-modal-backdrop-in 0.24s ease-out;
+  }
+}
+
+.candidate-modal.is-closing {
+  // Slightly quicker on the way out. Leaving is not the part worth watching.
+  animation: candidate-modal-out 0.16s ease-in forwards;
+
+  &::backdrop {
+    animation: candidate-modal-backdrop-in 0.16s ease-in reverse forwards;
+  }
+}
+
+// _animations.scss already collapses every animation under this query with
+// !important, which leaves the popup appearing instantly and the close path in
+// questionnaire.js falling through on its animationend a frame later. This is
+// the local, explicit statement of the same intent, so the promise survives any
+// rework of that global reset.
+@media (prefers-reduced-motion: reduce) {
+  .candidate-modal[open],
+  .candidate-modal[open]::backdrop,
+  .candidate-modal.is-closing,
+  .candidate-modal.is-closing::backdrop {
+    animation: none;
+  }
+}
+
+.candidate-modal__body {
+  padding: $space-lg $space-gutter $space-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.candidate-modal__title {
+  margin: 0;
+  font-size: 1.5rem;
+  line-height: 1.15;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.candidate-modal__lead {
+  margin: 0;
+  line-height: 1.45;
+}
+
+// The address is the action, so it is sized as one rather than left inline in
+// the sentence where it reads as a footnote.
+.candidate-modal__action {
+  margin: 0;
+  font-family: $font-display;
+  font-size: 1.1rem;
+  font-weight: 700;
+  word-break: break-word;
+}
+
+.candidate-modal__note {
+  margin: 0;
+  font-size: 0.9rem;
+  color: $color-muted;
+}
+
+.candidate-modal__actions {
+  margin-top: $space-xs;
+}
+
+// The same sentence in the body copy, for readers without scripting and for
+// everybody who dismissed the popup on a previous visit. Left-edge accent
+// rather than a second box: the page already carries a .callout further down,
+// and two boxed asides in the first screen is a page that shouts.
+.questionnaire-candidate-note {
+  margin: $space-md 0 0;
+  padding-left: $space-sm;
+  border-left: $space-xs solid $color-warm;
+  color: $color-muted;
+
+  strong { color: $color-text; }
+}
+
 .questionnaire-summary {
   p { margin-bottom: 0; }
 }
@@ -19,64 +176,99 @@
 // items on the same vertical rhythm.
 .questionnaire-actions {
   margin-top: $space-md;
-}
 
-// A single wrapping row of pills rather than a sidebar or a sticky bar: nine
-// links fit on two lines at phone width, and a sticky element would eat the
-// screen height the questions need.
-.questionnaire-jump {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: $space-xs;
-  margin: $space-lg 0;
-}
-
-.questionnaire-jump__label {
-  font-family: $font-display;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.8rem;
-  color: $color-muted;
-}
-
-.questionnaire-jump__list {
-  list-style: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: $space-xs;
-  margin: 0;
-  padding: 0;
-
-  a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.6rem;
-    border: 2px solid $color-border;
-    // The topic's own accent, so the pill matches the section it lands on and
-    // the two are recognisably the same thing.
-    border-left: 5px solid var(--card-accent, #{$color-accent});
-    border-radius: $radius;
-    background: $color-bg-warm;
-    color: $color-text;
-    font-size: 0.85rem;
-    font-weight: 600;
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible {
-      background: var(--card-accent, #{$color-accent});
-      border-color: var(--card-accent, #{$color-accent});
-      color: #fff;
-    }
+  // Half the row each. These are the two things you can do with this page and
+  // neither outranks the other, so neither gets to be the wider one.
+  //
+  // A flex-basis rather than `width: 50%`: below about 33rem two halves of a
+  // row cannot hold "See candidate scores and submissions" in fewer than four
+  // lines, and a basis lets them wrap to full width on their own instead of
+  // needing a breakpoint guessed here. It also means the print button being
+  // hidden until scripting loads leaves the remaining link filling the row,
+  // rather than sitting at half width beside a hole.
+  .btn {
+    flex: 1 1 16rem;
+    // .btn is an inline-block sized to its text everywhere else on the site, so
+    // it never needed to say where the text sits inside a wider box.
+    text-align: center;
   }
 }
 
+// --- Search -----------------------------------------------------------------
+// Markup: questionnaire/index.md. Script: assets/js/questionnaire.js.
+//
+// The box itself is .scorecard-controls / .scorecard-search from
+// _components.scss — the same control the scorecard puts above its candidate
+// list, borrowed whole rather than restyled here. What is left below is the
+// parts that page has no equivalent of.
+// Margins left to .scorecard-controls: the scorecard's own rhythm through this
+// stack is search → 1rem → filters → 1rem → count → 1.5rem → results, and the
+// point of borrowing its parts is to inherit that too.
+
+// .scorecard-controls sets display:flex, and a class beats the user agent's
+// `[hidden] { display: none }`. Without this the box the script is meant to
+// reveal is on the page from the first paint, doing nothing until the script
+// lands and never at all if it does not.
+.questionnaire-search[hidden] { display: none; }
+
+// Nothing to set: it wears .scorecard-count from _components.scss whole. The
+// class stays on it as the hook the print rules below hide it by.
+
+// Set by the script on a question or a section the current search excludes.
+// display:none rather than visibility, so the two-column list below reflows
+// around what is left instead of leaving the gaps where the misses were.
+.questionnaire-item.is-filtered-out,
+.questionnaire-section.is-filtered-out { display: none; }
+
+// A policy area whose questions are all filtered out: the pill stays in place
+// so the row does not reflow under the reader's cursor mid-word, but stops
+// claiming questions it can no longer reach.
+.questionnaire-jump__list .filter-pill.is-filtered-out {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+// --- Jump links -------------------------------------------------------------
+// Wears the scorecard's filter bar: .scorecard-filtergroup for the label-over-
+// row stack, .scorecard-filters for the row, .filter-pill for each link. Only
+// the three things that differ from a filter button are set here.
+// Spaced as .scorecard-filterbar is: nothing above it, because the search box
+// above already carries its own bottom margin, and $space-sm below it, which is
+// the gap the scorecard leaves between its filters and its count.
+.questionnaire-jump {
+  margin: 0 0 $space-sm;
+}
+
+// .scorecard-filters is written for a <div> of buttons. This one is the <ul>
+// a list of links ought to be, so it needs the list reset that a div came with.
+.questionnaire-jump__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// .filter-pill is a <button>; these are <a>. Anchors carry the site's underline
+// and link colour, and do not centre their own text.
+.questionnaire-jump__list .filter-pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  color: $color-text;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    color: #fff;
+    background: $color-accent-alt;
+    border-color: $color-accent-alt;
+  }
+}
+
+// The count in parentheses, as on the scorecard's municipality pills. Tabular
+// figures so the row does not twitch sideways as the numbers change under a
+// search.
 .questionnaire-jump__count {
   font-variant-numeric: tabular-nums;
-  font-size: 0.75rem;
   opacity: 0.7;
 }
 
@@ -84,6 +276,13 @@
   margin-top: $space-xl;
   // Clears the sticky site header when a jump link lands here.
   scroll-margin-top: 5.5rem;
+}
+
+// $space-xl is the gap between one policy area and the next, and the first one
+// has no previous area to be spaced from — only the count line, which sets the
+// distance itself, exactly as the scorecard's count does above its table.
+.questionnaire-section:first-of-type {
+  margin-top: 0;
 }
 
 .questionnaire-section__head {
@@ -293,12 +492,6 @@
   padding-left: 1.75rem;
 }
 
-.questionnaire-cta {
-  margin-top: $space-xl;
-
-  h2 { margin-top: 0; }
-}
-
 @media (min-width: 720px) {
   .questionnaire-section__titles h2 { font-size: 1.6rem; }
   .questionnaire-item__question { font-size: 1.05rem; }
@@ -395,13 +588,25 @@
   }
 
   // Nothing on paper that needs a cursor: navigation, the jump bar, the two
-  // buttons that do nothing, and the print button itself, which would otherwise
-  // print as an instruction to do the thing already done.
+  // buttons that do nothing, the search box, and the print button itself, which
+  // would otherwise print as an instruction to do the thing already done.
+  //
+  // Nothing here undoes a filter, so a reader who prints mid-search gets the
+  // questions they filtered to. That is the sheet they were looking at, and
+  // printing something other than what is on the screen is the worse surprise.
+  //
+  // The candidate note goes too. The worksheet is the thing a candidate prints
+  // to draft answers on, so a line telling them this sheet is not the form is
+  // an interruption on paper, and the masthead above already carries the site
+  // to go back to. The popup needs no rule — a closed <dialog> is not rendered,
+  // and printing with it open is not a thing that happens.
   .page-questionnaire .site-header,
   .page-questionnaire .site-footer,
+  .questionnaire-candidate-note,
+  .questionnaire-search,
+  .questionnaire-search__status,
   .questionnaire-jump,
-  .questionnaire-actions,
-  .questionnaire-cta { display: none; }
+  .questionnaire-actions { display: none; }
 
   // The page header is white text on inky purple with a texture overlay. With
   // backgrounds off that is white text on white paper.
