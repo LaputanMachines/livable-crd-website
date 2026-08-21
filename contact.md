@@ -15,11 +15,18 @@ description: >-
   answer.
 </p>
 
-<div class="callout">
-  <p>
-    <a href="mailto:{{ site.email }}">{{ site.email }}</a><br>
-    We aim to reply within a few days.
-  </p>
+{%- comment -%}
+  The address as the page's one button, not boxed in a .callout. A callout is a
+  box drawn round something that needs setting apart from the text, and once the
+  reply-time line went there was a single link inside a large empty rectangle.
+
+  Labelled with the address rather than "Email us": this is the page somebody
+  arrives at to find out what the address is, and a button that hides it behind
+  a click answers a question they did not ask. .btn-email keeps it in lower
+  case; see _components.scss.
+{%- endcomment -%}
+<div class="btn-group">
+  <a class="btn btn-primary btn-email" href="mailto:{{ site.email }}">{{ site.email }}</a>
 </div>
 
 <h2>What to write to us about</h2>

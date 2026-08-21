@@ -64,6 +64,18 @@
   }
 }
 
+// A button whose label is an email address. Every other .btn on the site is a
+// two-or-three-word instruction, which is why .btn uppercases and tracks them
+// out; an address is a string somebody may read back, type, or copy, and
+// HELLO@LIVABLECRD.CA is none of those things said clearly.
+.btn-email {
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 1rem;
+  // Long enough to overflow a narrow phone in one word.
+  word-break: break-word;
+}
+
 .btn-group {
   display: flex;
   flex-wrap: wrap;
