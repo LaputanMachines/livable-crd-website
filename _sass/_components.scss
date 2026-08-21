@@ -1515,6 +1515,24 @@ $category-colors: (
     .social-links__icon svg { width: 1.65rem; height: 1.65rem; }
   }
 
+  // Contact page: three of the site's own buttons rather than three bare icons.
+  // The .btn treatment arrives on the markup (item_class on the include), so
+  // all this does is settle the handful of places where .social-links__item and
+  // .btn disagree — the item rules are further down this file and would
+  // otherwise win on source order.
+  &--buttons {
+    margin: $space-md 0 0;
+
+    .social-links__item {
+      font-weight: 700;      // .btn's weight; __item asks for 600
+      line-height: inherit;  // __item's line-height:1 crushes the padding
+    }
+
+    // Sized against 0.92rem uppercase label text. The 1.5rem default is drawn
+    // for a row of icons with no words beside them.
+    .social-links__icon svg { width: 1.15rem; height: 1.15rem; }
+  }
+
   // Post footer: brand-purple pill buttons under the follow-up note.
   &--post {
     margin: $space-md 0 0;

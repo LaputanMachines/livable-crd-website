@@ -82,4 +82,14 @@ description: >-
   you need an answer to, please write to us.
 </p>
 
-{% include social-links.html class="social-links--icons" %}
+{%- comment -%}
+  Buttons, not the bare icon row the footer uses. The footer's icons sit in a
+  place a reader scans past; here they are the section's only content, and a
+  named button is the difference between "we are on Bluesky" and a small glyph
+  somebody has to recognise.
+
+  btn-secondary rather than btn-primary: the paragraph above says social is read
+  less reliably than email, and the email button further up the page should stay
+  the one thing on it drawn in solid purple.
+{%- endcomment -%}
+{% include social-links.html class="social-links--buttons" item_class="btn btn-secondary" %}

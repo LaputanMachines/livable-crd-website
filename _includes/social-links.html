@@ -1,8 +1,12 @@
 {%- comment -%}
   Social media buttons, rendered from the `social:` list in _config.yml.
   Params:
-    include.class   extra class(es) on the <ul> wrapper (optional)
-    include.heading visible heading text above the row (optional)
+    include.class      extra class(es) on the <div> wrapper (optional)
+    include.item_class extra class(es) on each link (optional). /contact/ passes
+                       the site's own `btn btn-secondary` through it, so the row
+                       is three real buttons rather than a second button
+                       treatment invented here.
+    include.heading    visible heading text above the row (optional)
   Icons are inline SVG (from Simple Icons) keyed off each entry's `platform`.
 {%- endcomment -%}
 {%- if site.social and site.social.size > 0 -%}
@@ -11,7 +15,7 @@
   <ul class="social-links__list">
     {%- for account in site.social -%}
     <li>
-      <a class="social-links__item" href="{{ account.url }}" target="_blank" rel="noopener me"
+      <a class="social-links__item{% if include.item_class %} {{ include.item_class }}{% endif %}" href="{{ account.url }}" target="_blank" rel="noopener me"
          aria-label="{{ site.title }} on {{ account.label }}" title="{{ account.label }}">
         <span class="social-links__icon" aria-hidden="true">
           {%- case account.platform -%}
