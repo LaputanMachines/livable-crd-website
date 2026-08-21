@@ -19,7 +19,7 @@ description: >-
       that shape daily life here.
     </p>
     <div class="btn-group">
-      <a class="btn btn-primary" href="{{ '/scorecard/' | relative_url }}#methodology">How we grade</a>
+      <a class="btn btn-primary" href="{{ '/questionnaire/' | relative_url }}">Read the questions</a>
       <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
       <a class="btn btn-newsletter" href="{{ '/signup/' | relative_url }}">Join the mailing list</a>
       <a class="btn btn-donate" href="{{ '/donate/' | relative_url }}">Support us</a>
