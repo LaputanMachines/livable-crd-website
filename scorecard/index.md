@@ -494,9 +494,9 @@ description: >-
             published yet. Grading is done by the coalition organization that wrote
             the topic's questions, and each topic is published as that organization
             finishes it, so a candidate can show letters in one topic and this in
-            another. The two topics we do not grade —
-            <strong>General</strong> and <strong>Healthcare access</strong> — show
-            it too until their answers are released. It says nothing about how the
+            another. It also shows on the two topics we do not grade,
+            <strong>General</strong> and <strong>Healthcare access</strong>,
+            until their answers are released. It says nothing about how the
             topic is going.
           </dd>
         </div>
@@ -523,7 +523,7 @@ description: >-
           </dt>
           <dd class="grade-def__desc">
             No completed questionnaire has come back from this candidate yet, so
-            there is nothing to publish in any topic — a candidate who has replied
+            there is nothing to publish in any topic. A candidate who has replied
             carries an hourglass or a speech bubble instead. A dash is never a bad
             grade: the grades are <strong>A</strong> through <strong>F</strong>,
             and a candidate who scores poorly gets a letter saying so.

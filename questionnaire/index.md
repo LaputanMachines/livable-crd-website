@@ -50,7 +50,7 @@ body_class: page-questionnaire
 {%- endcomment -%}
 <dialog class="candidate-modal" id="candidate-modal" aria-labelledby="candidate-modal-title">
   <div class="candidate-modal__body">
-    <h2 class="candidate-modal__title" id="candidate-modal-title">Wait &mdash; are you a candidate?</h2>
+    <h2 class="candidate-modal__title" id="candidate-modal-title">Are you a candidate?</h2>
     <p class="candidate-modal__lead">
       This page is the questionnaire as a read-only reference. It is not the
       form. Email us and we will send you the link to your fillable
@@ -61,11 +61,11 @@ body_class: page-questionnaire
     </p>
     <p class="candidate-modal__note">
       The questions are published here so voters, journalists and partner
-      organizations can read exactly what every candidate was asked &mdash; and
-      so candidates can prepare their answers before they open the form.
+      organizations can read exactly what every candidate was asked, and so
+      candidates can prepare their answers before they open the form.
     </p>
     <div class="btn-group candidate-modal__actions">
-      <button type="button" class="btn btn-primary" data-candidate-modal-close>Got it &mdash; read the questions</button>
+      <button type="button" class="btn btn-primary" data-candidate-modal-close>Got it, read the questions</button>
     </div>
   </div>
 </dialog>
