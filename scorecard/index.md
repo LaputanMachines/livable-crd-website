@@ -36,28 +36,6 @@ description: >-
   </div>
 
   {%- comment -%}
-    Above the grading key, not below the table: a candidate landing here to
-    check what is expected of them should not have to scroll past 66 rows to
-    find the cut-off. Links down to #deadlines for the full schedule and for
-    what a missed date actually costs.
-  {%- endcomment -%}
-  {% include deadline-notice.html
-     class="deadline-notice--scorecard"
-     heading="Candidate deadlines"
-     lead="Grades on this page come from the coalition questionnaire. Candidates have to return it by these dates for their results to be published."
-     more_url="#deadlines"
-     more_label="Key dates, and what a missed deadline means" %}
-
-  {%- comment -%}
-    Below the candidate deadlines rather than above them: the deadline band is
-    the one thing on this page a reader can miss at a cost, so nothing gets
-    inserted ahead of it. Still above the table, because a voter who cares
-    about food policy should see it while choosing what to compare, not after
-    scrolling every municipality.
-  {%- endcomment -%}
-  {% include other-scorecard-notice.html %}
-
-  {%- comment -%}
     How far along the whole exercise is, in one line. Without it a reader
     scrolling a table of dashes has no way to tell a questionnaire that has
     barely gone out from one candidates are ignoring. Both counts come from

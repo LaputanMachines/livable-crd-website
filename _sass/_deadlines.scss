@@ -3,46 +3,11 @@
 // --- Election-cycle deadlines -----------------------------------------------
 // Data:   _data/deadlines.yml
 // Markup: _includes/deadline-list.html     (the dated <ol>, shared)
-//         _includes/deadline-notice.html   (the band near the top of the scorecard)
 //         _includes/deadline-timeline.html (the homepage project timeline)
 //         the #deadlines FAQ block at the bottom of scorecard/index.md
 //
 // Loaded after "components" so the few rules that restate a .methodology
 // selector win on source order alone.
-
-.deadline-notice {
-  background: $color-surface;
-  border: $border-weight solid $color-text;
-  padding: $space-md $space-gutter;
-}
-
-// On the scorecard the band follows the status banner rather than opening a
-// section, so it supplies its own top gap.
-.deadline-notice--scorecard {
-  margin-top: $space-md;
-}
-
-
-.deadline-notice__heading {
-  margin: 0 0 $space-xs;
-  font-family: $font-display;
-  font-size: 1.35rem;
-  line-height: 1.15;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.deadline-notice__lead {
-  margin: 0 0 $space-md;
-  max-width: 60ch;
-  color: $color-muted;
-}
-
-.deadline-notice__more {
-  margin: $space-sm 0 0;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
 
 // The dated list. Rule lines are the $color-text background showing through
 // `gap`, not per-item borders: the grid reflows to one column on a narrow
@@ -348,22 +313,13 @@
 }
 
 @media (max-width: 480px) {
-  .deadline-notice {
-    padding: $space-sm $space-gutter;
-  }
-
-  .deadline-notice__heading {
-    font-size: 1.15rem;
-  }
-
   .deadline-list__item {
     padding: $space-sm;
   }
 }
 
-// Screen affordances. On the printed candidate leaflet the dates are already
-// past-tense context, and either block would eat a third of the sheet.
+// Screen affordance. On the printed candidate leaflet the dates are already
+// past-tense context, and the timeline would eat a third of the sheet.
 @media print {
-  .deadline-notice,
   .deadline-timeline { display: none; }
 }
