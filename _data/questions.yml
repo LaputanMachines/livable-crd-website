@@ -40,7 +40,7 @@
 # subject, which is the order candidates met the questions on the form.
 
 count: 66
-graded_count: 53
+graded_count: 54
 status: published
 items:
   # --- general ---
@@ -766,7 +766,7 @@ items:
       your record outside of council shows the same commitment?
     type: text
     type_label: Written answer
-    graded: false
+    graded: true
     weight: "35%"
     owner: Better Transit YYJ
   - label: ROL-GEN
@@ -882,7 +882,7 @@ items:
     type: single
     type_label: One answer
     graded: false
-    weight: "0%"
+    weight: "100%"
     owner: Family Doctors For Saanich
     options:
       - "(Colwood Model) Municipality is the clinic operator, GPs , NPs & support staff are all municipal employees."
