@@ -135,7 +135,7 @@
 - name: Teale Phelps Bondaroff
   display_name: "Phelps Bondaroff, Teale"
   municipality: saanich
-  office: Councillor
+  office: null
   standing: incumbent-councillor
   slate: null
 
@@ -180,6 +180,13 @@
   municipality: victoria
   office: Mayor
   standing: incumbent-mayor
+  slate: null
+
+- name: Lyall Atkinson
+  display_name: "Atkinson, Lyall"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
   slate: null
 
 - name: Wendy Bowkett
@@ -277,6 +284,13 @@
   display_name: "Lee, Bella"
   municipality: victoria
   office: Councillor
+  standing: challenger
+  slate: null
+
+- name: Bruce McGuigan
+  display_name: "McGuigan, Bruce"
+  municipality: victoria
+  office: Mayor
   standing: challenger
   slate: null
 
