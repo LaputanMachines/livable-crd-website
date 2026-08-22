@@ -1171,21 +1171,35 @@ $category-colors: (
   line-height: 1.4;
 }
 
-// --- Other organizations' scorecards ----------------------------------------
-// Data:   _data/other-scorecards.yml
-// Markup: _includes/other-scorecard-notice.html (homepage + scorecard)
+// --- Other organizations' work ----------------------------------------------
+// Data:   _data/other-orgs.yml
+// Markup: _includes/other-orgs-notice.html (homepage + scorecard)
 //
 // Deliberately not a .status-banner or a .callout: both of those speak for
 // Livable CRD, and this band speaks about somebody else's work. The lavender
 // surface with a heavy accent edge reads as "related, not ours" without
 // inventing a second colour language.
-.other-scorecards {
+//
+// auto-fit rather than the auto-fill this file uses for card grids: the band
+// holds two or three entries, and auto-fill would keep an empty third track on
+// a wide screen, leaving two cards squeezed into two thirds of the width with
+// dead space beside them. auto-fit collapses the empty track, so two entries
+// take half the band each and one entry takes the whole of it. The 22rem
+// track floor is what makes the pair stack on a tablet: two of them plus the
+// gap need more than the container has below roughly 760px, and a card any
+// narrower wraps its headline into five uppercase lines.
+.other-orgs {
   display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
   gap: $space-md;
   margin-top: $space-md;
 }
 
-.other-scorecard {
+// Column, so cards sitting side by side line their buttons up along the bottom
+// rather than each floating under its own paragraph.
+.other-org {
+  display: flex;
+  flex-direction: column;
   background: $color-bg-warm;
   border: $border-weight solid $color-text;
   border-left-width: $space-xs;
@@ -1193,7 +1207,7 @@ $category-colors: (
   padding: $space-md $space-gutter;
 }
 
-.other-scorecard__eyebrow {
+.other-org__eyebrow {
   margin: 0 0 $space-xs;
   font-family: $font-display;
   font-weight: 700;
@@ -1203,7 +1217,7 @@ $category-colors: (
   color: $color-accent;
 }
 
-.other-scorecard__title {
+.other-org__title {
   margin: 0 0 $space-xs;
   font-family: $font-display;
   font-size: 1.15rem;
@@ -1213,16 +1227,18 @@ $category-colors: (
   letter-spacing: 0.03em;
 }
 
-.other-scorecard__body {
+.other-org__body {
   margin: 0;
   color: $color-muted;
   font-size: 0.95rem;
 }
 
 // Row of end matter: the pill, the timing, and the outbound link. Wraps rather
-// than shrinking, so the pill keeps its shape on a phone.
-.other-scorecard__action {
-  margin: $space-sm 0 0;
+// than shrinking, so the pill keeps its shape on a phone. The auto top margin
+// pins it to the bottom of the card whatever the note above it runs to.
+.other-org__action {
+  margin: auto 0 0;
+  padding-top: $space-sm;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -1230,7 +1246,7 @@ $category-colors: (
   font-size: 0.9rem;
 }
 
-.other-scorecard__status {
+.other-org__status {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   background: $color-text;
@@ -1244,9 +1260,9 @@ $category-colors: (
   border-radius: $radius;
 }
 
-.other-scorecard__expected { color: $color-muted; }
+.other-org__expected { color: $color-muted; }
 
-.other-scorecard__org-link { font-weight: 600; }
+.other-org__org-link { font-weight: 600; }
 
 .contact-panel {
   background: $color-surface;

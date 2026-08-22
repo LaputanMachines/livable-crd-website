@@ -1,0 +1,69 @@
+{%- comment -%}
+  Band for what other organizations are doing in the same election: a
+  questionnaire on a subject ours leaves out, a campaign to get people voting
+  at all. Content comes from _data/other-orgs.yml, so a placeholder becomes a
+  live link by filling in one `url` rather than by editing markup.
+
+  The band never waits for a URL. Every entry renders; `url` only decides what
+  the last row of a card offers:
+    blank url - a "not published yet" pill, an optional timing line, and a
+                link to the organization rather than to the thing itself.
+    set url   - a button through to it, labelled by `action_label`.
+
+  Two entries sit side by side on a wide screen and stack on a phone, so
+  neither one reads as a footnote under the other.
+
+  Renders nothing when the data file has no entries.
+
+  Params:
+    class - extra class names on the wrapper
+{%- endcomment -%}
+{%- comment -%}
+  Bracket lookup because `site.data.other-orgs` parses as a subtraction in
+  Liquid, not as a hyphenated filename.
+{%- endcomment -%}
+{%- assign other_orgs = site.data["other-orgs"] -%}
+{%- if other_orgs and other_orgs.size > 0 -%}
+<div class="other-orgs{% if include.class %} {{ include.class }}{% endif %}">
+  {%- for entry in other_orgs -%}
+  {%- comment -%} An unset url is "" in YAML, which Liquid treats as truthy; normalize first. {%- endcomment -%}
+  {%- assign entry_url = entry.url | default: "" | strip -%}
+  {%- assign entry_org_url = entry.org_url | default: "" | strip -%}
+  {%- assign entry_action = entry.action_label | default: "" | strip -%}
+  {%- if entry_action == "" -%}{%- assign entry_action = "Visit " | append: entry.org -%}{%- endif -%}
+  <aside class="other-org{% if entry_url == '' %} other-org--pending{% endif %}"
+         aria-label="{{ entry.topic }}, from {{ entry.org }}">
+    <p class="other-org__eyebrow">{{ entry.topic }}</p>
+    <p class="other-org__title">{{ entry.headline }}</p>
+    {%- if entry.note %}
+    <p class="other-org__body">{{ entry.note }}</p>
+    {%- endif %}
+    {%- comment -%}
+      The card itself never depends on `url`; only this row does. While the
+      thing is pending the row still carries a link, to the organization, but
+      it says "About" out loud: an unlabelled org link sitting under this
+      headline reads as "the questionnaire is through here", which is the one
+      thing the placeholder must not imply. Once `url` is set the button takes
+      over and the org link drops, so there is a single obvious destination.
+    {%- endcomment -%}
+    <p class="other-org__action">
+      {%- if entry_url != "" %}
+      <a class="btn btn-secondary" href="{{ entry_url }}" target="_blank" rel="noopener">{{ entry_action }}</a>
+      {%- else %}
+      <span class="other-org__status">Not published yet</span>
+      {%- comment -%}
+        The standing half of this line ("we will link to it here") is in the
+        template because it is true of every pending entry. The timing half is
+        data, and optional, because it is the organization's date to give: with
+        no `expected` set the sentence still reads, and promises nothing.
+      {%- endcomment -%}
+      <span class="other-org__expected">{%- if entry.expected %}{{ entry.expected }}. {% endif -%}We will link to it here once it is published.</span>
+      {%- if entry_org_url != "" %}
+      <a class="other-org__org-link" href="{{ entry_org_url }}" target="_blank" rel="noopener">About {{ entry.org }} <span aria-hidden="true">→</span></a>
+      {%- endif %}
+      {%- endif %}
+    </p>
+  </aside>
+  {%- endfor -%}
+</div>
+{%- endif -%}

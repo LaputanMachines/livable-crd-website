@@ -55,6 +55,19 @@ description: >-
       Once candidates are surveyed, ratings will be published by municipality ahead
       of election day.
     </p>
+    {%- comment -%}
+      Closes the section that says what the coalition is building, because the
+      honest end of that answer is what it is not building: a food systems
+      questionnaire, or the turnout campaign that decides whether any of these
+      grades gets a vote behind it. High on the page rather than beside the ten
+      topic cards, where two lavender cards under a description of our own
+      questionnaire read as two more of our topics.
+
+      Above the sponsor notice, not below it. That notice says election
+      advertising on this site is authorized by Livable CRD; other
+      organizations' cards sitting under it would read as covered by it.
+    {%- endcomment -%}
+    {% include other-orgs-notice.html %}
     {% include sponsor-notice.html %}
   </div>
 </section>
@@ -122,13 +135,6 @@ description: >-
       The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, governance, and general livability. Each candidate is graded
       in every area, so voters can compare positions topic by topic at a glance.
     </p>
-    {%- comment -%}
-      Between the section's description and the ten topic cards: the sentence
-      above says what the questionnaire covers, so this is where "food systems
-      is not one of them, and here is who is covering it" reads as part of the
-      same answer rather than as a footnote under the grid.
-    {%- endcomment -%}
-    {% include other-scorecard-notice.html %}
     <div class="card-grid">
       {% for subject in site.data.subjects %}
       {% include topic-card.html subject=subject %}

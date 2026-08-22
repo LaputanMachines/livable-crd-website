@@ -1,0 +1,64 @@
+# What other organizations are doing in the same election.
+#
+# These organizations are NOT coalition partners (see _data/partners.yml for
+# those) and none of this is Livable CRD's work: we are working alongside them,
+# which is a different claim, and the wording should stay that way unless they
+# tell us otherwise. The point is voter service. A reader comparing candidates
+# here should know when someone else is grading the same candidates on a
+# subject our questionnaire leaves out, or running the campaign that gets those
+# voters to the polls in the first place.
+#
+# Rendered by _includes/other-orgs-notice.html, on the homepage. The band does
+# not wait for a URL: an entry with no `url` still renders, saying the thing is
+# on its way. Delete every entry to pull the band.
+#
+# Keep the copy non-partisan. Livable CRD is a registered third-party sponsor,
+# and describing someone else's campaign is still our advertising: say what the
+# organization is asking a voter to do, not who to vote for, whatever framing
+# the organization's own page uses.
+#
+# Fields:
+#   org           Organization name (required).
+#   topic         Subject area, shown as the eyebrow above the headline (required).
+#   headline      One line naming what they are doing (required).
+#   note          A sentence or two of context for a voter (optional).
+#   url           Where the thing itself lives. Adding it is the only edit
+#                 needed to turn an entry's "not published yet" line into a
+#                 button.
+#   action_label  Text of that button (optional). Defaults to "Visit <org>",
+#                 which is true of anything but says nothing, so write the
+#                 label out whenever `url` is set.
+#   org_url       The organization's own site (optional). Shown while `url` is
+#                 blank, so a reader has somewhere to go in the meantime.
+#   expected      Optional timing line, e.g. "Expected in the fall". Leave it
+#                 out unless the organization has actually committed to a date:
+#                 it is their schedule to announce, not ours to promise on
+#                 their behalf.
+#
+# An entry with no `url` renders the pending state, and that state is worded for
+# a questionnaire nobody has published yet ("Not published yet"). An entry for a
+# campaign that is already running should always carry its `url`.
+
+- org: Victoria Urban Food Table
+  topic: Food systems
+  headline: Victoria Urban Food Table is preparing a food systems questionnaire
+  note: >-
+    The Livable CRD questionnaire does not cover food systems. Victoria Urban
+    Food Table is putting its own questions to City of Victoria candidates and
+    plans to publish the answers separately, so voters who weigh food policy can
+    read both questionnaires side by side.
+  url: ""
+  action_label: ""
+  org_url: "https://www.victoriaurbanfoodtable.com/"
+
+- org: Dogwood
+  topic: Voter turnout
+  headline: Dogwood is asking voters to triple the vote on October 17
+  note: >-
+    About one in three British Columbians votes in a municipal election, so a
+    council seat can turn on a few dozen ballots. Dogwood's pledge asks you to
+    commit to voting this October and to talk three other people into voting
+    too, whoever they decide to vote for.
+  url: "https://www.dogwoodbc.ca/petitions/municipal2026pledge/"
+  action_label: "Sign Dogwood's Triple the Vote pledge"
+  org_url: "https://www.dogwoodbc.ca/"
