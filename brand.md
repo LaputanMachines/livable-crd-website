@@ -19,7 +19,35 @@ description: >-
   Email <a href="mailto:{{ site.email }}">{{ site.email }}</a>.
 </p>
 
-<h2>Logos</h2>
+{%- comment -%}
+  Jump links over a table of contents: this page is a supply cupboard, not a
+  document to read start to finish. A partner arrives wanting one shelf — the
+  logo pack, the posters, the fundraising graphics — and the row gets them there
+  in one click.
+
+  It doubles as the page's deep-link surface. Each pill sets the hash, so the
+  address bar holds a shareable URL (livablecrd.ca/brand/#fundraising) the
+  moment a section is opened, which is how a partner points a colleague at one
+  shelf without describing where to scroll.
+
+  Built from the scorecard's filter-bar parts, the way the questionnaire's own
+  jump row is: the small uppercase label over a wrapping row of .filter-pill.
+  Links, not filters, so a <ul> in a <nav> says so.
+{%- endcomment -%}
+<nav class="scorecard-filtergroup brand-jump" aria-label="Jump to a section">
+  <span class="scorecard-filtergroup__label">Jump to</span>
+  <ul class="scorecard-filters brand-jump__list">
+    <li><a class="filter-pill" href="#logos">Logos</a></li>
+    <li><a class="filter-pill" href="#colours">Colours</a></li>
+    <li><a class="filter-pill" href="#typeface">Typeface</a></li>
+    <li><a class="filter-pill" href="#usage">Usage</a></li>
+    <li><a class="filter-pill" href="#posters">Posters</a></li>
+    <li><a class="filter-pill" href="#promotion-templates">Promotion templates</a></li>
+    <li><a class="filter-pill" href="#fundraising">Fundraising</a></li>
+  </ul>
+</nav>
+
+<h2 class="brand-section" id="logos">Logos</h2>
 <p>
   Pick the variant that matches your background. Give the logo clear space and do
   not place it on busy or low-contrast imagery.
@@ -83,7 +111,7 @@ description: >-
   </div>
 </div>
 
-<h2>Colours</h2>
+<h2 class="brand-section" id="colours">Colours</h2>
 <p>
   Livable CRD uses three core brand colours. Keep text legible: use Inky Purple on
   light surfaces and white on the deep purples.
@@ -107,14 +135,14 @@ description: >-
   </div>
 </div>
 
-<h2>Typeface</h2>
+<h2 class="brand-section" id="typeface">Typeface</h2>
 <p>
   The brand typeface is <strong>Lexend</strong>, a free Google Font. Headings are
   set in uppercase Lexend to echo the logo wordmark.
   <a href="https://fonts.google.com/specimen/Lexend" target="_blank" rel="noopener noreferrer">Get Lexend on Google Fonts</a>.
 </p>
 
-<h2>Usage</h2>
+<h2 class="brand-section" id="usage">Usage</h2>
 <ul>
   <li><strong>Do</strong> keep clear space around the logo and use the variant that fits your background.</li>
   <li><strong>Do</strong> scale the SVG for print or large formats; it stays sharp at any size.</li>
@@ -122,7 +150,7 @@ description: >-
   <li><strong>Don't</strong> imply endorsement. Livable CRD is non-partisan and does not endorse candidates.</li>
 </ul>
 
-<h2>Posters</h2>
+<h2 class="brand-section" id="posters">Posters</h2>
 <p>
   Print-ready posters to pin up at events, community boards, cafés, and campus
   spaces. Each has a QR code that opens the scorecard at
@@ -160,7 +188,7 @@ description: >-
   </div>
 </div>
 
-<h2>Promotion templates</h2>
+<h2 class="brand-section" id="promotion-templates">Promotion templates</h2>
 <p>
   Ready-to-use copy for member organizations helping spread the word. Copy a
   template, then swap in your own organization's name and voice. Please keep the
@@ -219,7 +247,7 @@ Learn more and follow along: https://livablecrd.ca</pre>
   </div>
 </div>
 
-<h2>Fundraising</h2>
+<h2 class="brand-section" id="fundraising">Fundraising</h2>
 <p>
   Livable CRD is volunteer-run and paid for by individual donations. These are the
   assets for partners who want to help raise them. Both images carry a QR code that
