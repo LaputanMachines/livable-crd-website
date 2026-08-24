@@ -55,6 +55,13 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Kathleen Burton
+  display_name: "Burton, Kathleen"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Nathalie Chambers
   display_name: "Chambers, Nathalie"
   municipality: saanich
@@ -74,6 +81,13 @@
   municipality: saanich
   office: Mayor
   standing: incumbent-councillor
+  slate: null
+
+- name: Alli Deelstra
+  display_name: "Deelstra, Alli"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
   slate: null
 
 - name: Lorne DeLarge
@@ -428,6 +442,13 @@
   municipality: view-royal
   office: Councillor
   standing: incumbent-councillor
+  slate: null
+
+- name: Ryan Painter
+  display_name: "Painter, Ryan"
+  municipality: view-royal
+  office: Mayor
+  standing: challenger
   slate: null
 
 - name: David Screech
