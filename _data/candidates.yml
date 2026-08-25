@@ -444,6 +444,20 @@
   standing: incumbent-councillor
   slate: null
 
+- name: Sacha Christensen
+  display_name: "Christensen, Sacha"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+
+- name: Owen Marshall
+  display_name: "Marshall, Owen"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Ryan Painter
   display_name: "Painter, Ryan"
   municipality: view-royal
