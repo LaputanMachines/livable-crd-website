@@ -1,6 +1,8 @@
 // Scorecard matrix: client-side search (by name or slate) + filters (minimum
-// grade, office, municipality). Progressive enhancement: without JS, all
-// candidate rows remain visible.
+// grade, office, municipality). Every filter is mirrored into the query string
+// so the address bar is always a shareable link to the current view, and a link
+// that carries those params opens already filtered. Progressive enhancement:
+// without JS, all candidate rows remain visible.
 (function () {
   // Open a collapsed <details> panel when it (or an element inside it) is the
   // link target. Covers #methodology, #who-grades, #categories, and the
@@ -138,6 +140,8 @@
         ? 'Showing all ' + total + ' candidates'
         : 'Showing ' + visible + ' of ' + total + ' candidates';
     }
+
+    syncUrl();
   }
 
   if (search) {
@@ -147,16 +151,93 @@
     });
   }
 
+  // Paint one group of pills to match the state they represent. Shared by the
+  // click handler below and by the URL reader above it, so a filter restored
+  // from a link looks exactly like one the reader clicked.
+  function setPillState(pills, attr, value) {
+    pills.forEach(function (p) {
+      var on = p.getAttribute(attr) === value;
+      p.classList.toggle('is-active', on);
+      p.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+
+  // --- Shareable filter links -----------------------------------------------
+  // Every filter is mirrored into the query string, so the URL in the address
+  // bar is always a link to what the reader is looking at: clicking Sooke gives
+  // /scorecard/?muni=sooke, and that link opens on Sooke for whoever receives
+  // it. replaceState rather than pushState: a filter bar is a view of one page,
+  // not a series of pages, and eight taps on the pills should not cost eight
+  // presses of Back to leave.
+
+  // A value only counts if some control can express it, so a stale or hand-typed
+  // link falls back to "all" instead of filtering the table down to nothing.
+  function pillValue(pills, attr, value, fallback) {
+    if (!value) return fallback;
+    for (var i = 0; i < pills.length; i++) {
+      if (pills[i].getAttribute(attr) === value) return value;
+    }
+    return fallback;
+  }
+
+  function readUrlFilters() {
+    if (!window.URLSearchParams) return;
+    var params = new URLSearchParams(location.search);
+    activeMuni = pillValue(muniPills, 'data-muni', params.get('muni'), 'all');
+    activeGrade = pillValue(gradePills, 'data-grade', params.get('grade'), 'all');
+    activeOffice = pillValue(officePills, 'data-office', params.get('office'), 'all');
+    setPillState(muniPills, 'data-muni', activeMuni);
+    setPillState(gradePills, 'data-grade', activeGrade);
+    setPillState(officePills, 'data-office', activeOffice);
+
+    if (topicSelect) {
+      // Checked by walking the options rather than by building a selector, so a
+      // link carrying a junk topic cannot become a query the browser parses.
+      var topic = params.get('topic') || 'all';
+      var known = false;
+      for (var i = 0; i < topicSelect.options.length; i++) {
+        if (topicSelect.options[i].value === topic) known = true;
+      }
+      activeTopic = known ? topic : 'all';
+      topicSelect.value = activeTopic;
+    }
+
+    var q = (params.get('q') || '').trim();
+    if (search) search.value = q;
+    query = q.toLowerCase();
+  }
+
+  function syncUrl() {
+    if (!window.URLSearchParams || !window.history || !history.replaceState) return;
+    // Seeded from the current query string rather than from empty, so anything
+    // we did not put there (a utm_ tag on a shared link, say) survives.
+    var params = new URLSearchParams(location.search);
+    function put(key, value, fallback) {
+      if (!value || value === fallback) params.delete(key);
+      else params.set(key, value);
+    }
+    put('muni', activeMuni, 'all');
+    put('grade', activeGrade, 'all');
+    put('topic', activeTopic, 'all');
+    put('office', activeOffice, 'all');
+    // The reader's own casing, not the lowercased copy the filter matches on.
+    put('q', search ? search.value.trim() : '', '');
+    var qs = params.toString();
+    try {
+      history.replaceState(null, '', location.pathname + (qs ? '?' + qs : '') + location.hash);
+    } catch (e) {
+      // Some browsers refuse replaceState on file:// and other opaque origins.
+      // Filtering still works; only the shareable URL is lost.
+    }
+  }
+
   // Wire a group of mutually-exclusive filter pills sharing one data attribute.
   function wirePills(pills, attr, onPick) {
     pills.forEach(function (pill) {
       pill.addEventListener('click', function () {
-        onPick(this.getAttribute(attr));
-        pills.forEach(function (p) {
-          var on = p === pill;
-          p.classList.toggle('is-active', on);
-          p.setAttribute('aria-pressed', on ? 'true' : 'false');
-        });
+        var value = this.getAttribute(attr);
+        onPick(value);
+        setPillState(pills, attr, value);
         apply();
       });
     });
@@ -216,6 +297,7 @@
     });
   });
 
+  readUrlFilters();
   apply();
 
   // --- Seam: assets/js/favourites.js ---------------------------------------
