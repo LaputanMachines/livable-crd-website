@@ -104,6 +104,13 @@
   standing: challenger
   slate: Save Our Saanich
 
+- name: Noah Fruttarol
+  display_name: "Fruttarol, Noah"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+
 - name: Karen Harper
   display_name: "Harper, Karen"
   municipality: saanich
