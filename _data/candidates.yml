@@ -458,6 +458,20 @@
   standing: challenger
   slate: null
 
+- name: Carolynne Clark
+  display_name: "Clark, Carolynne"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+
+- name: Volker Dammann
+  display_name: "Dammann, Volker"
+  municipality: view-royal
+  office: Mayor
+  standing: challenger
+  slate: null
+
 - name: Owen Marshall
   display_name: "Marshall, Owen"
   municipality: view-royal
