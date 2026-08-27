@@ -72,6 +72,9 @@ graded_subjects:
   - governance
 
 candidates:
+  - name: Meagan Brame
+    municipality: esquimalt
+    subjects: []
   - name: Robb Johnstone
     municipality: esquimalt
     subjects: []
