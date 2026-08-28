@@ -897,49 +897,6 @@ items:
     type: text
     type_label: Written answer
     graded: false
-  # --- reconciliation ---
-  - label: REC-01
-    subject: reconciliation
-    question: >-
-      Do you support ensuring that local First Nations are represented in
-      transit governance, such as on the Victoria Regional Transit Commission
-      and the CRD Transportation Commission?
-    type: single
-    type_label: One answer
-    graded: true
-    weight: "50%"
-    owner: Better Transit YYJ
-    options:
-      - "Yes"
-      - "No"
-      - Decline to answer
-  - label: REC-02
-    subject: reconciliation
-    question: >-
-      Concerning our municipal government’s First Nations’ reconciliation and
-      consultation practices, I support:
-    type: single
-    type_label: One answer
-    graded: true
-    weight: "50%"
-    owner: Todd Litman
-    options:
-      - Significantly more consultation practices.
-      - Somewhat more consultation practices.
-      - The current amount of consultation is enough.
-      - Somewhat less consultation.
-      - Significantly less consultation.
-      - "Other, I have another idea."
-      - Decline to answer.
-  - label: REC-GEN
-    subject: reconciliation
-    question: >-
-      If you have anything you'd like to add in regards to First Nation
-      transit governance or consultation practices, feel free to share your
-      thoughts below.
-    type: text
-    type_label: Written answer
-    graded: false
   # --- governance ---
   - label: GOV-01
     subject: governance
@@ -949,7 +906,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
-    weight: "20%"
+    weight: "14%"
     owner: Strong Towns Victoria
     options:
       - "Yes"
@@ -966,7 +923,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "14%"
     owner: Better Transit YYJ
     options:
       - "Yes"
@@ -982,7 +939,7 @@ items:
     type: text
     type_label: "Written answer, up to 1,000 characters"
     graded: true
-    weight: "20%"
+    weight: "14%"
     owner: Strong Towns Victoria
   - label: GOV-04
     subject: governance
@@ -992,7 +949,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "14%"
     owner: Strong Towns Victoria
     options:
       - "Yes"
@@ -1011,7 +968,7 @@ items:
     type: "variant,multi"
     type_label: Asked separately for each municipality
     graded: true
-    weight: "20%"
+    weight: "14%"
     owner: Homes for Living
     options:
       - Allow substantially more housing and commercial development to grow the tax base and help fund infrastructure renewal.
@@ -1020,12 +977,54 @@ items:
       - "Reduce or defer infrastructure projects, service levels, or replacement standards."
       - Seek additional provincial or federal funding.
       - Decline to answer.
+  - label: REC-01
+    subject: governance
+    question: >-
+      Do you support ensuring that local First Nations are represented in
+      transit governance, such as on the Victoria Regional Transit Commission
+      and the CRD Transportation Commission?
+    type: single
+    type_label: One answer
+    graded: true
+    weight: "14%"
+    owner: Better Transit YYJ
+    options:
+      - "Yes"
+      - "No"
+      - Decline to answer
+  - label: REC-02
+    subject: governance
+    question: >-
+      Concerning our municipal government’s First Nations’ reconciliation and
+      consultation practices, I support:
+    type: single
+    type_label: One answer
+    graded: true
+    weight: "14%"
+    owner: Todd Litman
+    options:
+      - Significantly more consultation practices.
+      - Somewhat more consultation practices.
+      - The current amount of consultation is enough.
+      - Somewhat less consultation.
+      - Significantly less consultation.
+      - "Other, I have another idea."
+      - Decline to answer.
   - label: GOV-GEN
     subject: governance
     question: >-
       If you have anything you'd like to add in regards to governance, shared
       services, and municipal infrastructure, feel free to share your thoughts
       below.
+    type: text
+    type_label: Written answer
+    graded: false
+  - label: REC-GEN
+    subject: governance
+    question: >-
+      If you have anything you'd like to add in regards to First Nation
+      transit governance or consultation practices, feel free to share your
+      thoughts below.
     type: text
     type_label: Written answer
     graded: false
