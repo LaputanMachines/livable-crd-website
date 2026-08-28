@@ -98,6 +98,23 @@ body_class: page-questionnaire
     for the link to your fillable questionnaire.
   </p>
 
+  {%- comment -%}
+    What this question set leaves out, said on the page that is the question
+    set. A reader who has come here to find out what candidates were asked is
+    the reader most likely to notice that nobody asked them about food, and the
+    Victoria Urban Food Table is asking City of Victoria candidates exactly
+    that — while taking suggested questions from the public until September 3.
+
+    Near the top rather than under the last of sixty-six questions: the gap is
+    a fact about the whole page, and a reader who scrolls to the section they
+    came for never reaches the foot of it.
+
+    One entry, by id, not the homepage's whole band: Dogwood's turnout campaign
+    belongs beside "what we are building" and not beside "what we asked". The
+    include renders nothing if that entry is ever pulled from the data file.
+  {%- endcomment -%}
+  {% include other-orgs-notice.html only="uft-questionnaire" %}
+
   {%- if items == nil or items.size == 0 %}
   <div class="callout">
     <p>

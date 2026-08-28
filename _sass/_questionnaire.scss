@@ -600,8 +600,14 @@
   // an interruption on paper, and the masthead above already carries the site
   // to go back to. The popup needs no rule — a closed <dialog> is not rendered,
   // and printing with it open is not a thing that happens.
+  //
+  // So does the other-organizations card, for the same reason and one more: it
+  // is a live link with a deadline on it, and paper outlives both. Scoped to
+  // this page, because the band on the homepage is somebody's whole reason for
+  // printing that page.
   .page-questionnaire .site-header,
   .page-questionnaire .site-footer,
+  .page-questionnaire .other-orgs,
   .questionnaire-candidate-note,
   .questionnaire-search,
   .questionnaire-search__status,

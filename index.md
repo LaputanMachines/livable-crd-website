@@ -55,19 +55,6 @@ description: >-
       Once candidates are surveyed, ratings will be published by municipality ahead
       of election day.
     </p>
-    {%- comment -%}
-      Closes the section that says what the coalition is building, because the
-      honest end of that answer is what it is not building: a food systems
-      questionnaire, or the turnout campaign that decides whether any of these
-      grades gets a vote behind it. High on the page rather than beside the ten
-      topic cards, where two lavender cards under a description of our own
-      questionnaire read as two more of our topics.
-
-      Above the sponsor notice, not below it. That notice says election
-      advertising on this site is authorized by Livable CRD; other
-      organizations' cards sitting under it would read as covered by it.
-    {%- endcomment -%}
-    {% include other-orgs-notice.html %}
     {% include sponsor-notice.html %}
   </div>
 </section>
@@ -96,7 +83,45 @@ description: >-
   </div>
 </section>
 
+{%- comment -%}
+  What other organizations are doing in this election, in a section of its own
+  rather than tucked under "What we are building": three cards sitting under a
+  paragraph about our own questionnaire read as three more things we are doing,
+  which is the one thing they must not read as.
+
+  Directly before the coalition partners, so the two lists of organizations sit
+  together and a reader who wonders which of them we work with reads the answer
+  in the next section. The lead paragraph below states it outright rather than
+  leaving it to that adjacency, and has to: the heading does not say it. These
+  organizations are not coalition partners (see _data/partners.yml for those)
+  and none of this work is ours.
+
+  Below the sponsor notice rather than above it, which is the trade this move
+  makes. That notice says election advertising on this site is authorized by
+  Livable CRD, and it now sits several sections higher with the paragraph it
+  belongs to, far enough away that it no longer reads as covering these cards.
+
+  --alt because this is the slot for it: the timeline above is on the page's
+  own background, so the lavender band and its rules are what separate the two.
+  The coalition partners below take --above-topics for the same reason in
+  reverse. Neither modifier is named for its contents, so this pair can be
+  reordered again without either section losing its edges.
+{%- endcomment -%}
 <section class="section section--alt">
+  <div class="container">
+    <h2 class="section-title">Partner initiatives</h2>
+    <p>
+      Other organizations are putting their own questions to candidates in this
+      election, and running the campaigns that decide how many people vote in
+      it. None of it is Livable CRD's work and none of these organizations is a
+      coalition partner: we are listing them because a voter comparing
+      candidates here should know what else is being asked and organized.
+    </p>
+    {% include other-orgs-notice.html %}
+  </div>
+</section>
+
+<section class="section section--above-topics">
   <div class="container">
     <h2 class="section-title">Coalition partners</h2>
     <p>

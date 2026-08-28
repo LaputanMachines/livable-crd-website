@@ -8,9 +8,10 @@
 # subject our questionnaire leaves out, or running the campaign that gets those
 # voters to the polls in the first place.
 #
-# Rendered by _includes/other-orgs-notice.html, on the homepage. The band does
-# not wait for a URL: an entry with no `url` still renders, saying the thing is
-# on its way. Delete every entry to pull the band.
+# Rendered by _includes/other-orgs-notice.html, on the homepage and — filtered
+# to one entry by `id` — on the questionnaire page. The band does not wait for a
+# URL: an entry with no `url` still renders, saying the thing is on its way.
+# Delete every entry to pull the band.
 #
 # Keep the copy non-partisan. Livable CRD is a registered third-party sponsor,
 # and describing someone else's campaign is still our advertising: say what the
@@ -18,6 +19,9 @@
 # the organization's own page uses.
 #
 # Fields:
+#   id            Stable slug, so a page can include one entry rather than the
+#                 whole band (`{% include other-orgs-notice.html only="..." %}`).
+#                 Required on any entry a page singles out; harmless otherwise.
 #   org           Organization name (required).
 #   topic         Subject area, shown as the eyebrow above the headline (required).
 #   headline      One line naming what they are doing (required).
@@ -38,20 +42,40 @@
 # An entry with no `url` renders the pending state, and that state is worded for
 # a questionnaire nobody has published yet ("Not published yet"). An entry for a
 # campaign that is already running should always carry its `url`.
+#
+# One organization may hold more than one entry. Two of these are the Victoria
+# Urban Food Table, deliberately: the question intake closes on September 3 and
+# the forum is on October 5, so they expire on different days and the first can
+# be pulled without touching the second.
 
-- org: Victoria Urban Food Table
+- id: uft-questionnaire
+  org: Victoria Urban Food Table
   topic: Food systems
-  headline: Victoria Urban Food Table is preparing a food systems questionnaire
+  headline: Victoria Urban Food Table is taking questions for its food systems questionnaire
   note: >-
-    The Livable CRD questionnaire does not cover food systems. Victoria Urban
-    Food Table is putting its own questions to City of Victoria candidates and
-    plans to publish the answers separately, so voters who weigh food policy can
-    read both questionnaires side by side.
-  url: ""
-  action_label: ""
+    The Livable CRD questionnaire does not cover food systems. The Victoria
+    Urban Food Table is putting its own questions to City of Victoria council
+    candidates, and until 11pm on September 3 it is asking the public which
+    questions those should be. It expects to publish the questionnaire and the
+    candidates' answers by September 28.
+  url: "https://forms.gle/5gwF89dt1AYVNzQt5"
+  action_label: "Send them a question by September 3"
   org_url: "https://www.victoriaurbanfoodtable.com/"
 
-- org: Dogwood
+- id: uft-forum
+  org: Victoria Urban Food Table
+  topic: All-candidates forum
+  headline: Victoria Urban Food Table is hosting a food systems all-candidates forum
+  note: >-
+    An in-person forum with City of Victoria council candidates on food systems
+    and community health and safety, co-hosted with the Fernwood Community
+    Association. October 5 at 7pm, Fernwood Community Centre.
+  url: "https://calendarlink.com/event/B7wHI"
+  action_label: "Add the October 5 forum to your calendar"
+  org_url: "https://www.victoriaurbanfoodtable.com/"
+
+- id: dogwood-triple-the-vote
+  org: Dogwood
   topic: Voter turnout
   headline: Dogwood is asking voters to triple the vote on October 17
   note: >-
