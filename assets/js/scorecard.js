@@ -286,10 +286,10 @@
       });
     }
 
-    // The box ships `checked`, so the tint has to be painted once here: a
-    // checkbox that is already on fires no change event. Read the live property
-    // rather than assuming true, so a browser restoring the reader's unchecked
-    // state across a reload is honoured instead of overridden.
+    // The box ships unchecked, so the tint starts off. Painted once here
+    // anyway rather than assuming false: a browser restoring the reader's
+    // checked state across a reload fires no change event, and that restored
+    // state has to be honoured instead of overridden.
     paint(toggle.checked);
 
     toggle.addEventListener('change', function () {
