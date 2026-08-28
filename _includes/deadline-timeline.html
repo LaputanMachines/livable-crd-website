@@ -1,18 +1,24 @@
 {%- comment -%}
   Homepage project timeline: every entry in _data/deadlines.yml in date order,
-  marked done / up next / upcoming so a reader can see what stage the project
-  is at without reading five dates and doing the arithmetic themselves.
+  marked done / in progress / up next / upcoming so a reader can see what stage
+  the project is at without reading the dates and doing the arithmetic
+  themselves.
 
-  It shows the coalition's own milestones alongside the two candidate cut-offs,
-  which the scorecard band deliberately does not: the point here is the shape
-  of the whole schedule, and the cut-offs make more sense when you can see the
-  questionnaire being built ahead of them. They stay distinguishable: a
-  candidate deadline carries a visible "Deadline" tag.
+  It shows the coalition's own milestones alongside the candidate cut-off: the
+  point here is the shape of the whole schedule, and a cut-off makes more sense
+  when you can see the questionnaire being built ahead of it. The two stay
+  distinguishable, because the cut-off carries a visible "Candidate deadline"
+  tag and the milestones do not.
 
-  Uses the `short`/`brief` copy from the data file. Five milestones share the
+  Uses the `short`/`brief` copy from the data file. The milestones share the
   page width here, and the full `label`/`detail` wording does not survive being
-  squeezed into a fifth of it; that version runs in the scorecard band and the
-  #deadlines FAQ.
+  squeezed into a column of it; that version runs in the #deadlines FAQ.
+
+  An entry carrying `until` is a period rather than a moment - the stretch the
+  schedule is inside right now - and draws as a date range with a dashed
+  connector and an "In progress" tag. It deliberately does not take the "Up
+  next" tag: what is next is the milestone that ends it, and a reader looking
+  for the date they have to act on should find it on that one.
 
   Params:
     class - extra class names on the <ol>
@@ -37,10 +43,14 @@
     direction: better to still show a deadline as open for an hour after it
     closed than to close it seven hours early.
   {%- endcomment -%}
-  {%- assign d_end = d.date | date: "%s" | plus: 115200 -%}
+  {%- assign d_close = d.until | default: d.date -%}
+  {%- assign d_end = d_close | date: "%s" | plus: 115200 -%}
+  {%- assign d_start = d.date | date: "%s" | plus: 0 -%}
   {%- assign d_state = "upcoming" -%}
   {%- if d_end < deadline_now -%}
     {%- assign d_state = "done" -%}
+  {%- elsif d.until and d_start <= deadline_now -%}
+    {%- assign d_state = "active" -%}
   {%- elsif next_found == false -%}
     {%- assign d_state = "next" -%}
     {%- assign next_found = true -%}
@@ -57,7 +67,16 @@
       <span class="deadline-timeline__line"></span>
     </span>
     <div class="deadline-timeline__body">
+      {%- comment -%}
+        A period prints as two <time> elements rather than one holding a range:
+        `datetime` takes a single date, and a range crammed into it is not
+        machine-readable, it is just wrong in a machine-readable field.
+      {%- endcomment -%}
+      {%- if d.until -%}
+      <span class="deadline-timeline__date"><time datetime="{{ d.date | date: '%Y-%m-%d' }}">{{ d.date | date: "%b %-d" }}</time>&ndash;<time datetime="{{ d.until | date: '%Y-%m-%d' }}">{{ d.until | date: "%b %-d" }}</time></span>
+      {%- else -%}
       <time class="deadline-timeline__date" datetime="{{ d.date | date: '%Y-%m-%d' }}">{{ d.date | date: "%b %-d" }}</time>
+      {%- endif -%}
       {%- comment -%}
         State reaches a screen reader as words, not as a filled dot or a colour
         change. "Up next" is also on screen, so it is not repeated here.
@@ -68,6 +87,7 @@
       {%- if d.brief %}<span class="deadline-timeline__brief">{{ d.brief }}</span>{% endif -%}
       <span class="deadline-timeline__tags">
         {%- if d_state == "next" %}<span class="deadline-timeline__tag deadline-timeline__tag--next">Up next</span>{% endif -%}
+        {%- if d_state == "active" %}<span class="deadline-timeline__tag deadline-timeline__tag--active">In progress</span>{% endif -%}
         {%- comment -%}
           Marks the milestones a candidate can actually miss. Without it the
           timeline flattens a hard cut-off and an internal planning date into

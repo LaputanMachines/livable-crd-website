@@ -21,8 +21,14 @@
 {%- if deadline_items.size > 0 -%}
 {%- comment -%}
   A passed date is struck through and flagged rather than dropped. Someone
-  arriving on September 15 needs to see that the print cut-off is gone, not a
-  page that never mentioned it.
+  arriving after a milestone needs to see that it has gone, not a page that
+  never mentioned it.
+
+  An entry carrying `until` is a period rather than a moment. Its date block
+  holds the day it opened - a two-line block cannot carry two dates and stay
+  legible - and the closing date runs as its own line under the label. It
+  counts as passed only once the closing date has gone, and is flagged
+  "In progress" until then.
 
   This is build-time state: the site rebuilds on push and after the daily
   candidate sync, so the flag can trail a deadline by up to a day. The date
@@ -42,9 +48,16 @@
     in deadline-timeline.html so the two displays never disagree about whether
     a date has gone.
   {%- endcomment -%}
-  {%- assign d_end = d.date | date: "%s" | plus: 115200 -%}
+  {%- assign d_close = d.until | default: d.date -%}
+  {%- assign d_end = d_close | date: "%s" | plus: 115200 -%}
+  {%- assign d_start = d.date | date: "%s" | plus: 0 -%}
   {%- assign d_past = false -%}
-  {%- if d_end < deadline_now -%}{%- assign d_past = true -%}{%- endif -%}
+  {%- assign d_open = false -%}
+  {%- if d_end < deadline_now -%}
+    {%- assign d_past = true -%}
+  {%- elsif d.until and d_start <= deadline_now -%}
+    {%- assign d_open = true -%}
+  {%- endif -%}
   <li class="deadline-list__item{% if d_past %} deadline-list__item--past{% endif %}">
     <time class="deadline-list__date" datetime="{{ d.date | date: '%Y-%m-%d' }}">
       <span class="deadline-list__month">{{ d.date | date: "%b" }}</span>
@@ -52,8 +65,10 @@
     </time>
     <span class="deadline-list__text">
       <span class="deadline-list__label">{{ d.label }}</span>
+      {%- if d.until %}<span class="deadline-list__range">Through <time datetime="{{ d.until | date: '%Y-%m-%d' }}">{{ d.until | date: "%B %-d" }}</time></span>{% endif -%}
       {%- if d.detail %}<span class="deadline-list__detail">{{ d.detail }}</span>{% endif -%}
       {%- if d_past %}<span class="deadline-list__flag">Passed</span>{% endif -%}
+      {%- if d_open %}<span class="deadline-list__flag deadline-list__flag--open">In progress</span>{% endif -%}
     </span>
   </li>
   {%- endfor -%}

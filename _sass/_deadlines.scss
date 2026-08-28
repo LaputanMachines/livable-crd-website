@@ -93,6 +93,21 @@
   color: $color-muted;
 }
 
+// The closing date of a period, under the label it belongs to. Sized between
+// the label and the detail: it is part of naming the entry ("through September
+// 18"), not part of explaining it, so it should not read as the first line of
+// the paragraph below it.
+.deadline-list__range {
+  display: block;
+  margin-top: 0.2rem;
+  font-family: $font-display;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $color-muted;
+}
+
 // "Passed" reads as a shape and a word, not only as the greyed-out fill:
 // colour alone would carry the state (WCAG 1.4.1).
 .deadline-list__flag {
@@ -106,6 +121,13 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
+}
+
+// The one flag that is not about something being over, so it is the brand
+// accent rather than the near-black every other flag uses. Still a word first,
+// same as "Passed": the colour is the second signal, never the only one.
+.deadline-list__flag--open {
+  background: $color-accent;
 }
 
 // A passed cut-off stays on the page (its absence would read as "there was
@@ -245,6 +267,11 @@
   color: $color-text;
 }
 
+.deadline-timeline__tag--active {
+  background: $color-accent;
+  color: #fff;
+}
+
 .deadline-timeline__tag--cutoff {
   background: $color-text;
   color: #fff;
@@ -276,6 +303,27 @@
   }
 }
 
+// In progress: the stretch the schedule is inside right now. Filled like a
+// completed milestone but with no tick in it, and the connector leaving it is
+// dashed rather than solid - the segment is being crossed, not crossed. Both
+// differences survive greyscale, which the fill on its own would not, and the
+// "In progress" tag says it in words either way.
+.deadline-timeline__item--active {
+  .deadline-timeline__dot {
+    background: $color-accent;
+    border-color: $color-accent;
+  }
+
+  .deadline-timeline__line {
+    opacity: 1;
+    background: repeating-linear-gradient(
+      to bottom,
+      $color-accent 0 0.3rem,
+      transparent 0.3rem 0.6rem
+    );
+  }
+}
+
 @media (min-width: 900px) {
   .deadline-timeline {
     grid-auto-flow: column;
@@ -296,6 +344,16 @@
     width: auto;
     min-height: 0;
     height: $border-weight;
+  }
+
+  // The connector is horizontal here, so the dashes have to run along its new
+  // axis; a `to bottom` gradient on a 3px-tall box paints one flat colour.
+  .deadline-timeline__item--active .deadline-timeline__line {
+    background: repeating-linear-gradient(
+      to right,
+      $color-accent 0 0.3rem,
+      transparent 0.3rem 0.6rem
+    );
   }
 
   // The gutter between columns is the body's padding, not the item's: padding

@@ -1,22 +1,28 @@
 # Election-cycle milestones. Single source of truth for every place a date is
-# printed: the timeline on the homepage, the banner near the top of the
-# scorecard, and the #deadlines FAQ block at the bottom of the scorecard page.
-# Change a date here and all three follow; no date is written out by hand in a
-# template.
+# printed: the timeline on the homepage and the #deadlines FAQ block at the
+# bottom of the scorecard page. Change a date here and both follow; no date is
+# written out by hand in a template.
 #
 # audience:
 #   candidate: a cut-off a candidate can miss, with a consequence attached.
-#               These are the only entries the scorecard band renders, so it
-#               stays a list of things its reader can act on. The homepage
-#               timeline shows every entry but tags these ones.
-#   coalition: an internal milestone. It gives the cut-offs their context
-#               (when the questionnaire is written, when it goes out) without
-#               being something anyone outside the coalition can miss.
+#               Tagged as such on the homepage timeline, and the only entries
+#               _includes/deadline-list.html keeps when passed an `audience`.
+#   coalition: an internal milestone. It gives the cut-off its context (when
+#               the questionnaire is written, when it goes out, what the
+#               coalition is doing while it is open) without being something
+#               anyone outside the coalition can miss.
+#
+# until: optional. An entry with one is a period rather than a moment: it runs
+#         from `date` to `until` inclusive, and both displays draw it as a range
+#         and call it "In progress" while today is inside it. Without one the
+#         entry is a single dated milestone, which is what most of these are.
+#         A period never claims the "Up next" tag - it is not next, it is now -
+#         so the milestone after it keeps that tag.
 #
 # Each entry carries two lengths of copy, because the two displays have very
 # different room:
-#   label / detail: the full wording, used by the scorecard band and the FAQ
-#   short / brief:  a few words, used by the homepage timeline, where five
+#   label / detail: the full wording, used by the #deadlines FAQ
+#   short / brief:  a few words, used by the homepage timeline, where the
 #                    milestones share the width of the page
 # Keep them saying the same thing. `short`/`brief` fall back to `label` if
 # omitted, so a new entry renders either way.
@@ -55,23 +61,31 @@
   short: Questionnaire ready
   brief: The question set is locked and goes out to every candidate.
 
-- id: print-cutoff
-  date: 2026-09-11
-  audience: candidate
-  label: Candidate deadline to appear on print materials
+# The open window, and the only entry here that is a stretch of time rather than
+# a date. It exists because the schedule otherwise jumped from the questionnaire
+# going out to the cut-off with nothing in between, which read as a month of
+# waiting when it is in fact the month the work happens in. It starts the day
+# after the questionnaire goes out and ends on the cut-off, because grading runs
+# right up to it.
+- id: responses-and-grading
+  date: 2026-08-17
+  until: 2026-09-18
+  audience: coalition
+  label: Candidates respond, and the coalition grades
   detail: >-
-    The last day a candidate can return the questionnaire and still have their
-    results appear on printed scorecards, stickers, posters, and other physical
-    materials.
-  short: Print cut-off
-  brief: Last day to make printed scorecards, stickers, and posters.
+    The questionnaire is open. Candidates return it as they are ready, and each
+    partner organization grades the answers to the questions it wrote, so
+    results reach the scorecard in batches rather than all at once at the end.
+  short: Responses and grading
+  brief: Candidates reply; each group grades the answers to its own questions.
 
 - id: web-cutoff
   date: 2026-09-18
   audience: candidate
-  label: Candidate deadline to appear on the website
+  label: Candidate deadline to be graded and published
   detail: >-
-    The last day a candidate can return the questionnaire and still have their
-    results published on this website.
-  short: Website cut-off
-  brief: Last day to be graded and published on this site.
+    The last day a candidate can return the questionnaire and still be graded.
+    One cut-off covers everything: results published on this website, and
+    printed scorecards, stickers, posters, and other physical materials.
+  short: Final cut-off
+  brief: Last day to be graded, on this site and on anything printed.

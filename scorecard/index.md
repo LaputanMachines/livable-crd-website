@@ -650,39 +650,36 @@ description: >-
   </details>
 
   {%- comment -%}
-    Every date below comes from _data/deadlines.yml, including the ones quoted
-    mid-sentence: writing "September 11" into the prose would be a second copy
+    Every date below comes from _data/deadlines.yml, including the one quoted
+    mid-sentence: writing "September 18" into the prose would be a second copy
     to keep in sync with the list right above it.
   {%- endcomment -%}
-  {%- assign print_cutoff = site.data.deadlines | where: "id", "print-cutoff" | first -%}
   {%- assign web_cutoff = site.data.deadlines | where: "id", "web-cutoff" | first -%}
   <details class="methodology" id="deadlines">
     <summary>Key dates, and what a missed deadline means</summary>
     <div class="methodology__body">
       <p>
         The grades on this page come from the coalition questionnaire, which goes
-        to every confirmed candidate. The last two dates below are cut-offs a
-        candidate can miss; the ones before them are the coalition milestones
-        leading up to those, listed so the whole schedule is public. The same
-        schedule runs as a timeline on the <a href="{{ '/' | relative_url }}">homepage</a>.
+        to every confirmed candidate. The last date below is the one a candidate
+        can miss; the others are the coalition milestones leading up to it,
+        listed so the whole schedule is public. The same schedule runs as a
+        timeline on the <a href="{{ '/' | relative_url }}">homepage</a>.
       </p>
 
       {% include deadline-list.html class="deadline-list--stacked" %}
 
-      <h2>Why there are two candidate deadlines</h2>
+      <h2>What the deadline covers</h2>
       <p>
-        Print runs and the website are produced on different schedules. Printed
-        scorecards, stickers, and posters have to go to the printer well before
-        election day, so
-        <strong>{{ print_cutoff.date | date: "%B %-d" }}</strong> is the last day a
-        response can still make it onto physical materials. The website can be
-        updated later, which buys candidates until
-        <strong>{{ web_cutoff.date | date: "%B %-d" }}</strong> to have their
-        results published here.
+        <strong>{{ web_cutoff.date | date: "%B %-d" }}</strong> is the last day a
+        candidate can return the questionnaire and still be graded. One date
+        covers everything we produce: the grades on this website, and the printed
+        scorecards, stickers, and posters.
       </p>
       <p>
-        A response returned between those two dates is graded and published on this
-        site, but arrives too late for anything printed.
+        Until then the questionnaire is open and grading runs alongside it, so
+        results reach this page in batches as each partner organization finishes
+        the topics it owns, rather than all at once on the closing day. A
+        candidate who returns it early is graded early.
       </p>
 
       <h2>What happens to a candidate who does not respond</h2>
