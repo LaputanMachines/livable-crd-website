@@ -104,6 +104,9 @@ exclude:
   - vendor
   - .github
   - scripts
+  # Internal coalition documents (meeting decks and the like). Excluded so they
+  # are never copied into _site and served from livablecrd.ca.
+  - documents
 
 sass:
   style: compressed

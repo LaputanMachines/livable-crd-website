@@ -19,3 +19,8 @@ __pycache__/
 .envrc
 
 .DS_Store
+
+# Internal coalition documents (meeting decks and the like). The repo is public,
+# so excluding these from the Jekyll build in _config.yml is not enough on its
+# own -- anything committed here is readable on GitHub. Keep them out of git.
+documents/
