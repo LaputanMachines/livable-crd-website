@@ -660,7 +660,7 @@ tr:hover td { background: $color-bg-warm; }
 
 // Topic column headers: icon always, short text label only when there's room.
 // `auto` under the fixed layout above means "split what the name column leaves
-// evenly", which is what keeps all ten topics on a phone screen. A fixed width
+// evenly", which is what keeps all nine topics on a phone screen. A fixed width
 // here instead would add up to more than the viewport and force a scroll.
 .scorecard-matrix__col { width: auto; }
 
@@ -686,11 +686,22 @@ tr:hover td { background: $color-bg-warm; }
   text-align: left;
   padding-left: $space-xs; // align "Candidate" with the names below, off the edge-to-edge viewport edge
   // The name column is the only one given a width; every topic column then
-  // splits what is left. 7rem is deliberately tight: names wrap to two or
-  // three lines on a phone, which is a cheaper cost than either scrolling the
-  // table sideways or crushing the grade chips against their cell edges. The
-  // chips are the reason the table exists, so they get the slack.
-  width: 7rem;
+  // splits what is left. Still deliberately tight: names wrap to two or three
+  // lines on a phone, which is a cheaper cost than either scrolling the table
+  // sideways or crushing the grade chips against their cell edges. The chips
+  // are the reason the table exists, so they get the slack.
+  //
+  // 8rem, not the 7rem this was while there were ten topic columns. Dropping a
+  // column widened the other nine rather than narrowing the table, and the
+  // chips inside them had no use for all of the extra: a 1.25rem chip in a 31px
+  // column is the same chip further from its neighbours. The names did.
+  //
+  // Most of it, not all. Handing over a full column's width would have put the
+  // nine back at exactly the width the ten had, and they are better a little
+  // wider than that: at 360px this leaves 9 columns of 25.8px against the 10 of
+  // 24.8px they replaced, with 16px going to the names. The chips keep the room
+  // they gained, the names get most of it, and neither is squeezed.
+  width: 8rem;
 }
 
 // The matrix is edge-to-edge on mobile (negative margins above), so the outer
@@ -786,63 +797,58 @@ tr:hover td { background: $color-bg-warm; }
 // .table-scroll's `overflow-x: auto` makes the wrapper one on both axes (a
 // single `auto` axis makes the other compute to `auto` too). Stuck to a box
 // that never scrolls vertically, the header just hangs one offset down from the
-// top of the table, on top of the first rows. So the header can only stick at a
-// width where the wrapper has nothing to scroll sideways and can give up being
-// a scroll container at all, which is true at both ends of the range and false
-// in the middle:
+// top of the table, on top of the first rows. So the header sticks only where
+// the wrapper has nothing to scroll sideways and can give up being a scroll
+// container at all — which is now every width, because the table is sized never
+// to exceed its container:
 //
-//   below 720px   The table is `width: 100%` with no min-width. Icon-only
-//                 headers, a 7rem name column and compact chips are sized to
-//                 fit a phone, so there is nothing to scroll and the wrapper's
-//                 overflow-x is doing no work.
-//   720px-60rem   The table takes the 55rem min-width set in the 720px block,
-//                 which is wider than the space it has until 60rem (55rem of
-//                 table plus the container's two 1.25rem gutters is 57.5rem).
-//                 Here the sideways scroll is worth more than a sticky header.
-//   60rem+        Room for the whole table again, so it sticks again.
+//   below 52.5rem   `width: 100%` with no min-width. Icon-only headers, a 7rem
+//                   name column and compact chips fit any phone.
+//   52.5rem+        The roomier layout below, whose 50rem min-width is exactly
+//                   what the container has to give at 52.5rem (50rem of table
+//                   plus its two 1.25rem gutters) and less than it thereafter.
 //
-// Hence the shape below: stuck by default, unstuck inside the 720px block, and
-// stuck again at 60rem. Written as a mixin because the first and last of those
-// are the same declarations, and two copies would drift.
-@mixin sticky-topic-header {
-  .scorecard-matrix-scroll {
-    overflow-x: visible;
-    overflow-y: visible;
-    // Set with the overflow on .table-scroll, and turned off with it here.
-    // WebKit gives a box carrying this its own accelerated scrolling layer,
-    // and a sticky descendant of that layer does not stick. There is nothing
-    // to scroll at these widths, so there is nothing for it to do but break
-    // the header.
-    -webkit-overflow-scrolling: auto;
-  }
-
-  .scorecard-matrix thead th {
-    position: sticky;
-    // Below the site header, which is itself sticky at top: 0 at every width.
-    // Measured and republished by assets/js/scorecard.js; see :root in
-    // _layout.scss for what the fallback is.
-    //
-    // Minus a pixel so the two overlap rather than meet. The measured height
-    // is fractional and the stuck row's own position is subject to the same
-    // rounding, so an exact offset leaves a hairline of page showing through
-    // between the header and this row on some zoom levels and pixel ratios.
-    // The header is z-index 100 against this row's 3, so the overlap is
-    // painted over and costs nothing.
-    top: calc(var(--site-header-h, 74px) - 1px);
-    z-index: 3; // over the municipality bands and name cells it scrolls past
-    // No shadow standing in for the bottom rule here any more. That was needed
-    // while the table's borders were collapsed and so belonged to the table
-    // rather than to the cell, which left the rule behind with the rows the
-    // moment the header detached. Under `separate` the 2px border set on
-    // `thead th` above is the cell's own and travels with it.
-  }
+// This used to be three ranges rather than two, with a sideways scroll in the
+// middle that cost the sticky header between 720px and 60rem. That band was an
+// arithmetic leftover: the min-width was written for ten topic columns and the
+// breakpoint for the width ten of them needed. Nine columns fit sooner, so the
+// roomier layout can start where it fits and the scroll never has to happen.
+.scorecard-matrix-scroll {
+  overflow-x: visible;
+  overflow-y: visible;
+  // Set with the overflow on .table-scroll, and turned off with it here.
+  // WebKit gives a box carrying this its own accelerated scrolling layer,
+  // and a sticky descendant of that layer does not stick. There is nothing
+  // to scroll at any width, so there is nothing for it to do but break the
+  // header.
+  -webkit-overflow-scrolling: auto;
 }
 
-// Phones, where the table fits and the wrapper has nothing to scroll.
-@include sticky-topic-header;
+.scorecard-matrix thead th {
+  position: sticky;
+  // Below the site header, which is itself sticky at top: 0 at every width.
+  // Measured and republished by assets/js/scorecard.js; see :root in
+  // _layout.scss for what the fallback is.
+  //
+  // Minus a pixel so the two overlap rather than meet. The measured height
+  // is fractional and the stuck row's own position is subject to the same
+  // rounding, so an exact offset leaves a hairline of page showing through
+  // between the header and this row on some zoom levels and pixel ratios.
+  // The header is z-index 100 against this row's 3, so the overlap is
+  // painted over and costs nothing.
+  top: calc(var(--site-header-h, 74px) - 1px);
+  z-index: 3; // over the municipality bands and name cells it scrolls past
+  // No shadow standing in for the bottom rule here any more. That was needed
+  // while the table's borders were collapsed and so belonged to the table
+  // rather than to the cell, which left the rule behind with the rows the
+  // moment the header detached. Under `separate` the 2px border set on
+  // `thead th` above is the cell's own and travels with it.
+}
 
-// Roomier layout once there's width: show text labels, larger chips.
-@media (min-width: 720px) {
+// Roomier layout once there's width: show text labels, larger chips. The
+// breakpoint is the width this layout needs rather than a round number, so it
+// never arrives before there is room for it.
+@media (min-width: 52.5rem) {
   .scorecard-matrix-scroll {
     margin-left: 0;
     margin-right: 0;
@@ -851,26 +857,25 @@ tr:hover td { background: $color-bg-warm; }
   }
   // `table-layout: fixed` is set at the base now, so all this adds is room: a
   // wider name column and a floor under the table. `min-width` keeps the even
-  // split from squeezing the topic labels below their legible width on a narrow
-  // desktop: 14rem for names plus ten ~4rem topic columns. Below that the
-  // .table-scroll wrapper scrolls horizontally, as it already did here.
+  // split from squeezing the topic labels below their legible width: 14rem for
+  // names plus nine ~4rem topic columns. It is also what sets the breakpoint
+  // above - 50rem of table plus the container's two 1.25rem gutters is 52.5rem
+  // - so the floor is never higher than the room, and the table never scrolls.
+  // Change one of the two and the other has to follow.
   .scorecard-matrix {
     font-size: 0.95rem;
-    min-width: 55rem;
-  }
-  // That min-width is wider than the viewport up to 60rem, so the wrapper has
-  // to go back to being a horizontal scroll container - and a scroll container
-  // on one axis is one on both, which is what a sticky header cannot survive.
-  // Undone again by the 60rem block below, where the table fits once more.
-  .scorecard-matrix-scroll {
-    overflow-x: auto;
-    overflow-y: visible;
-  }
-  .scorecard-matrix thead th {
-    position: static;
+    min-width: 50rem;
   }
   .scorecard-matrix th,
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
+  // The edge gutter on the last column belongs to the edge-to-edge layout
+  // below this breakpoint, where the table has no side borders and the column
+  // would otherwise hug the viewport. Here it has a 3px border and a container
+  // gutter outside it, so the extra 0.1rem is not a gutter any more: it is one
+  // column padded differently from the other eight, which reads as a sliver of
+  // white down the right of the last topic.
+  .scorecard-matrix th:last-child,
+  .scorecard-matrix td:last-child { padding-right: 0.4rem; }
   .scorecard-matrix .scorecard-matrix__name-h { width: 14rem; }
   // The base padding-left carries through here on purpose. Zeroing it puts the
   // names hard against the table's left border, which reads as a rendering
@@ -883,10 +888,6 @@ tr:hover td { background: $color-bg-warm; }
   // row sizes the columns, so the name width lives on .scorecard-matrix__name-h.
   .scorecard-matrix__cand { font-size: 0.95rem; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
-}
-
-@media (min-width: 60rem) {
-  @include sticky-topic-header;
 }
 
 .scorecard-cta {
@@ -1113,7 +1114,7 @@ p + .partner-list {
 }
 
 // One distinct, AA-contrast (white text) colour per category id from _data/subjects.yml.
-// The 9 policy areas each get their own hue family; `general` is a neutral catch-all.
+// The 8 policy areas each get their own hue family; `general` is a neutral catch-all.
 $category-colors: (
   general: #475569,           // slate (neutral)
   transit: #1d4ed8,           // blue
@@ -1123,7 +1124,6 @@ $category-colors: (
   rolling-cycling: #0e7490,   // teal
   walking: #c2410c,           // orange
   healthcare-access: #b91c1c, // red
-  reconciliation: #78350f,    // earth brown
   governance: #86198f,        // plum
 );
 @each $cat, $col in $category-colors {

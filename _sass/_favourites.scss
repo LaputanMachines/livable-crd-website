@@ -22,7 +22,7 @@
   align-items: center;
   // Tighter than $space-xs on purpose: the matrix is a dense component and
   // already sets its own sub-scale paddings (0.2rem, 0.35rem) for the same
-  // reason: ten topic columns have to survive a phone.
+  // reason: nine topic columns have to survive a phone.
   gap: 0.25rem;
 }
 

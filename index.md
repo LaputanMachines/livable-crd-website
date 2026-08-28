@@ -132,11 +132,23 @@ description: >-
   <div class="container">
     <h2 class="section-title">Policy areas we evaluate</h2>
     <p>
-      The questionnaire covers ten topics, from transit and housing to climate, arts, reconciliation, walking, cycling, healthcare, governance, and general livability. Each candidate is graded
-      in every area, so voters can compare positions topic by topic at a glance.
+      The questionnaire covers eight policy areas, from transit and housing to climate, arts, walking, cycling, healthcare, and governance. Most carry a letter
+      grade, and where a question is published unscored the candidate's own answer is shown in full, so voters can compare positions topic by topic at a glance.
     </p>
+    {%- comment -%}
+      Every topic except `general`. This block is the reader's map of the policy
+      areas a candidate is judged on, and General is not one: it is the two
+      cross-cutting questions (GEN-01 and GEN-02), published unscored and
+      belonging to no area. Carding it beside Transit and Housing promised a
+      ninth policy area that the scorecard then has no column for.
+
+      Filtered here rather than dropped from _data/subjects.yml, which still
+      needs the entry: the questionnaire page groups the GEN-* questions under
+      it, and the scorecard renders its answers once a candidate's are released.
+    {%- endcomment -%}
     <div class="card-grid">
-      {% for subject in site.data.subjects %}
+      {% assign policy_areas = site.data.subjects | where_exp: "s", "s.id != 'general'" %}
+      {% for subject in policy_areas %}
       {% include topic-card.html subject=subject %}
       {% endfor %}
     </div>

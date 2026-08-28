@@ -82,7 +82,11 @@ VARIANT_RE = re.compile(r"^([A-Z]{2,4}-\d{2})-[A-Za-z]+$")
 PREFIX_CATEGORY = {
     "HFL": "Housing",
     "GOV": "Governance",
-    "REC": "Reconciliation",
+    # The reconciliation questions were folded into Governance with their codes
+    # left as they were, so a REC-* label is a Governance question now. Existing
+    # registry rows carry this in their hand-maintained Category cell; this map
+    # only decides where a newly-discovered REC-* question would be proposed.
+    "REC": "Governance",
     "TRN": "Transit",
     "CLI": "Climate",
     "ART": "Arts",
@@ -105,7 +109,7 @@ SKIP_LABELS = {"GEN-01", "GEN-02"}
 # Tab order, so the sheet reads the way the scorecard does.
 CATEGORY_ORDER = [
     "Housing", "Transit", "Walking", "Rolling & cycling", "Climate",
-    "Arts", "Governance", "Reconciliation", "Healthcare access",
+    "Arts", "Governance", "Healthcare access",
 ]
 
 # Categories the questionnaire asks about but nobody grades: General is only the

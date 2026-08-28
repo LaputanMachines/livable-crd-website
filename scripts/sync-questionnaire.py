@@ -101,6 +101,13 @@ VARIANT_RE = re.compile(r"^([A-Z]{2,4}-\d{2})-[A-Za-z]+$")
 # registry's category names; this one is keyed to _data/subjects.yml ids,
 # because ungraded questions never reach the registry and so have no category
 # cell to read. General is here and absent there for exactly that reason.
+#
+# REC maps to governance, not to a topic of its own. The two reconciliation
+# questions were folded into Governance and their codes were deliberately left
+# alone, so REC-GEN's "anything to add" box has to follow them: it never reaches
+# the registry, so this map is the only thing that decides where it is published.
+# The graded pair get their subject from the registry's Category column instead,
+# which has to say Governance for the same reason.
 PREFIX_SUBJECT = {
     "GEN": "general",
     "HFL": "housing",
@@ -110,7 +117,7 @@ PREFIX_SUBJECT = {
     "CLI": "climate",
     "ART": "arts",
     "GOV": "governance",
-    "REC": "reconciliation",
+    "REC": "governance",
     "HLT": "healthcare-access",
 }
 
@@ -153,13 +160,17 @@ SUBJECT_FOR_CATEGORY = {
     "climate": "climate",
     "arts": "arts",
     "governance": "governance",
-    "reconciliation": "reconciliation",
     "healthcare access": "healthcare-access",
     "general": "general",
     # What _data/subjects.yml called the General topic until the GEN-* questions
     # were on their way into the registry. Kept as an alias so a registry row
     # already typed the long way still resolves instead of failing the sync.
     "all categories / general": "general",
+    # Reconciliation is deliberately absent: the topic was folded into
+    # Governance and dropped from _data/subjects.yml. A "Reconciliation" column
+    # left behind on Category Grades is a half-finished migration, and the
+    # unmapped-category error is the point - a subject with no questions and no
+    # topic to publish under should stop the run, not sync as an empty column.
 }
 
 # Registry `Type` values, expanded for a reader who has never seen the sheet.

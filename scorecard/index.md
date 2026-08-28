@@ -132,6 +132,15 @@ description: >-
   {%- endcomment -%}
   {% include grade-legend.html %}
 
+  {%- comment -%}
+    Every full-width row in the matrix spans this. Derived rather than typed:
+    the columns are the name column plus one per topic, so a topic added to or
+    dropped from _data/subjects.yml has to move it. A stale literal here is not
+    a cosmetic bug — a colspan wider than the header row invents a column the
+    <thead> never declared, and it renders as an empty band inside the table
+    border for the whole length of the page.
+  {%- endcomment -%}
+  {%- assign matrix_columns = site.data.subjects.size | plus: 1 -%}
   <div class="table-scroll scorecard-matrix-scroll">
     <table class="scorecard-matrix" id="candidate-grid">
       <thead>
@@ -170,7 +179,7 @@ description: >-
       {% endcomment %}
       <tbody class="scorecard-matrix__group scorecard-matrix__group--fav" id="favourites-group" hidden>
         <tr class="scorecard-matrix__group-row">
-          <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head scorecard-matrix__group-head--fav">
+          <th scope="colgroup" colspan="{{ matrix_columns }}" class="scorecard-matrix__group-head scorecard-matrix__group-head--fav">
             Your favourites
             {%- comment -%}
               Also the accessible description of every reorder handle
@@ -192,7 +201,7 @@ description: >-
         {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
         <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}"{% if mc.size == 0 %} data-empty="true"{% endif %}>
           <tr class="scorecard-matrix__group-row">
-            <th scope="colgroup" colspan="11" class="scorecard-matrix__group-head">
+            <th scope="colgroup" colspan="{{ matrix_columns }}" class="scorecard-matrix__group-head">
               {%- comment -%}
                 The municipality name and its slate block sit on one flex row, so
                 they share a vertical centre; as bare text beside an inline-flex
@@ -255,7 +264,7 @@ description: >-
           </tr>
           {% if mc.size == 0 %}
           <tr class="scorecard-matrix__empty-row">
-            <td colspan="11" class="scorecard-matrix__empty-cell">
+            <td colspan="{{ matrix_columns }}" class="scorecard-matrix__empty-cell">
               No candidates have publicly announced here yet. Check back, or
               <a href="mailto:{{ site.email }}?subject=Candidate%20in%20{{ muni.name | url_encode }}">tell us about one</a>.
             </td>

@@ -31,7 +31,7 @@ OUT_DEFAULT = os.path.join(ROOT, "_data", "candidates.yml")
 
 # Sheet column -> subject id (in _data/subjects.yml). Subjects with no column in
 # the tracking sheet are omitted here and render as pending ("—") until a column
-# exists: "general", "reconciliation", "governance". Add the pair below once the
+# exists: "general" and "governance". Add the pair below once the
 # coalition adds the matching column.
 #
 # As of the sheet's 2026-08 restructure NONE of these columns exist any more:

@@ -13,7 +13,7 @@
 #             _data/subjects.yml so the pill picks up that topic's name and accent color:
 #               general, transit, housing, climate, arts,
 #               rolling-cycling, walking, healthcare-access,
-#               reconciliation, governance
+#               governance
 #             Any other value is shown verbatim with the default accent.
 
 - name: Walk On, Victoria

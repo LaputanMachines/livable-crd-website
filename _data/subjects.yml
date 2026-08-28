@@ -75,17 +75,6 @@
     Access to clinics, mental health supports, and municipal actions that help
     residents get timely care close to home.
 
-- id: reconciliation
-  name: Reconciliation
-  short: Reconciliation
-  abbr: T&R
-  icon: reconciliation.svg
-  accent: "#4c1d95"
-  description: >-
-    Advancing reconciliation with Indigenous peoples through respectful
-    relationships, honouring commitments, and decisions made in partnership with
-    local First Nations.
-
 - id: governance
   name: Governance
   short: Governance
