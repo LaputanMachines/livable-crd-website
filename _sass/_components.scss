@@ -440,16 +440,6 @@ tr:hover td { background: $color-bg-warm; }
   }
 }
 
-// How many candidates have replied, immediately under the key that just
-// explained the two empty states. Quiet: it is context for the table, not a
-// headline, and it sits between the key and the search box.
-.scorecard-progress {
-  margin-top: $space-xs;
-  margin-bottom: 0;
-  font-size: 0.9rem;
-  color: $color-muted;
-}
-
 // Search + municipality filter bar.
 .scorecard-controls {
   display: flex;
@@ -1052,7 +1042,6 @@ tr:hover td { background: $color-bg-warm; }
 }
 
 p + .callout,
-p + .status-banner,
 p + .card-grid,
 p + .partner-list {
   margin-top: $space-sm;
@@ -1146,30 +1135,6 @@ $category-colors: (
 }
 
 .partner-list .org-note { margin: 0; font-size: 0.9rem; color: $color-muted; }
-
-.status-banner {
-  text-align: center;
-  padding: $space-md $space-gutter;
-  background: $color-bg-warm;
-  border: $border-weight dashed $color-muted;
-  border-radius: 0;
-  margin-top: $space-md;
-  box-shadow: none;
-}
-
-// No max-width: the banner holds two short sentences now, and capping the
-// measure at 42ch left them wrapped into a narrow column with the dashed box
-// stretched empty either side of it.
-.status-banner p {
-  margin: 0;
-  color: $color-text;
-  font-weight: 700;
-  font-family: $font-display;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
 
 // --- Other organizations' work ----------------------------------------------
 // Data:   _data/other-orgs.yml

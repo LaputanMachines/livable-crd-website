@@ -357,6 +357,30 @@ main {
   }
 }
 
+// A line of description or a standing request, directly under a page's h1 and
+// inside the inky header with it.
+//
+// Sentence case, unlike the uppercase display type the headers otherwise use:
+// this carries running prose and an email address, and upper-casing an address
+// makes it harder to read and harder to copy correctly.
+.page-header__note {
+  margin: $space-xs 0 0;
+  // No measure cap: it runs the full width of the header's container, as the
+  // h1 above it does on any title short enough not to reach its own.
+  font-size: clamp(0.9rem, 2.5vw, 1.02rem);
+  line-height: 1.5;
+  // Under full white so the h1 above still leads, but well clear of the muted
+  // greys body copy uses: on the inky ground anything dimmer stops being read.
+  color: rgba(255, 255, 255, 0.85);
+
+  a {
+    color: #fff;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    &:hover { color: $color-warm; } // Kwetlal accent, as on the footer links
+  }
+}
+
 .page-inner main {
   min-height: 0;
 }

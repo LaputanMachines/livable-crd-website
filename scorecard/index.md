@@ -10,6 +10,23 @@ description: >-
 <div class="page-header">
   <div class="container">
     <h1>Candidate scorecard</h1>
+    {%- comment -%}
+      The correction line, in the header rather than in a banner further down.
+      It is the one thing on this page that asks the reader for something, and
+      the ask is about the list as a whole, so it belongs beside the title of
+      the list rather than in a box the reader meets after the intro copy.
+
+      Kept to a request rather than an announcement: the only thing this line is
+      for is catching the errors a reader can see and we cannot. Everything it
+      used to say about how the list is built lives in the
+      #how-candidates-are-added block at the foot of the page, which is still
+      linked from the deadlines FAQ and still reachable by its own heading.
+    {%- endcomment -%}
+    <p class="page-header__note">
+      Someone missing or listed incorrectly?
+      <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a>
+      by emailing {{ site.email }}.
+    </p>
   </div>
 </div>
 
@@ -23,43 +40,6 @@ description: >-
     <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>,
     and a candidate's own page shows how each of their answers was graded.
   </p>
-
-  {%- comment -%}
-    One line, and it is a request rather than an announcement: the only thing
-    this band is for is catching the errors a reader can see and we cannot.
-    Everything it used to say about how the list is built lives in the
-    #how-candidates-are-added block at the foot of the page, which is still
-    linked from the deadlines FAQ and still reachable by its own heading.
-  {%- endcomment -%}
-  <div class="status-banner">
-    <p>Someone missing or listed incorrectly? <a href="mailto:{{ site.email }}?subject=Scorecard%20correction">Tell us</a> by emailing {{ site.email }}.</p>
-  </div>
-
-  {%- comment -%}
-    How far along the whole exercise is, in one line. Without it a reader
-    scrolling a table of dashes has no way to tell a questionnaire that has
-    barely gone out from one candidates are ignoring. Both counts come from
-    _plugins/questionnaire_scores.rb rather than being counted here, so the
-    sentence cannot disagree with the chips in the table.
-
-    Absent entirely until the first reply comes back: "0 of 66 have returned it"
-    is a true sentence that reads as an accusation, and early in a cycle it says
-    nothing except that we sent the questionnaire out recently.
-  {%- endcomment -%}
-  {%- assign returned_count = site.data.returned_candidate_count | default: 0 %}
-  {%- if returned_count > 0 %}
-  <p class="scorecard-progress">
-    <strong>{{ returned_count }}</strong> of {{ site.data.candidates.size }} candidates
-    {% if returned_count == 1 %}has{% else %}have{% endif %} returned the questionnaire so far.
-    {%- assign published_count = site.data.published_candidate_count | default: 0 %}
-    {%- if published_count > 0 %}
-    {{ published_count }} of them {% if published_count == 1 %}has{% else %}have{% endif %}
-    at least one topic graded and published.
-    {%- else %}
-    No topic has finished grading yet.
-    {%- endif %}
-  </p>
-  {%- endif %}
 
   <div class="scorecard-controls">
     <label for="candidate-search" class="sr-only">Search candidates by name or slate</label>
