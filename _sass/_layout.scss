@@ -539,28 +539,23 @@ main {
   letter-spacing: 0.1em;
 }
 
-.hero .btn-secondary {
-  background: transparent;
-  color: #fff !important;
-  border-color: #fff;
-
-  &:hover {
-    background: #fff;
-    color: $color-accent-alt !important;
-  }
-}
-
-.hero .btn-donate {
-  border-color: $color-warm;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.15);
-}
-
-// accent-alt matches the hero background, so give the newsletter button a solid
-// light fill here to keep it a visible, highlighted pill on the dark hero.
-.hero .btn-newsletter {
+// The hero's single call to action. Every other .btn on the site is one of a
+// row and sized to sit level with its neighbours; this one is alone, so it is
+// sized to be what the eye lands on after the headline.
+//
+// Solid white rather than either brand purple: $color-accent-alt IS the hero
+// background, and $color-accent is a near neighbour of it, so a filled button
+// in either reads as a slightly different patch of the same field. White is
+// the only fill on this background that is unambiguously a button.
+.hero .btn-hero {
   background: #fff;
   color: $color-accent-alt !important;
   border-color: #fff;
+  padding: 1.05rem 2.4rem;
+  font-size: 1.05rem;
+  // The label runs to four words, which wraps on a narrow phone; centred so it
+  // wraps into a block rather than a ragged left edge inside the pill.
+  text-align: center;
 
   &:hover {
     background: rgba(255, 255, 255, 0.85);
@@ -850,6 +845,16 @@ main {
   .hero-inner {
     padding-top: $space-xl;
     padding-bottom: $space-lg;
+  }
+
+  // Full width on a phone. The label is too long to hold its intrinsic width
+  // here without wrapping anyway, and a wrapped pill floating at two-thirds of
+  // the column reads as a mistake where a full-width bar reads as a bar.
+  .hero .btn-hero {
+    display: block;
+    padding-left: $space-sm;
+    padding-right: $space-sm;
+    font-size: 1rem;
   }
 
   .page-header {

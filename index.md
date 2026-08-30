@@ -18,11 +18,15 @@ description: >-
       Regional District, so voters can see where candidates stand on the issues
       that shape daily life here.
     </p>
+    {%- comment -%}
+      One call to action, not four. The hero's job is to send a visitor to the
+      thing they came for, and a row of four equal-weight pills asked them to
+      choose between reading, viewing, joining and donating before they had
+      seen anything the site is about. The other three are all still one click
+      away in the nav, and donate and join are highlighted there.
+    {%- endcomment -%}
     <div class="btn-group">
-      <a class="btn btn-primary" href="{{ '/questionnaire/' | relative_url }}">Read the questions</a>
-      <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">View scorecard</a>
-      <a class="btn btn-newsletter" href="{{ '/signup/' | relative_url }}">Join the mailing list</a>
-      <a class="btn btn-donate" href="{{ '/donate/' | relative_url }}">Support us</a>
+      <a class="btn btn-hero" href="{{ '/scorecard/' | relative_url }}">View All Candidates &amp; Scores</a>
     </div>
   </div>
   <div class="grade-strip" aria-label="Grading scale">
