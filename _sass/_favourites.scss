@@ -142,6 +142,16 @@
 .scorecard-matrix .scorecard-matrix__group-head--fav {
   background: $color-warm;
   border-top: none; // it sits directly under the table head's own bottom border
+
+  // The one band that does not stick. It carries a two-line instruction under
+  // its heading, so it is roughly twice the height of a municipality band, and
+  // two stuck boxes of different heights at the same offset do not hand over
+  // cleanly: the first municipality band pins on top of this one and the extra
+  // height shows as a strip of purple hanging out below it. It also has the
+  // least to gain from sticking — a reader's favourites are a handful of rows,
+  // all of them on screen with the heading, which is the situation sticking
+  // exists to fix.
+  position: static;
 }
 
 // Instructions, not a heading: normal case and weight so the eye skips it once

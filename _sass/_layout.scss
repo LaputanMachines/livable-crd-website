@@ -34,6 +34,11 @@
 // script runs, and if it never does.
 :root {
   --site-header-h: 74px;
+  // Height of the matrix's own topic header row, which the municipality bands
+  // stick below. Measured and republished by assets/js/scorecard.js on the same
+  // terms as the site header above; this is the icon-only phone layout, and
+  // _components.scss raises it in the 52.5rem block where the row grows a label.
+  --matrix-head-h: 35px;
 }
 
 .site-header {

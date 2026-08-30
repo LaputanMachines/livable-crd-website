@@ -745,6 +745,26 @@ tr:hover td { background: $color-bg-warm; }
   padding: 0.35rem $space-xs;
   border-top: 2px solid $color-text;
   border-bottom: 2px solid $color-text;
+
+  // Sticky for the same reason the topic row is: which municipality a row
+  // belongs to is the other thing a reader loses partway down a 99-row grid,
+  // and the answer is a band that has already scrolled off. A sticky table
+  // cell is constrained to its own row group, so each band is pushed up and
+  // out by the next municipality's as that group arrives, rather than all
+  // thirteen piling up under the header.
+  position: sticky;
+  // The site header, then the topic row stuck under it. Both heights are
+  // measured and republished by assets/js/scorecard.js; the fallbacks are the
+  // :root declarations (see _layout.scss and the 52.5rem block below), which
+  // are what this gets before the script runs and if it never does.
+  //
+  // Minus two, not one: the topic row is itself offset up a pixel to overlap
+  // the site header (see .scorecard-matrix thead th), so its bottom edge is a
+  // pixel higher than the sum, and this band takes another pixel of overlap
+  // on the same reasoning — a fractional measured height would otherwise leave
+  // a hairline of page showing through the seam at some zoom levels.
+  top: calc(var(--site-header-h, 74px) + var(--matrix-head-h, 35px) - 2px);
+  z-index: 2; // under the topic row (3), over the candidate rows it covers
 }
 
 // Placeholder under a municipality nobody has announced in yet. Quieter than a
@@ -856,6 +876,11 @@ tr:hover td { background: $color-bg-warm; }
     font-size: 0.95rem;
     min-width: 50rem;
   }
+  // Pre-script fallback for the topic row's height, which nearly doubles here:
+  // the label appears under the icon and the cell padding goes from 0.4rem to
+  // 0.5rem. scorecard.js overwrites this with the measured value as an inline
+  // style on the same element, so this only ever governs the first paint.
+  :root { --matrix-head-h: 63px; }
   .scorecard-matrix th,
   .scorecard-matrix td { padding: 0.5rem 0.4rem; }
   // The edge gutter on the last column belongs to the edge-to-edge layout

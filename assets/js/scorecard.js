@@ -49,6 +49,22 @@
     if (window.ResizeObserver) new ResizeObserver(publishHeaderHeight).observe(siteHeader);
   }
 
+  // The municipality bands stick below the topic header row, so their offset is
+  // the site header plus that row. Its height is no more a constant than the
+  // header's: the row is icon-only on a phone and icon-plus-label from 52.5rem
+  // up, so a literal is wrong on one side of that breakpoint or the other.
+  var matrixHead = table.tHead;
+  if (matrixHead) {
+    var publishMatrixHeadHeight = function () {
+      // Floored for the same reason as above: an overlap the row above paints
+      // over costs nothing, a gap shows the page through the seam.
+      var mh = Math.floor(matrixHead.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--matrix-head-h', mh + 'px');
+    };
+    publishMatrixHeadHeight();
+    if (window.ResizeObserver) new ResizeObserver(publishMatrixHeadHeight).observe(matrixHead);
+  }
+
   var search = document.getElementById('candidate-search');
   var count = document.getElementById('candidate-count');
   var empty = document.getElementById('candidate-empty');
