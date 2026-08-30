@@ -1,24 +1,35 @@
 <footer class="site-footer">
   <div class="footer-inner">
-    <p><strong>{{ site.title }}</strong>: candidate scorecard for CRD municipal elections.</p>
-    <nav class="footer-nav" aria-label="Footer">
-      <ul>
-        <li><a href="{{ '/' | relative_url }}">Home</a></li>
-        <li><a href="{{ '/scorecard/' | relative_url }}">Scorecard</a></li>
-        <li><a href="{{ '/donate/' | relative_url }}">Donate</a></li>
-        <li><a href="{{ '/signup/' | relative_url }}">Join</a></li>
-        <li><a href="{{ '/about/' | relative_url }}">About Us</a></li>
-        <li><a href="{{ '/blog/' | relative_url }}">Blog</a></li>
-        <li><a href="{{ '/press/' | relative_url }}">Press</a></li>
-        <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>
-        <li><a href="{{ '/code-of-conduct/' | relative_url }}">Code of Conduct</a></li>
-      </ul>
-    </nav>
-    <p>Contact: <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
-    {% include social-links.html class="social-links--footer social-links--icons" %}
-    <p><a href="{{ '/brand/' | relative_url }}">Brand assets for partners</a></p>
-    <p>&copy; {{ 'now' | date: '%Y' }} {{ site.title }}</p>
-    {% include sponsor-notice.html class="sponsor-notice--footer" %}
-    <p class="footer-credit">Brand identity &amp; iconography by Abby Ivison.</p>
+    {%- comment -%}
+      Two columns on desktop: the identity/legal block on the left, the full
+      page list stacked on the right. Below 720px the grid collapses and the
+      two blocks stack in source order.
+    {%- endcomment -%}
+    <div class="footer-cols">
+      <div class="footer-col footer-col--main">
+        <p><strong>{{ site.title }}</strong>: candidate scorecard for CRD municipal elections.</p>
+        <p>Contact: <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
+        {% include social-links.html class="social-links--footer social-links--icons" %}
+        <p><a href="{{ '/brand/' | relative_url }}">Brand assets for partners</a></p>
+        <p>&copy; {{ 'now' | date: '%Y' }} {{ site.title }}</p>
+        {% include sponsor-notice.html class="sponsor-notice--footer" %}
+        <p class="footer-credit">Brand identity &amp; iconography by Abby Ivison.</p>
+      </div>
+
+      <nav class="footer-col footer-col--nav footer-nav" aria-label="Footer">
+        <ul>
+          <li><a href="{{ '/' | relative_url }}">Home</a></li>
+          <li><a href="{{ '/questionnaire/' | relative_url }}">Questionnaire</a></li>
+          <li><a href="{{ '/scorecard/' | relative_url }}">Scorecard</a></li>
+          <li><a href="{{ '/donate/' | relative_url }}">Donate</a></li>
+          <li><a href="{{ '/signup/' | relative_url }}">Join</a></li>
+          <li><a href="{{ '/about/' | relative_url }}">About Us</a></li>
+          <li><a href="{{ '/blog/' | relative_url }}">Blog</a></li>
+          <li><a href="{{ '/press/' | relative_url }}">Press</a></li>
+          <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>
+          <li><a href="{{ '/code-of-conduct/' | relative_url }}">Code of Conduct</a></li>
+        </ul>
+      </nav>
+    </div>
   </div>
 </footer>

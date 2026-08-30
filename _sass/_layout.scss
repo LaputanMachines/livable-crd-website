@@ -414,6 +414,21 @@ main {
   p { margin: 0 0 $space-xs; }
   p:last-child { margin-bottom: 0; }
 
+  // Single stack on phones; two columns from 720px up, with the page list in
+  // a narrow right-hand rail so the legal text on the left keeps its measure.
+  .footer-cols {
+    display: grid;
+    gap: $space-lg;
+
+    @media (min-width: 720px) {
+      grid-template-columns: minmax(0, 1fr) auto;
+      column-gap: $space-xl;
+      align-items: start;
+    }
+  }
+
+  .footer-col--main > :last-child { margin-bottom: 0; }
+
   .footer-nav {
     margin: 0 0 $space-sm;
 
@@ -424,6 +439,20 @@ main {
       display: flex;
       flex-wrap: wrap;
       gap: 0.4rem 1.25rem;
+    }
+
+    // In the desktop rail the links stack; the wrapping row above is the
+    // phone layout, where a vertical list of ten would push the legal text
+    // off the first screen of the footer.
+    @media (min-width: 720px) {
+      margin-bottom: 0;
+      text-align: right;
+
+      ul {
+        flex-direction: column;
+        align-items: flex-end; // ragged left, flush against the footer's right edge
+        gap: 0.5rem;
+      }
     }
 
     a {
