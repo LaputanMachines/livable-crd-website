@@ -552,6 +552,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
+    weight: "6.67%"
     owner: "Victori'us"
     options:
       - "Yes"
@@ -568,6 +569,7 @@ items:
     type: text
     type_label: Written answer
     graded: true
+    weight: "16.67%"
     owner: "Victori'us"
   - label: ART-03
     subject: arts
@@ -578,6 +580,7 @@ items:
       would prioritize. Select your top three options.
     type: multi
     graded: true
+    weight: "13.33%"
     owner: "Victori'us"
     options:
       - A regularly updated inventory of cultural spaces and vulnerable venues.
@@ -599,6 +602,7 @@ items:
       commit to? Select all that apply.
     type: multi
     graded: true
+    weight: "10.00%"
     owner: "Victori'us"
     options:
       - "Clear, published service standards for permit decisions."
@@ -620,6 +624,7 @@ items:
       five.
     type: multi
     graded: true
+    weight: "16.67%"
     owner: "Victori'us"
     options:
       - Increase funding for existing municipal cultural infrastructure programs
@@ -647,6 +652,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "10.00%"
     owner: "Victori'us"
     options:
       - "Yes, arts and culture should maintain or grow alongside other core services."
@@ -662,6 +668,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "10.00%"
     owner: "Victori'us"
     options:
       - Preserve the existing cultural space where feasible.
@@ -677,6 +684,7 @@ items:
       for nonprofits? Select all that apply.
     type: multi
     graded: true
+    weight: "16.67%"
     owner: "Victori'us"
     options:
       - Require or incentivize cultural space in major development projects.
