@@ -166,7 +166,7 @@ description: >-
               (aria-describedby), so it is stated once here instead of being
               repeated inside 66 button labels.
             {%- endcomment -%}
-            <span class="scorecard-matrix__group-hint" id="favourites-hint">Saved in this browser only. Drag a row by its reorder handle to change the order.</span>
+            <span class="scorecard-matrix__group-hint" id="favourites-hint">Saved to browser. Drag and re-order favourites by grabbing the handle below the star icon.</span>
           </th>
         </tr>
       </tbody>
