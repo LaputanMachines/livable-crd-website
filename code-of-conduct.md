@@ -79,7 +79,7 @@ description: >-
   <li>
     <strong>A low grade is not a conduct finding, and a conduct finding is not a
     grade.</strong> Grades come from the published
-    <a href="{{ '/scorecard/#methodology' | relative_url }}">methodology</a> and
+    <a href="{{ '/faq/#methodology' | relative_url }}">methodology</a> and
     measure positions against coalition goals. The two are decided separately and
     reported separately.
   </li>
@@ -93,7 +93,7 @@ description: >-
 <p>
   Nothing here removes a candidate from the scorecard. Every confirmed candidate
   keeps their row, as described in
-  <a href="{{ '/scorecard/#how-candidates-are-added' | relative_url }}">how candidates get added</a>.
+  <a href="{{ '/faq/#how-candidates-are-added' | relative_url }}">how candidates get added</a>.
 </p>
 <ol>
   <li>
@@ -103,7 +103,7 @@ description: >-
   </li>
   <li>
     <strong>The candidate can revise or withdraw that answer</strong> up to the
-    published <a href="{{ '/scorecard/#deadlines' | relative_url }}">response deadline</a>.
+    published <a href="{{ '/faq/#deadlines' | relative_url }}">response deadline</a>.
     A revised answer is graded and published normally, with no note that it was
     revised.
   </li>

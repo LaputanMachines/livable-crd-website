@@ -1,5 +1,5 @@
 # Election-cycle milestones. Single source of truth for every place a date is
-# printed: the timeline on the homepage and the #deadlines FAQ block at the
+# printed: the timeline on the homepage and the #deadlines FAQ panel at the
 # bottom of the scorecard page. Change a date here and both follow; no date is
 # written out by hand in a template.
 #
@@ -21,7 +21,7 @@
 #
 # Each entry carries two lengths of copy, because the two displays have very
 # different room:
-#   label / detail: the full wording, used by the #deadlines FAQ
+#   label / detail: the full wording, used by the #deadlines FAQ panel
 #   short / brief:  a few words, used by the homepage timeline, where the
 #                    milestones share the width of the page
 # Keep them saying the same thing. `short`/`brief` fall back to `label` if

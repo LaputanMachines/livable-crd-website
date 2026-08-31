@@ -906,7 +906,15 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
 }
 
-// Collapsed methodology panel at the bottom of the scorecard.
+// The scorecard's link down to /faq/, standing where the FAQ panels used to.
+// Body type via .content-follow-up, the same as the homepage's closing lines;
+// all this adds is the gap off the bottom of the matrix, which is wider than
+// the gap that class leaves after a paragraph.
+.scorecard-faq-link {
+  margin-top: $space-xl;
+}
+
+// Collapsed FAQ panel. Every one of these lives on /faq/ (faq/index.md).
 .methodology {
   margin-top: $space-xl;
   border: $border-weight solid $color-text;
@@ -1026,9 +1034,9 @@ tr:hover td { background: $color-bg-warm; }
   .topic-def__name { margin-bottom: 0; }
 }
 
-// Category FAQ: a collapsible box at the bottom of the scorecard page. Homepage
-// topic cards deep-link to each row via #category-<id> (scorecard.js opens the
-// panel on hash). Styling rides on the shared .methodology accordion.
+// Category FAQ: a collapsible box on /faq/. Homepage topic cards deep-link to
+// each row via #category-<id> (details-hash.js opens the panel on hash).
+// Styling rides on the shared .methodology accordion.
 // Offset anchored rows below the sticky header when reached via a deep link.
 .topic-def { scroll-margin-top: 5.5rem; }
 

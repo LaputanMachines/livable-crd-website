@@ -147,7 +147,7 @@ body_class: page-questionnaire
       {% if ungraded == 1 %}answer informs{% else %}answers inform{% endif %} the coalition's work, but no
       letter is assigned to {% if ungraded == 1 %}it{% else %}them{% endif %}.
       {%- endif %}
-      <a href="{{ '/scorecard/#methodology' | relative_url }}">How we grade</a>.
+      <a href="{{ '/faq/#methodology' | relative_url }}">How we grade</a>.
     </p>
   </div>
 

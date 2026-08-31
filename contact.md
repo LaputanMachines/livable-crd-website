@@ -38,7 +38,7 @@ description: >-
   <li>
     <strong>A candidate we are missing.</strong> Volunteers track every
     announcement across the region, and gaps happen. See
-    <a href="{{ '/scorecard/#how-candidates-are-added' | relative_url }}">how candidates get added</a>
+    <a href="{{ '/faq/#how-candidates-are-added' | relative_url }}">how candidates get added</a>
     to the scorecard.
   </li>
   <li>
@@ -61,7 +61,7 @@ description: >-
   <li>
     <strong>Questions about our methodology</strong>: how grades are assigned and
     who assigns them is documented in our
-    <a href="{{ '/scorecard/#methodology' | relative_url }}">published methodology</a>.
+    <a href="{{ '/faq/#methodology' | relative_url }}">published methodology</a>.
   </li>
 </ul>
 

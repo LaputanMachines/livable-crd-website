@@ -82,7 +82,7 @@ description: >-
     </p>
     {% include deadline-timeline.html %}
     <p class="content-follow-up">
-      <a href="{{ '/scorecard/#deadlines' | relative_url }}">Learn more about project timelines <span aria-hidden="true">→</span></a>
+      <a href="{{ '/faq/#deadlines' | relative_url }}">Learn more about project timelines <span aria-hidden="true">→</span></a>
     </p>
   </div>
 </section>
@@ -183,7 +183,7 @@ description: >-
     </div>
     <p class="content-follow-up">
       Curious how candidates earn their letter grades? See
-      <a href="{{ '/scorecard/#methodology' | relative_url }}">how we grade</a>
+      <a href="{{ '/faq/#methodology' | relative_url }}">how we grade</a>
       for our methodology and a breakdown of each topic, or
       <a href="{{ '/questionnaire/' | relative_url }}">read the questionnaire</a>
       itself: every question we put to every candidate, in full.
