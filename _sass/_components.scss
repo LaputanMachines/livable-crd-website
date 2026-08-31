@@ -502,11 +502,24 @@ tr:hover td { background: $color-bg-warm; }
   background: $color-bg-warm;
   padding: $space-md $space-gutter;
   text-align: center;
+  color: $color-text;
+
+  p { margin: 0; }
+  p + p { margin-top: $space-xs; }
+}
+
+.candidate-empty__headline {
   font-family: $font-display;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: $color-text;
+}
+
+// The ask sits under the headline in body type: shouting an email address in
+// display caps makes it harder to read back, not easier.
+.candidate-empty__cta {
+  font-size: 0.9rem;
+  color: $color-muted;
 }
 
 // Labeled filter groups (minimum grade + municipality) below the search box.
@@ -891,12 +904,6 @@ tr:hover td { background: $color-bg-warm; }
   // row sizes the columns, so the name width lives on .scorecard-matrix__name-h.
   .scorecard-matrix__cand { font-size: 0.95rem; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
-}
-
-.scorecard-cta {
-  margin-top: $space-xl;
-
-  h2 { margin-bottom: $space-xs; }
 }
 
 // Collapsed methodology panel at the bottom of the scorecard.

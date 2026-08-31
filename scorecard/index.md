@@ -420,13 +420,16 @@ description: >-
   {%- endcomment -%}
   <p class="sr-only" id="favourites-status" role="status" aria-live="polite"></p>
 
-  <p class="candidate-empty" id="candidate-empty" role="status" hidden>No candidates match your search.</p>
-
-  <div class="callout scorecard-cta">
-    <h2>Don’t see a candidate you care about?</h2>
-    <p>
-      Have a candidate you want represented on the scorecard?
-      <a href="mailto:{{ site.email }}">Email us at {{ site.email }}</a> and let us know.
+  {%- comment -%}
+    The "missing a candidate" ask used to be a standing block below the table.
+    It only ever applied to someone who looked and came up short, so it lives
+    inside the empty state now and appears with it.
+  {%- endcomment -%}
+  <div class="candidate-empty" id="candidate-empty" role="status" hidden>
+    <p class="candidate-empty__headline">No candidates match your search.</p>
+    <p class="candidate-empty__cta">
+      Missing a candidate?
+      <a href="mailto:{{ site.email }}">Email us at {{ site.email }}</a> to let us know!
     </p>
   </div>
 
