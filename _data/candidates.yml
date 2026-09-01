@@ -474,6 +474,14 @@
   slate: null
   website: null
 
+- name: Sam Holland
+  display_name: "Holland, Sam"
+  municipality: oak-bay
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: "https://samuelholland.ca"
+
 - name: Will Moore
   display_name: "Moore, Will"
   municipality: oak-bay
@@ -711,6 +719,14 @@
   website: "https://gordbaird.ca"
 
 # --- Central Saanich ---
+- name: Pat Bryant
+  display_name: "Bryant, Pat"
+  municipality: central-saanich
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: "https://patbryantformayor.ca/"
+
 - name: Zeb King
   display_name: "King, Zeb"
   municipality: central-saanich
@@ -725,6 +741,14 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
+
+- name: Sarah Riddell
+  display_name: "Riddell, Sarah"
+  municipality: central-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
   website: null
 
 - name: Anny Scoones
