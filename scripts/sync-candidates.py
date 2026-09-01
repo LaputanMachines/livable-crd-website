@@ -19,8 +19,9 @@ import csv
 import io
 import os
 import sys
-import urllib.request
 import urllib.error
+import urllib.parse
+import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MUNI_YML = os.path.join(ROOT, "_data", "municipalities.yml")
@@ -49,6 +50,10 @@ SCORE_MAP = [
     ("Health", "healthcare-access"),
 ]
 
+# Click-tracking query parameters, dropped from a published website (utm_* is
+# matched by prefix, so it is not listed here).
+TRACKING_PARAMS = {"fbclid", "gclid", "mc_cid", "mc_eid", "igshid"}
+
 # Grades with a corresponding CSS class in _sass/_components.scss. Anything else
 # (incl. "D", which has no style) is rejected so a typo can't ship an unstyled badge.
 VALID_GRADES = {"A", "B", "C", "C-", "F"}
@@ -60,10 +65,14 @@ REQUIRED_COLUMNS = ("Candidate Name", "Municipality", "Running?")
 # tab that omits it) must still sync rather than fail the whole job.
 SLATE_COLUMN = "Slate"
 
-# Slate wording that means "nobody filled this in", as distinct from a real
-# answer. Blank publishes no slate at all; "Independent" is a genuine, factual
-# answer and is published as written.
-UNKNOWN_SLATE = {
+# The sheet's campaign-website column. Optional for the same reason SLATE_COLUMN
+# is: a tab that predates it must still sync rather than fail the whole job.
+WEBSITE_COLUMN = "Website"
+
+# Sheet wording that means "nobody filled this cell in", as distinct from a real
+# answer. Shared by the slate and website columns. Blank publishes no slate at
+# all; "Independent" is a genuine, factual answer and is published as written.
+UNKNOWN_VALUES = {
     "", "-", "--", "---", "–", "—", "?", "n/a", "na", "none", "nil",
     "tbd", "tba", "unknown", "not applicable", "not known",
 }
@@ -100,6 +109,11 @@ HEADER = """\
 #                does not say. Free text from the sheet, optionally tidied via
 #                _data/slates.yml; an unrecognized slate is published as
 #                written, not rejected. Naming a slate is not an endorsement.
+#   website      The candidate's own campaign page as an absolute http(s) URL, or
+#                null if the sheet does not list one. Whatever the sheet gives is
+#                published, campaign site or social profile alike; click-tracking
+#                query parameters are stripped. Linking to it is signposting, not
+#                an endorsement.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -270,7 +284,7 @@ def normalize_slate(value, name, slate_labels, canonical, warnings):
     happens to use does.
     """
     text = tidy(value)
-    if norm(text) in UNKNOWN_SLATE:
+    if norm(text) in UNKNOWN_VALUES:
         return None
 
     # scorecard/index.md joins the candidate meta line by splitting on "|", so a
@@ -298,6 +312,68 @@ def normalize_slate(value, name, slate_labels, canonical, warnings):
     return label
 
 
+def normalize_website(value, name, warnings):
+    """Return the candidate's campaign link as an absolute URL, or None.
+
+    The sheet is filled in by hand, so the column holds every shape a person
+    types into a spreadsheet: bare domains ("bruceformayor.com"), full URLs,
+    Instagram and Facebook profiles, deep links into a platform page, and the
+    odd cell padded with spaces. All of those are published; what gets dropped
+    is a cell nobody filled in and anything that is not an http(s) address, so a
+    typo can never render as a "mailto:" or "javascript:" link on a candidate's
+    page.
+
+    Unpublishable wording warns rather than errors: the campaign link is a
+    convenience, and a malformed cell must not stall the daily sync (and with it
+    every grade update) the way an unknown municipality does.
+    """
+    text = tidy(value)
+    if norm(text) in UNKNOWN_VALUES:
+        return None
+
+    if " " in text:
+        # Two links in one cell, or a link with a note beside it. Publishing the
+        # first half would be a guess at which part the writer meant.
+        warnings.append(f"{name}: website {text!r} is not a single URL → no link shown")
+        return None
+
+    head = text.split("/", 1)[0]
+    if "://" in text:
+        scheme = text.split("://", 1)[0].lower()
+    elif ":" in head:
+        # "mailto:someone@example.ca", "javascript:...": a scheme, just not one
+        # this column is for.
+        scheme = head.split(":", 1)[0].lower()
+    else:
+        # The common case in the sheet: a bare domain. https, not http, because
+        # every campaign host in the column serves it and a downgrade is ours to
+        # avoid causing.
+        text = "https://" + text
+        scheme = "https"
+
+    if scheme not in ("http", "https"):
+        warnings.append(f"{name}: website {text!r} is not an http(s) address → no link shown")
+        return None
+
+    parts = urllib.parse.urlsplit(text)
+    host = parts.netloc.lower()
+    if "." not in host.split(":", 1)[0].strip("."):
+        warnings.append(f"{name}: website {text!r} has no usable domain → no link shown")
+        return None
+
+    # Click-tracking that rode along when the link was copied out of somebody's
+    # Instagram bio. It says nothing about where the link points, it is often
+    # longer than the URL carrying it, and it would follow every reader who
+    # clicked through from here.
+    kept = [
+        (k, v) for k, v in urllib.parse.parse_qsl(parts.query, keep_blank_values=True)
+        if not (k.lower().startswith("utm_") or k.lower() in TRACKING_PARAMS)
+    ]
+    query = urllib.parse.urlencode(kept)
+
+    return urllib.parse.urlunsplit((scheme, host, parts.path, query, parts.fragment))
+
+
 def normalize_grade(value):
     """Return a valid grade string, or None if blank. Raise ValueError if invalid."""
     g = (value or "").strip().upper().replace("−", "-")  # U+2212 minus → hyphen
@@ -310,7 +386,8 @@ def normalize_grade(value):
 
 # --- Build records -----------------------------------------------------------
 
-def build_records(rows, muni_lookup, slate_labels, has_slate, errors, warnings):
+def build_records(rows, muni_lookup, slate_labels, has_slate, has_website,
+                  errors, warnings):
     records = []
     skipped = 0
     seen = set()
@@ -353,12 +430,17 @@ def build_records(rows, muni_lookup, slate_labels, has_slate, errors, warnings):
             slate = normalize_slate(row.get(SLATE_COLUMN), name, slate_labels,
                                     slate_canonical, warnings)
 
+        website = None
+        if has_website:
+            website = normalize_website(row.get(WEBSITE_COLUMN), name, warnings)
+
         records.append({
             "name": name,
             "municipality": slug,
             "office": normalize_office(row.get("Position Sought"), name, warnings),
             "standing": normalize_standing(row.get("Incumbent?"), name, warnings),
             "slate": slate,
+            "website": website,
             "scores": scores,
         })
     return records, skipped
@@ -444,6 +526,7 @@ def render_record(rec, subject_order):
         f"  office: {rec['office'] if rec['office'] else 'null'}",
         f"  standing: {rec['standing'] if rec['standing'] else 'null'}",
         f"  slate: {scalar(rec['slate']) if rec['slate'] else 'null'}",
+        f"  website: {scalar(rec['website']) if rec['website'] else 'null'}",
     ]
     if rec["scores"]:
         lines.append("  scores:")
@@ -531,8 +614,13 @@ def main(argv=None):
     # column in SCORE_MAP is expected to be missing and flagging it on every run
     # is pure noise. A grade that is present but unparseable still errors below.
 
+    has_website = WEBSITE_COLUMN in fields
+    if not has_website:
+        warnings.append(f"CSV has no {WEBSITE_COLUMN!r} column: no campaign link "
+                        f"published for any candidate")
+
     records, skipped = build_records(list(reader), muni_lookup, slate_labels,
-                                    has_slate, errors, warnings)
+                                     has_slate, has_website, errors, warnings)
 
     # A standing id with no entry in standings.yml would render as a blank label,
     # so treat it as fatal rather than shipping an unexplained gap.

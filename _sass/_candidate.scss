@@ -86,6 +86,30 @@
   }
 }
 
+// The candidate's own campaign link, under the slate. Sentence case and the
+// same size as the slate line, for the same reason: a domain upper-cased into
+// the display type beside the standing stops reading as an address.
+.candidate-hero__site {
+  margin: $space-xs 0 0;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: $color-warm;
+
+  a {
+    // White, not Kwetlal: the back link above is the hero's other link and it is
+    // navigation within the site. This one leaves, and the two should not look
+    // like the same kind of thing.
+    color: #fff;
+    // Domains have no spaces to break at, and some of these run long
+    // ("facebook.com/LisaFoxall4langford"), so let one wrap mid-word rather than
+    // widen the hero on a phone.
+    overflow-wrap: anywhere;
+    text-decoration-color: rgba(255, 255, 255, 0.45);
+    text-underline-offset: 0.15em;
+
+    &:hover { text-decoration-color: #fff; }
+  }
+}
+
 // Both scoped to .candidate-page purely for specificity: .callout and the base
 // `.page-content > h2:not(:first-child)` rule would otherwise win on source
 // order and pseudo-class weight respectively.
@@ -717,6 +741,23 @@ summary.candidate-grade {
       margin-top: 1mm;
       color: #000;
       font-size: 11pt;
+    }
+
+    .candidate-hero__site {
+      margin-top: 1mm;
+      color: #000;
+      font-size: 11pt;
+
+      // Nothing on paper is clickable, so the address is printed as plain text:
+      // an underlined blue domain on a leaflet promises a click that a sheet of
+      // paper cannot deliver. The arrow goes for the same reason the chevrons
+      // do — it points at an action the reader cannot take.
+      a {
+        color: #000;
+        text-decoration: none;
+      }
+
+      span { display: none; }
     }
 
     // Page chrome that only exists to centre and pad content in a viewport.

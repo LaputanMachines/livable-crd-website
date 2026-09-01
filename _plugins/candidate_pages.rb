@@ -46,6 +46,18 @@ module LivableCrd
       data["slate"] = slate.empty? ? nil : slate
       data["slate_class"] = slate.empty? ? nil : slate_class
 
+      # The candidate's own campaign page, and the text the link shows. Both nil
+      # when the tracking sheet lists no link; a blank cell arrives as "", the
+      # same as the slate above. sync-candidates.py has already reduced whatever
+      # was typed into the cell to an absolute http(s) URL, so nothing here has
+      # to defend against a "javascript:" address.
+      #
+      # Pointing at a campaign page is signposting, not an endorsement, which is
+      # also why the template links it rel="nofollow".
+      website = candidate["website"].to_s.strip
+      data["website"] = website.empty? ? nil : website
+      data["website_label"] = website.empty? ? nil : website_label(website)
+
       # jekyll-seo-tag renders `title` as "<title> | Livable CRD", so qualify the
       # name here: a bare "Jane Doe" is meaningless in a search result, and two
       # candidates in different municipalities would be indistinguishable.
@@ -60,6 +72,25 @@ module LivableCrd
     end
 
     private
+
+    # Longest link text this page draws in full. Past it the path is dropped and
+    # only the domain is shown: the label sits under the candidate's name in the
+    # hero and is what the print leaflet spells out in place of a clickable link,
+    # and a Facebook group URL carrying two 15-digit ids is neither readable
+    # there nor typeable off paper.
+    WEBSITE_LABEL_MAX = 45
+
+    # What the link says: the address without the scheme, without a "www." that
+    # tells a reader nothing, and without a trailing slash. The path is kept
+    # where it is short, because for a candidate whose only page is a social
+    # profile ("instagram.com/noah4saanich") the path is the half that identifies
+    # them, and the leaflet's reader has to be able to type what they see.
+    def website_label(url)
+      bare = url.sub(%r{\Ahttps?://}i, "").sub(/\Awww\./i, "").sub(%r{/\z}, "")
+      return bare if bare.length <= WEBSITE_LABEL_MAX
+
+      bare.split("/", 2).first
+    end
 
     # Kept under ~160 characters so search engines and link previews show the
     # whole thing. Deliberately says nothing about the grades themselves: every

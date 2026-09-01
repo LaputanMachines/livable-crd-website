@@ -86,6 +86,27 @@ layout: default
       <span class="slate-dot" aria-hidden="true"></span>Running with <strong>{{ page.slate }}</strong>
     </p>
     {%- endif %}
+    {%- comment -%}
+      The candidate's own campaign page, straight from the tracking sheet: for
+      most it is a campaign site, for some the only page they have is a Facebook
+      or Instagram profile, and both are published as given. It is the last line
+      of the hero because it is the only one that leaves this site.
+
+      Sending a reader to a candidate's own words is signposting, not an
+      endorsement, and this page grades positions either way. rel="nofollow" says
+      the same thing to a search engine: 66 campaign links off a coalition site
+      should not read as 66 recommendations.
+
+      The link text is the domain (see website_label in the plugin) rather than
+      "Visit website": on the print leaflet nothing is clickable, so what the
+      line shows has to be the address a reader can type.
+    {%- endcomment -%}
+    {%- if page.website %}
+    <p class="candidate-hero__site">
+      Campaign page:
+      <a href="{{ page.website }}" target="_blank" rel="noopener nofollow">{{ page.website_label }} <span aria-hidden="true">→</span></a>
+    </p>
+    {%- endif %}
   </div>
 </div>
 

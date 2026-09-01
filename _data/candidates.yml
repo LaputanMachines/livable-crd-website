@@ -28,6 +28,11 @@
 #                does not say. Free text from the sheet, optionally tidied via
 #                _data/slates.yml; an unrecognized slate is published as
 #                written, not rejected. Naming a slate is not an endorsement.
+#   website      The candidate's own campaign page as an absolute http(s) URL, or
+#                null if the sheet does not list one. Whatever the sheet gives is
+#                published, campaign site or social profile alike; click-tracking
+#                query parameters are stripped. Linking to it is signposting, not
+#                an endorsement.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -40,6 +45,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.facebook.com/groups/701337097784084/user/61577084721458/"
 
 - name: Colette Baty
   display_name: "Baty, Colette"
@@ -47,6 +53,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://colettebaty.ca"
 
 - name: Susan Brice
   display_name: "Brice, Susan"
@@ -54,6 +61,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://susanbrice.ca"
 
 - name: Kathleen Burton
   display_name: "Burton, Kathleen"
@@ -61,6 +69,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Nathalie Chambers
   display_name: "Chambers, Nathalie"
@@ -68,6 +77,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://nathaliechambers.ca/"
 
 - name: Mauricio Curbelo
   display_name: "Curbelo, Mauricio"
@@ -75,6 +85,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.mauricioforsaanich.ca/"
 
 - name: Zac De Vries
   display_name: "De Vries, Zac"
@@ -82,6 +93,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Alli Deelstra
   display_name: "Deelstra, Alli"
@@ -89,6 +101,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Lorne DeLarge
   display_name: "DeLarge, Lorne"
@@ -96,6 +109,7 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+  website: "https://www.lornedelarge.ca"
 
 - name: Nancy Di Castri
   display_name: "Di Castri, Nancy"
@@ -103,6 +117,7 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+  website: null
 
 - name: Noah Fruttarol
   display_name: "Fruttarol, Noah"
@@ -110,6 +125,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.instagram.com/noah4saanich/"
 
 - name: Karen Harper
   display_name: "Harper, Karen"
@@ -117,6 +133,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Hollis Hodson
   display_name: "Hodson, Hollis"
@@ -124,6 +141,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://hollishodson.ca/"
 
 - name: Garnett Humenick
   display_name: "Humenick, Garnett"
@@ -131,6 +149,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.garnettforsaanich.ca"
 
 - name: Sasha Izard
   display_name: "Izard, Sasha"
@@ -138,6 +157,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://sashaizard.com/"
 
 - name: Laurie Lidstone
   display_name: "Lidstone, Laurie"
@@ -145,6 +165,7 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+  website: null
 
 - name: Matt McGeachie
   display_name: "McGeachie, Matt"
@@ -152,6 +173,7 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+  website: "https://www.matt4council.ca"
 
 - name: Teale Phelps Bondaroff
   display_name: "Phelps Bondaroff, Teale"
@@ -159,6 +181,7 @@
   office: null
   standing: incumbent-councillor
   slate: null
+  website: "https://www.teale.ca/platform2026"
 
 - name: Colin Plant
   display_name: "Plant, Colin"
@@ -166,6 +189,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://colinplant.com"
 
 - name: Harjas Singh Popli
   display_name: "Popli, Harjas Singh"
@@ -173,6 +197,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://harjaspopli.ca"
 
 - name: Rishi Sharma
   display_name: "Sharma, Rishi"
@@ -180,6 +205,7 @@
   office: Mayor
   standing: challenger
   slate: Save Our Saanich
+  website: "https://www.rishiformayor.com"
 
 - name: Tia Sibbald
   display_name: "Sibbald, Tia"
@@ -187,6 +213,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Graham Wright
   display_name: "Wright, Graham"
@@ -194,6 +221,7 @@
   office: Councillor
   standing: challenger
   slate: Save Our Saanich
+  website: null
 
 # --- Victoria ---
 - name: Marianne Alto
@@ -202,6 +230,7 @@
   office: Mayor
   standing: incumbent-mayor
   slate: null
+  website: "https://mariannealto.ca"
 
 - name: Lyall Atkinson
   display_name: "Atkinson, Lyall"
@@ -209,6 +238,7 @@
   office: Mayor
   standing: challenger
   slate: null
+  website: "https://voteforlyallatkinson.ca/"
 
 - name: Wendy Bowkett
   display_name: "Bowkett, Wendy"
@@ -216,6 +246,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://wendybowkett.ca"
 
 - name: Jeremy Caradonna
   display_name: "Caradonna, Jeremy"
@@ -223,6 +254,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://electjeremy.ca"
 
 - name: Melissa Cseszko
   display_name: "Cseszko, Melissa"
@@ -230,6 +262,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://melissacseszko.ca"
 
 - name: Matt Dell
   display_name: "Dell, Matt"
@@ -237,6 +270,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://mattdell.ca"
 
 - name: Shona Dion
   display_name: "Dion, Shona"
@@ -244,6 +278,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Jerry Garcia
   display_name: "Garcia, Jerry"
@@ -251,6 +286,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://jerry.pirouz.ai"
 
 - name: Marg Gardiner
   display_name: "Gardiner, Marg"
@@ -258,6 +294,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Peter Rose Gibbs
   display_name: "Gibbs, Peter Rose"
@@ -265,6 +302,7 @@
   office: Councillor
   standing: challenger
   slate: Victoria For All
+  website: "https://www.instagram.com/peterrose_gibbs/reels/"
 
 - name: Martin Girard
   display_name: "Girard, Martin"
@@ -272,6 +310,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://martingirardforvictoriacouncil.ca"
 
 - name: Owen Haley
   display_name: "Haley, Owen"
@@ -279,6 +318,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Stephen Hammond
   display_name: "Hammond, Stephen"
@@ -286,6 +326,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.votestephenhammond.ca/priorities"
 
 - name: Susan Kim
   display_name: "Kim, Susan"
@@ -293,6 +334,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: Victoria For All
+  website: null
 
 - name: Krista Laughton
   display_name: "Laughton, Krista"
@@ -300,6 +342,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://kristaloughton.ca"
 
 - name: Bella Lee
   display_name: "Lee, Bella"
@@ -307,6 +350,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://bellalee.ca"
 
 - name: Bruce McGuigan
   display_name: "McGuigan, Bruce"
@@ -314,6 +358,7 @@
   office: Mayor
   standing: challenger
   slate: null
+  website: "https://bruceformayor.com"
 
 - name: Arthur McInnis
   display_name: "McInnis, Arthur"
@@ -321,6 +366,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.arthurmcinnis.ca"
 
 - name: Karen Rothe
   display_name: "Rothe, Karen"
@@ -328,6 +374,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://karenrothe.ca"
 
 - name: Jack Sandor
   display_name: "Sandor, Jack"
@@ -335,6 +382,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://jacksandor.ca"
 
 - name: Dave Thompson
   display_name: "Thompson, Dave"
@@ -342,6 +390,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://davethompsonvictoria.ca"
 
 # --- Esquimalt ---
 - name: Andrea Boardman
@@ -350,6 +399,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Meagan Brame
   display_name: "Brame, Meagan"
@@ -357,6 +407,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
@@ -364,6 +415,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.duncancavens.ca/"
 
 - name: Dan Igaz
   display_name: "Igaz, Dan"
@@ -371,6 +423,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://danigaz.ca/en/"
 
 - name: Robb Johnstone
   display_name: "Johnstone, Robb"
@@ -378,6 +431,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.facebook.com/groups/34953210528/user/61591412316974/"
 
 - name: Tim Morrison
   display_name: "Morrison, Tim"
@@ -385,6 +439,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Zachary Mulder
   display_name: "Mulder, Zachary"
@@ -392,6 +447,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.facebook.com/groups/1054760926974870/"
 
 - name: Kody Thomson
   display_name: "Thomson, Kody"
@@ -399,6 +455,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.kody4council.ca"
 
 - name: Tara Todesco
   display_name: "Todesco, Tara"
@@ -406,6 +463,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.facebook.com/people/Tara-Todesco-for-Esquimalt-Council/61590297676107/"
 
 # --- Oak Bay ---
 - name: Hazel Braithwaite
@@ -414,6 +472,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Will Moore
   display_name: "Moore, Will"
@@ -421,6 +480,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.moore-for-oak-bay.com"
 
 - name: Kevin Murdoch
   display_name: "Murdoch, Kevin"
@@ -428,6 +488,7 @@
   office: Mayor
   standing: incumbent-mayor
   slate: null
+  website: "https://www.kevinmurdoch.ca/"
 
 - name: Karin Sweeney
   display_name: "Sweeney, Karin"
@@ -435,6 +496,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://karinforoakbay.com"
 
 # --- View Royal ---
 - name: Don Brown
@@ -443,6 +505,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Sacha Christensen
   display_name: "Christensen, Sacha"
@@ -450,6 +513,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Carolynne Clark
   display_name: "Clark, Carolynne"
@@ -457,6 +521,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Volker Dammann
   display_name: "Dammann, Volker"
@@ -464,6 +529,7 @@
   office: Mayor
   standing: challenger
   slate: null
+  website: null
 
 - name: Owen Marshall
   display_name: "Marshall, Owen"
@@ -471,6 +537,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: null
 
 - name: Ryan Painter
   display_name: "Painter, Ryan"
@@ -478,6 +545,7 @@
   office: Mayor
   standing: challenger
   slate: null
+  website: null
 
 - name: David Screech
   display_name: "Screech, David"
@@ -485,6 +553,7 @@
   office: Mayor
   standing: ex-incumbent-mayor
   slate: null
+  website: null
 
 # --- Colwood ---
 - name: Harold Bloomenthal
@@ -493,6 +562,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://harold4colwood.ca"
 
 - name: David Grove
   display_name: "Grove, David"
@@ -500,6 +570,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://davidgrove.ca/"
 
 - name: Doug Kobayashi
   display_name: "Kobayashi, Doug"
@@ -507,6 +578,7 @@
   office: Mayor
   standing: incumbent-mayor
   slate: null
+  website: null
 
 - name: Misty Olsen
   display_name: "Olsen, Misty"
@@ -514,6 +586,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Eugene Tseng
   display_name: "Tseng, Eugene"
@@ -521,6 +594,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.eugenetseng.ca/"
 
 - name: Ian Ward
   display_name: "Ward, Ian"
@@ -528,6 +602,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.ianforcolwood.ca"
 
 # --- Langford ---
 - name: Shawn Blair
@@ -536,6 +611,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://shawnforlangford.ca/"
 
 - name: Jennifer Dunnett
   display_name: "Dunnett, Jennifer"
@@ -543,6 +619,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.jenniferdunnettlangford.ca"
 
 - name: Lisa Foxhall
   display_name: "Foxhall, Lisa"
@@ -550,6 +627,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.facebook.com/LisaFoxall4langford/"
 
 - name: Scott Goodmanson
   display_name: "Goodmanson, Scott"
@@ -557,6 +635,7 @@
   office: Mayor
   standing: incumbent-mayor
   slate: null
+  website: "https://www.goodmanson.ca"
 
 - name: Brandy Gordon
   display_name: "Gordon, Brandy"
@@ -564,6 +643,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://brandygordon4council.com/"
 
 - name: Kimberly Guiry
   display_name: "Guiry, Kimberly"
@@ -571,6 +651,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.kimberleyguiry.ca"
 
 - name: Colby Harder
   display_name: "Harder, Colby"
@@ -578,6 +659,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.colbyharder.ca/"
 
 - name: Bryson Hill
   display_name: "Hill, Bryson"
@@ -585,6 +667,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://brysonforlangford.ca"
 
 - name: Wendy Hobbs
   display_name: "Hobbs, Wendy"
@@ -592,6 +675,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.instagram.com/wendyhobbs4langfordcouncil/"
 
 - name: Mary Wagner
   display_name: "Wagner, Mary"
@@ -599,6 +683,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.mary4langford.ca"
 
 - name: Keith Yacucha
   display_name: "Yacucha, Keith"
@@ -606,6 +691,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: "https://www.keithyacucha.ca"
 
 - name: Stew Young
   display_name: "Young, Stew"
@@ -613,6 +699,7 @@
   office: Mayor
   standing: ex-incumbent-mayor
   slate: null
+  website: "https://stewformayor.ca"
 
 # --- Highlands ---
 - name: Gord Baird
@@ -621,6 +708,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: "https://gordbaird.ca"
 
 # --- Central Saanich ---
 - name: Zeb King
@@ -629,6 +717,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: David Lawson
   display_name: "Lawson, David"
@@ -636,6 +725,7 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
 
 - name: Anny Scoones
   display_name: "Scoones, Anny"
@@ -643,6 +733,7 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
 
 - name: Susan Zedel
   display_name: "Zedel, Susan"
@@ -650,6 +741,7 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
 
 - name: Kathleen Zimmerman
   display_name: "Zimmerman, Kathleen"
@@ -657,6 +749,7 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
 
 # --- North Saanich ---
 - name: Kristine Marshall
@@ -665,6 +758,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
+  website: null
 
 - name: Jack McClintock
   display_name: "McClintock, Jack"
@@ -672,6 +766,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: "https://jackmcclintock.ca"
 
 - name: Irene McConkey
   display_name: "McConkey, Irene"
@@ -679,6 +774,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
+  website: null
 
 - name: Sanjiv Shrivastava
   display_name: "Shrivastava, Sanjiv"
@@ -686,6 +782,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: North Saanich Strong
+  website: null
 
 - name: Celia Stock
   display_name: "Stock, Celia"
@@ -693,6 +790,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Jim Woolford
   display_name: "Woolford, Jim"
@@ -700,6 +798,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.instagram.com/jimfornorthsaanich/"
 
 # --- Sidney ---
 - name: Scott Garnett
@@ -708,6 +807,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Jamie Wellbourn
   display_name: "Wellbourn, Jamie"
@@ -715,6 +815,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://www.jamiewellbourn.ca"
 
 # --- Sooke ---
 - name: Al Beddows
@@ -723,6 +824,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: null
+  website: null
 
 - name: Susan Belford
   display_name: "Belford, Susan"
@@ -730,6 +832,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke Together
+  website: "https://www.belfordforsooke.ca/"
 
 - name: Ty Daniels
   display_name: "Daniels, Ty"
@@ -737,6 +840,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://tydaniels.ca"
 
 - name: Janet Evans
   display_name: "Evans, Janet"
@@ -744,6 +848,7 @@
   office: Councillor
   standing: ex-incumbent-mayor
   slate: Sooke First
+  website: null
 
 - name: Herb Haldane
   display_name: "Haldane, Herb"
@@ -751,6 +856,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: Sooke First
+  website: "https://electherbhaldane.ca/"
 
 - name: Elliot Lifton
   display_name: "Lifton, Elliot"
@@ -758,6 +864,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke First
+  website: "https://electelliottlifton.ca"
 
 - name: Brian McHattie
   display_name: "McHattie, Brian"
@@ -765,6 +872,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke Together
+  website: "https://brianmchattie.com/"
 
 - name: Rob Pearce
   display_name: "Pearce, Rob"
@@ -772,6 +880,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke First
+  website: null
 
 - name: Kevin Pearson
   display_name: "Pearson, Kevin"
@@ -779,6 +888,7 @@
   office: Mayor
   standing: incumbent-councillor
   slate: Sooke First
+  website: "https://electkevinpearson.ca"
 
 - name: Curtis Peterec
   display_name: "Peterec, Curtis"
@@ -786,6 +896,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke First
+  website: "https://electcurtispeterec.ca"
 
 - name: Helen Ritts
   display_name: "Ritts, Helen"
@@ -793,6 +904,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke Together
+  website: "https://helenritts.ca/"
 
 - name: Steve Sorensen
   display_name: "Sorensen, Steve"
@@ -800,6 +912,7 @@
   office: Councillor
   standing: challenger
   slate: Sooke Together
+  website: "https://www.stevesorensen.ca/"
 
 - name: Katherine Strongwind
   display_name: "Strongwind, Katherine"
@@ -807,6 +920,7 @@
   office: Councillor
   standing: challenger
   slate: null
+  website: "https://katherinestrongwind.com"
 
 - name: Christine Thomas
   display_name: "Thomas, Christine"
@@ -814,3 +928,4 @@
   office: Councillor
   standing: challenger
   slate: Sooke First
+  website: "https://electchristinethomas.ca"
