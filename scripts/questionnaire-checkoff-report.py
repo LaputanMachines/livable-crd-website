@@ -1,30 +1,41 @@
 #!/usr/bin/env python3
-"""Tick "Completed Questionnaire" in the candidate-tracking sheet.
+"""Report who to tick off in the candidate-tracking sheet's questionnaire column.
 
-Two sheets, one direction. Reads who submitted the questionnaire from Tally's
+Two sheets, no writes. Reads who submitted the questionnaire from Tally's
 submission spreadsheet (`QUESTIONNAIRE_SUBMISSIONS_SHEET_ID`), matches them
 against the coalition candidate-tracking sheet (`CANDIDATES_CSV_URL`), and
-ticks the tracking sheet's "Completed Questionnaire" checkbox for every match
-that is not ticked already. Meant to run daily in CI; see
-.github/workflows/mark-questionnaire-complete.yml.
+names every candidate whose "Completed Questionnaire" checkbox is still empty
+so a human can tick it. Meant to run daily in CI, where the list is written to
+the run's job summary; see .github/workflows/questionnaire-checkoff-report.yml.
+
+WHY IT DOES NOT TICK THE BOXES ITSELF
+  Ticking would need a Google service account with edit access to the tracking
+  sheet — the only write credential the repo would hold, against a working
+  document the coalition edits by hand all day. The list is the useful half of
+  that job, and it needs no credential at all: both sheets are read over plain
+  HTTP as CSV, the same way the rest of scripts/ reads them.
 
 WHAT IT NEVER DOES
-  - Unticks. A ticked box is left alone even if no submission matches it: the
-    coalition ticks boxes by hand too (a candidate who answered by email, a
-    submission filed under a different name), and a sync that fought those
-    edits would be worse than no sync. The box only ever goes one way.
-  - Touches any other cell, column, or tab, in either spreadsheet. The
-    submission sheet is read-only here, as it is everywhere else in scripts/.
+  - Writes to either spreadsheet, or to the repository. Nothing here holds a
+    credential that could.
   - Reads candidate email addresses. Four identity columns come back from the
     submission sheet's raw tab (submission id, first name, last name,
     municipality) via a gviz column select, the same way
     scripts/sync-questionnaire.py does it.
+  - Names the spreadsheets in its output. The report goes to a job summary on a
+    public repository, and a sheet id is a capability over the whole sheet. It
+    prints a cell reference (column letter and row number) and nothing that
+    says which document to open it in.
+
+  A ticked box is only ever read, never cleared: a box the coalition ticked by
+  hand (a candidate who answered by email, a submission filed under a different
+  name) drops out of the report and is not questioned.
 
 MATCHING
   On normalized full name, disambiguated by municipality only where it has to
-  be: one tracking row with that name gets ticked outright, several (the same
+  be: one tracking row with that name is reported outright, several (the same
   name running in two municipalities) need the submission's municipality to
-  pick one, and anything still unresolved is reported and skipped rather than
+  pick one, and anything still unresolved is reported as unresolved rather than
   guessed at. A submission matching nobody is reported too — usually a
   candidate the tracking sheet has not caught up with yet.
 
@@ -32,33 +43,18 @@ MATCHING
   not who filled in the form; an unconfirmed candidate who answered has still
   answered, and that is what the column records.
 
-CREDENTIALS
-  Reading needs nothing: both sheets come over HTTP as CSV. Writing needs a
-  Google service account with edit access to the tracking sheet — share the
-  sheet with the service account's email, and put the account's JSON key in
-  $GOOGLE_SERVICE_ACCOUNT_JSON (CI: the repo secret of the same name). It is
-  the only credential in scripts/ that can write to a spreadsheet, so it is
-  scoped to spreadsheets alone and used by this script alone.
-
-  Which spreadsheet and which tab are taken from CANDIDATES_CSV_URL, so there
-  is no second copy of the sheet id to keep in step. The export URL is
-  read-only on its own; it names the target, the service account authorizes it.
-
 Usage:
-  python3 scripts/mark-questionnaire-complete.py --dry-run   # report, write nothing
-  python3 scripts/mark-questionnaire-complete.py             # tick the boxes
+  python3 scripts/questionnaire-checkoff-report.py             # print the list
+  python3 scripts/questionnaire-checkoff-report.py --summary out.md
 """
 
 import argparse
 import csv
 import importlib.util
 import io
-import json
 import os
 import sys
 import urllib.error
-import urllib.parse
-import urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MUNI_YML = os.path.join(ROOT, "_data", "municipalities.yml")
@@ -73,18 +69,8 @@ CHECKBOX_COLUMN = "Completed Questionnaire"
 
 # Cell values that count as already ticked. A Sheets checkbox exports as
 # TRUE/FALSE, but the column may have been a hand-typed "yes" column before it
-# was one, and re-ticking a row that is already marked would be a pointless
-# write with a real chance of clobbering the note somebody left in it.
+# was one, and a row somebody wrote "done" into is a row already dealt with.
 TICKED_VALUES = {"true", "yes", "y", "x", "✓", "✔", "1", "done", "complete", "completed"}
-
-# Written into an empty checkbox. Sent with USER_ENTERED, so Sheets parses it
-# into the boolean a checkbox holds rather than storing the four letters beside
-# an untouched tickbox.
-TICK = "TRUE"
-
-# Least privilege for the write: this account can touch spreadsheets shared with
-# it and nothing else in the Drive it was created in.
-SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
 
 
 # --- Helpers borrowed from the sync scripts ----------------------------------
@@ -121,39 +107,11 @@ TAB_FIRST_HEADER = _SQ.TAB_FIRST_HEADER
 
 # --- The tracking sheet ------------------------------------------------------
 
-def parse_export_url(url):
-    """(spreadsheet id, worksheet gid or None) from a CSV export URL.
-
-    The gid may legitimately be absent — an export URL without one means the
-    first tab — but the id may not, and a URL this function cannot read is a
-    misconfigured secret rather than something to work around.
-    """
-    parsed = urllib.parse.urlparse(url)
-    parts = [p for p in parsed.path.split("/") if p]
-    try:
-        sheet_id = parts[parts.index("d") + 1]
-    except (ValueError, IndexError):
-        sys.exit("FATAL: CANDIDATES_CSV_URL has no /d/<sheet id>/ in it; expected a "
-                 "Google Sheets export URL.")
-
-    query = urllib.parse.parse_qs(parsed.query)
-    gid = (query.get("gid") or [None])[0]
-    if gid is None and parsed.fragment:
-        gid = (urllib.parse.parse_qs(parsed.fragment).get("gid") or [None])[0]
-    if gid is not None:
-        try:
-            gid = int(gid)
-        except ValueError:
-            sys.exit(f"FATAL: CANDIDATES_CSV_URL has a non-numeric gid: {gid!r}")
-    return sheet_id, gid
-
-
 def read_tracking_rows(text):
     """(header list, [(sheet row number, {column: value})]) from the export CSV.
 
     Row numbers are the spreadsheet's own, 1-based and counting the header, so
-    that what comes out of here can address a cell without a second pass over
-    the sheet.
+    that what comes out of here can name a cell the reader will scroll to.
     """
     rows = list(csv.reader(io.StringIO(text)))
     if not rows:
@@ -177,7 +135,7 @@ def find_column(header, wanted):
 
 
 def index_candidates(records, muni_lookup):
-    """{normalized name: [(row number, municipality slug or None, ticked?)]}.
+    """{normalized name: [row dict]}, each row dict describing one tracking row.
 
     A list per name, not a row: two people with the same name in different
     municipalities is the case this script has to notice rather than average
@@ -185,12 +143,17 @@ def index_candidates(records, muni_lookup):
     """
     index = {}
     for row_number, record in records:
-        name = norm(record.get(NAME_COLUMN, ""))
+        name = tidy(record.get(NAME_COLUMN, ""))
         if not name:
             continue
-        slug = muni_lookup.get(norm(record.get(MUNICIPALITY_COLUMN, "")))
-        ticked = norm(record.get(CHECKBOX_COLUMN, "")) in TICKED_VALUES
-        index.setdefault(name, []).append((row_number, slug, ticked))
+        municipality = tidy(record.get(MUNICIPALITY_COLUMN, ""))
+        index.setdefault(norm(name), []).append({
+            "row": row_number,
+            "name": name,
+            "municipality": municipality,
+            "slug": muni_lookup.get(norm(municipality)),
+            "ticked": norm(record.get(CHECKBOX_COLUMN, "")) in TICKED_VALUES,
+        })
     return index
 
 
@@ -232,85 +195,84 @@ def read_submissions(sheet_id, muni_lookup, warnings):
 
 # --- Matching ----------------------------------------------------------------
 
-def resolve(submissions, candidates, warnings):
-    """Sheet row numbers to tick, in sheet order.
+def resolve(submissions, candidates):
+    """({sheet row number: row dict} to tick, already ticked count, [unresolved]).
 
-    Also reports, once per candidate, every submission that could not be placed
-    in the tracking sheet. Those are the interesting ones: a candidate the sheet
-    has not heard of, or a name spelled differently in the two systems.
+    The unresolved list is the other half of the report: a candidate the sheet
+    has not heard of, or a name spelled differently in the two systems. Each is
+    listed once per candidate, not once per submission.
     """
-    to_tick = {}
-    unmatched = []
+    to_check = {}
+    unresolved = []
     already = 0
 
     for key, slug, display in submissions:
         rows = candidates.get(key)
         if not rows:
-            unmatched.append((display, "no row with that name in the tracking sheet"))
+            unresolved.append((display, "no row with that name in the tracking sheet"))
             continue
 
         if len(rows) > 1:
-            narrowed = [r for r in rows if slug is not None and r[1] == slug]
+            narrowed = [r for r in rows if slug is not None and r["slug"] == slug]
             if len(narrowed) != 1:
-                unmatched.append((display, f"{len(rows)} rows share that name and the "
-                                           "submission's municipality does not pick one"))
+                unresolved.append((display, f"{len(rows)} rows share that name and the "
+                                            "submission's municipality does not pick one"))
                 continue
             rows = narrowed
 
-        row_number, _, ticked = rows[0]
-        if ticked:
+        if rows[0]["ticked"]:
             already += 1
         else:
-            to_tick[row_number] = display
+            to_check[rows[0]["row"]] = rows[0]
 
-    for display, reason in sorted(set(unmatched)):
-        warnings.append(f"{display}: {reason}")
-    return to_tick, already
+    return to_check, already, sorted(set(unresolved))
 
 
-# --- The write ---------------------------------------------------------------
+# --- Reporting ---------------------------------------------------------------
 
-def open_worksheet(sheet_id, gid):
-    """The tracking sheet's tab, opened with the service account.
-
-    gspread and google-auth are imported here rather than at the top of the
-    file so that --dry-run, which needs neither, runs on a stdlib-only box the
-    way the rest of scripts/ does.
-    """
-    try:
-        import gspread
-        from google.oauth2.service_account import Credentials
-    except ImportError:
-        sys.exit("FATAL: writing needs gspread and google-auth "
-                 "(pip install -r scripts/questionnaire/requirements.txt), or pass --dry-run.")
-
-    blob = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON", "").strip()
-    if not blob:
-        sys.exit("FATAL: set GOOGLE_SERVICE_ACCOUNT_JSON to the service account's JSON key "
-                 "(or pass --dry-run).")
-    try:
-        info = json.loads(blob)
-    except json.JSONDecodeError as e:
-        sys.exit(f"FATAL: GOOGLE_SERVICE_ACCOUNT_JSON is not valid JSON: {e}")
-
-    client = gspread.authorize(Credentials.from_service_account_info(info, scopes=SCOPES))
-    spreadsheet = client.open_by_key(sheet_id)
-    if gid is None:
-        return spreadsheet.get_worksheet(0)
-    try:
-        return spreadsheet.get_worksheet_by_id(gid)
-    except Exception:
-        sys.exit(f"FATAL: the tracking spreadsheet has no tab with gid {gid} "
-                 "(the one CANDIDATES_CSV_URL points at).")
+def cell_ref(column_index, row_number):
+    """The cell to tick, as the sheet itself labels it: "P42"."""
+    return f"{a1(column_index)}{row_number}"
 
 
-def tick(worksheet, column_index, row_numbers):
-    """Tick one cell per row, in a single batched request."""
-    letter = a1(column_index)
-    worksheet.batch_update(
-        [{"range": f"{letter}{n}", "values": [[TICK]]} for n in sorted(row_numbers)],
-        value_input_option="USER_ENTERED",
-    )
+def render_summary(to_check, already, submissions, unresolved, warnings, column_index):
+    """The job summary, as Markdown. Names no spreadsheet: see the module docstring."""
+    out = ["## Questionnaires to check off", ""]
+
+    if to_check:
+        out.append(f"**{len(to_check)} to tick** in the tracking sheet's "
+                   f"`{CHECKBOX_COLUMN}` column — nothing is ticked for you.")
+        out.append("")
+        out.append("| Cell | Candidate | Municipality |")
+        out.append("| --- | --- | --- |")
+        for row_number in sorted(to_check):
+            row = to_check[row_number]
+            out.append(f"| `{cell_ref(column_index, row_number)}` | {row['name']} | "
+                       f"{row['municipality'] or '—'} |")
+    else:
+        out.append(f"**Nothing to tick.** Every submission that matches a tracking row "
+                   f"already has its `{CHECKBOX_COLUMN}` box ticked.")
+    out.append("")
+
+    if unresolved:
+        out.append(f"### {len(unresolved)} submission(s) with no row to tick")
+        out.append("")
+        out.append("| Candidate | Why |")
+        out.append("| --- | --- |")
+        for display, reason in unresolved:
+            out.append(f"| {display} | {reason} |")
+        out.append("")
+
+    if warnings:
+        out.append("### Warnings")
+        out.append("")
+        out.extend(f"- {w}" for w in warnings)
+        out.append("")
+
+    out.append(f"<sub>{len(submissions)} submission(s) read · {already} already ticked · "
+               f"read-only: this job writes to no spreadsheet.</sub>")
+    out.append("")
+    return "\n".join(out)
 
 
 # --- Main --------------------------------------------------------------------
@@ -322,8 +284,9 @@ def main(argv=None):
                     help="Tracking sheet CSV export URL (default: $CANDIDATES_CSV_URL)")
     ap.add_argument("--sheet-id", default=os.environ.get("QUESTIONNAIRE_SUBMISSIONS_SHEET_ID"),
                     help="Submission spreadsheet id (default: $QUESTIONNAIRE_SUBMISSIONS_SHEET_ID)")
-    ap.add_argument("--dry-run", action="store_true",
-                    help="Report what would be ticked; write nothing, and need no credentials.")
+    ap.add_argument("--summary", default=os.environ.get("GITHUB_STEP_SUMMARY"),
+                    help="Append the report as Markdown to this file "
+                         "(default: $GITHUB_STEP_SUMMARY, i.e. the CI run's summary page)")
     args = ap.parse_args(argv)
 
     if not args.csv_url:
@@ -331,7 +294,6 @@ def main(argv=None):
     if not args.sheet_id:
         sys.exit("FATAL: set QUESTIONNAIRE_SUBMISSIONS_SHEET_ID (or pass --sheet-id).")
 
-    sheet_id, gid = parse_export_url(args.csv_url)
     _, muni_lookup = load_municipalities(MUNI_YML)
 
     try:
@@ -351,30 +313,30 @@ def main(argv=None):
 
     warnings = []
     submissions = read_submissions(args.sheet_id, muni_lookup, warnings)
-    if not submissions:
-        print("No submissions in the sheet; nothing to tick.")
-        return 0
-
     candidates = index_candidates(records, muni_lookup)
-    to_tick, already = resolve(submissions, candidates, warnings)
+    to_check, already, unresolved = resolve(submissions, candidates)
 
     for message in warnings:
         print(f"warning: {message}", file=sys.stderr)
 
     print(f"{len(submissions)} submission(s), {already} already ticked, "
-          f"{len(to_tick)} to tick.")
-    for row_number in sorted(to_tick):
-        print(f"  row {row_number}: {to_tick[row_number]}")
+          f"{len(to_check)} to tick by hand.")
+    for row_number in sorted(to_check):
+        row = to_check[row_number]
+        print(f"  {cell_ref(checkbox_index, row_number)}  {row['name']}"
+              f"{' — ' + row['municipality'] if row['municipality'] else ''}")
+    for display, reason in unresolved:
+        print(f"  (no row) {display}: {reason}")
 
-    if not to_tick:
-        return 0
-    if args.dry_run:
-        print("Dry run: the tracking sheet was not modified.")
-        return 0
-
-    worksheet = open_worksheet(sheet_id, gid)
-    tick(worksheet, checkbox_index, to_tick)
-    print(f"Ticked {len(to_tick)} checkbox(es) in {CHECKBOX_COLUMN!r}.")
+    if args.summary:
+        report = render_summary(to_check, already, submissions, unresolved,
+                                warnings, checkbox_index)
+        try:
+            with open(args.summary, "a", encoding="utf-8") as fh:
+                fh.write(report)
+        except OSError as e:
+            print(f"warning: could not write the summary to {args.summary}: {e}",
+                  file=sys.stderr)
     return 0
 
 

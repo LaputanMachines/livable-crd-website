@@ -1,0 +1,51 @@
+name: Questionnaires to check off in the candidate sheet
+
+# Reads who submitted the candidate questionnaire from Tally's submission
+# spreadsheet, matches them against the coalition candidate-tracking sheet, and
+# writes the run's summary page with the candidates whose "Completed
+# Questionnaire" box is still empty — cell reference, name, municipality — so
+# somebody can tick them by hand.
+#
+# It ticks nothing itself. Writing to the sheet would need a Google service
+# account with edit access to a document the coalition edits by hand all day;
+# the list is the useful half of that and needs no credential, since both
+# sheets are read over plain HTTP as CSV. Nothing is committed, no deploy
+# follows, and the published site takes nothing from this column.
+#
+# Runs after both sync jobs' slots so a candidate confirmed the same morning is
+# already a row in the tracking sheet by the time this looks for one.
+#
+# THE SUMMARY IS PUBLIC. This repository is public, so anyone can read a run's
+# summary page. It therefore carries candidate names, municipalities and cell
+# references, and never the spreadsheet ids or export URLs — those are
+# capabilities over the whole sheets, contact details included, and stay in
+# secrets. Names of candidates the tracking sheet has not confirmed yet do
+# appear; if that is not wanted, the report has to move off a public run.
+#
+# SETUP: none beyond the CANDIDATES_CSV_URL and QUESTIONNAIRE_SUBMISSIONS_SHEET_ID
+# secrets the sync jobs already use. This job holds no write credential.
+
+on:
+  schedule:
+    - cron: "17 14 * * *" # daily ~07:17 America/Vancouver (14:17 UTC)
+  workflow_dispatch:
+
+permissions:
+  contents: read # reads two spreadsheets, writes nothing anywhere
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x" # script is stdlib-only; no pip install needed
+
+      # Writes the list to $GITHUB_STEP_SUMMARY, which is this run's summary page.
+      - name: List the questionnaires to check off
+        run: python3 scripts/questionnaire-checkoff-report.py
+        env:
+          CANDIDATES_CSV_URL: ${{ secrets.CANDIDATES_CSV_URL }}
+          QUESTIONNAIRE_SUBMISSIONS_SHEET_ID: ${{ secrets.QUESTIONNAIRE_SUBMISSIONS_SHEET_ID }}
