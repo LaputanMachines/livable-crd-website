@@ -833,6 +833,22 @@
   slate: null
   website: null
 
+- name: Richard Novek
+  display_name: "Novek, Richard"
+  municipality: sidney
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Steve Price
+  display_name: "Price, Steve"
+  municipality: sidney
+  office: Councillor
+  standing: ex-incumbent-mayor
+  slate: null
+  website: null
+
 - name: Jamie Wellbourn
   display_name: "Wellbourn, Jamie"
   municipality: sidney
