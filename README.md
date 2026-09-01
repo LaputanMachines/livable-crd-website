@@ -198,6 +198,38 @@ The run **fails without writing either file** if a registry category maps to no 
 
 Each tab is checked against its expected first header before being parsed. Asking for a tab that does not exist does not fail: the spreadsheet answers with its *first* sheet instead, so a renamed tab would otherwise feed 236 columns of the wrong data into a parser expecting nine. A mismatch is treated as a missing tab.
 
+## Marking completed questionnaires
+
+The write in the other direction, and the only job in this repo that changes a spreadsheet rather than a file. A scheduled GitHub Action, [.github/workflows/mark-questionnaire-complete.yml](.github/workflows/mark-questionnaire-complete.yml), runs daily (and on demand via *Actions → Mark completed questionnaires in the candidate sheet → Run workflow*, which offers a dry run). [`scripts/mark-questionnaire-complete.py`](scripts/mark-questionnaire-complete.py) reads who submitted from the questionnaire submission sheet and ticks the tracking sheet's `Completed Questionnaire` checkbox for each of them.
+
+Nothing is committed and no deploy follows. The tracking sheet is the coalition's own working document; the published site takes nothing from this column, and reads its "did they answer?" state from `scores.yml` instead (see [the three states a topic can be in](#the-three-states-a-topic-can-be-in)).
+
+The job runs at 14:17 UTC, after both sync jobs' slots, so a candidate confirmed the same morning is already a row in the tracking sheet by the time this looks for one.
+
+### What it will and will not do
+
+- **It only ever ticks.** A ticked box is never cleared, even when no submission matches it. The coalition ticks boxes by hand too — a candidate who answered by email, a submission filed under a different name — and a sync that fought those edits would be worse than no sync.
+- **It writes to that one column** and to no other cell, column or tab, in either spreadsheet.
+- **It reads four identity columns** from the submission sheet's raw tab (submission id, first name, last name, municipality) via a column select, never the email addresses beside them.
+- **Row status is not consulted.** `Running?` decides who the website publishes, not who filled the form in; an unconfirmed candidate who answered has still answered.
+
+Matching is on normalized full name, disambiguated by municipality only where it has to be: one tracking row with that name is ticked outright, and two people sharing a name need the submission's municipality to pick between them. Anything still unresolved warns and is skipped rather than guessed at. A submission matching no row warns too — usually a candidate the tracking sheet has not caught up with yet.
+
+### One-time setup
+
+Create a Google service account, share the **candidate-tracking** spreadsheet with its email address as an **Editor**, and add its JSON key as the `GOOGLE_SERVICE_ACCOUNT_JSON` repository secret. Which spreadsheet and which tab it writes to are taken from `CANDIDATES_CSV_URL`, so there is no second copy of the sheet id to keep in step.
+
+This is the only credential in the repo that can write to a spreadsheet. It is scoped to Sheets alone, and only this script uses it — everything else in `scripts/` reads over plain HTTP and needs no credentials at all.
+
+### Running it locally
+
+```bash
+CANDIDATES_CSV_URL="…" QUESTIONNAIRE_SUBMISSIONS_SHEET_ID="…" \
+  python3 scripts/mark-questionnaire-complete.py --dry-run
+```
+
+`--dry-run` prints the rows it would tick and needs no service account key; the Sheets client is imported only when a write is actually going to happen. Without `--dry-run` the script needs `gspread` and `google-auth` (`pip install -r scripts/questionnaire/requirements.txt`). A tracking sheet with no `Completed Questionnaire` column fails the run and lists the columns it did find.
+
 ## Questionnaire committee tooling
 
 [`scripts/questionnaire/`](scripts/questionnaire/) builds the working sheet the committee uses to choose which questions make the questionnaire: it collects every submitted question into one categorised master list and generates a per-member voting tab so scoring can happen asynchronously. See [`scripts/questionnaire/README.md`](scripts/questionnaire/README.md).

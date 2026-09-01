@@ -1,0 +1,58 @@
+name: Mark completed questionnaires in the candidate sheet
+
+# Reads who submitted the candidate questionnaire from Tally's submission
+# spreadsheet and ticks the "Completed Questionnaire" checkbox for each of them
+# in the coalition candidate-tracking sheet. See
+# scripts/mark-questionnaire-complete.py for what it will and will not touch:
+# it only ever ticks, never unticks, and writes to no other column.
+#
+# Unlike sync-candidates.yml and sync-questionnaire.yml, this job writes to a
+# spreadsheet rather than to the repository. Nothing is committed and no deploy
+# follows: the tracking sheet is the coalition's own working document, and the
+# published site takes nothing from this column.
+#
+# Runs after both sync jobs' slots so a candidate confirmed the same morning is
+# already a row in the tracking sheet by the time this looks for one.
+#
+# SETUP (once): create a Google service account, share the candidate-tracking
+# spreadsheet with its email address as an Editor, and add its JSON key as the
+# GOOGLE_SERVICE_ACCOUNT_JSON repository secret. Reading needs no credentials;
+# this is the only secret in the repo that can write to a spreadsheet, and it is
+# scoped to Sheets alone. Which spreadsheet and tab it writes to comes from
+# CANDIDATES_CSV_URL, so there is no second copy of the sheet id to keep in step.
+
+on:
+  schedule:
+    - cron: "17 14 * * *" # daily ~07:17 America/Vancouver (14:17 UTC)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report what would be ticked, without writing to the sheet"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read # writes to the sheet, not to the repository
+
+jobs:
+  mark:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # Reading both sheets is stdlib-only; the write needs a Sheets client.
+      - name: Install the Google Sheets client
+        run: pip install --disable-pip-version-check gspread google-auth
+
+      - name: Tick the completed questionnaires
+        run: |
+          python3 scripts/mark-questionnaire-complete.py \
+            ${{ inputs.dry_run && '--dry-run' || '' }}
+        env:
+          CANDIDATES_CSV_URL: ${{ secrets.CANDIDATES_CSV_URL }}
+          QUESTIONNAIRE_SUBMISSIONS_SHEET_ID: ${{ secrets.QUESTIONNAIRE_SUBMISSIONS_SHEET_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
