@@ -328,6 +328,14 @@
   slate: null
   website: "https://www.votestephenhammond.ca/priorities"
 
+- name: Mike Harris
+  display_name: "Harris, Mike"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Susan Kim
   display_name: "Kim, Susan"
   municipality: victoria
@@ -825,6 +833,14 @@
   website: "https://www.instagram.com/jimfornorthsaanich/"
 
 # --- Sidney ---
+- name: Eric Diller
+  display_name: "Diller, Eric"
+  municipality: sidney
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Scott Garnett
   display_name: "Garnett, Scott"
   municipality: sidney
