@@ -55,11 +55,23 @@ sponsor:
 # re-enable. (Changing this requires restarting `jekyll serve`.)
 partner_logos: false
 
+# The election every page on this site is about. Read by
+# _plugins/candidate_pages.rb, which puts it in the <title> and description of
+# each candidate page and each municipality index: people search for "esquimalt
+# candidates 2026", and until this existed the year appeared nowhere a search
+# engine reads it, only inside the dates in _data/deadlines.yml. Set it once at
+# the start of a cycle. Blank it and every page drops the year cleanly rather
+# than printing a stale one.
+election_year: 2026
+
 # --- SEO (jekyll-seo-tag) ---
 # tagline is appended to the site title on the homepage:
-#   "Livable CRD | Capital Region municipal candidate scorecard"
+#   "Livable CRD | 2026 Capital Region candidate scorecard"
 # Kept short so the full homepage <title> stays under Google's ~60-char limit.
-tagline: "Capital Region municipal candidate scorecard"
+# The year is written out here rather than read from `election_year` above:
+# _config.yml is not itself templated, and one repeated literal costs less than
+# the per-page Liquid override the alternative would need.
+tagline: "2026 Capital Region candidate scorecard"
 locale: en_CA
 logo: /assets/images/logo.png            # publisher logo in structured data
 

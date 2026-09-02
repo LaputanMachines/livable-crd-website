@@ -1,15 +1,16 @@
 ---
 layout: default
-title: Candidate Scorecard
+title: 2026 Candidate Scorecard
 permalink: /scorecard/
 description: >-
-  Compare where Capital Regional District municipal candidates stand on transit,
-  housing, climate, arts, and cycling. Search by name or filter by municipality.
+  Where Capital Regional District municipal candidates stand on transit,
+  housing, climate, and arts in the 2026 election. Search or filter by
+  municipality.
 ---
 
 <div class="page-header">
   <div class="container">
-    <h1>Candidate scorecard</h1>
+    <h1>2026 candidate scorecard</h1>
     {%- comment -%}
       The correction line, in the header rather than in a banner further down.
       It is the one thing on this page that asks the reader for something, and
@@ -193,7 +194,26 @@ description: >-
                 name cell wraps its contents (see .scorecard-matrix__name-inner).
               {%- endcomment -%}
               <span class="scorecard-matrix__group-inner">
-                <span class="scorecard-matrix__group-name">{{ muni.name }}</span>
+                {%- comment -%}
+                  The municipality's own index, /scorecard/esquimalt/, generated
+                  by _plugins/candidate_pages.rb. This heading is the one place
+                  on the site that links to all of them, so it is what gets them
+                  crawled; it is also the shortest way for a reader looking at
+                  one municipality's rows to get the page that is only about
+                  that municipality.
+
+                  Only where there are candidates, matching the plugin: it
+                  builds no index for a municipality with nobody confirmed, so
+                  linking one here would be a link to a 404. The empty row below
+                  says the same thing this link would have.
+                {%- endcomment -%}
+                <span class="scorecard-matrix__group-name">
+                  {%- if mc.size > 0 -%}
+                  <a class="scorecard-matrix__group-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">{{ muni.name }}</a>
+                  {%- else -%}
+                  {{ muni.name }}
+                  {%- endif -%}
+                </span>
                 {%- comment -%}
                   Slates, scoped to this municipality. A slate contests one
                   council, so its colour key belongs beside that municipality

@@ -60,8 +60,20 @@ layout: default
 
 <div class="page-header candidate-hero">
   <div class="container">
-    <p class="candidate-hero__back">
+    {%- comment -%}
+      Two steps up rather than one. "All candidates" is the 115-row region-wide
+      table, which is rarely what a reader who arrived on one Esquimalt
+      candidate wants next; the municipality's own index is. Both are kept
+      because they answer different questions, and the arrow stays on the first
+      so the line still reads as a way back out. Hidden in print with the rest
+      of the navigation (see the @media print block in _sass/_candidate.scss).
+    {%- endcomment -%}
+    <p class="page-header__back">
       <a href="{{ '/scorecard/' | relative_url }}"><span aria-hidden="true">←</span> All candidates</a>
+      {%- if page.municipality_slug %}
+      <span class="page-header__back-sep" aria-hidden="true">·</span>
+      <a href="{{ '/scorecard/' | append: page.municipality_slug | append: '/' | relative_url }}">{{ page.municipality_name }} candidates</a>
+      {%- endif %}
     </p>
     <h1 class="candidate-hero__name">{{ c.name }}</h1>
     {%- if page.subtitle != "" %}

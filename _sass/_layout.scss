@@ -362,6 +362,37 @@ main {
   }
 }
 
+// The way back out, above a page's h1 and inside the inky header with it: a
+// crumb trail on the candidate pages, a single link up to /scorecard/ on the
+// municipality indexes.
+//
+// Uppercase display type, unlike the note below it: this is navigation, and it
+// reads as navigation by matching the header's own type rather than the running
+// prose underneath.
+.page-header__back {
+  margin: 0 0 $space-xs;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.78rem;
+
+  a {
+    // Livable Purple links vanish against the inky header; Kwetlal is what the
+    // footer already uses for links on the same dark ground.
+    color: $color-warm;
+    text-decoration: none;
+    &:hover { color: #fff; }
+  }
+}
+
+// The middot between two crumbs. Dimmer than the links it divides, so the trail
+// reads as two destinations and not as three things of equal weight.
+.page-header__back-sep {
+  margin: 0 0.15rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
 // A line of description or a standing request, directly under a page's h1 and
 // inside the inky header with it.
 //

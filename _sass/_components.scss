@@ -768,6 +768,24 @@ tr:hover td { background: $color-bg-warm; }
   z-index: 2; // under the topic row (3), over the candidate rows it covers
 }
 
+// The municipality name in the band, which is a link to that municipality's own
+// index wherever one exists. Takes the band's colour and weight rather than the
+// site's link colour: it is the heading, and a purple heading in a row of inky
+// ones would read as a different kind of thing. The underline on hover and on
+// focus is what says it is clickable, which is enough for something a reader
+// meets thirteen times down one page.
+.scorecard-matrix__group-link {
+  color: inherit;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
 // Placeholder under a municipality nobody has announced in yet. Quieter than a
 // candidate row (it is an absence, not an entry) and left-aligned to sit under
 // its heading rather than centring across the grade columns.

@@ -37,23 +37,6 @@
   }
 }
 
-.candidate-hero__back {
-  margin: 0 0 $space-xs;
-  font-family: $font-display;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  font-size: 0.78rem;
-
-  a {
-    // Livable Purple links vanish against the inky hero; Kwetlal is what the
-    // footer already uses for links on the same dark ground.
-    color: $color-warm;
-    text-decoration: none;
-    &:hover { color: #fff; }
-  }
-}
-
 .candidate-hero__name {
   // Names get long ("Teale Phelps Bondaroff") and the shared h1 is a clamp up to
   // 4rem, so a single unbroken surname can outrun a narrow viewport.
@@ -664,7 +647,7 @@ summary.candidate-grade {
     // Navigation and controls: everything that assumes a reader who can click.
     .site-header,
     .site-footer,
-    .candidate-hero__back,
+    .page-header__back,
     .candidate-actions { display: none; }
 
     // The per-question breakdown, and the chevron that opens it. Both belong on
