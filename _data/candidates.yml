@@ -352,14 +352,6 @@
   slate: Victoria For All
   website: null
 
-- name: Krista Laughton
-  display_name: "Laughton, Krista"
-  municipality: victoria
-  office: Councillor
-  standing: incumbent-councillor
-  slate: null
-  website: "https://kristaloughton.ca"
-
 - name: Bella Lee
   display_name: "Lee, Bella"
   municipality: victoria
@@ -367,6 +359,14 @@
   standing: challenger
   slate: null
   website: "https://bellalee.ca"
+
+- name: Krista Loughton
+  display_name: "Loughton, Krista"
+  municipality: victoria
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: "https://kristaloughton.ca"
 
 - name: Bruce McGuigan
   display_name: "McGuigan, Bruce"
