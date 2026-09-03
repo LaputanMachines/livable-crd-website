@@ -433,6 +433,14 @@
   slate: null
   website: "https://danigaz.ca/en/"
 
+- name: Meredith James
+  display_name: "James, Meredith"
+  municipality: esquimalt
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Robb Johnstone
   display_name: "Johnstone, Robb"
   municipality: esquimalt
@@ -897,6 +905,14 @@
   standing: challenger
   slate: null
   website: "https://tydaniels.ca"
+
+- name: Nick Dickinson-Wilde
+  display_name: "Dickinson-Wilde, Nick"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://nick4sooke.ca/"
 
 - name: Janet Evans
   display_name: "Evans, Janet"
