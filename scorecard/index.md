@@ -259,6 +259,28 @@ description: >-
                   </label>
                 </span>
                 {%- endif -%}
+                {%- comment -%}
+                  How many of this municipality's candidates have returned the
+                  questionnaire, on the right-hand end of the band. The matrix
+                  answers it per row already, but only one topic at a time and
+                  only in the shape of a badge, so a reader wanting "has anyone
+                  here replied yet" had to read ten cells across every row of the
+                  group and infer it.
+
+                  `questionnaire_returned` is attached by
+                  _plugins/questionnaire_scores.rb to every candidate the grading
+                  sheet has a row for, which is the same flag the hourglass
+                  badges are drawn from: the number here can never disagree with
+                  the cells below it.
+
+                  Static, like the slate counts and the municipality filter
+                  pills: it describes the municipality, not the current search,
+                  so it does not move when the filters narrow the table.
+                {%- endcomment -%}
+                {%- if mc.size > 0 -%}
+                {%- assign muni_returned = mc | where_exp: "c", "c.questionnaire_returned" -%}
+                <span class="scorecard-matrix__group-count">{{ muni_returned.size }} of {{ mc.size }} returned the questionnaire</span>
+                {%- endif -%}
               </span>
             </th>
           </tr>

@@ -786,6 +786,40 @@ tr:hover td { background: $color-bg-warm; }
   }
 }
 
+// How many of the municipality's candidates have returned the questionnaire,
+// at the right-hand end of the heading band. `margin-left: auto` rather than
+// `justify-content: space-between` on the row: the band's middle is the slate
+// legend, which grows and shrinks with the number of slates, and space-between
+// would push it around as it did.
+//
+// Opts out of the band's uppercase display type for the same reason
+// .slate-control does — it is a sentence, not a heading — and takes full ink
+// rather than $color-muted, which lands around the 4.5:1 line on small text
+// over the Kwetlal-tinted band.
+//
+// Off below 720px, the site's usual phone breakpoint. There it never gets its
+// own end of the row: the band is already carrying the municipality name and,
+// in the largest municipalities, a wrapped slate legend, so this wraps onto a
+// line of its own and pushes every row of the group down the page. The number
+// is a nice-to-know beside a list the reader came for, not worth that on the
+// screen with the least of it.
+.scorecard-matrix__group-count {
+  display: none;
+  margin-left: auto;
+  flex: 0 0 auto;
+  font-family: $font-sans;
+  font-weight: 400;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  text-transform: none;
+  letter-spacing: 0;
+  color: $color-text;
+
+  @media (min-width: 720px) {
+    display: block;
+  }
+}
+
 // Placeholder under a municipality nobody has announced in yet. Quieter than a
 // candidate row (it is an absence, not an entry) and left-aligned to sit under
 // its heading rather than centring across the grade columns.
