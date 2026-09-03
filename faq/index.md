@@ -251,9 +251,10 @@ description: >-
     <div class="methodology__body">
       <p>
         The grades on the scorecard come from the coalition questionnaire, which goes
-        to every confirmed candidate. The last date below is the one a candidate
-        can miss; the others are the coalition milestones leading up to it,
-        listed so the whole schedule is public. The same schedule runs as a
+        to every confirmed candidate. Only one date below is one a candidate can
+        miss, and it carries its own heading underneath; the others are the
+        coalition milestones leading up to it and the publication date that
+        follows it, listed so the whole schedule is public. The same schedule runs as a
         timeline on the <a href="{{ '/' | relative_url }}">homepage</a>.
       </p>
 

@@ -78,7 +78,7 @@ description: >-
     <h2 class="section-title">Project timeline</h2>
     <p>
       Where the scorecard is in its schedule, from the coalition drafting the
-      questionnaire through to the last day a candidate can respond.
+      questionnaire through to the day the grades are published.
     </p>
     {% include deadline-timeline.html %}
     <p class="content-follow-up">

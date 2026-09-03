@@ -89,3 +89,18 @@
     printed scorecards, stickers, posters, and other physical materials.
   short: Final cut-off
   brief: Last day to be graded, on this site and on anything printed.
+
+# The end of the schedule, and the only entry after the cut-off: everything
+# above is the coalition and the candidates working towards a date, and this is
+# the day the result of that work reaches voters. Two days after the cut-off
+# rather than the same day, because the last batch of answers still has to be
+# graded.
+- id: grades-released
+  date: 2026-09-20
+  audience: coalition
+  label: Grades published on the scorecard
+  detail: >-
+    Every graded candidate's ratings go live on the scorecard, organized by
+    municipality, in time for voters to read them before election day.
+  short: Grades released
+  brief: Ratings go live on the scorecard, by municipality.
