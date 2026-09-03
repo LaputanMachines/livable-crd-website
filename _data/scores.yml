@@ -83,10 +83,16 @@ candidates:
   - name: Keith Yacucha
     municipality: langford
     subjects: []
+  - name: Sam Holland
+    municipality: oak-bay
+    subjects: []
   - name: Colin Plant
     municipality: saanich
     subjects: []
   - name: Mauricio Curbelo
+    municipality: saanich
+    subjects: []
+  - name: Susan Brice
     municipality: saanich
     subjects: []
   - name: Jack Sandor
