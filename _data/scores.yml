@@ -95,6 +95,9 @@ candidates:
   - name: Susan Brice
     municipality: saanich
     subjects: []
+  - name: Richard Novek
+    municipality: sidney
+    subjects: []
   - name: Jack Sandor
     municipality: victoria
     subjects: []
