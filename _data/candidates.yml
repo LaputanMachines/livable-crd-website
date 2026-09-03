@@ -63,6 +63,14 @@
   slate: null
   website: "https://susanbrice.ca"
 
+- name: Judy Brownoff
+  display_name: "Brownoff, Judy"
+  municipality: saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Kathleen Burton
   display_name: "Burton, Kathleen"
   municipality: saanich
