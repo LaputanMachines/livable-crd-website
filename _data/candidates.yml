@@ -800,14 +800,6 @@
   website: null
 
 # --- North Saanich ---
-- name: Kristine Marshall
-  display_name: "Marshall, Kristine"
-  municipality: north-saanich
-  office: Councillor
-  standing: incumbent-councillor
-  slate: North Saanich Strong
-  website: null
-
 - name: Jack McClintock
   display_name: "McClintock, Jack"
   municipality: north-saanich
