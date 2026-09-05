@@ -206,3 +206,130 @@ a.muni-index__link:hover {
   font-size: 0.85rem;
   color: $color-muted;
 }
+
+// --- Address lookup -------------------------------------------------------
+// The form above .muni-index. Ships hidden in index.md and is revealed by
+// assets/js/muni-finder.js, so this whole block only ever paints when the
+// script that gives it a purpose is running.
+//
+// `display: grid` here beats the browser's own `[hidden] { display: none }`,
+// the same guard .questionnaire-search and .fav-toggle carry.
+.muni-finder {
+  display: grid;
+  gap: $space-xs;
+  margin-top: $space-md;
+  padding: $space-sm $space-gutter;
+  background: $color-bg-warm;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+}
+
+.muni-finder[hidden] { display: none; }
+
+.muni-finder__label {
+  font-family: $font-display;
+  font-weight: 700;
+}
+
+// `stretch`, not `center`: the input and the two buttons carry different
+// padding and different font sizes, so left to their own heights they sit as
+// three slightly different boxes on one line. Stretching gives every control
+// on a line the height of the tallest, which is the input.
+.muni-finder__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  align-items: stretch;
+}
+
+// Wide enough to hold a real street address before it starts scrolling, and
+// allowed to take the leftover width so the two buttons stay their own size.
+.muni-finder__input {
+  flex: 1 1 16rem;
+  min-width: 0;
+  padding: 0.7rem 0.85rem;
+  font: inherit;
+  color: $color-text;
+  background: $color-surface;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+}
+
+.muni-finder__submit[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+// A real button beside "Find mine", carrying .btn for the shared geometry
+// (uppercase, letter-spacing, 3px border, radius) so it reads as part of the
+// same control and not as a link that wandered in.
+//
+// Deliberately not .btn-secondary, which is what "Find mine" wears: two
+// identical pills side by side read as a choice between two ways to search.
+// This one is drawn in the muted ink of the surrounding note instead, so it is
+// plainly a button and plainly the lesser of the two.
+.muni-finder__reset {
+  background: transparent;
+  color: $color-muted;
+  border-color: $color-muted;
+
+  &:hover {
+    background: $color-surface;
+    color: $color-text;
+    border-color: $color-text;
+  }
+}
+
+// Both buttons are flex items stretched to the input's height, so they centre
+// their own label. Left to `display: inline-block` from .btn they lean on the
+// button element's own vertical centring, which is a user-agent detail.
+.muni-finder__submit,
+.muni-finder__reset {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.muni-finder__reset[hidden] { display: none; }
+
+.muni-finder__status {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+// Out of the grid entirely until it has something to say. It reserved a line
+// height so the box would not resize when an answer arrived, which cost a blank
+// line plus a grid gap on every page load to save a shift almost nobody sees.
+//
+// The element itself still ships in the markup on load, which is what a live
+// region needs to be announced later; only the empty box goes.
+.muni-finder__status:empty { display: none; }
+
+.muni-finder__status--ok { font-weight: 700; }
+.muni-finder__status--warn { color: $color-muted; }
+
+.muni-finder__note {
+  margin: 0;
+  font-size: 0.8rem;
+  color: $color-muted;
+}
+
+// While a search is applied, everything that is not the answer goes quiet and
+// stops being clickable. The script also sets aria-disabled and takes those
+// links out of the tab order: opacity is not a state a keyboard can feel.
+.muni-index--filtered .muni-index__item:not(.muni-index__item--match) {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.muni-index--filtered .muni-index__item--match .muni-index__link {
+  border-color: $color-accent;
+  box-shadow: 0 0 0 3px rgba($color-accent, 0.28);
+  background: $color-surface;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .muni-index--filtered .muni-index__item {
+    transition: opacity $transition-fast;
+  }
+}

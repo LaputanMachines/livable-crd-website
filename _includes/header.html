@@ -13,7 +13,7 @@
       <nav aria-label="Main" class="site-nav-panel" id="site-nav">
         {% assign current = page.url %}
         {% assign in_more = false %}
-        {% if current == '/questionnaire/' or current == '/faq/' or current == '/about/' or current contains '/blog' or current == '/press/' or current == '/contact/' %}{% assign in_more = true %}{% endif %}
+        {% if current == '/questionnaire/' or current == '/faq/' or current == '/about/' or current == '/coalition/' or current contains '/blog' or current == '/press/' or current == '/contact/' %}{% assign in_more = true %}{% endif %}
         <ul class="site-nav">
           <li><a href="{{ '/' | relative_url }}" {% if current == '/' %}class="active"{% endif %}>Home</a></li>
           <li><a href="{{ '/scorecard/' | relative_url }}" class="nav-highlight{% if current contains '/scorecard' %} active{% endif %}">Scorecard</a></li>
@@ -35,6 +35,7 @@
               <li><a href="{{ '/questionnaire/' | relative_url }}" {% if current == '/questionnaire/' %}class="active"{% endif %}>Questionnaire</a></li>
               <li><a href="{{ '/faq/' | relative_url }}" {% if current == '/faq/' %}class="active"{% endif %}>FAQ</a></li>
               <li><a href="{{ '/about/' | relative_url }}" {% if current == '/about/' %}class="active"{% endif %}>About Us</a></li>
+              <li><a href="{{ '/coalition/' | relative_url }}" {% if current == '/coalition/' %}class="active"{% endif %}>Coalition</a></li>
               <li><a href="{{ '/blog/' | relative_url }}" {% if current contains '/blog' %}class="active"{% endif %}>Blog</a></li>
               <li><a href="{{ '/press/' | relative_url }}" {% if current == '/press/' %}class="active"{% endif %}>Press</a></li>
               <li><a href="{{ '/contact/' | relative_url }}" {% if current == '/contact/' %}class="active"{% endif %}>Contact</a></li>

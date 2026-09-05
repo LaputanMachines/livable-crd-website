@@ -64,6 +64,16 @@
   word-break: break-word;
 }
 
+// A button that owns its line, for the end of a section where it is the only
+// thing to do next. `display: block` rather than a full-width inline-block so
+// it takes the container's width on its own; text-align re-centres the label,
+// which .btn's inline-block layout otherwise leaves at the left edge.
+.btn--full {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 .btn-group {
   display: flex;
   flex-wrap: wrap;

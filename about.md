@@ -48,3 +48,13 @@ description: >-
   the questions it submitted, using a published methodology so the process is
   transparent and reproducible.
 </p>
+
+<h2>Coalition partners</h2>
+<p>
+  {{ site.data.partners | size }} organizations across the Capital Regional
+  District, each already working on the area it writes and grades questions in.
+  Taking part is not an endorsement of any candidate, by them or by us.
+</p>
+<p>
+  <a class="btn btn-secondary btn--full" href="{{ '/coalition/' | relative_url }}">See all {{ site.data.partners | size }} coalition partners</a>
+</p>

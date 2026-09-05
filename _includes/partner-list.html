@@ -1,0 +1,35 @@
+{%- comment -%}
+  The coalition partners, from _data/partners.yml, as one grid of cards.
+
+  Three pages render this list: the homepage section, the About page's account
+  of how the coalition works, and the Coalition page that is nothing else. It
+  lives here so adding a partner stays a one-line edit to the data file, and so
+  the three never drift into three different card shapes.
+
+  The heading and the surrounding copy stay with each page. They are not the
+  same sentence in the three places — the homepage introduces the coalition to
+  someone who has just arrived, the Coalition page is already about it — and a
+  heading baked in here would have to be, or would have to be passed in, which
+  is the same edit with more indirection.
+
+  Params:
+    class - extra class names on the <ul>
+{%- endcomment -%}
+<ul class="partner-list{% if include.class %} {{ include.class }}{% endif %}">
+  {% for partner in site.data.partners %}
+  <li>
+    {% if site.partner_logos and partner.logo %}
+    {% if partner.logo contains "/" %}{% assign partner_logo_src = partner.logo %}{% else %}{% assign partner_logo_src = partner.logo | prepend: '/assets/images/partners/' %}{% endif %}
+    <img class="partner-logo" src="{{ partner_logo_src | relative_url }}" alt="{{ partner.name }} logo" loading="lazy">
+    {% endif %}
+    {% if partner.category %}
+    {% assign cat = site.data.subjects | where: "id", partner.category | first %}
+    {% if cat %}{% assign cat_label = cat.name %}{% else %}{% assign cat_label = partner.category %}{% endif %}
+    <p class="org-category"><span class="category-pill category-pill--{{ partner.category | slugify }}">{{ cat_label }}</span></p>
+    {% endif %}
+    <p class="org-name">{{ partner.name }}</p>
+    {% if partner.note %}<p class="org-note">{{ partner.note }}</p>{% endif %}
+    {% if partner.url %}<p class="org-link"><a href="{{ partner.url }}" target="_blank" rel="noopener">Visit website →</a></p>{% endif %}
+  </li>
+  {% endfor %}
+</ul>

@@ -70,10 +70,49 @@ description: >-
       {{ site.election_day | date: "%A, %B %-d, %Y" }}.
       {%- endif %}
     </p>
-    <ul class="muni-index">
+    {%- comment -%}
+      Address lookup. Ships `hidden` and is unhidden by assets/js/muni-finder.js,
+      the same progressive-enhancement contract the questionnaire search and the
+      favourite stars use: the list below is the page, and this only narrows it.
+
+      Worth the network call because the boundaries are not where people think
+      they are — 3400 Douglas St has a Victoria mailing address and is in
+      Saanich, and half of "Victoria" in conversation is Saanich, Esquimalt or
+      Oak Bay. Someone who picks the wrong index reads the wrong ballot.
+    {%- endcomment -%}
+    <form class="muni-finder" id="muni-finder" hidden>
+      <label class="muni-finder__label" for="muni-finder-input">
+        Not sure which one you vote in? Enter your address.
+      </label>
+      <div class="muni-finder__row">
+        <input class="muni-finder__input" id="muni-finder-input" type="search" name="address"
+               placeholder="e.g. 3400 Douglas St, Victoria" autocomplete="street-address"
+               enterkeyhint="search" spellcheck="false">
+        <button class="btn btn-secondary muni-finder__submit" type="submit">Find mine</button>
+      </div>
+      {%- comment -%}
+        role="status" so the answer is announced: for a screen-reader user the
+        result of this form is a visual change to a list further down the page,
+        which is no result at all unless it is also said.
+      {%- endcomment -%}
+      <p class="muni-finder__status" role="status" aria-live="polite"></p>
+      <p class="muni-finder__note">
+        Your address is sent to the Province of B.C.'s public
+        <a href="https://www2.gov.bc.ca/gov/content?id=118DD57CD9674D57BDBD511C2E78DC0D" target="_blank" rel="noopener">address geocoder</a>
+        to work out the municipality, and nowhere else. We do not store it.
+      </p>
+    </form>
+    <ul class="muni-index" id="muni-index">
       {%- for muni in site.data.municipalities %}
       {%- assign mc = site.data.candidates | where: "municipality", muni.slug %}
-      <li class="muni-index__item">
+      {%- comment -%}
+        data-muni-name is what the finder matches the geocoder's answer against,
+        after both sides are stripped to letters and digits. That stripping is
+        the whole alias table: the geocoder returns "Saltspring Island" for what
+        this file calls "Salt Spring Island", and resolves "Saanichton" to
+        "Central Saanich" before we ever see it.
+      {%- endcomment -%}
+      <li class="muni-index__item" data-muni-name="{{ muni.name }}">
         {%- if mc.size > 0 %}
         <a class="muni-index__link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">
           <span class="muni-index__name">{{ muni.name }}</span>
@@ -187,24 +226,7 @@ description: >-
     <p>
       Livable CRD is a joint project between organizers and advocates across the region.
     </p>
-    <ul class="partner-list">
-      {% for partner in site.data.partners %}
-      <li>
-        {% if site.partner_logos and partner.logo %}
-        {% if partner.logo contains "/" %}{% assign partner_logo_src = partner.logo %}{% else %}{% assign partner_logo_src = partner.logo | prepend: '/assets/images/partners/' %}{% endif %}
-        <img class="partner-logo" src="{{ partner_logo_src | relative_url }}" alt="{{ partner.name }} logo" loading="lazy">
-        {% endif %}
-        {% if partner.category %}
-        {% assign cat = site.data.subjects | where: "id", partner.category | first %}
-        {% if cat %}{% assign cat_label = cat.name %}{% else %}{% assign cat_label = partner.category %}{% endif %}
-        <p class="org-category"><span class="category-pill category-pill--{{ partner.category | slugify }}">{{ cat_label }}</span></p>
-        {% endif %}
-        <p class="org-name">{{ partner.name }}</p>
-        {% if partner.note %}<p class="org-note">{{ partner.note }}</p>{% endif %}
-        {% if partner.url %}<p class="org-link"><a href="{{ partner.url }}" target="_blank" rel="noopener">Visit website →</a></p>{% endif %}
-      </li>
-      {% endfor %}
-    </ul>
+    {% include partner-list.html %}
     <p class="content-follow-up">
       Interested in joining the coalition or supporting this work?
       <a href="{{ '/donate/' | relative_url }}">Donate</a>
@@ -246,3 +268,5 @@ description: >-
     </p>
   </div>
 </section>
+
+<script src="{{ '/assets/js/muni-finder.js' | asset_url }}" defer></script>
