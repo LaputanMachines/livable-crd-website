@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require "shellwords"
+require "time"
+
 # Per-candidate scorecard pages, one for every entry in _data/candidates.yml.
 #
 # Checked-in Markdown files were rejected: candidates.yml is itself regenerated
@@ -17,8 +20,18 @@ module LivableCrd
   # of the site uses (/scorecard/saanich/jane-doe/) without a `permalink` key.
   class CandidatePage < Jekyll::PageWithoutAFile
     def initialize(site, dir, candidate:, municipality_name:, municipality_slug:,
-                   standing_label:, slate_class: nil, election_year: nil)
+                   standing_label:, slate_class: nil, election_year: nil,
+                   last_modified_at: nil)
       super(site, site.source, dir, "index.html")
+
+      # jekyll-sitemap takes <lastmod> from a source file's mtime, and these
+      # pages have no source file, so all of them shipped without one. The
+      # generator hands down the mtime of the data files the page is built from
+      # instead; see data_mtime in CandidatePages for why that is the honest
+      # date. Without it the twice-daily sync rebuilds the whole site and tells
+      # a crawler nothing has changed, which matters most on the day the grades
+      # land and 117 pages gain their content at once.
+      data["last_modified_at"] = last_modified_at if last_modified_at
 
       name = candidate["name"]
       office = candidate["office"]
@@ -135,33 +148,83 @@ module LivableCrd
   # table that JavaScript filters is not a page a search engine can offer anyone.
   class MunicipalityPage < Jekyll::PageWithoutAFile
     def initialize(site, dir, municipality_name:, municipality_slug:, office_groups:,
-                   candidate_count:, siblings:, election_year: nil)
+                   candidate_count:, siblings:, race_counts: {}, municipality: {},
+                   election_day: nil, election_year: nil, last_modified_at: nil)
       super(site, site.source, dir, "index.html")
+
+      # See the note on CandidatePage: no source file, so no mtime, so no
+      # <lastmod> in the sitemap unless the generator supplies one.
+      data["last_modified_at"] = last_modified_at if last_modified_at
 
       data["layout"] = "municipality"
       data["municipality_name"] = municipality_name
       data["municipality_slug"] = municipality_slug
       data["office_groups"] = office_groups
       data["candidate_count"] = candidate_count
+      data["race_counts"] = race_counts
       data["siblings"] = siblings
       data["election_year"] = election_year
 
-      # "Esquimalt Candidates 2026": the words in the order they get typed. The
-      # longest name in _data/municipalities.yml still leaves seo-tag's appended
+      # Election day, and what this municipality actually elects. Both are
+      # optional and the template draws neither when they are missing: the
+      # date lives in _data/deadlines.yml and the seat counts in
+      # _data/municipalities.yml, and a page that has to wait for one of them
+      # is better than a page that guesses. Seat counts especially: this is an
+      # elections site, and a wrong number of council seats is worse than no
+      # number at all.
+      data["election_day"] = election_day
+      data["election_day_label"] = format_election_day(election_day)
+      data["council_seats"] = municipality["council_seats"]
+      data["mayor_seats"] = municipality["mayor_seats"]
+      data["elections_url"] = municipality["elections_url"]
+      data["summary"] = municipality["summary"]
+
+      # "Esquimalt Municipal Election 2026": the words in the order they get
+      # typed. This page used to be titled "Esquimalt Candidates 2026", which
+      # matches "esquimalt candidates 2026" and nothing else; the query people
+      # actually type is the name of the election, and the head term for it was
+      # the one word the title never said. "Candidates" is not lost - it is in
+      # the h2 over the list, in every office heading, and in the description
+      # below - and "election" is the word this page was losing on.
+      #
+      # The longest name in _data/municipalities.yml that has a page (Central
+      # Saanich, 39 characters here) still leaves seo-tag's appended
       # " | Livable CRD" inside the ~60 characters Google displays.
-      data["title"] = [municipality_name, "Candidates", election_year].compact.join(" ")
-      data["description"] = description_for(municipality_name, election_year)
+      data["title"] = [municipality_name, "Municipal Election", election_year].compact.join(" ")
+      data["description"] = description_for(municipality_name, election_year, data["election_day_label"])
     end
 
     private
 
+    # The one date on this page a voter cannot look up faster somewhere else,
+    # written the way it is spoken. nil when _config.yml sets no `election_day`,
+    # which is what keeps the date out of the description and off the page
+    # rather than printing a guess: this is an elections site, and a wrong
+    # general voting day is the single worst fact it could publish.
+    def format_election_day(date)
+      return nil unless date.respond_to?(:strftime)
+
+      date.strftime("%A, %B %-d, %Y")
+    end
+
     # Under ~160 characters, and as silent about grades as the candidate pages
     # are, for the same reason: most of the list it describes is pending until
     # the questionnaires come back.
-    def description_for(municipality_name, election_year)
-      election = election_year ? "the #{election_year} municipal election" : "the coming municipal election"
-      "Every confirmed candidate running in #{municipality_name} in #{election}, " \
-        "with the Livable CRD scorecard on transit, housing, and climate."
+    #
+    # Leads with the date because that is the question behind the query: someone
+    # searching "saanich municipal election 2026" wants to know when it is
+    # before they want to know who is on the ballot. Falls back to the wording
+    # this description carried before the date existed, so a missing
+    # election-day entry costs a sentence rather than the description.
+    def description_for(municipality_name, election_year, election_day_label)
+      if election_day_label
+        "#{municipality_name} municipal election, #{election_day_label}. Every confirmed " \
+          "candidate, with the Livable CRD scorecard on transit, housing, and climate."
+      else
+        election = election_year ? "the #{election_year} municipal election" : "the coming municipal election"
+        "Every confirmed candidate running in #{municipality_name} in #{election}, " \
+          "with the Livable CRD scorecard on transit, housing, and climate."
+      end
     end
   end
 
@@ -187,6 +250,16 @@ module LivableCrd
       standings = index_by(site.data["standings"], "id")
       election_year = site.config["election_year"]
       seen = {}
+
+      # Stat'd once here rather than per page: 129 pages would otherwise stat
+      # the same two files 129 times to arrive at the same two answers.
+      candidates_mtime = data_mtime(site, "candidates")
+      # A candidate page's content is the join of both files, so its <lastmod>
+      # is the later of the two. sync-questionnaire.yml rewrites scores.yml
+      # half an hour after sync-candidates.yml rewrites candidates.yml, and it
+      # is the grades landing in the former that a crawler needs to come back
+      # for.
+      candidate_mtime = [candidates_mtime, data_mtime(site, "scores")].compact.max
 
       # {municipality slug => {name, entries}}, filled as the candidate pages are
       # built and turned into the municipality indexes below. Accumulated on this
@@ -249,7 +322,8 @@ module LivableCrd
           municipality_slug: muni_slug,
           standing_label: label,
           slate_class: site.data["slate_classes"][candidate["slate"].to_s.strip],
-          election_year: election_year
+          election_year: election_year,
+          last_modified_at: candidate_mtime
         )
 
         slate = candidate["slate"].to_s.strip
@@ -262,11 +336,17 @@ module LivableCrd
           "url" => "/#{dir}/",
           "office" => candidate["office"],
           "standing_label" => label,
+          # Whether this person holds elected office right now, straight from
+          # _data/standings.yml's `current` rather than matched off the id or
+          # the label: a former mayor and a sitting one both read "Incumbent"
+          # in one and carry "incumbent" in the other, and only `current`
+          # separates them. Counted on the municipality index.
+          "incumbent" => standings.dig(candidate["standing"], "current") == true,
           "slate" => slate.empty? ? nil : slate
         }
       end
 
-      build_municipality_pages(site, groups, election_year)
+      build_municipality_pages(site, groups, election_year, candidates_mtime)
     end
 
     private
@@ -280,13 +360,15 @@ module LivableCrd
     # reader to name a candidate we have missed. A page of its own whose entire
     # content is that sentence would be a thin result competing with the pages
     # that do answer the question.
-    def build_municipality_pages(site, groups, election_year)
+    def build_municipality_pages(site, groups, election_year, last_modified_at)
       # Every index links to all the others, so each one is reachable from any of
       # them rather than only from the scorecard. Sorted by name because the
       # reader scans this list for a place, and `groups` is in the order the
       # candidate rows happened to arrive in.
       slugs = groups.keys.sort_by { |slug| groups[slug]["name"] }
       directory = slugs.map { |slug| { "name" => groups[slug]["name"], "url" => "/scorecard/#{slug}/" } }
+      municipalities = index_by(site.data["municipalities"], "slug")
+      election_day = election_day(site)
 
       slugs.each do |slug|
         entries = groups[slug]["entries"]
@@ -298,10 +380,93 @@ module LivableCrd
           municipality_slug: slug,
           office_groups: office_groups(entries),
           candidate_count: entries.size,
+          # Counted here rather than in Liquid: the template would have to
+          # filter the same list twice more, and these two numbers are the only
+          # sentence on the page that is not a name or a shared template.
+          race_counts: race_counts(entries),
+          municipality: municipalities[slug] || {},
+          election_day: election_day,
           siblings: directory.reject { |m| m["url"] == "/scorecard/#{slug}/" },
-          election_year: election_year
+          election_year: election_year,
+          last_modified_at: last_modified_at
         )
       end
+    end
+
+    # How many are seeking each office, and how many of the whole field already
+    # hold elected office somewhere. "23 confirmed candidates, 4 running for
+    # mayor, 6 of them incumbents" is the one line on a municipality index that
+    # is true of that municipality and no other, which is the whole reason it is
+    # computed.
+    def race_counts(entries)
+      {
+        "total" => entries.size,
+        "mayor" => entries.count { |e| e["office"] == "Mayor" },
+        "councillor" => entries.count { |e| e["office"] == "Councillor" },
+        "incumbent" => entries.count { |e| e["incumbent"] }
+      }
+    end
+
+    # Election day, from `election_day` in _config.yml beside `election_year`.
+    #
+    # Deliberately not an entry in _data/deadlines.yml, which is the coalition's
+    # own schedule: every date in that file is something this project does, the
+    # homepage draws it under the heading "Project timeline", and commit 3503fe4
+    # settled that it ends on the day the grades are published. General voting
+    # day is not a project milestone, it is a fact about the election, and
+    # filing it there would reopen that decision and put a date nobody here
+    # controls in a list of dates this coalition owns.
+    #
+    # nil when the key is absent or unparseable, and every template that uses it
+    # draws nothing rather than a gap - the same contract the rest of this file
+    # keeps with `election_year`.
+    def election_day(site)
+      raw = site.config["election_day"]
+      return nil if raw.to_s.strip.empty?
+
+      Date.parse(raw.to_s)
+    rescue ArgumentError
+      log_data_warning("election_day #{raw.inspect} in _config.yml is not a date; omitting it")
+      nil
+    end
+
+    # When the data behind a generated page last changed.
+    #
+    # The commit date, NOT the file's mtime. actions/checkout writes every file
+    # at checkout time, so in CI an mtime says "changed just now" on every
+    # build, and a sitemap that claims all 129 pages changed every day is worth
+    # less than one that claims nothing - a crawler learns to ignore it, which
+    # is the opposite of the point. The commit date is the same on every
+    # machine and moves only when the sync workflow actually commits new data.
+    #
+    # This needs full history: .github/workflows/deploy.yml sets fetch-depth: 0
+    # for exactly this reason. Falls back to the mtime if git cannot answer (a
+    # shallow clone, a tarball, no git at all), which is right locally and
+    # merely unhelpful in CI - never wrong enough to fail a build over.
+    def data_mtime(site, name)
+      path = site.in_source_dir("_data", "#{name}.yml")
+      return nil unless File.exist?(path)
+
+      @data_mtimes ||= {}
+      @data_mtimes[path] ||= git_commit_time(site, path) || begin
+        log_data_warning("no git history for _data/#{name}.yml; <lastmod> falls back to the file mtime")
+        File.mtime(path)
+      end
+    end
+
+    # Last commit to touch one path, as a Time, or nil if git cannot say.
+    # Deliberately swallows everything: a sitemap timestamp is not worth failing
+    # a build for, and every caller above already handles nil.
+    def git_commit_time(site, path)
+      output = Dir.chdir(site.source) do
+        `git log -1 --format=%cI -- #{Shellwords.escape(path)} 2>/dev/null`
+      end
+      return nil unless $?&.success?
+
+      stamp = output.to_s.strip
+      stamp.empty? ? nil : Time.parse(stamp)
+    rescue StandardError
+      nil
     end
 
     # Offices in the order a ballot puts them: mayor, then council, then whatever

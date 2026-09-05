@@ -1,9 +1,9 @@
 <footer class="site-footer">
   <div class="footer-inner">
     {%- comment -%}
-      Two columns on desktop: the identity/legal block on the left, the full
-      page list stacked on the right. Below 720px the grid collapses and the
-      two blocks stack in source order.
+      Three columns on desktop: the identity/legal block on the left, the full
+      page list, and every municipality index. Below 720px the grid collapses
+      and the blocks stack in source order.
     {%- endcomment -%}
     <div class="footer-cols">
       <div class="footer-col footer-col--main">
@@ -29,6 +29,36 @@
           <li><a href="{{ '/press/' | relative_url }}">Press</a></li>
           <li><a href="{{ '/contact/' | relative_url }}">Contact</a></li>
           <li><a href="{{ '/code-of-conduct/' | relative_url }}">Code of Conduct</a></li>
+        </ul>
+      </nav>
+
+      {%- comment -%}
+        Every municipality index, on every page.
+
+        These are the pages this site is most often looked for and they were the
+        hardest to reach: the only link to any of them was a heading inside the
+        scorecard's table. Here they are one click from anywhere, which is worth
+        as much to a crawler working out what this site is about as it is to a
+        reader who wants the municipality next to theirs.
+
+        Deliberately not in the top nav: _includes/header.html caps that at four
+        destinations on purpose, and this gets the same reach without spending
+        one of them.
+
+        Same guard as everywhere else - a municipality with nobody confirmed has
+        no page, so it is left out here rather than linked to a 404. Left out
+        entirely rather than named: unlike the homepage index, this list is
+        navigation, and a row that goes nowhere is not.
+      {%- endcomment -%}
+      <nav class="footer-col footer-col--nav footer-nav" aria-labelledby="footer-municipalities">
+        <h2 class="footer-nav__heading" id="footer-municipalities">Municipalities</h2>
+        <ul>
+          {%- for muni in site.data.municipalities %}
+          {%- assign mc = site.data.candidates | where: "municipality", muni.slug %}
+          {%- if mc.size > 0 %}
+          <li><a href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">{{ muni.name }}</a></li>
+          {%- endif %}
+          {%- endfor %}
         </ul>
       </nav>
     </div>

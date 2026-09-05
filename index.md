@@ -1,7 +1,9 @@
 ---
 layout: default
-# No `title` here: jekyll-seo-tag renders the homepage <title> as
-# "Livable CRD | <site.tagline>", which is more descriptive than "Home".
+# No `title` here: it is set in _config.yml's `defaults:` for this one path,
+# beside the note explaining why the homepage leads with the words rather than
+# with the brand. Setting it there keeps the string in the same file as the rest
+# of the site-wide SEO configuration.
 description: >-
   Livable CRD is a non-partisan coalition scoring Capital Regional District
   municipal candidates on transit, housing, climate, arts, and other livability
@@ -40,6 +42,59 @@ description: >-
 </section>
 
 {%- comment -%}
+  Every municipality index, linked from the homepage.
+
+  These pages answer the question this site is most often searched for - who is
+  running where I live - and until now the only route to any of them was a
+  heading inside the scorecard's table, which put every one of them two clicks
+  from the front page and left the homepage without a single municipality name
+  in its text. A crawler arriving at the root had one link into a tree of 129
+  pages.
+
+  Built from the same source and the same guard the scorecard's table headings
+  use (scorecard/index.md): a municipality with nobody confirmed gets no page
+  from _plugins/candidate_pages.rb, so linking one here would be a link to a
+  404. It is named rather than linked instead, which is also the honest thing to
+  show - "nobody has announced here yet" is a real answer to the question this
+  section asks.
+{%- endcomment -%}
+<section class="section section--under-hero">
+  <div class="container">
+    <h2 class="section-title">Find your municipality</h2>
+    <p>
+      Every confirmed candidate for the
+      {% if site.election_year %}{{ site.election_year }} {% endif %}municipal
+      election, grouped by where they are running.
+      {%- if site.election_day %}
+      General voting day across the Capital Region is
+      {{ site.election_day | date: "%A, %B %-d, %Y" }}.
+      {%- endif %}
+    </p>
+    <ul class="muni-index">
+      {%- for muni in site.data.municipalities %}
+      {%- assign mc = site.data.candidates | where: "municipality", muni.slug %}
+      <li class="muni-index__item">
+        {%- if mc.size > 0 %}
+        <a class="muni-index__link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">
+          <span class="muni-index__name">{{ muni.name }}</span>
+          <span class="muni-index__count">{{ mc.size }} candidate{% if mc.size != 1 %}s{% endif %}</span>
+        </a>
+        {%- else %}
+        <span class="muni-index__link muni-index__link--empty">
+          <span class="muni-index__name">{{ muni.name }}</span>
+          <span class="muni-index__count">None confirmed yet</span>
+        </span>
+        {%- endif %}
+      </li>
+      {%- endfor %}
+    </ul>
+    <p class="content-follow-up">
+      <a href="{{ '/scorecard/' | relative_url }}">Compare every candidate in the region <span aria-hidden="true">&rarr;</span></a>
+    </p>
+  </div>
+</section>
+
+{%- comment -%}
   --under-hero, not --alt: the two carry the same background, but --alt also
   draws a top border, and the hero already closes with a heavy one. The
   modifier names the slot rather than the content because the alternating
@@ -57,7 +112,8 @@ description: >-
       evaluates. Several participating organizations are building a shared
       questionnaire; the timeline below shows where it stands.
       Once candidates are surveyed, ratings will be published by municipality ahead
-      of election day.
+      of{% if site.election_day %} general voting day,
+      {{ site.election_day | date: "%A, %B %-d, %Y" }}{% else %} election day{% endif %}.
     </p>
     {% include sponsor-notice.html %}
   </div>

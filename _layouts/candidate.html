@@ -222,7 +222,7 @@ layout: default
       <details class="candidate-grade__disclosure" id="topic-{{ subject.id }}">
         <summary class="candidate-grade">
           <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
-          <span class="candidate-grade__name">{{ subject.name }}</span>
+          <h2 class="candidate-grade__name">{{ subject.name }}</h2>
           <span class="candidate-grade__leader" aria-hidden="true"></span>
           {% include grade-badge.html grade=cell state=cell_state %}
           {%- comment -%}
@@ -437,7 +437,7 @@ layout: default
       {%- endcomment -%}
       <div class="candidate-grade">
         <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
-        <span class="candidate-grade__name">{{ subject.name }}</span>
+        <h2 class="candidate-grade__name">{{ subject.name }}</h2>
         <span class="candidate-grade__leader" aria-hidden="true"></span>
         {% include grade-badge.html grade=cell state=cell_state %}
         <svg class="candidate-grade__chevron candidate-grade__chevron--disabled" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
@@ -470,3 +470,79 @@ layout: default
 </div>
 
 <script src="{{ '/assets/js/candidate.js' | asset_url }}" defer></script>
+
+{%- comment -%}
+  This page as a machine-readable profile of one candidate. Until now the only
+  structured data on it was the site-wide Organization block in
+  _includes/head.html and jekyll-seo-tag's generic WebPage, neither of which
+  says that the page is about a person at all - on a site whose candidate pages
+  are the ones that already surface in search, that was the cheapest thing left
+  undone.
+
+  ProfilePage wrapping a Person is the shape Google documents for "a page about
+  one individual", with `mainEntity` naming which individual. `sameAs` carries
+  the campaign site: it is that person's own page elsewhere on the web, which
+  is exactly what sameAs is for, and it is the strongest signal available that
+  the Jane Doe on this page is the Jane Doe on that one.
+
+  Nothing is asserted about grades. They are published per topic and gated on
+  the sheet, so a page can carry none, some, or all of them, and there is no
+  honest single rating to put in a Rating. The same reason the meta description
+  says nothing about them.
+
+  Everything goes through `jsonify`, which quotes and escapes; nothing is
+  interpolated into the JSON by hand.
+{%- endcomment -%}
+{%- assign muni_url = '/scorecard/' | append: page.municipality_slug | append: '/' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": {{ '/' | absolute_url | jsonify }} },
+        { "@type": "ListItem", "position": 2, "name": "Scorecard", "item": {{ '/scorecard/' | absolute_url | jsonify }} },
+        { "@type": "ListItem", "position": 3, "name": {{ page.municipality_name | jsonify }}, "item": {{ muni_url | absolute_url | jsonify }} },
+        { "@type": "ListItem", "position": 4, "name": {{ c.name | jsonify }}, "item": {{ page.url | absolute_url | jsonify }} }
+      ]
+    },
+    {
+      "@type": "ProfilePage",
+      "url": {{ page.url | absolute_url | jsonify }},
+      "name": {{ page.title | jsonify }},
+      "description": {{ page.description | jsonify }},
+      "mainEntity": {
+        "@type": "Person",
+        "name": {{ c.name | jsonify }},
+        "url": {{ page.url | absolute_url | jsonify }},
+        {%- if page.website %}
+        "sameAs": [{{ page.website | jsonify }}],
+        {%- endif %}
+        {%- if page.subtitle %}
+        "description": {{ page.subtitle | jsonify }},
+        {%- endif %}
+        {%- if page.slate %}
+        {%- comment -%}
+          The electoral organization the candidate runs with, named as an
+          affiliation. Naming a slate is not an endorsement of it, the same
+          position the visible page takes.
+        {%- endcomment -%}
+        "affiliation": {
+          "@type": "Organization",
+          "name": {{ page.slate | jsonify }}
+        },
+        {%- endif %}
+        "homeLocation": {
+          "@type": "AdministrativeArea",
+          "name": {{ page.municipality_name | jsonify }},
+          "containedInPlace": {
+            "@type": "AdministrativeArea",
+            "name": "Capital Regional District, British Columbia, Canada"
+          }
+        }
+      }
+    }
+  ]
+}
+</script>

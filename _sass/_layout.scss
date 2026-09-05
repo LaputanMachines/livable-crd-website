@@ -457,13 +457,25 @@ main {
     gap: $space-lg;
 
     @media (min-width: 720px) {
-      grid-template-columns: minmax(0, 1fr) auto;
+      grid-template-columns: minmax(0, 1fr) auto auto;
       column-gap: $space-xl;
       align-items: start;
     }
   }
 
   .footer-col--main > :last-child { margin-bottom: 0; }
+
+  // Labels the municipality list, which unlike the page list beside it is not
+  // self-evident from its contents. Sized to the footer's own text rather than
+  // to the h2 scale: it is a column label, not a section of the page.
+  .footer-nav__heading {
+    margin: 0 0 $space-xs;
+    font-family: $font-display;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-size: 0.75rem;
+  }
 
   .footer-nav {
     margin: 0 0 $space-sm;

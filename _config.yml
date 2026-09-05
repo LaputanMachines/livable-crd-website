@@ -64,14 +64,40 @@ partner_logos: false
 # than printing a stale one.
 election_year: 2026
 
+# General voting day, as an ISO date string. Read by
+# _plugins/candidate_pages.rb for each municipality index's date line and
+# meta description, and by the Liquid `date` filter wherever a template prints
+# it, so the date is written here once and nowhere else.
+#
+# NOT in _data/deadlines.yml. That file is the coalition's own schedule - every
+# entry in it is something this project does, the homepage renders it under
+# "Project timeline", and it deliberately ends on the day the grades are
+# published. General voting day is a fact about the election rather than a
+# milestone of ours.
+#
+# Quoted so Jekyll hands templates a plain string, which is what the Liquid
+# `date` filter wants; the plugin parses it into a Date itself. Blank it and
+# every date line disappears cleanly rather than printing a stale one - which
+# is the behaviour to rely on rather than guessing, because a wrong voting day
+# is the worst fact this site could publish.
+#
+# Source: Elections BC - B.C. general local elections are held on the third
+# Saturday of October every four years.
+election_day: "2026-10-17"
+
 # --- SEO (jekyll-seo-tag) ---
-# tagline is appended to the site title on the homepage:
-#   "Livable CRD | 2026 Capital Region candidate scorecard"
-# Kept short so the full homepage <title> stays under Google's ~60-char limit.
-# The year is written out here rather than read from `election_year` above:
-# _config.yml is not itself templated, and one repeated literal costs less than
-# the per-page Liquid override the alternative would need.
-tagline: "2026 Capital Region candidate scorecard"
+# The homepage <title>, set through `defaults:` below rather than as `tagline`.
+#
+# `tagline` renders the homepage as "Livable CRD | <tagline>", which leads with
+# the brand; a page title leads with the words instead - "2026 Capital Region
+# candidate scorecard | Livable CRD" - and the brand is the half a truncated
+# title can afford to lose. It also fixes og:title: seo-tag takes that from the
+# page title and falls back to the bare site title, so every share of the
+# homepage read just "Livable CRD" while the <title> beside it said far more.
+#
+# Kept short so the full homepage <title> stays under Google's ~60-char limit
+# (this one lands at 53). The year is written out here rather than read from
+# `election_year` above: _config.yml is not itself templated.
 locale: en_CA
 logo: /assets/images/logo.png            # publisher logo in structured data
 
@@ -83,6 +109,12 @@ permalink: pretty
 # Inject the default social image into every page so og:image/twitter:image emit.
 # Individual pages can override `image` in their own front matter.
 defaults:
+  # The homepage title. See the SEO note above for why it is set here rather
+  # than as `tagline`; it is scoped to the one file so no other page inherits it.
+  - scope:
+      path: "index.md"
+    values:
+      title: "2026 Capital Region candidate scorecard"
   - scope:
       path: ""
     values:

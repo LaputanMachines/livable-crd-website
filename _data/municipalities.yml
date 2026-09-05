@@ -1,81 +1,237 @@
 # Participating municipalities (matches coalition questionnaire scope)
+#
+# Fields:
+#   slug           URL segment, and the key _data/candidates.yml joins on.
+#   name           Display name.
+#   status         Vestigial; read only by _includes/municipality-card.html,
+#   grade          which nothing currently includes.
+#
+#   council_seats  How many councillors this municipality elects, and how many
+#   mayor_seats    mayors. Rendered on the municipality index as "on the ballot"
+#                  and nowhere else. Both are OPTIONAL and the template draws
+#                  neither when they are missing, which is the behaviour to rely
+#                  on: this is an elections site, and no number is better than a
+#                  wrong one. Every value below was read off that municipality's
+#                  own 2026 nomination notice or council page in September 2026
+#                  (see elections_url) - do not fill one in from memory, and
+#                  re-check them all at the start of the next cycle, because a
+#                  municipality can change the size of its council by bylaw.
+#
+#   elections_url  That municipality's own election page. Linked from the index
+#                  so a reader who wants voting places, mail-in ballots or the
+#                  official candidate list goes to the authority for it rather
+#                  than to us. Optional; no link is drawn without it.
+#
+#   summary        A paragraph specific to this municipality, rendered on its
+#                  index above the candidate list. Deliberately about the place
+#                  and what its council decides, NOT about the race: the site
+#                  syncs candidate data daily but this file is hand-written, so
+#                  anything here about who is running or which seats are open
+#                  goes stale silently. Keep each one saying something true of
+#                  this municipality and no other - the point of them is that
+#                  the sixteen indexes stop reading as one page with the name
+#                  swapped. Optional.
+#
+# The four electoral areas at the bottom carry no council_seats/mayor_seats:
+# they elect a regional director and, on the islands, Islands Trust trustees,
+# which is not the mayor-and-council shape these fields describe. None of them
+# has a page today (no confirmed candidates), and if one ever does its index
+# simply renders without the seat line.
+
 - slug: saanich
   name: Saanich
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 8
+  elections_url: "https://www.saanich.ca/EN/main/local-government/2026-election.html"
+  summary: >-
+    Saanich is the most populous municipality in the region, and the one whose
+    council decides the most at once: it runs from the dense blocks bordering
+    Victoria out to farmland and parkland behind the urban containment
+    boundary, so the same council votes on tower proposals, rural road
+    standards, and where that boundary should sit. It shares a border, a bus
+    network, and an unresolved amalgamation question with Victoria, and elects
+    the largest council in the Capital Region.
 
 - slug: victoria
   name: Victoria
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 8
+  elections_url: "https://www.victoria.ca/city-government/elections"
+  summary: >-
+    Victoria is the regional core and the provincial capital: the densest
+    housing, the most transit service, the region's largest arts sector, and
+    the separated bike network that every other council here is compared
+    against. Its council also carries decisions the surrounding municipalities
+    do not, from downtown street design to the services concentrated in a city
+    centre that the whole region uses. It is one of two municipalities in the
+    region that elects eight councillors.
 
 - slug: esquimalt
   name: Esquimalt
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.esquimalt.ca/government-bylaws/elections"
+  summary: >-
+    Esquimalt is small and almost entirely built out, which makes nearly every
+    housing decision its council takes a decision about changing an existing
+    street rather than opening a new one. It borders Victoria, shares its
+    transit corridors, and holds the naval base and the working harbour, so
+    land use, employment, and shoreline questions arrive at this council
+    together in a way they do not elsewhere in the region.
 
 - slug: oak-bay
   name: Oak Bay
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.oakbay.ca/elections"
+  summary: >-
+    Oak Bay is the region's clearest test of what a council does with
+    provincial housing legislation in a low-density, heritage-heavy
+    municipality: almost all of its land is single-family, its housing stock is
+    among the oldest in the region, and it is bordered on two sides by Victoria
+    and Saanich. Density, tree canopy, and how the municipality funds aging
+    infrastructure are the questions that keep returning to this council.
 
 - slug: view-royal
   name: View Royal
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.viewroyal.ca/EN/main/town/elections.html"
+  summary: >-
+    View Royal sits between Victoria and the West Shore, and most of the
+    region's traffic passes through it on the way somewhere else. That gives
+    its council an unusual share of decisions about highway-adjacent land, the
+    E&N rail corridor, and how a small town of a few thousand people absorbs
+    growth generated by its much larger neighbours. It is also home to the
+    region's hospital.
 
 - slug: colwood
   name: Colwood
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.colwood.ca/local-government/mayor-council/elections"
+  summary: >-
+    Colwood is building a new town centre and a large waterfront neighbourhood
+    at the same time, which puts its council in the position of approving whole
+    districts rather than individual buildings. Transit service along the
+    Sooke Road and Island Highway corridors, shoreline and sea-level planning,
+    and whether new housing arrives with the walking and cycling connections to
+    reach it are the recurring questions here.
 
 - slug: langford
   name: Langford
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://langford.ca/election-2026/"
+  summary: >-
+    Langford has been the fastest-growing city in the region for two decades
+    and has the youngest population to go with it, so its council decides
+    questions of pace and sequencing that the older municipalities do not: how
+    tall, how fast, and whether schools, transit, parks, and healthcare arrive
+    with the housing or years behind it. What this council does about growth
+    sets the terms for the whole West Shore.
 
 - slug: highlands
   name: Highlands
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.highlands.ca/local-government/elections"
+  summary: >-
+    Highlands is the region's smallest municipality by population and one of
+    its largest by forest cover: rural, unserviced for the most part, and with
+    no town centre. Its council's decisions are mostly about what stays as it
+    is - watershed and wildfire protection, quarry and industrial land, and how
+    a community of a couple of thousand people keeps its roads and its fire
+    service - which makes it a very different ballot from the ones next door.
 
 - slug: metchosin
   name: Metchosin
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 4
+  elections_url: "https://www.metchosin.ca/municipal-hall/elections"
+  summary: >-
+    Metchosin is rural by design: large lots, working farms, and a council
+    whose land-use decisions have consistently been about holding that pattern
+    against regional growth pressure on every side. Agricultural land, parks
+    and trails, and how a municipality with almost no commercial tax base pays
+    for its services are the questions its council keeps returning to.
 
 - slug: central-saanich
   name: Central Saanich
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.centralsaanich.ca/municipal-hall/elections"
+  summary: >-
+    Central Saanich holds much of the region's remaining farmland, and its
+    council spends more time than most on the boundary between growing
+    Brentwood Bay and Saanichton and the agricultural land around them. Highway
+    corridor safety, transit to the peninsula, and whether new housing goes
+    inside the existing village centres or at their edges are decided here.
 
 - slug: north-saanich
   name: North Saanich
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.northsaanich.ca/local-government/elections/"
+  summary: >-
+    North Saanich is largely rural and low-density, and holds the two gateways
+    most of the region arrives through: the airport and the Swartz Bay ferry
+    terminal. That gives its council a mix nowhere else has - farmland and
+    large-lot residential policy on one side, and regionally significant
+    transportation land on the other - alongside a long-running argument about
+    how much new housing the municipality should plan for.
 
 - slug: sidney
   name: Sidney
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.sidney.ca/government/elections/"
+  summary: >-
+    Sidney is the most walkable small town in the region: a compact seaside
+    downtown, apartments and townhouses within a few blocks of it, and one of
+    the oldest median ages in British Columbia. Its council's decisions land on
+    housing that lets people age in place, transit and healthcare access to a
+    town at the end of the peninsula, and keeping a main street that works
+    without a car.
 
 - slug: sooke
   name: Sooke
   status: coming_soon
   grade: null
-  summary: null
+  mayor_seats: 1
+  council_seats: 6
+  elections_url: "https://www.sooke.ca/municipal-hall/elections/"
+  summary: >-
+    Sooke is the region's western edge and has grown quickly while remaining
+    connected to the rest of the Capital Region by a single highway. That one
+    fact shapes most of what its council decides: how much housing to approve
+    and where, whether transit on the Highway 14 corridor can carry commuters,
+    and how a community that grew out of forestry and fishing pays for the
+    services a much larger population now needs.
 
 - slug: juan-de-fuca
   name: Juan de Fuca

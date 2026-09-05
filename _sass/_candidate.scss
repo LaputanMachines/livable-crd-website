@@ -221,7 +221,17 @@ summary.candidate-grade {
   flex-shrink: 0;
 }
 
+// An <h2>, not the <span> this was. The page renders nine topic sections and
+// used to carry exactly one heading in the whole document - the candidate's
+// name - so a page that is structurally an outline had no outline in it. Each
+// topic is a section about this candidate's position on it, which is what an h2
+// is for, and it is about to be the page's actual content once the grades
+// publish.
+//
+// The row is a flex container, so a block-level heading lays out exactly as the
+// span did; only the browser's own margin and font-size have to be undone.
 .candidate-grade__name {
+  margin: 0;
   font-family: $font-display;
   font-weight: 700;
   text-transform: uppercase;

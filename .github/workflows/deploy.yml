@@ -30,6 +30,15 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref || github.sha }}
+          # Full history, not the default shallow clone.
+          # _plugins/candidate_pages.rb dates the 129 generated pages from the
+          # last commit to touch _data/candidates.yml and _data/scores.yml, so
+          # the sitemap's <lastmod> moves when the sheet sync commits new data
+          # and stays put otherwise. A shallow clone has no commit for those
+          # paths, and the plugin would fall back to the file mtime - which
+          # checkout sets to "now", telling crawlers all 129 pages change on
+          # every build.
+          fetch-depth: 0
 
       - uses: actions/configure-pages@v5
         id: pages

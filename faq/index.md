@@ -34,12 +34,67 @@ description: >-
   {%- endcomment -%}
   <p>
     How the coalition's candidate scorecard is built, in the coalition's own
-    words. Each panel below opens onto one answer: what the letter grades mean
-    and how they are assigned, which organization writes and grades each topic,
-    what every policy category covers, how a candidate gets added to the
+    words. Each panel below opens onto one answer: when the election is and what
+    is on the ballot, what the letter grades mean and how they are assigned,
+    which organization writes and grades each topic, what every policy category
+    covers, how a candidate gets added to the
     <a href="{{ '/scorecard/' | relative_url }}">scorecard</a>, and the dates the
     <a href="{{ '/questionnaire/' | relative_url }}">questionnaire</a> runs to.
   </p>
+
+  {%- comment -%}
+    First panel, and the only one on this page not about how the scorecard
+    works. It is here because it was the plainest question about this election
+    that the site could not answer anywhere: the schedule this project runs to
+    was published in full, and the date the whole schedule exists to get ahead
+    of was not written down once.
+
+    Both facts come from _config.yml (`election_day`, `election_year`) and
+    _data/municipalities.yml, so this panel and the municipality indexes
+    cannot disagree about the date or about how many seats a council has.
+  {%- endcomment -%}
+  <details class="methodology" id="election-day">
+    <summary>When is the {% if site.election_year %}{{ site.election_year }} {% endif %}municipal election?</summary>
+    <div class="methodology__body">
+      {%- if site.election_day %}
+      <p>
+        General voting day across British Columbia is
+        <strong>{{ site.election_day | date: "%A, %B %-d, %Y" }}</strong>. Local
+        elections are held province-wide on the third Saturday of October every
+        four years, so every municipality in the Capital Regional District votes
+        on the same day.
+      </p>
+      {%- endif %}
+      <p>
+        Advance voting days, voting places, and mail-in ballots are set by each
+        municipality rather than by the province, and each one publishes its own.
+        Every <a href="{{ '/scorecard/' | relative_url }}">municipality's page on
+        this site</a> links to its election page for exactly that.
+      </p>
+
+      <h2>What is on the ballot</h2>
+      <p>
+        Each municipality elects a mayor and a council, and the size of the
+        council varies:
+      </p>
+      <ul>
+        {%- for muni in site.data.municipalities %}
+        {%- if muni.council_seats %}
+        <li>
+          <strong>{{ muni.name }}</strong>:
+          {{ muni.mayor_seats }} mayor and {{ muni.council_seats }} councillors
+        </li>
+        {%- endif %}
+        {%- endfor %}
+      </ul>
+      <p>
+        Voters also elect school trustees, and in the electoral areas and on the
+        islands a regional director and Islands Trust trustees. Those races are
+        outside the scope of this scorecard, which covers candidates for mayor
+        and council.
+      </p>
+    </div>
+  </details>
 
   <details class="methodology" id="methodology">
     <summary>How we grade: methodology</summary>
