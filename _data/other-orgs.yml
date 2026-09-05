@@ -43,24 +43,10 @@
 # a questionnaire nobody has published yet ("Not published yet"). An entry for a
 # campaign that is already running should always carry its `url`.
 #
-# One organization may hold more than one entry. Two of these are the Victoria
-# Urban Food Table, deliberately: the question intake closes on September 3 and
-# the forum is on October 5, so they expire on different days and the first can
-# be pulled without touching the second.
-
-- id: uft-questionnaire
-  org: Victoria Urban Food Table
-  topic: Food systems
-  headline: Victoria Urban Food Table is taking questions for its food systems questionnaire
-  note: >-
-    The Livable CRD questionnaire does not cover food systems. The Victoria
-    Urban Food Table is putting its own questions to City of Victoria council
-    candidates, and until 11pm on September 3 it is asking the public which
-    questions those should be. It expects to publish the questionnaire and the
-    candidates' answers by September 28.
-  url: "https://forms.gle/5gwF89dt1AYVNzQt5"
-  action_label: "Send them a question by September 3"
-  org_url: "https://www.victoriaurbanfoodtable.com/"
+# One organization may hold more than one entry, and an entry lives only as long
+# as the thing it points at. The Victoria Urban Food Table's question intake
+# closed on September 3 and its entry was pulled then; the October 5 forum
+# entry is untouched, which is the point of keeping them separate.
 
 - id: uft-forum
   org: Victoria Urban Food Table
