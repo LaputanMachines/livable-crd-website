@@ -673,20 +673,11 @@ main {
   border-bottom: $border-weight solid $color-text;
 }
 
-// The last slot before the topic cards. Named for the slot, not its contents,
-// like .section--under-hero above, so the homepage can be reordered without a
-// section inheriting the wrong edges.
-//
-// Background left at the page's own, because .section--alt sits directly above
-// and two lavender bands in a row put their borders back to back, which reads
-// as one botched rule rather than two sections. What the slot does need is a
-// closing rule: $color-bg and the $color-surface of .section--topics below are
-// two hairs apart, so with no border the two sections read as one band with
-// two headings in it.
-.section--above-topics {
-  border-bottom: $border-weight solid $color-text;
-}
-
+// The topic cards, on the third of the three backgrounds. It follows a
+// .section--alt band, whose bottom border is what separates the two:
+// $color-surface and the $color-bg of a bare .section are two hairs apart, so
+// the slot above this one must stay lavender or the pair reads as one band
+// with two headings in it.
 .section--topics {
   background: $color-surface;
 }

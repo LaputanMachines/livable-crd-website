@@ -134,13 +134,13 @@ description: >-
 </section>
 
 {%- comment -%}
-  --under-hero, not --alt: the two carry the same background, but --alt also
-  draws a top border, and the hero already closes with a heavy one. The
-  modifier names the slot rather than the content because the alternating
-  background belongs to the position on the page: whatever section is put
-  here next keeps the rhythm by keeping the class.
+  No modifier: the page's own background. The band above is lavender, so this
+  slot is the light one, and the sections below alternate from here. The
+  modifiers name slots rather than contents for exactly this reason - the
+  rhythm belongs to the position on the page, so reordering these sections
+  means moving the classes with the slots, not with the headings.
 {%- endcomment -%}
-<section class="section section--under-hero">
+<section class="section">
   <div class="container">
     <h2 class="section-title">What we are building</h2>
     <p>
@@ -168,7 +168,7 @@ description: >-
   candidate cut-offs: the two were the same schedule split in half, and split
   they answered "what are the dates" without answering "where are we now".
 {%- endcomment -%}
-<section class="section">
+<section class="section section--alt">
   <div class="container">
     <h2 class="section-title">Project timeline</h2>
     <p>
@@ -200,13 +200,13 @@ description: >-
   Livable CRD, and it now sits several sections higher with the paragraph it
   belongs to, far enough away that it no longer reads as covering these cards.
 
-  --alt because this is the slot for it: the timeline above is on the page's
-  own background, so the lavender band and its rules are what separate the two.
-  The coalition partners below take --above-topics for the same reason in
-  reverse. Neither modifier is named for its contents, so this pair can be
-  reordered again without either section losing its edges.
+  No modifier, so this sits on the page's own background between two lavender
+  bands: the timeline above and the coalition partners below both take --alt,
+  and their rules are what separate this section from each. Neither modifier is
+  named for its contents, so this pair can be reordered again as long as the
+  classes stay with the slots and the backgrounds keep alternating.
 {%- endcomment -%}
-<section class="section section--alt">
+<section class="section">
   <div class="container">
     <h2 class="section-title">Partner initiatives</h2>
     <p>
@@ -220,7 +220,13 @@ description: >-
   </div>
 </section>
 
-<section class="section section--above-topics">
+{%- comment -%}
+  The last lavender band before the topic cards, which carry $color-surface.
+  --alt rather than a bare .section: $color-bg and $color-surface are two hairs
+  apart, so on the page's own background this section and the one below it read
+  as one band with two headings in it.
+{%- endcomment -%}
+<section class="section section--alt">
   <div class="container">
     <h2 class="section-title">Coalition partners</h2>
     <p>
