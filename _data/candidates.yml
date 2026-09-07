@@ -604,11 +604,27 @@
   slate: null
   website: "https://davidgrove.ca/"
 
+- name: Kim Jordison
+  display_name: "Jordison, Kim"
+  municipality: colwood
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Doug Kobayashi
   display_name: "Kobayashi, Doug"
   municipality: colwood
   office: Mayor
   standing: incumbent-mayor
+  slate: null
+  website: null
+
+- name: Deborah Law
+  display_name: "Law, Deborah"
+  municipality: colwood
+  office: Councillor
+  standing: challenger
   slate: null
   website: null
 
