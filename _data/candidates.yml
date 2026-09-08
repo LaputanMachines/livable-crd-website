@@ -286,7 +286,7 @@
   office: Councillor
   standing: challenger
   slate: null
-  website: null
+  website: "https://www.shonadion4victoria.ca/"
 
 - name: Jerry Garcia
   display_name: "Garcia, Jerry"
@@ -302,7 +302,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
-  website: null
+  website: "https://marggardiner.ca/"
 
 - name: Peter Rose Gibbs
   display_name: "Gibbs, Peter Rose"
