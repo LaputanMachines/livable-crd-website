@@ -628,6 +628,14 @@
   slate: null
   website: null
 
+- name: Rob Martin
+  display_name: "Martin, Rob"
+  municipality: colwood
+  office: Mayor
+  standing: ex-incumbent-mayor
+  slate: null
+  website: null
+
 - name: Misty Olsen
   display_name: "Olsen, Misty"
   municipality: colwood
