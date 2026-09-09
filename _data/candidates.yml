@@ -344,6 +344,14 @@
   slate: null
   website: null
 
+- name: David Johnston
+  display_name: "Johnston, David"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Susan Kim
   display_name: "Kim, Susan"
   municipality: victoria
@@ -433,6 +441,22 @@
   slate: null
   website: "https://www.duncancavens.ca/"
 
+- name: Holly Courtright
+  display_name: "Courtright, Holly"
+  municipality: esquimalt
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: David Gautier
+  display_name: "Gautier, David"
+  municipality: esquimalt
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Dan Igaz
   display_name: "Igaz, Dan"
   municipality: esquimalt
@@ -498,6 +522,22 @@
   slate: null
   website: null
 
+- name: Cairine Green
+  display_name: "Green, Cairine"
+  municipality: oak-bay
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Roxanne Helme
+  display_name: "Helme, Roxanne"
+  municipality: oak-bay
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Sam Holland
   display_name: "Holland, Sam"
   municipality: oak-bay
@@ -521,6 +561,22 @@
   standing: incumbent-mayor
   slate: null
   website: "https://www.kevinmurdoch.ca/"
+
+- name: Esther Paterson
+  display_name: "Paterson, Esther"
+  municipality: oak-bay
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Sarah Starkweather
+  display_name: "Starkweather, Sarah"
+  municipality: oak-bay
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
 
 - name: Karin Sweeney
   display_name: "Sweeney, Karin"
@@ -596,6 +652,14 @@
   slate: null
   website: "https://harold4colwood.ca"
 
+- name: Terrilynn Gee
+  display_name: "Gee, Terrilynn"
+  municipality: colwood
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://www.terrilynnforcolwood.ca/"
+
 - name: David Grove
   display_name: "Grove, David"
   municipality: colwood
@@ -610,7 +674,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: null
-  website: null
+  website: "https://kimjordison.com/"
 
 - name: Doug Kobayashi
   display_name: "Kobayashi, Doug"
@@ -641,6 +705,14 @@
   municipality: colwood
   office: Councillor
   standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Jennifer Parlee
+  display_name: "Parlee, Jennifer"
+  municipality: colwood
+  office: Councillor
+  standing: challenger
   slate: null
   website: null
 
@@ -725,6 +797,14 @@
   slate: null
   website: "https://brysonforlangford.ca"
 
+- name: Trevor Hinton
+  display_name: "Hinton, Trevor"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Wendy Hobbs
   display_name: "Hobbs, Wendy"
   municipality: langford
@@ -732,6 +812,22 @@
   standing: challenger
   slate: null
   website: "https://www.instagram.com/wendyhobbs4langfordcouncil/"
+
+- name: Andrew Jackson
+  display_name: "Jackson, Andrew"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Matt Sahlstrom
+  display_name: "Sahlstrom, Matt"
+  municipality: langford
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: null
 
 - name: Mary Wagner
   display_name: "Wagner, Mary"
@@ -758,6 +854,14 @@
   website: "https://stewformayor.ca"
 
 # --- Highlands ---
+- name: Leslie Anderson
+  display_name: "Anderson, Leslie"
+  municipality: highlands
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Gord Baird
   display_name: "Baird, Gord"
   municipality: highlands
@@ -765,6 +869,55 @@
   standing: incumbent-councillor
   slate: null
   website: "https://gordbaird.ca"
+
+- name: Marcie McLean
+  display_name: "McLean, Marcie"
+  municipality: highlands
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Karel Roessingh
+  display_name: "Roessingh, Karel"
+  municipality: highlands
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Ken Williams
+  display_name: "Williams, Ken"
+  municipality: highlands
+  office: Mayor
+  standing: incumbent-mayor
+  slate: null
+  website: null
+
+# --- Metchosin ---
+- name: Shelly Donaldson
+  display_name: "Donaldson, Shelly"
+  municipality: metchosin
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Marie-Térèse Little
+  display_name: "Little, Marie-Térèse"
+  municipality: metchosin
+  office: Mayor
+  standing: incumbent-mayor
+  slate: null
+  website: null
+
+- name: Eric White
+  display_name: "White, Eric"
+  municipality: metchosin
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
 
 # --- Central Saanich ---
 - name: Pat Bryant
@@ -805,6 +958,14 @@
   office: Councillor
   standing: challenger
   slate: Sustain Our Central Saanich
+  website: null
+
+- name: Lori A Shaw
+  display_name: "Shaw, Lori A"
+  municipality: central-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
   website: null
 
 - name: Susan Zedel
@@ -873,8 +1034,40 @@
   slate: null
   website: null
 
+- name: Steve Duck
+  display_name: "Duck, Steve"
+  municipality: sidney
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Scott Garnett
   display_name: "Garnett, Scott"
+  municipality: sidney
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Rory Lambert
+  display_name: "Lambert, Rory"
+  municipality: sidney
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Richard Novek
+  display_name: "Novek, Richard"
+  municipality: sidney
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Terri O’Keeffe
+  display_name: "O’Keeffe, Terri"
   municipality: sidney
   office: Councillor
   standing: incumbent-councillor
@@ -886,6 +1079,14 @@
   municipality: sidney
   office: Councillor
   standing: ex-incumbent-mayor
+  slate: null
+  website: null
+
+- name: Peter Wainwright
+  display_name: "Wainwright, Peter"
+  municipality: sidney
+  office: Mayor
+  standing: ex-incumbent-councillor
   slate: null
   website: null
 
@@ -930,12 +1131,28 @@
   slate: null
   website: "https://nick4sooke.ca/"
 
+- name: Noah Dowhy
+  display_name: "Dowhy, Noah"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Janet Evans
   display_name: "Evans, Janet"
   municipality: sooke
   office: Councillor
   standing: ex-incumbent-mayor
   slate: Sooke First
+  website: null
+
+- name: Landon Grams
+  display_name: "Grams, Landon"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: null
   website: null
 
 - name: Herb Haldane
