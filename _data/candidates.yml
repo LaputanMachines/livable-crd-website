@@ -45,7 +45,7 @@
   office: Councillor
   standing: challenger
   slate: null
-  website: "https://www.facebook.com/groups/701337097784084/user/61577084721458/"
+  website: "https://www.med4saanich.com"
 
 - name: Colette Baty
   display_name: "Baty, Colette"
@@ -222,6 +222,14 @@
   standing: challenger
   slate: null
   website: null
+
+- name: Sierra Wicks-Irving
+  display_name: "Wicks-Irving, Sierra"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://sierra4saanich.ca"
 
 - name: Graham Wright
   display_name: "Wright, Graham"
@@ -1021,7 +1029,7 @@
   display_name: "Woolford, Jim"
   municipality: north-saanich
   office: Councillor
-  standing: challenger
+  standing: ex-incumbent-school-trustee
   slate: null
   website: "https://www.instagram.com/jimfornorthsaanich/"
 
