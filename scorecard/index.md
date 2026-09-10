@@ -78,8 +78,9 @@ description: >-
 
     {%- comment -%}
       No slate filter group here on purpose. Slate reaches the reader through
-      the search box (which matches slate as well as name) and the meta line
-      under each candidate, rather than through a fourth row of pills.
+      the search box (which matches slate as well as name), the per-municipality
+      tint and its labelled legend below, and each candidate's own page, rather
+      than through a fourth row of pills.
 
       Two reasons. The filter bar already carries grade, topic, office and
       municipality, and slate would be the least load-bearing of them: most
@@ -235,10 +236,14 @@ description: >-
                   it off per municipality; the swatches in the legend stay either
                   way, so nothing is lost by unchecking it.
 
-                  Colour is never the only carrier (WCAG 1.4.1): the row names its
-                  slate in the meta line and the legend labels every swatch, which
-                  is also what keeps a >8-slate region readable once two slates
-                  start sharing a colour.
+                  The legend is what keeps the tint honest. Every swatch is
+                  labelled with its slate and count, so the colours are decoded
+                  in text rather than guessed at - which is also what keeps a
+                  >8-slate region readable once two slates start sharing a
+                  colour. The row itself no longer names its slate (the meta
+                  line is office and standing only), so on this page the tint is
+                  the only per-row cue; a reader who needs the name in text has
+                  the legend, the search box, and the candidate's own page.
                 {%- endcomment -%}
                 {%- assign muni_slated = mc | where_exp: "c", "c.slate" -%}
                 {%- if muni_slated.size > 0 -%}
@@ -356,22 +361,26 @@ description: >-
                     {%- endif -%}
                   {%- endif -%}
                   {%- comment -%}
-                    Office, standing and slate are each independently optional,
-                    so the middots are placed by collecting whichever parts
-                    exist and joining them, rather than by enumerating the
-                    combinations: three optional parts is seven branches, and
-                    the old two-part version was already the whole conditional.
+                    Office and standing are each independently optional, so the
+                    middot is placed by collecting whichever parts exist and
+                    joining them, rather than by enumerating the combinations.
 
                     Captured with "|" and split because Liquid has no array
                     append: `split` drops the empty trailing field, so the
-                    result is exactly the present parts. sync-candidates.py
-                    rewrites any literal "|" in a slate name to "/" so a slate
-                    cannot inject an extra part here.
+                    result is exactly the present parts.
+
+                    Slate is deliberately not a part here. The matrix is a wide
+                    grid whose name column is the narrowest thing on the page,
+                    and a slate name is the longest of the three: it wrapped the
+                    cell for the minority of candidates who run with one while
+                    saying nothing about how they were graded. It still reaches
+                    the reader four other ways - the row tint and its labelled
+                    legend above, the search box (which matches slate), and the
+                    candidate's own page, which names it in full.
                   {%- endcomment -%}
                   {%- capture meta_raw -%}
                   {%- if c.office %}{{ c.office }}|{% endif -%}
                   {%- if status != "" %}{{ status }}|{% endif -%}
-                  {%- if c.slate %}{{ c.slate }}|{% endif -%}
                   {%- endcapture -%}
                   {%- assign meta_parts = meta_raw | split: "|" -%}
                   {%- if meta_parts.size > 0 -%}<span class="scorecard-matrix__meta">{{ meta_parts | join: " · " }}</span>{%- endif -%}

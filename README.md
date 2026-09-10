@@ -65,7 +65,7 @@ Slate is the deliberate exception to that strictness: an unrecognized slate **wa
 
 ### Editing the data
 
-Edit the **source spreadsheet**, not the YAML. To support a new municipality, add its `slug`/`name` to [`_data/municipalities.yml`](_data/municipalities.yml) first; grades live in the topic columns and must be one of `A`, `B`, `C`, `C-`, `F`. The sheet's `Incumbent?` column is role-specific (`Incumbent Councillor`, `Ex-Incumbent Mayor`, `Challenger, …`); to support new wording there, add an entry to [`_data/standings.yml`](_data/standings.yml) and map it in `normalize_standing()`. Preview locally:
+Edit the **source spreadsheet**, not the YAML. To support a new municipality, add its `slug`/`name` to [`_data/municipalities.yml`](_data/municipalities.yml) first; grades live in the topic columns and must be one of `A`, `B`, `C`, `C-`, `F`. The sheet's `Incumbent?` column is role-specific (`Incumbent Councillor`, `Ex-Incumbent Mayor`, `Ex-Incumbent School Trustee`, `Challenger, …`); to support new wording there, add an entry to [`_data/standings.yml`](_data/standings.yml) and map it in `normalize_standing()`. Preview locally:
 
 ```bash
 CANDIDATES_CSV_URL="…" python3 scripts/sync-candidates.py --dry-run
@@ -75,7 +75,7 @@ CANDIDATES_CSV_URL="…" python3 scripts/sync-candidates.py --dry-run
 
 The sheet's optional `Slate` column names the electoral organization a candidate runs with. Listing a slate is a factual public-record field, not an endorsement. It surfaces in three places:
 
-- The scorecard **meta line** under each name: `Councillor · Incumbent · Sooke First`.
+- The **candidate's own page**, which names it in full under the hero. It is deliberately *not* in the scorecard's meta line under each name (that line is office and standing only: `Councillor · Incumbent`), because a slate name is the longest of the three and the matrix's name column is the narrowest thing on the page.
 - The **search box**, which matches slate as well as name, so typing `sooke first` narrows to that slate. There is deliberately no slate filter group: the filter bar already carries four controls, and since most candidates run unaffiliated, pills would cost every reader vertical space to filter a minority of rows. Note search matches name and slate only, not municipality, which has its own filter.
 - An opt-in **row tint**, one colour per slate, toggled by a *Highlight Slate Candidates* checkbox in each municipality's heading; see below.
 - Each **candidate page**, on its own labelled line (`Running with Sooke First`) with a dot in that slate's colour, which also prints on the leaflet. Kept off that page's uppercase meta line on purpose: beside the standing, a bare slate name read as another attribute of the same kind.
