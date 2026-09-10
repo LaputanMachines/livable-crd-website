@@ -32,6 +32,17 @@
   role_label: Incumbent Councillor
   current: true
 
+# School trustee is a school-board seat, never one of the offices this site
+# lists in `office`, so the role always differs and role_label always wins.
+# The sheet only carries the ex- form today; this current-office counterpart is
+# here so the sheet gaining "Incumbent School Trustee" adds a label instead of
+# failing the sync on an id with no entry.
+- id: incumbent-school-trustee
+  role: School Trustee
+  label: Incumbent
+  role_label: Incumbent School Trustee
+  current: true
+
 # Sheet wording that names no role. Kept so a plain "Incumbent" in the sheet
 # still labels correctly instead of falling through to unlabelled.
 - id: incumbent
@@ -57,6 +68,12 @@
   role: Councillor
   label: Former Incumbent
   role_label: Former Councillor
+  current: false
+
+- id: ex-incumbent-school-trustee
+  role: School Trustee
+  label: Former Incumbent
+  role_label: Former School Trustee
   current: false
 
 - id: challenger

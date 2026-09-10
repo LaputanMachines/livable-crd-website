@@ -101,9 +101,9 @@ HEADER = """\
 #   office       "Mayor", "Councillor", or null if not specified in the source.
 #   standing     Id from _data/standings.yml describing what elected position the
 #                candidate holds or held ("incumbent-councillor",
-#                "ex-incumbent-mayor", "challenger", ...), or null if the sheet
-#                does not say. Role-specific on purpose: a sitting councillor
-#                running for mayor is not the incumbent mayor.
+#                "ex-incumbent-school-trustee", "challenger", ...), or null if
+#                the sheet does not say. Role-specific on purpose: a sitting
+#                councillor running for mayor is not the incumbent mayor.
 #   slate        Electoral organization the candidate runs with, as a display
 #                label ("Together Victoria", "Independent"), or null if the sheet
 #                does not say. Free text from the sheet, optionally tidied via
@@ -236,15 +236,20 @@ def normalize_standing(value, name, warnings):
     """Map the sheet's "Incumbent?" wording to a _data/standings.yml id.
 
     The sheet qualifies incumbency by role ("Incumbent Councillor", "Ex-Incumbent
-    Mayor"), which matters because the role often differs from the office being
-    sought: a sitting councillor running for mayor is not the incumbent mayor.
-    Role is preserved here rather than flattened to a boolean.
+    Mayor", "Ex-Incumbent School Trustee"), which matters because the role often
+    differs from the office being sought: a sitting councillor running for mayor
+    is not the incumbent mayor, and a school trustee never holds the office this
+    site lists at all. Role is preserved here rather than flattened to a boolean.
     """
     low = norm(value)
     if low == "":
         return None
 
-    if "councillor" in low:
+    # Trustee first: a school board seat is not one of the offices in
+    # "Position Sought", so it can only ever be qualifying the incumbency.
+    if "trustee" in low:
+        role = "school-trustee"
+    elif "councillor" in low:
         role = "councillor"
     elif "mayor" in low:
         role = "mayor"
