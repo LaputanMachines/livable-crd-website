@@ -1,5 +1,5 @@
 {%- comment -%}
-  The grading key: five letters and the three states that are not letters.
+  The grading key: four letters and the three states that are not letters.
   Rendered directly above the grades it explains, on the scorecard matrix and on
   every candidate page.
 
@@ -13,8 +13,22 @@
   An empty `grade` is what puts that include into an empty state; `state` picks
   which of the three.
 {%- endcomment -%}
+{%- comment -%}
+  C- is filtered out here the same way the homepage hero strip filters it
+  (index.md), and for the same reason: a fourth letter chip between C and F
+  crowds a key that a reader scans rather than studies. It stays in
+  _data/grades.yml with its label, description and colour, so the grade is
+  still one the coalition can award and grade-badge.html still draws it.
+
+  The trade that comes with that: if a published grade ever is a C-, the key
+  above it will not name that mark. No score currently carries one, so nothing
+  on the site is unexplained today — but this is a filter on presentation, not
+  a retirement of the grade, and the scorecard's UX pass is the place to decide
+  whether the key should show the letters in use rather than a fixed list.
+{%- endcomment -%}
+{%- assign legend_grades = site.data.grades | where_exp: "grade", "grade.letter != 'C-'" -%}
 <div class="scorecard-legend" aria-label="Grading key">
-  {% for grade in site.data.grades %}
+  {% for grade in legend_grades %}
   <span class="scorecard-legend__item">
     <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
   </span>
