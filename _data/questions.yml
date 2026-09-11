@@ -32,6 +32,12 @@
 #             registry ("20%"). Omitted where the registry leaves it blank,
 #             which is most of them: weighting is set per subject by the
 #             partner organization that owns it, and several have not.
+#
+#             Always absent on a housing question, and that is not a gap. Homes
+#             for Living score housing in points rather than weights, and how
+#             many points a question is worth out of how many the candidate had
+#             available is a fact about that candidate's municipality, not about
+#             the question. It is published per candidate, in _data/scores.yml.
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
@@ -357,6 +363,27 @@ items:
       - Fewer homes than the target (the target is too high).
       - More homes than the target (the target is too low).
       - About that many homes (the target is approximately right).
+      - Decline to answer.
+  - label: HFL-12
+    subject: housing
+    question: >-
+      Municipal asset-management plans have identified substantial gaps
+      between current funding and the amount needed to maintain and replace
+      roads, water and sewer systems, public buildings, and other
+      infrastructure. In Victoria, the 2024 Corporate Asset Management
+      Strategy identified $570 million worth of infrastructure in poor or very
+      poor condition. Which approaches would you prioritize to address this
+      infrastructure problem? Select up to two.
+    type: "variant,multi"
+    type_label: Asked separately for each municipality
+    graded: true
+    owner: Homes for Living
+    options:
+      - Allow substantially more housing and commercial development to grow the tax base and help fund infrastructure renewal.
+      - Increase property taxes or introduce a dedicated infrastructure levy.
+      - "Increase development cost charges, amenity contributions, or other fees imposed on new housing and development."
+      - "Reduce or defer infrastructure projects, service levels, or replacement standards."
+      - Seek additional provincial or federal funding.
       - Decline to answer.
   # --- climate ---
   - label: CLI-01
@@ -914,7 +941,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Strong Towns Victoria
     options:
       - "Yes"
@@ -931,7 +958,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Better Transit YYJ
     options:
       - "Yes"
@@ -947,7 +974,7 @@ items:
     type: text
     type_label: "Written answer, up to 1,000 characters"
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Strong Towns Victoria
   - label: GOV-04
     subject: governance
@@ -957,34 +984,12 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Strong Towns Victoria
     options:
       - "Yes"
       - "No"
       - Decline to answer
-  - label: HFL-12
-    subject: governance
-    question: >-
-      Municipal asset-management plans have identified substantial gaps
-      between current funding and the amount needed to maintain and replace
-      roads, water and sewer systems, public buildings, and other
-      infrastructure. In Victoria, the 2024 Corporate Asset Management
-      Strategy identified $570 million worth of infrastructure in poor or very
-      poor condition. Which approaches would you prioritize to address this
-      infrastructure problem? Select up to two.
-    type: "variant,multi"
-    type_label: Asked separately for each municipality
-    graded: true
-    weight: "14%"
-    owner: Homes for Living
-    options:
-      - Allow substantially more housing and commercial development to grow the tax base and help fund infrastructure renewal.
-      - Increase property taxes or introduce a dedicated infrastructure levy.
-      - "Increase development cost charges, amenity contributions, or other fees imposed on new housing and development."
-      - "Reduce or defer infrastructure projects, service levels, or replacement standards."
-      - Seek additional provincial or federal funding.
-      - Decline to answer.
   - label: REC-01
     subject: governance
     question: >-
@@ -994,7 +999,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Better Transit YYJ
     options:
       - "Yes"
@@ -1008,7 +1013,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "14%"
+    weight: "17%"
     owner: Todd Litman
     options:
       - Significantly more consultation practices.
