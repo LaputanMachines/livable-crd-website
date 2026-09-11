@@ -132,6 +132,20 @@ R_LABEL, R_CATEGORY, R_QUESTION, R_TYPE, R_GRADED, R_WEIGHT, R_RAW, R_NOTES, R_O
 G_KEY, G_CANDIDATE, G_MUNICIPALITY, G_LABEL, G_QUESTION, G_ANSWER, G_OWNER, \
     G_GRADE, G_WEIGHT, G_RATIONALE = range(10)
 
+# Subjects graded on a points rubric rather than a letter per question. Homes
+# for Living score each housing question out of a stated number of points, ask
+# different questions in different municipalities, and hand back one cumulative
+# grade; the letter on Category Grades is that cumulative grade banded at
+# 85/70/60/50.
+#
+# Their tab is the same thirteen columns as every other one, and the two a
+# grader uses mean something else on it: G_GRADE holds a score rather than a
+# letter, and G_WEIGHT what that score is out of rather than a percentage.
+#
+# Mirrors SCORED_CATEGORIES in grading_tabs.py and appsscript/Code.gs, keyed to
+# subject ids rather than to the registry's category names.
+SCORED_SUBJECTS = {"housing"}
+
 # Category Grades identity columns, 0-based.
 C_KEY, C_CANDIDATE, C_MUNICIPALITY = range(3)
 
@@ -297,6 +311,12 @@ QUESTIONS_HEADER = """\
 #             registry ("20%"). Omitted where the registry leaves it blank,
 #             which is most of them: weighting is set per subject by the
 #             partner organization that owns it, and several have not.
+#
+#             Always absent on a housing question, and that is not a gap. Homes
+#             for Living score housing in points rather than weights, and how
+#             many points a question is worth out of how many the candidate had
+#             available is a fact about that candidate's municipality, not about
+#             the question. It is published per candidate, in _data/scores.yml.
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
@@ -357,10 +377,27 @@ SCORES_HEADER = """\
 #                 or an empty list when none is published yet:
 #     id          Topic id.
 #     grade       Top-level letter, or null if not yet assigned.
+#     score       Present only on a subject graded on points rather than on a
+#                 letter per question - housing, which Homes for Living score on
+#                 their own rubric. `points` out of `max`, and `percent` the
+#                 share of them, which is what `grade` is banded from. The
+#                 maximum is the candidate's own: the municipality-specific
+#                 questions are not asked everywhere, so a Sooke candidate is
+#                 scored out of 54 where a Victoria one is scored out of 66. A
+#                 subject appears here only when every question its candidate
+#                 was asked carries points; half-scored is not published,
+#                 because a missing question drops out of the maximum as well as
+#                 the total and reads as a better result than it is.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
-#       weight    Share of the subject grade. Omitted where the sheet is blank.
+#                 Absent on a points-scored subject, which carries the two
+#                 fields below instead.
+#       points    What the question earned, on a points-scored subject.
+#       max_points What it was worth.
+#       weight    Share of the subject grade. Omitted where the sheet is blank,
+#                 and always absent on a points-scored subject: the points are
+#                 the weighting.
 #       rationale The grader's written reasoning. Omitted where blank.
 #       answer    What the candidate submitted, as the sheet records it. Blank
 #                 lines are collapsed and trailing spaces trimmed so the value
@@ -1373,12 +1410,32 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             if grade_col is not None:
                 grade = grade_or_none(row[grade_col] if grade_col < len(row) else "",
                                       where, warnings)
+            scored = subject_id in SCORED_SUBJECTS
+            questions = subject_questions(
+                grade_rows.get((key, subject_name), []), name, subject_name,
+                question_labels, scored, warnings)
+
+            # A scored subject publishes a cumulative total, and refuses to
+            # publish at all until every question a candidate was asked carries
+            # points. The deploy checkbox says the partner org is finished; this
+            # says whether the numbers behind it agree.
+            score = None
+            if scored:
+                score = subject_score(questions, name, subject_name, warnings)
+                if score is None:
+                    continue
+                # Questions this candidate's municipality was never asked. The
+                # Apps Script fans every label out to every candidate, so a
+                # Sooke candidate has an HFL-11 row with no answer in it; left
+                # in, it would publish as a pending em-dash and read as a
+                # question still being graded rather than one never put to them.
+                questions = [q for q in questions if q["points"] is not None]
+
             published.append({
                 "id": subject_id,
                 "grade": grade,
-                "questions": subject_questions(
-                    grade_rows.get((key, subject_name), []), name, subject_name,
-                    question_labels, warnings),
+                "score": score,
+                "questions": questions,
                 # The ungraded answers for this subject, released by the same
                 # checkbox as its grades. A per-topic "anything to add" box only
                 # goes public once its topic does, so nothing a candidate wrote
@@ -1432,7 +1489,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
     return records
 
 
-def subject_questions(rows, candidate, subject_name, question_labels, warnings):
+def subject_questions(rows, candidate, subject_name, question_labels, scored, warnings):
     out = []
     for row in rows:
         cell = lambda idx: tidy(row[idx]) if idx < len(row) else ""
@@ -1447,15 +1504,93 @@ def subject_questions(rows, candidate, subject_name, question_labels, warnings):
             continue
         where = f"{GRADE_TAB_PREFIX}{subject_name} ({candidate}, {label})"
         prose, selected = split_selections(clean_text(row[G_ANSWER] if G_ANSWER < len(row) else ""))
-        out.append({
+        question = {
             "label": label,
-            "grade": grade_or_none(row[G_GRADE] if G_GRADE < len(row) else "", where, warnings),
-            "weight": cell(G_WEIGHT),
+            "grade": None if scored else grade_or_none(
+                row[G_GRADE] if G_GRADE < len(row) else "", where, warnings),
+            "weight": "" if scored else cell(G_WEIGHT),
             "rationale": clean_text(row[G_RATIONALE] if G_RATIONALE < len(row) else ""),
             "answer": prose,
             "selected": selected,
-        })
+        }
+        if scored:
+            question["points"] = number_or_none(cell(G_GRADE), where, "score", warnings)
+            question["max_points"] = number_or_none(cell(G_WEIGHT), where,
+                                                    "max points", warnings)
+        out.append(question)
     return out
+
+
+def number_or_none(value, where, what, warnings):
+    """A score cell as a number, or None for the blank that means "not scored".
+
+    Blank is the ordinary state of a score cell and carries real meaning, so it
+    is not a warning: a question a candidate's municipality never asked is
+    fanned out to their tab like every other and simply never scored. Anything
+    that is neither blank nor a number is the warning.
+    """
+    if not value:
+        return None
+    try:
+        number = float(value.replace(",", ""))
+    except ValueError:
+        warnings.append(f"{where}: {what} {value!r} is not a number, treated as unscored")
+        return None
+    return int(number) if number == int(number) else number
+
+
+def subject_score(questions, candidate, subject_name, warnings):
+    """Score, maximum and percentage for one candidate's points-scored subject.
+
+    A question with no score drops out of the total and out of the maximum, which
+    is what lets one rule cover every municipality: HFL-11 is only asked in ten
+    of them and HFL-12 in five, the Apps Script fans all of them out to every
+    candidate regardless, and the ones nobody was asked are simply never scored.
+    A Sooke candidate is graded out of the 54 they were asked rather than the 66
+    somebody in Victoria was.
+
+    That same rule is why an unscored question a candidate *did* answer must stop
+    publication: it would quietly leave its points out of the maximum as well as
+    the total, and the candidate would read better than they are. The two states
+    are different and the warnings say which is which.
+    """
+    scored = [q for q in questions if q["points"] is not None]
+    answered_unscored = [q for q in questions
+                         if q["points"] is None and (q["answer"] or q["selected"])]
+
+    if not scored:
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} has no score on any "
+            f"question, so the subject is not published even though its deploy box "
+            f"is ticked."
+        )
+        return None
+    if answered_unscored:
+        missing = ", ".join(q["label"] for q in answered_unscored)
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} answered {missing} but "
+            f"it carries no score, so the subject is not published. An unscored "
+            f"answer drops out of the maximum as well as the total, which would "
+            f"publish a better result than they earned."
+        )
+        return None
+
+    missing_max = [q["label"] for q in scored if q["max_points"] is None]
+    if missing_max:
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} is scored on "
+            f"{', '.join(missing_max)}, which has no Max points on its "
+            f"{REGISTRY_TAB} row, so the subject is not published."
+        )
+        return None
+
+    points = sum(q["points"] for q in scored)
+    maximum = sum(q["max_points"] for q in scored)
+    return {
+        "points": points,
+        "max": maximum,
+        "percent": round(100 * points / maximum) if maximum else 0,
+    }
 
 
 def render_scores(graded_subjects, records):
@@ -1498,12 +1633,22 @@ def render_scores(graded_subjects, records):
         for subject in record["subjects"]:
             parts.append(f"      - id: {subject['id']}")
             parts.append(f"        grade: {subject['grade'] or 'null'}")
+            if subject.get("score"):
+                score = subject["score"]
+                parts.append("        score:")
+                parts.append(f"          points: {score['points']}")
+                parts.append(f"          max: {score['max']}")
+                parts.append(f"          percent: {score['percent']}")
 
             if subject["questions"]:
                 parts.append("        questions:")
                 for q in subject["questions"]:
                     parts.append(f"          - label: {scalar(q['label'])}")
-                    parts.append(f"            grade: {q['grade'] or 'null'}")
+                    if q.get("max_points") is not None:
+                        parts.append(f"            points: {q['points']}")
+                        parts.append(f"            max_points: {q['max_points']}")
+                    else:
+                        parts.append(f"            grade: {q['grade'] or 'null'}")
                     if q["weight"]:
                         parts.append(f"            weight: {scalar(q['weight'])}")
                     if q["rationale"]:

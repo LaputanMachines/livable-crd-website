@@ -195,14 +195,17 @@ description: >-
 
       <h2>How grades are assigned</h2>
       <p>
-        Participating organizations are finalizing the questionnaire. When complete, we
-        will publish the full question set and weighting here. In general:
+        Each participating group contributes the questions in its area of focus, and that
+        same group grades candidates' responses to the questions it submitted. Every
+        question and its weighting is published on the
+        <a href="{{ '/questionnaire/' | relative_url }}">questionnaire page</a>, and every
+        candidate's per-question result is published on their own page.
       </p>
       <ul>
-        <li>Each participating group contributes the questions in its area of focus, and that same group grades candidates' responses to the questions it submitted.</li>
-        <li>Points are awarded for positions that advance coalition goals within each topic.</li>
-        <li>Each topic grade reflects the candidate's responses within that area, including general livability questions.</li>
-        <li>Points are deducted for positions that would clearly undermine progress on housing, mobility, climate, healthcare access, or other priorities covered in the survey.</li>
+        <li>Most topics are graded question by question. Each question carries a letter grade and a stated share of its topic, and the topic grade is the weighted average of them.</li>
+        <li>Housing is graded differently, on Homes for Living's own rubric: each question is worth a set number of points, and the topic grade is the share of the points available that a candidate earned &mdash; 85% or better is an A, 70% a B, 60% a C, 50% a C&#8209;, and anything below that an F.</li>
+        <li>How many points are available depends on where someone is running. Several housing questions are asked only in the municipalities they are about, so a candidate is always scored against the questions they were actually asked.</li>
+        <li>Points are awarded for positions that advance coalition goals, and deducted for positions that would clearly undermine progress on housing, mobility, climate, healthcare access, or other priorities covered in the survey.</li>
       </ul>
 
       <p>

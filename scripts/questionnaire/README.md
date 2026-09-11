@@ -369,10 +369,13 @@ Weight lives here, once per question, rather than repeated on every candidate's 
 block at `J1:L` totals the weights per category; each category should reach 100%.
 
 `Category` is why this tab exists rather than a regex over the header row. Prefixes don't
-map onto subjects: `HFL-12` is the infrastructure funding gap, which `finalize.py` grades
-as Governance even though Homes for Living submitted it, and Governance also owns the
-separate `GOV-*` block. `CATEGORY_OVERRIDE` in the script seeds that; the column is
-authoritative afterwards.
+map onto subjects on their own: Governance owns the `GOV-*` block and the two `REC-*`
+reconciliation questions, whose codes were left alone when the topic was folded in.
+`PREFIX_CATEGORY` and `CATEGORY_OVERRIDE` in the script seed the column; it is
+authoritative afterwards, and `move_question.py` is what changes it safely.
+
+Housing rows carry **no weight**, and that is not an omission - see "Housing is scored in
+points" below. `Check setup` skips the 100% test for them.
 
 `Owner` is who submitted the question, so a grader who needs to check intent knows whom
 to ask. Populated from the `Finalized Questions` tab of the committee sheet, matching on
@@ -401,6 +404,105 @@ either there corrects every grading row at once, including rows already graded.
 
 `Key` is `<Submission ID>|<Label>`, and it is what makes the sync safe: rows are matched by
 key, never by position.
+
+#### Housing is scored in points
+
+Homes for Living grade housing on their own rubric: every question is worth a set number
+of points, the municipality-specific ones are only asked where they apply, and a candidate
+gets **one cumulative grade** from their share of the points available to them rather than
+a letter on each answer.
+
+`Grade - Housing` is the same thirteen columns as every other grading tab. Two of them
+mean something else on it, and their headers say so:
+
+| Column | Letter-graded tab | `Grade - Housing` |
+|---|---|---|
+| `H` | `Grade` - a letter from the dropdown | `Score` - a whole number, validated 0-8 |
+| `I` | `Weight` - `VLOOKUP` of the registry's `Weight` | `Max points` - `VLOOKUP` of the registry's `Max points` |
+
+Everything else is unchanged: same width, same indices, same `Rationale`, same
+`Grader` / `Graded at` stamps, same hidden hash.
+
+`Category Grades` bands the ratio instead of averaging letters:
+
+```
+SUM(scores) / SUM(maximums, where the score is not blank)
+   >= 85% A   >= 70% B   >= 60% C   >= 50% C-   below that F
+```
+
+**The `where the score is not blank` is what makes one formula work everywhere.** `HFL-11`
+is asked in ten municipalities and `HFL-12` in five, but the Apps Script fans every
+question out to every candidate, so a Sooke candidate has an `HFL-11` row with nothing in
+it. Leave it unscored and it drops out of the total *and* out of the maximum, so they are
+graded out of the 54 they were asked rather than the 66 somebody in Victoria was.
+
+The same rule is why a question a candidate **did** answer must never be left blank: it
+would quietly shrink the denominator and flatter them. `sync-questionnaire.py` refuses to
+publish the topic when that happens and says which question it was. A zero is a score and
+counts; blank means "not scored".
+
+#### `Max points` on the registry
+
+Column **M** of `Question Registry`, past the `J:L` weight tally, on the same "anything
+after `A:I` goes in M or beyond" rule as everything else added to that tab. One number per
+question, and the single thing that decides what a question is worth for every candidate.
+
+`grading_tabs.py` seeds it from Homes for Living's workbook - 8, 8, 6, 5, 3, 6, 3, 2, 6, 7
+for `HFL-01`-`HFL-10`, then 6 and 6 - and never overwrites a value that is already there.
+Their Questions and Cross Check tabs both say `HFL-12` is worth 5, but every scoring tab
+that produced a real percentage divides by 6, and those are the totals they have published.
+
+`Grading > Check setup` flags a scored question with no maximum, because a blank one lets
+the question's score count towards the total while adding nothing to what that total is
+out of.
+
+#### `move_question.py`: changing a question's subject
+
+Changing the `Category` cell alone strands grading work: `syncAll` keys rows per tab, so
+the question appends a fresh batch of blank rows to its new `Grade - <Subject>` tab and
+abandons the answers, grades, rationales and hashes on the old one.
+
+```bash
+python3 scripts/questionnaire/move_question.py HFL-12 --to Housing            # preview
+python3 scripts/questionnaire/move_question.py HFL-12 --to Housing --apply    # do it
+```
+
+It carries `Grade`, `Rationale`, `Grader`, `Graded at` and the answer hash across,
+re-derives the `Owner` and `Weight` lookups for the rows they land on, deletes the rows it
+copied, and rebalances the weights of whatever is left in the old category. Every tab is
+dumped to `~/livable-crd-backups/` before the first write.
+
+The routing itself needs no script change: `readRegistry` in `Code.gs` takes a question's
+category from the registry's `Category` cell and nothing else, so the moment that cell says
+`Housing` the Apps Script stops sending the question to `Grade - Governance`.
+
+#### Switching housing over, in order
+
+```bash
+# 1. HFL-12 joins Housing. Preview, then --apply.
+python3 scripts/questionnaire/move_question.py HFL-12 --to Housing
+python3 scripts/questionnaire/move_question.py HFL-12 --to Housing --apply
+
+# 2. Max points on the registry, the H/I headers and validation, column I on every
+#    row that predates the rubric, and Category Grades' housing rollup.
+python3 scripts/questionnaire/grading_tabs.py --dry-run
+python3 scripts/questionnaire/grading_tabs.py
+```
+
+3. Paste `appsscript/Code.gs` into the sheet's Apps Script editor and save. Needed for
+   everything appended *after* this point - a new submission's housing rows, and any
+   candidate who gets a `Category Grades` row from here on.
+4. `Grading > Check setup` in the sheet. It now checks that every scored question has a
+   `Max points` instead of that the category's weights total 100%.
+5. Tell Homes for Living where to type: column `H` of `Grade - Housing`, one row per
+   candidate per question, the number out of the `Max points` beside it. Sorting the tab
+   by `Candidate` puts each person's twelve rows together.
+
+Step 2 is what fixes the rows that already exist. The Apps Script writes column `I` only
+on rows it appends - deliberately, so a sync never overwrites a grader - so it will never
+revisit the 264 housing rows that were already there, or re-touch the `Category Grades`
+cells it wrote with the old letter-average formula. A `Category Grades` cell holding a
+letter somebody typed is left alone and reported rather than overwritten.
 
 #### The Apps Script
 

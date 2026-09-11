@@ -13,6 +13,11 @@
   description: >-
     Minimally meets standards or has significant inconsistencies. Some positive
     positions, but notable shortcomings in one or more topic areas.
+- letter: C-
+  label: Weak
+  description: >-
+    Falls short of coalition standards more often than it meets them. A few
+    positions point the right way, but not enough of them to add up to progress.
 - letter: F
   label: Poor
   description: >-

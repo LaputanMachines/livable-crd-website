@@ -262,9 +262,23 @@ layout: default
             or the page is not showing it. Said once here rather than repeated
             under all eleven questions, which would be a wall of apology.
           {%- endcomment -%}
+          {%- comment -%}
+            A points-scored topic states the total instead of the question count.
+            Housing is graded by Homes for Living on a points rubric - each
+            question worth a stated number of points, out of a maximum that
+            depends on which municipality-specific questions the candidate was
+            asked - and the letter above is that fraction banded, not an average
+            of eleven letters. Counting the questions there says nothing about
+            how the grade was reached; the fraction says all of it.
+          {%- endcomment -%}
           {%- assign reasoned = detail.questions | where_exp: "q", "q.rationale" %}
           <p class="candidate-grade__meta">
-            {%- if detail.questions.size > 0 %}
+            {%- if detail.score %}
+            {{ detail.score.points }} of {{ detail.score.max }} points ({{ detail.score.percent }}%)
+            {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
+            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
+            {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
+            {%- elsif detail.questions.size > 0 %}
             {{ detail.questions.size }} graded question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Graded by {{ owners[0] }}{% endif %}
             {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
@@ -294,16 +308,31 @@ layout: default
                 what it is worth is what a reader wants before reading it.
               {%- endcomment -%}
               <div class="candidate-answer__head">
-                {%- if q.weight %}
+                {%- comment -%}
+                  A scored question needs no "what it is worth" pill: the
+                  fraction on the right says it, and saying it twice on one line
+                  is the same number arriving from both ends.
+                {%- endcomment -%}
+                {%- if q.weight and q.max_points == nil %}
                 <span class="candidate-answer__weight">{{ q.weight }} of this topic</span>
                 {%- endif %}
                 <span class="candidate-answer__label">{{ q.label }}</span>
                 <span class="candidate-answer__leader" aria-hidden="true"></span>
+                {%- comment -%}
+                  A scored question carries points where a graded one carries a
+                  letter, and the two must not be drawn the same way: a "5" in
+                  the chip where a letter usually sits reads as a grade of five
+                  out of nothing. The score is shown as the fraction it is.
+                {%- endcomment -%}
+                {%- if q.max_points %}
+                <span class="candidate-answer__points">{{ q.points }}<span class="candidate-answer__points-of"> / {{ q.max_points }}</span></span>
+                {%- else %}
                 {% include grade-badge.html grade=q.grade %}
+                {%- endif %}
               </div>
               <p class="candidate-answer__question">{{ q.question }}</p>
               {%- if q.rationale %}
-              <p class="candidate-answer__rationale"><strong>Why this grade:</strong> {{ q.rationale }}</p>
+              <p class="candidate-answer__rationale"><strong>Why this {% if q.max_points %}score{% else %}grade{% endif %}:</strong> {{ q.rationale }}</p>
               {%- endif %}
               {%- if q.answer %}
               {%- comment -%}

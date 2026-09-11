@@ -355,6 +355,25 @@ summary.candidate-grade {
   white-space: nowrap;
 }
 
+// Where a letter-graded question puts its chip. Sized to sit on the same
+// baseline as one without pretending to be one: a points score is a fraction,
+// and rounding it into a chip would read as a grade of five out of nothing.
+.candidate-answer__points {
+  flex: 0 0 auto;
+  font-family: $font-display;
+  font-weight: 700;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: $color-text;
+  white-space: nowrap;
+}
+
+.candidate-answer__points-of {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: $color-muted;
+}
+
 .candidate-answer__leader {
   flex: 1 1 auto;
   min-width: $space-xs;

@@ -46,6 +46,19 @@ var REGISTRY_TAB = 'Question Registry';
 var LOG_TAB = 'Sync Log';
 var GRADE_PREFIX = 'Grade - ';
 var CATEGORY_TAB = 'Category Grades';
+// Categories scored in raw points rather than a letter per question. Homes for
+// Living grade housing on a points rubric and hand back one cumulative grade,
+// so on a housing row H is a score out of I rather than a letter weighted by I.
+// grading_tabs.py holds the same set as SCORED_CATEGORIES; change both.
+var SCORED_CATEGORIES = { 'Housing': true };
+
+// Registry column holding what a scored question is worth, 1-based.
+// grading_tabs.py writes the header and seeds the values.
+var REGISTRY_MAX_COLUMN = 13;
+
+// Homes for Living's grade bands, as a share of the points available. Ascending,
+// because MATCH with a 1 finds the last threshold at or below the value.
+var SCORE_BANDS = '{0;0.5;0.6;0.7;0.85}';
 
 // Category Grades columns, 1-based: identity, then a (grade, deploy checkbox)
 // pair per category in whatever order grading_tabs.py wrote the header - read
@@ -528,13 +541,14 @@ function syncAll(trigger) {
 /** Append rows in one write, with the owner and weight lookups pointing at the registry. */
 function writeRows(sheet, rows) {
   var first = Math.max(sheet.getLastRow() + 1, 2);
+  var scored = isScoredTab(sheet.getName());
   var values = rows.map(function (r, i) {
     var line = first + i;
     return [
       r.key, r.candidate, r.municipality, r.label, r.question, r.answer,
       "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$I,9,FALSE),\"\")",
-      '',  // grade, typed by a grader
-      "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$F,6,FALSE),\"\")",
+      '',  // grade on a letter tab, score on a scored one. Typed by a grader.
+      scored ? maxPointsFormula(line) : weightFormula(line),
       '',  // rationale
       '',  // grader
       '',  // graded at
@@ -543,6 +557,46 @@ function writeRows(sheet, rows) {
   });
   sheet.getRange(first, 1, values.length, G_WIDTH).setValues(values);
 }
+
+
+/** Column I on a letter-graded tab: this question's share of its subject. */
+function weightFormula(line) {
+  return "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$F,6,FALSE),\"\")";
+}
+
+
+/**
+ * Column I on a scored tab: what this question is worth.
+ *
+ * The same shape as the weight lookup it replaces - a VLOOKUP into the registry
+ * rather than a copy, so correcting a maximum there corrects every candidate's
+ * row at once - just pointed at Max points instead. grading_tabs.py renders the
+ * same string for the rows that predate the rubric.
+ */
+function maxPointsFormula(line) {
+  return "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$" +
+      columnLetter(REGISTRY_MAX_COLUMN) + "," + REGISTRY_MAX_COLUMN + ",FALSE),\"\")";
+}
+
+
+/** 1-based column index to its A1 letters. */
+function columnLetter(index) {
+  var letters = '';
+  while (index > 0) {
+    var rem = (index - 1) % 26;
+    letters = String.fromCharCode(65 + rem) + letters;
+    index = (index - 1 - rem) / 26;
+  }
+  return letters;
+}
+
+
+/** Whether a "Grade - <Subject>" tab is scored in points rather than letters. */
+function isScoredTab(tabName) {
+  return !!SCORED_CATEGORIES[String(tabName).slice(GRADE_PREFIX.length)];
+}
+
+
 
 
 /** Existing keys on a grading tab: key -> {row, hash, grade}. */
@@ -557,7 +611,10 @@ function existingRows(sheet) {
     out[key] = {
       row: i + 2,
       hash: String(values[i][G_HASH - 1] || ''),
-      grade: String(values[i][G_GRADE - 1] || '')
+      // Not `|| ''`: on a scored tab this cell is a number, and a score of 0 is
+      // a real grade that `||` would report as an empty one in the drift log.
+      grade: values[i][G_GRADE - 1] === '' || values[i][G_GRADE - 1] == null
+        ? '' : String(values[i][G_GRADE - 1])
     };
   }
   return out;
@@ -662,6 +719,7 @@ function ensureCategoryRows(ss, submissions, trigger) {
  */
 function categoryFormula(category, row) {
   var tab = "'" + GRADE_PREFIX + category + "'";
+  if (SCORED_CATEGORIES[category]) return scoredCategoryFormula(tab, row);
   var scale = '{"F","C-","C","B","A"}';
   var candidateCol = tab + '!$B$2:$B', municipalityCol = tab + '!$C$2:$C';
   var gradeCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
@@ -675,6 +733,56 @@ function categoryFormula(category, row) {
   return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},ROUND(' + numerator + '/' + denominator + ',0)+1),"")';
 }
 
+
+/**
+ * Cumulative letter for a category scored in points.
+ *
+ * Homes for Living grade a candidate on their share of the points available to
+ * them, not on an average of per-question grades: sum the points, divide by the
+ * maximum for the questions their municipality was actually asked, and band the
+ * ratio at 85/70/60/50. A question nobody has scored yet has no points and no
+ * maximum, so it leaves both sums alone - the same courtesy the letter rollup
+ * pays a partly-graded candidate.
+ *
+ * Typed-over-able, exactly as the letter rollup is: the partner org replacing
+ * this with their own call is the intended use, not a mistake.
+ */
+function scoredCategoryFormula(tab, row) {
+  var where = tab + '!$B:$B,$B' + row + ',' + tab + '!$C:$C,$C' + row;
+  var points = 'SUMIFS(' + tab + '!$H:$H,' + where + ')';
+  var max = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + tab + '!$H:$H,"<>")';
+  return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},MATCH(' + points + '/' + max +
+      ',' + SCORE_BANDS + ',1)),"")';
+}
+
+
+
+/**
+ * Scored questions with no maximum on their registry row.
+ *
+ * A blank maximum divides nothing by nothing: the question's score still counts
+ * towards the total while contributing zero to what that total is out of, so
+ * every candidate who answered it reads better than they are. Worth catching
+ * from a menu item rather than from a candidate's page.
+ */
+function maxPointsProblems(category) {
+  var problems = [];
+  var reg = sheet(REGISTRY_TAB);
+  var last = reg.getLastRow();
+  if (last < 2) return problems;
+
+  var rows = reg.getRange(2, 1, last - 1, REGISTRY_MAX_COLUMN).getValues();
+  for (var i = 0; i < rows.length; i++) {
+    var label = String(rows[i][0] || '').trim();
+    if (!label || String(rows[i][1] || '').trim() !== category) continue;
+    if (String(rows[i][4] || '').trim().toLowerCase() !== 'yes') continue;
+    if (!Number(rows[i][REGISTRY_MAX_COLUMN - 1])) {
+      problems.push(label + ' has no Max points, so it counts towards the ' +
+                    category + ' score without adding to what that score is out of.');
+    }
+  }
+  return problems;
+}
 
 /* ------------------------------------------------------------------ the registry */
 
@@ -885,6 +993,14 @@ function menuCheckSetup() {
 
   for (var c in counts) {
     if (!ss.getSheetByName(GRADE_PREFIX + c)) problems.push('No tab "' + GRADE_PREFIX + c + '".');
+    // A category scored in points has no weights to total: the points are the
+    // weighting. What it needs instead is a maximum on every one of its
+    // questions, because a blank one silently drops that question out of the
+    // denominator and flatters every candidate who answered it.
+    if (SCORED_CATEGORIES[c]) {
+      problems = problems.concat(maxPointsProblems(c));
+      continue;
+    }
     var total = Math.round(weights[c] * 1000) / 1000;
     if (total !== 1) problems.push(c + ' weights total ' + Math.round(total * 100) + '%, not 100%.');
   }
