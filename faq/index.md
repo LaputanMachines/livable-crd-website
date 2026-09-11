@@ -43,6 +43,14 @@ description: >-
   </p>
 
   {%- comment -%}
+    The release date, assigned once for the whole page: three panels below tell
+    a reader when results appear, and all three quote this entry rather than
+    writing out a date that would have to be kept in sync with
+    _data/deadlines.yml.
+  {%- endcomment -%}
+  {%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
+
+  {%- comment -%}
     First panel, and the only one on this page not about how the scorecard
     works. It is here because it was the plainest question about this election
     that the site could not answer anywhere: the schedule this project runs to
@@ -147,12 +155,13 @@ description: >-
           <dd class="grade-def__desc">
             This candidate returned the questionnaire and this topic has not been
             published yet. Grading is done by the coalition organization that wrote
-            the topic's questions, and each topic is published as that organization
-            finishes it, so a candidate can show letters in one topic and this in
-            another. It also shows on the two topics we do not grade,
-            <strong>General</strong> and <strong>Healthcare access</strong>,
-            until their answers are released. It says nothing about how the
-            topic is going.
+            the topic's questions, and nothing it finishes goes on the scorecard
+            early: every topic, including the two we do not grade
+            (<strong>General</strong> and <strong>Healthcare access</strong>),
+            is published on
+            <strong>{{ grades_released.date | date: "%B %-d" }}</strong>, when
+            the responses and grades are released together. It says nothing
+            about how the topic is going.
           </dd>
         </div>
         <div class="grade-def">
@@ -326,10 +335,12 @@ description: >-
         scorecards, stickers, and posters.
       </p>
       <p>
-        Until then the questionnaire is open and grading runs alongside it, so
-        results reach the scorecard in batches as each partner organization finishes
-        the topics it owns, rather than all at once on the closing day. A
-        candidate who returns it early is graded early.
+        Until then the questionnaire is open and grading runs alongside it, but
+        none of it reaches the scorecard while that happens. Every response and
+        every grade is published together on
+        <strong>{{ grades_released.date | date: "%B %-d" }}</strong>: a candidate
+        who returns the questionnaire early is graded early, and goes live the
+        same day as everyone else.
       </p>
 
       <h2>What happens to a candidate who does not respond</h2>

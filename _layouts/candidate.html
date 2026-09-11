@@ -35,6 +35,12 @@ layout: default
 {%- endcomment -%}
 {%- assign returned = c.questionnaire_returned -%}
 {%- assign gradable = site.data.scores.graded_subjects -%}
+{%- comment -%}
+  The one publication date, quoted by both empty-state callouts below rather
+  than written out twice. It lives in _data/deadlines.yml with the rest of the
+  schedule, so the callouts, the homepage timeline and the FAQ cannot disagree.
+{%- endcomment -%}
+{%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
 {%- assign published = 0 -%}
 {%- for subject in subjects -%}
   {%- if c.published_subjects[subject.id] -%}{%- assign published = published | plus: 1 -%}{%- endif -%}
@@ -134,8 +140,9 @@ layout: default
     <p>
       <strong>No reply yet.</strong> We have not received a completed coalition
       questionnaire from {{ c.name }}, so every topic below shows a dash
-      (<span aria-hidden="true">—</span>) rather than a letter grade. Grades are
-      published here as responses come back. You can still
+      (<span aria-hidden="true">—</span>) rather than a letter grade. Every
+      candidate's responses and grades are published together on
+      {{ grades_released.date | date: "%B %-d" }}. You can still
       <a href="{{ '/questionnaire/' | relative_url }}">read every question they were asked</a>.
       <a href="{{ '/faq/#methodology' | relative_url }}">How we grade</a>.
     </p>
@@ -147,8 +154,9 @@ layout: default
       <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
       way and nothing has been published yet, so every topic below shows
       an hourglass rather than a letter or their answers. Each topic we grade is
-      handled by the coalition organization that wrote its questions and appears
-      here as that organization finishes, so they will not all arrive at once. In the
+      handled by the coalition organization that wrote its questions, and no
+      topic goes up as it is finished: the answers and grades are released
+      together on {{ grades_released.date | date: "%B %-d" }}. In the
       meantime you can
       <a href="{{ '/questionnaire/' | relative_url }}">read every question they answered</a>.
       <a href="{{ '/faq/#methodology' | relative_url }}">How we grade</a>.

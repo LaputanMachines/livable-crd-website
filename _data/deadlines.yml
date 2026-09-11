@@ -74,8 +74,9 @@
   label: Candidates respond, and the coalition grades
   detail: >-
     The questionnaire is open. Candidates return it as they are ready, and each
-    partner organization grades the answers to the questions it wrote, so
-    results reach the scorecard in batches rather than all at once at the end.
+    partner organization grades the answers to the questions it wrote. None of
+    it reaches the scorecard while this runs: every response and every grade is
+    held until the release date below.
   short: Responses and grading
   brief: Candidates reply; each group grades the answers to its own questions.
 
@@ -93,14 +94,20 @@
 # The end of the schedule, and the only entry after the cut-off: everything
 # above is the coalition and the candidates working towards a date, and this is
 # the day the result of that work reaches voters. Two days after the cut-off
-# rather than the same day, because the last batch of answers still has to be
-# graded.
+# rather than the same day, because the answers that arrive on the cut-off still
+# have to be graded.
+#
+# It is also the single publication date for the whole project: responses and
+# grades are held back until this day and released together, rather than going
+# up as they are finished. Every page that tells a reader when to expect
+# results quotes this entry, so the date is written once.
 - id: grades-released
   date: 2026-09-20
   audience: coalition
-  label: Grades published on the scorecard
+  label: Responses and grades published on the scorecard
   detail: >-
-    Every graded candidate's ratings go live on the scorecard, organized by
-    municipality, in time for voters to read them before election day.
-  short: Grades released
-  brief: Ratings go live on the scorecard, by municipality.
+    Every candidate's responses and grades go live on the scorecard together,
+    organized by municipality, in time for voters to read them before election
+    day. Nothing is published before this date.
+  short: Results released
+  brief: Every response and grade goes live at once, by municipality.

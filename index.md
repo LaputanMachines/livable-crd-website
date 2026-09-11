@@ -143,6 +143,12 @@ description: >-
 <section class="section">
   <div class="container">
     <h2 class="section-title">What we are building</h2>
+    {%- comment -%}
+      The publication date comes from _data/deadlines.yml, like every other date
+      on this page: the timeline below prints the same milestone, and a date
+      written out here in prose would be a second copy to keep in sync with it.
+    {%- endcomment -%}
+    {%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
     <p>
       Municipal councils shape transit, housing, climate, arts, streets safe for
       walking and cycling, healthcare access, and more. This
@@ -150,7 +156,9 @@ description: >-
       positions using a clear letter-grade system across the topics our coalition
       evaluates. Several participating organizations are building a shared
       questionnaire; the timeline below shows where it stands.
-      Once candidates are surveyed, ratings will be published by municipality ahead
+      Responses and ratings are not posted as they come in: they are released
+      together on {{ grades_released.date | date: "%B %-d, %Y" }}, by
+      municipality, ahead
       of{% if site.election_day %} general voting day,
       {{ site.election_day | date: "%A, %B %-d, %Y" }}{% else %} election day{% endif %}.
     </p>
