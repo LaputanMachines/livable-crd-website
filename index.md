@@ -31,8 +31,19 @@ description: >-
       <a class="btn btn-hero" href="{{ '/scorecard/' | relative_url }}">View All Candidates &amp; Scores</a>
     </div>
   </div>
+  {%- comment -%}
+    The strip shows the scale's shape, not its every step. C- is still a grade
+    the coalition awards and still appears in the legend on the scorecard and
+    candidate pages, where a reader is looking at real grades and needs the key
+    to cover all of them. Here, in the hero, a fourth chip between C and F only
+    crowded the row without telling a first-time visitor anything the four
+    remaining marks do not. Filtered by letter rather than dropped from
+    _data/grades.yml so the grade keeps its label, description and colour
+    everywhere else.
+  {%- endcomment -%}
+  {%- assign strip_grades = site.data.grades | where_exp: "grade", "grade.letter != 'C-'" -%}
   <div class="grade-strip" aria-label="Grading scale">
-    {% for grade in site.data.grades %}
+    {% for grade in strip_grades %}
     <div class="grade-strip__item">
       <span class="grade-strip__letter grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>
       <span class="grade-strip__label">{{ grade.label }}</span>
