@@ -79,6 +79,14 @@
   slate: null
   website: null
 
+- name: Don Cameron
+  display_name: "Cameron, Don"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Nathalie Chambers
   display_name: "Chambers, Nathalie"
   municipality: saanich
@@ -219,6 +227,14 @@
   display_name: "Sibbald, Tia"
   municipality: saanich
   office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Robin M Stanbridge
+  display_name: "Stanbridge, Robin M"
+  municipality: saanich
+  office: Mayor
   standing: challenger
   slate: null
   website: null
@@ -530,6 +546,14 @@
   slate: null
   website: null
 
+- name: David Gleeson
+  display_name: "Gleeson, David"
+  municipality: oak-bay
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Cairine Green
   display_name: "Green, Cairine"
   municipality: oak-bay
@@ -595,6 +619,14 @@
   website: "https://karinforoakbay.com"
 
 # --- View Royal ---
+- name: Anna Becker
+  display_name: "Becker, Anna"
+  municipality: view-royal
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Don Brown
   display_name: "Brown, Don"
   municipality: view-royal
@@ -627,8 +659,80 @@
   slate: null
   website: null
 
+- name: Spencer Dixon
+  display_name: "Dixon, Spencer"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Diane Fownes
+  display_name: "Fownes, Diane"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Cam Harris
+  display_name: "Harris, Cam"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Jay Josh
+  display_name: "Josh, Jay"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Teodora Kristof
+  display_name: "Kristof, Teodora"
+  municipality: view-royal
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Gery Lemon
+  display_name: "Lemon, Gery"
+  municipality: view-royal
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Sean Mackenzie
+  display_name: "Mackenzie, Sean"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Owen Marshall
   display_name: "Marshall, Owen"
+  municipality: view-royal
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Ron Mattson
+  display_name: "Mattson, Ron"
+  municipality: view-royal
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Amy McCooey
+  display_name: "McCooey, Amy"
   municipality: view-royal
   office: Councillor
   standing: challenger
@@ -639,6 +743,14 @@
   display_name: "Painter, Ryan"
   municipality: view-royal
   office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Josh Peterson
+  display_name: "Peterson, Josh"
+  municipality: view-royal
+  office: Councillor
   standing: challenger
   slate: null
   website: null
@@ -936,6 +1048,22 @@
   slate: null
   website: "https://patbryantformayor.ca/"
 
+- name: Rafael R Fuentes
+  display_name: "Fuentes, Rafael R"
+  municipality: central-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Chris Graham
+  display_name: "Graham, Chris"
+  municipality: central-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Zeb King
   display_name: "King, Zeb"
   municipality: central-saanich
@@ -993,6 +1121,14 @@
   website: null
 
 # --- North Saanich ---
+- name: Felice B Mazzoni
+  display_name: "Mazzoni, Felice B"
+  municipality: north-saanich
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Jack McClintock
   display_name: "McClintock, Jack"
   municipality: north-saanich
