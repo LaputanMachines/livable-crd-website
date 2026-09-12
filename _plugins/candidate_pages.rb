@@ -342,6 +342,18 @@ module LivableCrd
           # in one and carry "incumbent" in the other, and only `current`
           # separates them. Counted on the municipality index.
           "incumbent" => standings.dig(candidate["standing"], "current") == true,
+          # Whether a questionnaire came back, from the flag
+          # _plugins/questionnaire_scores.rb attaches to every candidate the
+          # grading sheet has a row for. That generator runs at :high and this
+          # one at :normal, so the flag is already on the candidate by the time
+          # this hash is built.
+          #
+          # Deliberately not a grade and not a count of graded topics: the
+          # municipality index is not a second scorecard, and until the release
+          # date there is nothing published to count. "They replied" is the one
+          # thing about a returned questionnaire this page can say today, and it
+          # stays true after the grades go up.
+          "questionnaire_returned" => candidate["questionnaire_returned"] == true,
           "slate" => slate.empty? ? nil : slate
         }
       end

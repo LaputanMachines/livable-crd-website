@@ -123,13 +123,75 @@ layout: default
 
   <h2 class="muni-office__heading muni-office__heading--section" id="who-is-running">Who is running in {{ page.municipality_name }}</h2>
 
+  {%- comment -%}
+    What the column of ticks and dashes down the left of every list below
+    means, said once above all of them rather than repeated per office. Drawn
+    from the same two marks the rows carry, so the key cannot describe
+    something the list does not show.
+
+    "Returned the questionnaire" and not "completed", which a reader could take
+    as "and we have graded it". Both are true of a returned reply; only the
+    first is true of one still being graded, which today is all of them.
+  {%- endcomment -%}
+  <p class="muni-list-key">
+    <span class="muni-list-key__item">
+      <span class="muni-list__status muni-list__status--returned" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 6 9 17l-5-5"/>
+        </svg>
+      </span>Returned the questionnaire
+    </span>
+    <span class="muni-list-key__item">
+      <span class="muni-list__status muni-list__status--pending" aria-hidden="true">&#8212;</span>No reply yet
+    </span>
+  </p>
+
   {%- for group in page.office_groups %}
   <section class="muni-office">
     <h3 class="muni-office__heading">{{ group.heading }}</h3>
     <ul class="muni-list">
       {%- for candidate in group.candidates %}
       <li class="muni-list__item">
-        <a class="muni-list__name" href="{{ candidate.url | relative_url }}">{{ candidate.display_name }}</a>
+        {%- comment -%}
+          A status column, on the left edge of every row and the same width on
+          all of them, so the ticks line up into a column a reader can scan
+          down rather than a mark they have to find at the end of each name.
+
+          Two states, never blank: a tick for a returned questionnaire, a dash
+          for one that has not come back. The dash is doing real work - a row
+          with nothing in this column would read as a row we forgot to fill in,
+          and a page where only the repliers are marked makes the reader guess
+          whether the gaps mean "no reply" or "not checked".
+
+          Blue, not the accent purple everything else on this page is drawn in:
+          this is the one mark on the row that is a fact about the candidate's
+          reply rather than site furniture, and in purple it disappeared into
+          the name beside it. Not a grade colour either - see the note in
+          _variables.scss - because a tick here says they replied and says
+          nothing about how they scored.
+
+          The glyph is aria-hidden and the meaning is in the visually hidden
+          text beside it, which is what a screen reader announces: a tick
+          character alone is read out as "check mark" or skipped entirely
+          depending on the reader, and neither says what it is a check mark
+          about.
+        {%- endcomment -%}
+        <span class="muni-list__who">
+          {%- if candidate.questionnaire_returned %}
+          <span class="muni-list__status muni-list__status--returned" title="{{ candidate.name }} returned the coalition questionnaire">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <path d="M20 6 9 17l-5-5"/>
+            </svg>
+            <span class="sr-only">Questionnaire returned.</span>
+          </span>
+          {%- else %}
+          <span class="muni-list__status muni-list__status--pending" title="No questionnaire returned by {{ candidate.name }} yet">
+            <span aria-hidden="true">&#8212;</span>
+            <span class="sr-only">No questionnaire returned yet.</span>
+          </span>
+          {%- endif %}
+          <a class="muni-list__name" href="{{ candidate.url | relative_url }}">{{ candidate.display_name }}</a>
+        </span>
         {%- comment -%}
           Standing and slate, in the one line and in that order, matching the
           meta line the scorecard's rows carry. Both are optional in the source

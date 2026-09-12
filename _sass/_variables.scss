@@ -24,6 +24,15 @@ $color-hero: $inky-purple;
 $border-weight: 3px;
 $border-weight-heavy: 4px;
 
+// The "questionnaire came back" tick on the municipality indexes, and nothing
+// else. A blue from outside both the brand purples and the grade scale: on a
+// list of names the mark has to separate from the purple every other thing on
+// the row is drawn in, and it must not borrow a letter's colour, because all it
+// knows is that somebody replied - not how they scored. Darker than $grade-b,
+// which it sits near in hue, so the two are not mistaken for each other on a
+// reader who has just come from the scorecard.
+$color-check: #1355a6;
+
 // Letter-grade colours stay semantic (green→good … red→poor) so the scorecard
 // remains legible at a glance; they convey data, not brand identity.
 //

@@ -124,6 +124,80 @@
   &:hover { text-decoration: underline; }
 }
 
+// Status mark and name, as one flex child of the row. The row is
+// space-between with the meta line hard right, so the two have to travel
+// together; left as separate children the name would drift to the middle of
+// the row as the meta line grew.
+//
+// `min-width: 0` because the name inside it is a link that may be longer than
+// the space left once the meta line has taken its side: without it the flex
+// item refuses to shrink below its content and the row overflows instead of
+// wrapping, which is the one thing the wrapping row was built to avoid.
+.muni-list__who {
+  display: flex;
+  align-items: baseline;
+  gap: $space-xs;
+  min-width: 0;
+}
+
+// The left-hand column: a tick or a dash, one per row, on every row. Fixed
+// width and centred so the marks stack into a column the eye can run down
+// rather than sitting at whatever indent each name happens to start at, and
+// `flex: 0 0 auto` so a long name cannot squeeze it.
+//
+// Sized in ch rather than rem: the two marks it holds are a glyph and an em
+// dash, so the column only has to be as wide as the wider of the two, and ch
+// tracks the type it is set in when the page is zoomed.
+.muni-list__status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.6ch;
+  line-height: 1;
+}
+
+// Blue, from outside both the brand purples and the grade scale (see
+// $color-check). Drawn a little under the name's cap height: a tick at the
+// name's full size is the loudest thing in the row, and this is a marker
+// beside the name, not a heading for it.
+.muni-list__status--returned {
+  color: $color-check;
+
+  svg {
+    display: block;
+    width: 1.05em;
+    height: 1.05em;
+  }
+}
+
+// The same em dash the grade chips use for "nothing to report", in the same
+// muted ink: a reader who has met a dash on the scorecard meets the same mark
+// here meaning the same thing. Deliberately quiet - it is the majority state
+// on most of these lists, and at the tick's weight a page of dashes would read
+// as a page of marks against people.
+.muni-list__status--pending {
+  color: $color-muted;
+}
+
+// The key above the lists. Same two marks the rows carry, each followed by
+// what it means, on one line where there is room and wrapping to two where
+// there is not.
+.muni-list-key {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem $space-sm;
+  margin: 0 0 $space-sm;
+  font-size: 0.85rem;
+  color: $color-muted;
+}
+
+.muni-list-key__item {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.4rem;
+}
+
 .muni-list__meta {
   font-size: 0.85rem;
   color: $color-muted;
