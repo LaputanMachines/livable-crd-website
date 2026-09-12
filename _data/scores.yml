@@ -50,27 +50,38 @@
 #                 or an empty list when none is published yet:
 #     id          Topic id.
 #     grade       Top-level letter, or null if not yet assigned.
-#     score       Present only on a subject graded on points rather than on a
-#                 letter per question - housing, which Homes for Living score on
-#                 their own rubric. `points` out of `max`, and `percent` the
-#                 share of them, which is what `grade` is banded from. The
-#                 maximum is the candidate's own: the municipality-specific
-#                 questions are not asked everywhere, so a Sooke candidate is
-#                 scored out of 54 where a Victoria one is scored out of 66. A
-#                 subject appears here only when every question its candidate
-#                 was asked carries points; half-scored is not published,
-#                 because a missing question drops out of the maximum as well as
-#                 the total and reads as a better result than it is.
+#     score       Present only on a subject whose graders score each question
+#                 rather than grading it, and `percent` - the figure `grade` is
+#                 banded from - is the only field both kinds carry.
+#
+#                 Housing, scored by Homes for Living, also carries `points` out
+#                 of `max`. The maximum is the candidate's own: the
+#                 municipality-specific questions are not asked everywhere, so a
+#                 Sooke candidate is scored out of 54 where a Victoria one is
+#                 scored out of 66.
+#
+#                 Arts, scored by Victori'us, carries `percent` alone. Each
+#                 question is scored 0-3 and weighted, so the percentage is the
+#                 weighted average of the scores; the raw scores do add up, but
+#                 that total is unweighted and is not what the grade is from.
+#
+#                 A subject appears here only when every question its candidate
+#                 was asked carries a score; half-scored is not published,
+#                 because a missing question drops out of the denominator as
+#                 well as the total and reads as a better result than it is.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
-#                 Absent on a points-scored subject, which carries the two
-#                 fields below instead.
-#       points    What the question earned, on a points-scored subject.
-#       max_points What it was worth.
+#                 Absent on a scored subject, which carries the two fields below
+#                 instead.
+#       points    What the question earned, on a scored subject.
+#       max_points What it was worth: the question's own maximum on housing, and
+#                 the top of the scale - the same 3 on every arts question - on
+#                 arts.
 #       weight    Share of the subject grade. Omitted where the sheet is blank,
-#                 and always absent on a points-scored subject: the points are
-#                 the weighting.
+#                 and always absent on housing, where the points are the
+#                 weighting. Present on arts, which weights its questions and
+#                 scores them both.
 #       rationale The grader's written reasoning. Omitted where blank.
 #       answer    What the candidate submitted, as the sheet records it. Blank
 #                 lines are collapsed and trailing spaces trimmed so the value
@@ -121,6 +132,9 @@ candidates:
   - name: Colin Plant
     municipality: saanich
     subjects: []
+  - name: Garnett Humenick
+    municipality: saanich
+    subjects: []
   - name: Judy Brownoff
     municipality: saanich
     subjects: []
@@ -163,10 +177,16 @@ candidates:
   - name: Carolynne Clark
     municipality: view-royal
     subjects: []
+  - name: David Screech
+    municipality: view-royal
+    subjects: []
   - name: Don Brown
     municipality: view-royal
     subjects: []
   - name: Sacha Christensen
+    municipality: view-royal
+    subjects: []
+  - name: Sean Mackenzie
     municipality: view-royal
     subjects: []
   - name: Volker Dammann

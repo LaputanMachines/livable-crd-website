@@ -38,6 +38,9 @@
 #             many points a question is worth out of how many the candidate had
 #             available is a fact about that candidate's municipality, not about
 #             the question. It is published per candidate, in _data/scores.yml.
+#             Present on an arts question, which is scored and weighted both:
+#             Victori'us score each answer 0-3 and weight the questions against
+#             each other exactly as a letter-graded subject does.
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
