@@ -46,19 +46,38 @@ var REGISTRY_TAB = 'Question Registry';
 var LOG_TAB = 'Sync Log';
 var GRADE_PREFIX = 'Grade - ';
 var CATEGORY_TAB = 'Category Grades';
-// Categories scored in raw points rather than a letter per question. Homes for
-// Living grade housing on a points rubric and hand back one cumulative grade,
-// so on a housing row H is a score out of I rather than a letter weighted by I.
-// grading_tabs.py holds the same set as SCORED_CATEGORIES; change both.
-var SCORED_CATEGORIES = { 'Housing': true };
+// Categories whose graders type a number in H rather than a letter, and what
+// that number is out of. Two partner orgs score rather than grade, and they do
+// it differently enough to need a map each.
+//
+// Housing - Homes for Living. Each question is worth a stated number of points,
+// so H is a score out of the Max points in I, and the topic grade is the share
+// of the points the candidate had available to them. Housing questions carry no
+// Weight: the points are the weighting.
+//
+// Arts - Victori'us. Each question is scored 0-3 and carries a Weight exactly as
+// on a letter tab, so I is the same weight lookup as everywhere else and only H
+// changes meaning. The topic grade is the weighted average of those scores read
+// as a percentage.
+//
+// grading_tabs.py holds both; change them together.
+var POINTS_CATEGORIES = { 'Housing': true };
+var SCALE_CATEGORIES = { 'Arts': 3 };
 
-// Registry column holding what a scored question is worth, 1-based.
+// Registry column holding what a points-scored question is worth, 1-based.
 // grading_tabs.py writes the header and seeds the values.
 var REGISTRY_MAX_COLUMN = 13;
 
-// Homes for Living's grade bands, as a share of the points available. Ascending,
-// because MATCH with a 1 finds the last threshold at or below the value.
-var SCORE_BANDS = '{0;0.5;0.6;0.7;0.85}';
+// Each org's grade bands, as a share of what was available, with the letters
+// they band into. Ascending, because MATCH with a 1 finds the last threshold at
+// or below the value.
+//
+// Not the same bands: Homes for Living's C- runs from 50% to 60%, and
+// Victori'us have no C- at all and start A a point higher, at 86%.
+var POINTS_BANDS = '{0;0.5;0.6;0.7;0.85}';
+var POINTS_LETTERS = '{"F";"C-";"C";"B";"A"}';
+var SCALE_BANDS = '{0;0.6;0.7;0.86}';
+var SCALE_LETTERS = '{"F";"C";"B";"A"}';
 
 // Category Grades columns, 1-based: identity, then a (grade, deploy checkbox)
 // pair per category in whatever order grading_tabs.py wrote the header - read
@@ -541,14 +560,14 @@ function syncAll(trigger) {
 /** Append rows in one write, with the owner and weight lookups pointing at the registry. */
 function writeRows(sheet, rows) {
   var first = Math.max(sheet.getLastRow() + 1, 2);
-  var scored = isScoredTab(sheet.getName());
+  var category = String(sheet.getName()).slice(GRADE_PREFIX.length);
   var values = rows.map(function (r, i) {
     var line = first + i;
     return [
       r.key, r.candidate, r.municipality, r.label, r.question, r.answer,
       "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$I,9,FALSE),\"\")",
       '',  // grade on a letter tab, score on a scored one. Typed by a grader.
-      scored ? maxPointsFormula(line) : weightFormula(line),
+      columnIFormula(category, line),
       '',  // rationale
       '',  // grader
       '',  // graded at
@@ -559,14 +578,15 @@ function writeRows(sheet, rows) {
 }
 
 
-/** Column I on a letter-graded tab: this question's share of its subject. */
+/** Column I on a letter-graded tab, and on a scale tab: this question's share
+ *  of its subject. */
 function weightFormula(line) {
   return "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$F,6,FALSE),\"\")";
 }
 
 
 /**
- * Column I on a scored tab: what this question is worth.
+ * Column I on a points tab: what this question is worth.
  *
  * The same shape as the weight lookup it replaces - a VLOOKUP into the registry
  * rather than a copy, so correcting a maximum there corrects every candidate's
@@ -579,6 +599,18 @@ function maxPointsFormula(line) {
 }
 
 
+/**
+ * Column I: what the question is worth, in the units its tab grades in.
+ *
+ * A maximum on a points tab, and a weight on every other kind - a scale tab's
+ * column I is the one a letter tab has, untouched. Mirrors column_i_formula()
+ * in grading_tabs.py.
+ */
+function columnIFormula(category, line) {
+  return POINTS_CATEGORIES[category] ? maxPointsFormula(line) : weightFormula(line);
+}
+
+
 /** 1-based column index to its A1 letters. */
 function columnLetter(index) {
   var letters = '';
@@ -588,12 +620,6 @@ function columnLetter(index) {
     index = (index - 1 - rem) / 26;
   }
   return letters;
-}
-
-
-/** Whether a "Grade - <Subject>" tab is scored in points rather than letters. */
-function isScoredTab(tabName) {
-  return !!SCORED_CATEGORIES[String(tabName).slice(GRADE_PREFIX.length)];
 }
 
 
@@ -709,17 +735,21 @@ function ensureCategoryRows(ss, submissions, trigger) {
 
 
 /**
- * Weighted-average letter grade for one candidate's category, from the graded
- * question rows in that category's Grade tab. Question grades map onto an
- * even 0-4 scale (F=0 ... A=4); the weighted average rounds to the nearest
- * whole point and back to a letter. Ungraded rows (blank Grade cell) drop out
- * of both the numerator and the weight used to normalise it, so a
- * partly-graded candidate isn't pulled toward F by the questions nobody has
- * graded yet.
+ * One candidate's Category Grades cell, in whatever the category's rubric is.
+ * Two of them score rather than grade and hand off below; this is the letter
+ * rollup every other category uses.
+ *
+ * Weighted-average letter grade from the graded question rows in that
+ * category's Grade tab. Question grades map onto an even 0-4 scale
+ * (F=0 ... A=4); the weighted average rounds to the nearest whole point and
+ * back to a letter. Ungraded rows (blank Grade cell) drop out of both the
+ * numerator and the weight used to normalise it, so a partly-graded candidate
+ * isn't pulled toward F by the questions nobody has graded yet.
  */
 function categoryFormula(category, row) {
   var tab = "'" + GRADE_PREFIX + category + "'";
-  if (SCORED_CATEGORIES[category]) return scoredCategoryFormula(tab, row);
+  if (POINTS_CATEGORIES[category]) return pointsCategoryFormula(tab, row);
+  if (SCALE_CATEGORIES[category]) return scaleCategoryFormula(tab, row, SCALE_CATEGORIES[category]);
   var scale = '{"F","C-","C","B","A"}';
   var candidateCol = tab + '!$B$2:$B', municipalityCol = tab + '!$C$2:$C';
   var gradeCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
@@ -747,18 +777,64 @@ function categoryFormula(category, row) {
  * Typed-over-able, exactly as the letter rollup is: the partner org replacing
  * this with their own call is the intended use, not a mistake.
  */
-function scoredCategoryFormula(tab, row) {
+function pointsCategoryFormula(tab, row) {
   var where = tab + '!$B:$B,$B' + row + ',' + tab + '!$C:$C,$C' + row;
   var points = 'SUMIFS(' + tab + '!$H:$H,' + where + ')';
   var max = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + tab + '!$H:$H,"<>")';
-  return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},MATCH(' + points + '/' + max +
-      ',' + SCORE_BANDS + ',1)),"")';
+  return '=' + bandExpression(points + '/' + max, POINTS_LETTERS, POINTS_BANDS);
+}
+
+
+/**
+ * A ratio banded into a letter, as a formula fragment.
+ *
+ * One shape for both rubrics, which is the point: the thresholds and the
+ * letters are the org's own, and they disagree. Mirrors band_expression() in
+ * grading_tabs.py; the two render the same string.
+ */
+function bandExpression(ratio, letters, bands) {
+  return 'IFERROR(INDEX(' + letters + ',MATCH(' + ratio + ',' + bands + ',1)),"")';
+}
+
+
+/**
+ * Cumulative letter for a category scored on a fixed 0-N scale.
+ *
+ * Victori'us score every arts question 0-3 and weight the questions against
+ * each other, so the topic grade is the weighted average of those scores as a
+ * share of a straight 3, banded at 86/70/60. A question nobody has scored yet
+ * drops out of the total and out of the weight it is divided by, the same
+ * courtesy the letter rollup pays a partly-graded candidate.
+ *
+ * Two things about the shape are deliberate. The score is read through MATCH
+ * rather than multiplied, exactly as the letter rollup reads a letter through
+ * MATCH: SUMPRODUCT evaluates the whole column, and a column of mostly-empty
+ * cells cannot be multiplied - one "" in it and the arithmetic is #VALUE!
+ * before the filter gets a say. And ISNUMBER, not <>"", is what decides whether
+ * a row counts, so a letter left behind from before the rubric changed drops
+ * out of the weight as well as the total instead of scoring a silent zero.
+ *
+ * Typed-over-able, exactly as the letter rollup is: the partner org replacing
+ * this with their own call is the intended use, not a mistake.
+ */
+function scaleCategoryFormula(tab, row, ceiling) {
+  var scoreCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
+  var scale = [];
+  for (var n = 0; n <= ceiling; n++) scale.push(n);
+
+  var rows = '(' + tab + '!$B$2:$B=$B' + row + ')*(' + tab + '!$C$2:$C=$C' + row +
+      ')*ISNUMBER(' + scoreCol + ')';
+  var value = 'IFERROR(MATCH(' + scoreCol + ',{' + scale.join(';') + '},0)-1,0)';
+  var earned = 'SUMPRODUCT(' + rows + '*' + value + '*' + weightCol + ')';
+  var available = '(' + ceiling + '*SUMPRODUCT(' + rows + '*' + weightCol + '))';
+
+  return '=' + bandExpression(earned + '/' + available, SCALE_LETTERS, SCALE_BANDS);
 }
 
 
 
 /**
- * Scored questions with no maximum on their registry row.
+ * Points-scored questions with no maximum on their registry row.
  *
  * A blank maximum divides nothing by nothing: the question's score still counts
  * towards the total while contributing zero to what that total is out of, so
@@ -997,7 +1073,10 @@ function menuCheckSetup() {
     // weighting. What it needs instead is a maximum on every one of its
     // questions, because a blank one silently drops that question out of the
     // denominator and flatters every candidate who answered it.
-    if (SCORED_CATEGORIES[c]) {
+    //
+    // A category scored on a scale is checked like any other: its questions
+    // carry ordinary weights, and those weights still have to total 100%.
+    if (POINTS_CATEGORIES[c]) {
       problems = problems.concat(maxPointsProblems(c));
       continue;
     }

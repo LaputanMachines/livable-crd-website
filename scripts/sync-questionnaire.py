@@ -132,19 +132,29 @@ R_LABEL, R_CATEGORY, R_QUESTION, R_TYPE, R_GRADED, R_WEIGHT, R_RAW, R_NOTES, R_O
 G_KEY, G_CANDIDATE, G_MUNICIPALITY, G_LABEL, G_QUESTION, G_ANSWER, G_OWNER, \
     G_GRADE, G_WEIGHT, G_RATIONALE = range(10)
 
-# Subjects graded on a points rubric rather than a letter per question. Homes
-# for Living score each housing question out of a stated number of points, ask
-# different questions in different municipalities, and hand back one cumulative
-# grade; the letter on Category Grades is that cumulative grade banded at
-# 85/70/60/50.
+# Subjects whose graders score each question rather than grading it, and how.
+# Two partner orgs do, and not the same way. Both tabs are the same thirteen
+# columns as every other one; what differs is what the two cells a grader uses
+# hold, and how Category Grades turns them into a letter.
 #
-# Their tab is the same thirteen columns as every other one, and the two a
-# grader uses mean something else on it: G_GRADE holds a score rather than a
-# letter, and G_WEIGHT what that score is out of rather than a percentage.
+# housing - Homes for Living score each question out of a stated number of
+# points, ask different questions in different municipalities, and hand back one
+# cumulative grade. G_GRADE holds the score and G_WEIGHT what it is out of, and
+# the letter is the share of the available points banded at 85/70/60/50.
 #
-# Mirrors SCORED_CATEGORIES in grading_tabs.py and appsscript/Code.gs, keyed to
-# subject ids rather than to the registry's category names.
-SCORED_SUBJECTS = {"housing"}
+# arts - Victori'us score each question 0-3 against their own rubric and weight
+# the questions against each other. G_GRADE holds the score and G_WEIGHT is the
+# ordinary percentage every letter-graded tab carries, and the letter is the
+# weighted average of the scores banded at 86/70/60. No C-: their bands have
+# none, so the arts rubric can never produce one.
+#
+# Mirrors POINTS_CATEGORIES and SCALE_CATEGORIES in grading_tabs.py and
+# appsscript/Code.gs, keyed to subject ids rather than to the registry's
+# category names.
+POINTS = "points"
+SCALE = "scale"
+POINTS_SUBJECTS = {"housing"}
+SCALE_SUBJECTS = {"arts": 3}
 
 # Category Grades identity columns, 0-based.
 C_KEY, C_CANDIDATE, C_MUNICIPALITY = range(3)
@@ -317,6 +327,9 @@ QUESTIONS_HEADER = """\
 #             many points a question is worth out of how many the candidate had
 #             available is a fact about that candidate's municipality, not about
 #             the question. It is published per candidate, in _data/scores.yml.
+#             Present on an arts question, which is scored and weighted both:
+#             Victori'us score each answer 0-3 and weight the questions against
+#             each other exactly as a letter-graded subject does.
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
@@ -377,27 +390,38 @@ SCORES_HEADER = """\
 #                 or an empty list when none is published yet:
 #     id          Topic id.
 #     grade       Top-level letter, or null if not yet assigned.
-#     score       Present only on a subject graded on points rather than on a
-#                 letter per question - housing, which Homes for Living score on
-#                 their own rubric. `points` out of `max`, and `percent` the
-#                 share of them, which is what `grade` is banded from. The
-#                 maximum is the candidate's own: the municipality-specific
-#                 questions are not asked everywhere, so a Sooke candidate is
-#                 scored out of 54 where a Victoria one is scored out of 66. A
-#                 subject appears here only when every question its candidate
-#                 was asked carries points; half-scored is not published,
-#                 because a missing question drops out of the maximum as well as
-#                 the total and reads as a better result than it is.
+#     score       Present only on a subject whose graders score each question
+#                 rather than grading it, and `percent` - the figure `grade` is
+#                 banded from - is the only field both kinds carry.
+#
+#                 Housing, scored by Homes for Living, also carries `points` out
+#                 of `max`. The maximum is the candidate's own: the
+#                 municipality-specific questions are not asked everywhere, so a
+#                 Sooke candidate is scored out of 54 where a Victoria one is
+#                 scored out of 66.
+#
+#                 Arts, scored by Victori'us, carries `percent` alone. Each
+#                 question is scored 0-3 and weighted, so the percentage is the
+#                 weighted average of the scores; the raw scores do add up, but
+#                 that total is unweighted and is not what the grade is from.
+#
+#                 A subject appears here only when every question its candidate
+#                 was asked carries a score; half-scored is not published,
+#                 because a missing question drops out of the denominator as
+#                 well as the total and reads as a better result than it is.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
-#                 Absent on a points-scored subject, which carries the two
-#                 fields below instead.
-#       points    What the question earned, on a points-scored subject.
-#       max_points What it was worth.
+#                 Absent on a scored subject, which carries the two fields below
+#                 instead.
+#       points    What the question earned, on a scored subject.
+#       max_points What it was worth: the question's own maximum on housing, and
+#                 the top of the scale - the same 3 on every arts question - on
+#                 arts.
 #       weight    Share of the subject grade. Omitted where the sheet is blank,
-#                 and always absent on a points-scored subject: the points are
-#                 the weighting.
+#                 and always absent on housing, where the points are the
+#                 weighting. Present on arts, which weights its questions and
+#                 scores them both.
 #       rationale The grader's written reasoning. Omitted where blank.
 #       answer    What the candidate submitted, as the sheet records it. Blank
 #                 lines are collapsed and trailing spaces trimmed so the value
@@ -1410,18 +1434,17 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             if grade_col is not None:
                 grade = grade_or_none(row[grade_col] if grade_col < len(row) else "",
                                       where, warnings)
-            scored = subject_id in SCORED_SUBJECTS
             questions = subject_questions(
                 grade_rows.get((key, subject_name), []), name, subject_name,
-                question_labels, scored, warnings)
+                subject_id, question_labels, warnings)
 
             # A scored subject publishes a cumulative total, and refuses to
             # publish at all until every question a candidate was asked carries
-            # points. The deploy checkbox says the partner org is finished; this
-            # says whether the numbers behind it agree.
+            # a score. The deploy checkbox says the partner org is finished;
+            # this says whether the numbers behind it agree.
             score = None
-            if scored:
-                score = subject_score(questions, name, subject_name, warnings)
+            if rubric_for(subject_id):
+                score = subject_score(questions, name, subject_name, subject_id, warnings)
                 if score is None:
                     continue
                 # Questions this candidate's municipality was never asked. The
@@ -1489,7 +1512,17 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
     return records
 
 
-def subject_questions(rows, candidate, subject_name, question_labels, scored, warnings):
+def rubric_for(subject_id):
+    """How this subject is scored, or None where it is graded in letters."""
+    if subject_id in POINTS_SUBJECTS:
+        return POINTS
+    if subject_id in SCALE_SUBJECTS:
+        return SCALE
+    return None
+
+
+def subject_questions(rows, candidate, subject_name, subject_id, question_labels, warnings):
+    rubric = rubric_for(subject_id)
     out = []
     for row in rows:
         cell = lambda idx: tidy(row[idx]) if idx < len(row) else ""
@@ -1506,17 +1539,28 @@ def subject_questions(rows, candidate, subject_name, question_labels, scored, wa
         prose, selected = split_selections(clean_text(row[G_ANSWER] if G_ANSWER < len(row) else ""))
         question = {
             "label": label,
-            "grade": None if scored else grade_or_none(
+            "grade": None if rubric else grade_or_none(
                 row[G_GRADE] if G_GRADE < len(row) else "", where, warnings),
-            "weight": "" if scored else cell(G_WEIGHT),
+            # Column I is a maximum on a points subject and has no business
+            # being published as a share of anything. On every other kind,
+            # scored or not, it is the share it has always been.
+            "weight": "" if rubric == POINTS else cell(G_WEIGHT),
             "rationale": clean_text(row[G_RATIONALE] if G_RATIONALE < len(row) else ""),
             "answer": prose,
             "selected": selected,
         }
-        if scored:
+        if rubric:
             question["points"] = number_or_none(cell(G_GRADE), where, "score", warnings)
+        if rubric == POINTS:
             question["max_points"] = number_or_none(cell(G_WEIGHT), where,
                                                     "max points", warnings)
+        elif rubric == SCALE:
+            # The same number on every row of the subject: what a question is
+            # worth against the others is the weight in column I, not the top of
+            # the scale, which is a property of the rubric and not of the
+            # question. Published per question all the same, because "2" beside
+            # an answer says nothing without it.
+            question["max_points"] = SCALE_SUBJECTS[subject_id]
         out.append(question)
     return out
 
@@ -1539,20 +1583,26 @@ def number_or_none(value, where, what, warnings):
     return int(number) if number == int(number) else number
 
 
-def subject_score(questions, candidate, subject_name, warnings):
-    """Score, maximum and percentage for one candidate's points-scored subject.
+def subject_score(questions, candidate, subject_name, subject_id, warnings):
+    """The cumulative figure behind one candidate's letter on a scored subject.
 
-    A question with no score drops out of the total and out of the maximum, which
-    is what lets one rule cover every municipality: HFL-11 is only asked in ten
-    of them and HFL-12 in five, the Apps Script fans all of them out to every
-    candidate regardless, and the ones nobody was asked are simply never scored.
-    A Sooke candidate is graded out of the 54 they were asked rather than the 66
-    somebody in Victoria was.
+    A question with no score drops out of the total and out of what the total is
+    measured against, which is what lets one rule cover every municipality:
+    HFL-11 is only asked in ten of them and HFL-12 in five, the Apps Script fans
+    all of them out to every candidate regardless, and the ones nobody was asked
+    are simply never scored. A Sooke candidate is graded out of the 54 they were
+    asked rather than the 66 somebody in Victoria was.
 
     That same rule is why an unscored question a candidate *did* answer must stop
-    publication: it would quietly leave its points out of the maximum as well as
-    the total, and the candidate would read better than they are. The two states
-    are different and the warnings say which is which.
+    publication: it would quietly leave that question out of the denominator as
+    well as the total, and the candidate would read better than they are. The two
+    states are different and the warnings say which is which.
+
+    Both checks are the rubrics' in common; what each returns is not. A points
+    subject publishes the points, the maximum and the share of it. A scale
+    subject has no meaningful running total to publish - a raw 19 out of 24 is
+    the unweighted figure, and the weighting is the whole rubric - so it
+    publishes the weighted percentage and nothing else.
     """
     scored = [q for q in questions if q["points"] is not None]
     answered_unscored = [q for q in questions
@@ -1575,6 +1625,10 @@ def subject_score(questions, candidate, subject_name, warnings):
         )
         return None
 
+    if rubric_for(subject_id) == SCALE:
+        return scale_score(scored, candidate, subject_name,
+                           SCALE_SUBJECTS[subject_id], warnings)
+
     missing_max = [q["label"] for q in scored if q["max_points"] is None]
     if missing_max:
         warnings.append(
@@ -1591,6 +1645,67 @@ def subject_score(questions, candidate, subject_name, warnings):
         "max": maximum,
         "percent": round(100 * points / maximum) if maximum else 0,
     }
+
+
+def scale_score(scored, candidate, subject_name, ceiling, warnings):
+    """The weighted percentage behind a scale-scored subject's letter.
+
+    Each question's score is its share of the scale, and each question's share
+    of the subject is its weight, so the subject is the one divided by the
+    other: the scores weighted, over the weights that carried a score. Dividing
+    by the weights present rather than by 100% is the same courtesy the rest of
+    this pays a partly-scored candidate, and it is also what keeps the figure
+    right when a question is left unasked.
+
+    Refused rather than approximated in two cases, because both would publish a
+    number that is not the one the graders arrived at: a scored question with no
+    weight beside it (its score would count for nothing), and a score above the
+    top of the scale (the sheet's validation should have stopped it, and if it
+    did not, the rubric is not what this thinks it is).
+    """
+    unweighted = [q["label"] for q in scored if share_or_none(q["weight"]) is None]
+    if unweighted:
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} is scored on "
+            f"{', '.join(unweighted)}, which carries no weight, so the subject is "
+            f"not published. A scored question with no weight counts towards "
+            f"nothing, and the grade would be of the other questions only."
+        )
+        return None
+
+    over = [f"{q['label']} ({q['points']})" for q in scored if q["points"] > ceiling]
+    if over:
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} scores "
+            f"{', '.join(over)} above the {ceiling} the rubric tops out at, so "
+            f"the subject is not published."
+        )
+        return None
+
+    weights = [share_or_none(q["weight"]) for q in scored]
+    earned = sum(q["points"] * w for q, w in zip(scored, weights))
+    available = ceiling * sum(weights)
+    return {"percent": round(100 * earned / available) if available else 0}
+
+
+def share_or_none(value):
+    """A weight cell as a fraction of one, or None if it is not a weight.
+
+    The sheet renders column I as a percentage and gviz hands it back the way it
+    is rendered, so "16.67%" is what arrives for a sixth of a subject. Parsed
+    rather than rounded to an integer percentage the way it is published: eight
+    weights rounded to whole percents total 101%, and a weighted average taken
+    against that is not the one the graders' own workbook computes.
+    """
+    text = (value or "").strip().replace(",", "")
+    if not text:
+        return None
+    percent = text.endswith("%")
+    try:
+        number = float(text[:-1] if percent else text)
+    except ValueError:
+        return None
+    return number / 100 if percent else number
 
 
 def render_scores(graded_subjects, records):
@@ -1636,8 +1751,13 @@ def render_scores(graded_subjects, records):
             if subject.get("score"):
                 score = subject["score"]
                 parts.append("        score:")
-                parts.append(f"          points: {score['points']}")
-                parts.append(f"          max: {score['max']}")
+                # Only a points subject has a running total to state. A scale
+                # subject's figure is the weighted percentage and nothing else:
+                # its raw scores add up to something, but that something is
+                # unweighted and would contradict the percentage beside it.
+                if score.get("max") is not None:
+                    parts.append(f"          points: {score['points']}")
+                    parts.append(f"          max: {score['max']}")
                 parts.append(f"          percent: {score['percent']}")
 
             if subject["questions"]:

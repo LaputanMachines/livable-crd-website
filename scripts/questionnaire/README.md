@@ -375,7 +375,9 @@ reconciliation questions, whose codes were left alone when the topic was folded 
 authoritative afterwards, and `move_question.py` is what changes it safely.
 
 Housing rows carry **no weight**, and that is not an omission - see "Housing is scored in
-points" below. `Check setup` skips the 100% test for them.
+points" below. `Check setup` skips the 100% test for them. Arts rows are the other way
+round: they are scored rather than graded too, but they carry ordinary weights that still
+have to total 100%, and `Check setup` still says so.
 
 `Owner` is who submitted the question, so a grader who needs to check intent knows whom
 to ask. Populated from the `Finalized Questions` tab of the committee sheet, matching on
@@ -399,6 +401,10 @@ for when wording or columns changed. It never touches `Category`, `Graded`, `Wei
 `Grade` (a dropdown of the five grades the site can render), `Rationale`, and nothing else;
 `Grader` / `Graded at` stamp themselves.
 
+Two subjects take a number in `H` instead of a letter, because the partner orgs who own
+them score rather than grade - see "Housing is scored in points" and "Arts is scored 0-3"
+below. Every tab is the same thirteen columns either way.
+
 `Owner` and `Weight` are `VLOOKUP`s into the registry rather than copies, so correcting
 either there corrects every grading row at once, including rows already graded.
 
@@ -406,6 +412,10 @@ either there corrects every grading row at once, including rows already graded.
 key, never by position.
 
 #### Housing is scored in points
+
+Two subjects are scored rather than graded, on the rubrics their partner orgs already use.
+This is the first; "Arts is scored 0-3" below is the other, and they have almost nothing in
+common beyond `H` holding a number.
 
 Homes for Living grade housing on their own rubric: every question is worth a set number
 of points, the municipality-specific ones are only asked where they apply, and a candidate
@@ -455,6 +465,80 @@ that produced a real percentage divides by 6, and those are the totals they have
 `Grading > Check setup` flags a scored question with no maximum, because a blank one lets
 the question's score count towards the total while adding nothing to what that total is
 out of.
+
+#### Arts is scored 0-3
+
+Victori'us grade arts on their own rubric too, and not the same way. Every question is
+scored **0 to 3** against their criteria and carries the ordinary `Weight` every
+letter-graded question does, and the topic grade is the weighted average of those scores
+read as a percentage.
+
+`Grade - Arts` changes in exactly one place. `H` stops being a letter and becomes a score:
+
+| Column | Letter-graded tab | `Grade - Arts` |
+|---|---|---|
+| `H` | `Grade` - a letter from the dropdown | `Score / 3` - a whole number, validated 0-3 |
+| `I` | `Weight` - `VLOOKUP` of the registry's `Weight` | unchanged |
+
+`I` being unchanged is the point: arts weights its questions like everything else, they
+still have to total 100%, and `Grading > Check setup` still checks that they do. Nothing on
+the registry moves, and `Max points` stays empty on every `ART-*` row.
+
+It is rendered to **two decimal places**, unlike a letter tab's whole percent. The arts
+weights are sixths and fifteenths, and eight of them rounded to whole percents read
+7 + 17 + 13 + 10 + 17 + 10 + 10 + 17 = 101% of a topic. `/questionnaire/` already publishes
+them to two places from the registry, and the candidate pages take theirs from this column,
+so the two would disagree on the same number.
+
+`Category Grades` bands the weighted average:
+
+```
+SUM(score x weight) / (3 x SUM(weight, where the score is a number))
+   >= 86% A   >= 70% B   >= 60% C   below that F
+```
+
+**Not the same bands as housing.** Victori'us have no `C-` at all and start `A` a point
+higher, at 86%. Both band tables are each org's own, copied from their own workbook.
+
+Two details of the formula are deliberate, and both are worth leaving alone:
+
+- The score is read through `MATCH` into `{0;1;2;3}` rather than multiplied. `SUMPRODUCT`
+  evaluates the whole column, and a column of mostly-empty cells cannot be multiplied - one
+  `""` anywhere in it and the arithmetic is `#VALUE!` before the filter gets a say. The
+  letter rollup reads a letter through `MATCH` for the same reason.
+- `ISNUMBER`, not `<>""`, decides whether a row counts. Three rows on the tab still held a
+  letter from the pass that graded the first candidate before this rubric arrived; they are
+  left where they are rather than deleted, and `ISNUMBER` keeps them out of the weight they
+  would be divided by as well as out of the total. A stale letter therefore scores nothing
+  and drags nothing down. `grading_tabs.py` prints each one it finds.
+
+`sync-questionnaire.py` publishes the weighted percentage and **not** a running total: the
+raw scores do add up, but that total is unweighted and would contradict the percentage
+beside it. Each question publishes its own `2 / 3` and its weight, and a candidate's page
+reads `87% weighted score across 8 questions`.
+
+#### Switching arts over, in order
+
+```bash
+# 1. The H header, the 0-3 validation, and Category Grades' arts rollup.
+#    Nothing else on the tab moves, and no registry cell changes at all.
+python3 scripts/questionnaire/grading_tabs.py --dry-run
+python3 scripts/questionnaire/grading_tabs.py
+```
+
+2. Paste `appsscript/Code.gs` into the sheet's Apps Script editor and save, then
+   **Deploy > Manage deployments > (pencil) > Version: New version**. Saving is enough for
+   the daily trigger and the menu, which always run the latest code; the web app Tally
+   posts to runs the deployed version and needs the new one.
+
+   Needed for every `Category Grades` row appended from here on: the old formula reads a
+   0-3 score as a letter, matches nothing, and bands the resulting zero to `F`. The rows
+   already there are fixed by step 1.
+3. `Grading > Check setup` in the sheet. Arts is checked exactly as it was - its weights
+   still have to total 100%.
+4. Tell Victori'us where to type: column `H` of `Grade - Arts`, one row per candidate per
+   question, a whole number 0-3. The three cells that still hold a letter are named in
+   step 1's output and want retyping as scores.
 
 #### `move_question.py`: changing a question's subject
 
@@ -634,7 +718,10 @@ Three things about this sheet matter to what gets published:
 - **`Grade` accepts `N/A`** as well as the five letters, and it is published as its own
   badge meaning "does not apply to this candidate" — for `ROL-05`, which asks what
   somebody did in a previous term, a first-time candidate is `N/A`, not a blank. A blank
-  publishes as "not graded yet".
+  publishes as "not graded yet". Letter-graded tabs only: on `Grade - Housing` and
+  `Grade - Arts` the cell takes a number, and a question that does not apply is left blank,
+  which drops it out of that candidate's total and out of what the total is measured
+  against.
 
 `Grader` and `Graded at` are never published. Grades go out as the coalition's.
 

@@ -271,18 +271,32 @@ layout: default
             under all eleven questions, which would be a wall of apology.
           {%- endcomment -%}
           {%- comment -%}
-            A points-scored topic states the total instead of the question count.
-            Housing is graded by Homes for Living on a points rubric - each
-            question worth a stated number of points, out of a maximum that
-            depends on which municipality-specific questions the candidate was
-            asked - and the letter above is that fraction banded, not an average
-            of eleven letters. Counting the questions there says nothing about
-            how the grade was reached; the fraction says all of it.
+            A scored topic states what it scored instead of counting questions.
+            Two of them are, and each says it the way its own rubric works.
+
+            Housing is scored by Homes for Living on points - each question worth
+            a stated number, out of a maximum that depends on which
+            municipality-specific questions the candidate was asked - and the
+            letter above is that fraction banded, not an average of eleven
+            letters. Counting the questions says nothing about how the grade was
+            reached; the fraction says all of it.
+
+            Arts is scored by Victori'us 0-3 a question and weighted, so there
+            is no running total to state: a raw score out of 24 would be the
+            unweighted figure and would disagree with the percentage it sits
+            beside. The percentage is the whole of it, and the question count
+            still earns its place there because each of those questions carries
+            its own visible score.
           {%- endcomment -%}
           {%- assign reasoned = detail.questions | where_exp: "q", "q.rationale" %}
           <p class="candidate-grade__meta">
-            {%- if detail.score %}
+            {%- if detail.score.max %}
             {{ detail.score.points }} of {{ detail.score.max }} points ({{ detail.score.percent }}%)
+            {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
+            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
+            {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
+            {%- elsif detail.score %}
+            {{ detail.score.percent }}% weighted score across {{ detail.questions.size }} question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
             {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
@@ -317,11 +331,14 @@ layout: default
               {%- endcomment -%}
               <div class="candidate-answer__head">
                 {%- comment -%}
-                  A scored question needs no "what it is worth" pill: the
-                  fraction on the right says it, and saying it twice on one line
-                  is the same number arriving from both ends.
+                  A housing question needs no "what it is worth" pill: its points
+                  are its weighting, so the fraction on the right already says
+                  it, and the pill would be the same number arriving from both
+                  ends. An arts question is scored and weighted separately - 2
+                  out of 3 on a question worth a sixth of the topic - so both
+                  belong, and a row that carries a weight shows it.
                 {%- endcomment -%}
-                {%- if q.weight and q.max_points == nil %}
+                {%- if q.weight %}
                 <span class="candidate-answer__weight">{{ q.weight }} of this topic</span>
                 {%- endif %}
                 <span class="candidate-answer__label">{{ q.label }}</span>

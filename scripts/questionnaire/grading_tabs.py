@@ -19,10 +19,12 @@ Tabs created:
                       source of truth for what gets graded and what each
                       question is worth.
   Grade - <Subject>   One per scorecard subject. A-G generated and protected,
-                      H-J typed by graders, M a hidden drift hash. On a subject
-                      in SCORED_CATEGORIES the same two columns mean something
-                      else: H is a score out of I rather than a letter weighted
-                      by I, and I looks up the registry's Max points.
+                      H-J typed by graders, M a hidden drift hash. H holds a
+                      letter on most subjects and a number on the two whose
+                      partner org scores rather than grades: a number of points
+                      out of the Max points in I on a POINTS_CATEGORIES subject,
+                      and a 0-N score beside the ordinary weight in I on a
+                      SCALE_CATEGORIES one.
   Category Grades     One row per candidate. One column per graded subject,
                       each starting as a weighted rollup of that subject's
                       question grades which a partner org can type their own
@@ -111,19 +113,42 @@ CATEGORY_OVERRIDE = {}
 # score, and the GEN-* questions are published unscored.
 SKIP_LABELS = {"GEN-01", "GEN-02"}
 
-# Categories scored in raw points rather than in letters per question.
+# Categories whose graders type a number in H rather than a letter, and what
+# that number is out of. Two partner orgs score rather than grade, and they do
+# it differently enough that this is two maps and not one set.
 #
-# Homes for Living grade housing on a points rubric - every question is worth a
-# stated number of points, the municipality-specific ones are worth different
-# numbers in different municipalities, and the candidate gets one cumulative
-# grade from their share of the total rather than a grade on each answer. That
-# does not fit the weighted-letter-average every other partner org uses, so the
-# housing tabs carry two extra columns (Points, Max points) and Category Grades
-# bands the ratio instead of averaging letters.
+# Housing - Homes for Living. Every question is worth a stated number of points,
+# the municipality-specific ones are only asked where they apply, and the
+# candidate gets one cumulative grade from their share of the points available
+# to them. Column I holds that question's Max points, and housing questions
+# carry no Weight at all: the points ARE the weighting, so the registry's
+# per-category "should total 100%" check is skipped for them.
 #
-# A scored category's questions carry no Weight: the points ARE the weighting,
-# and the registry's per-category "should total 100%" check is skipped for them.
-SCORED_CATEGORIES = {"Housing"}
+# Arts - Victori'us. Every question is scored 0-3 against their rubric and
+# carries a Weight exactly as on a letter tab, and the topic grade is the
+# weighted average of those scores read as a percentage. Column I is the same
+# Weight lookup every letter tab has, the weights still have to total 100%, and
+# the only thing that changes about the tab is what H means.
+#
+# Both are mirrored in appsscript/Code.gs and sync-questionnaire.py.
+POINTS_CATEGORIES = {"Housing"}
+SCALE_CATEGORIES = {"Arts": 3}
+SCORED_CATEGORIES = POINTS_CATEGORIES | set(SCALE_CATEGORIES)
+
+# Where each rubric's bands fall, as a share of what was available. Ascending,
+# because MATCH with a 1 finds the last threshold at or below the value.
+#
+# They are deliberately not the same bands. Homes for Living have a C- running
+# from 50% to 60%; Victori'us have no C- at all and put A a point higher, at
+# 86%. Each is the org's own threshold table, as their own workbook states it.
+POINTS_BANDS = [(0.0, "F"), (0.5, "C-"), (0.6, "C"), (0.7, "B"), (0.85, "A")]
+SCALE_BANDS = [(0.0, "F"), (0.6, "C"), (0.7, "B"), (0.86, "A")]
+
+# How a scale tab's Weight column is rendered. Two places, not the whole percent
+# a letter tab shows, because it is what a grader and the website both read: the
+# arts weights are sixths and fifteenths, and eight of them rounded to whole
+# percents total 101%.
+SCALE_WEIGHT_PATTERN = "0.00%"
 
 # Tab order, so the sheet reads the way the scorecard does.
 CATEGORY_ORDER = [
@@ -158,12 +183,16 @@ GRADE_HEADERS = [
     "Grade", "Weight", "Rationale", "Grader", "Graded at", "Answer hash",
 ]
 
-# What H and I are called on a scored category's tab. The columns themselves
-# are the same two every grading tab has - no tab is a different width, and
-# every hardcoded index in Code.gs, sync-questionnaire.py and this file keeps
-# its meaning - but on a scored tab H holds a number out of I rather than a
-# letter weighted by I.
-SCORED_GRADE_HEADERS = ["Score", "Max points"]
+# What H and I are called on a tab that takes a number in H. The columns
+# themselves are the same two every grading tab has - no tab is a different
+# width, and every hardcoded index in Code.gs, sync-questionnaire.py and this
+# file keeps its meaning - only what a grader puts in them changes.
+#
+# A points tab renames both: H holds a number out of I rather than a letter
+# weighted by I. A scale tab renames only H, and names the ceiling while it is
+# there, because a bare "Score" above a column whose neighbour still reads
+# "Weight" does not say what the number is out of.
+POINTS_GRADE_HEADERS = ["Score", "Max points"]
 
 # Registry column holding what a scored question is worth, 1-based. Sits past
 # the J:L weight tally, in the "column M or beyond" the schema reserves for
@@ -415,17 +444,28 @@ def registry_requests(sheet_id, row_count):
     ]
 
 
-def grade_tab_requests(sheet_id, row_count, scored=False):
+def grade_headers_for(category):
+    """The header row of one subject's grading tab."""
+    headers = GRADE_HEADERS[:]
+    if category in POINTS_CATEGORIES:
+        headers[7:9] = POINTS_GRADE_HEADERS
+    elif category in SCALE_CATEGORIES:
+        headers[7] = f"Score / {SCALE_CATEGORIES[category]}"
+    return headers
+
+
+def grade_tab_requests(sheet_id, row_count, category=None):
     """Validation, formats, widths, the hidden hash column and the edit warning.
 
-    A scored tab takes a number in H instead of a letter, and a whole number of
-    points in I instead of a percentage: the same two cells, validated for what
-    they now hold. Leaving the letter dropdown in place would invite a grader to
-    type an A that nothing would ever read.
+    A tab that takes a number in H is validated for a number: leaving the letter
+    dropdown in place would invite a grader to type an A that nothing would ever
+    read. What column I is validated as follows the rubric - whole points on a
+    points tab, the same percentage every letter tab shows on a scale tab, whose
+    I column is still a weight.
     """
     body = {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count}
-    if scored:
-        requests = score_validation_requests(sheet_id, row_count)
+    if category in SCORED_CATEGORIES:
+        requests = score_validation_requests(sheet_id, row_count, category)
     else:
         requests = [
             {"setDataValidation": {
@@ -512,10 +552,40 @@ def max_points_formula(line):
             f"!$A:${a1(REGISTRY_MAX_COLUMN - 1)},{REGISTRY_MAX_COLUMN},FALSE),\"\")")
 
 
-def scored_rollup_formula(category, line):
+def weight_formula(line):
+    """Column I on a letter-graded tab, and on a scale tab: this question's
+    share of its subject. Mirrors weightFormula() in appsscript/Code.gs."""
+    return f"=IFERROR(VLOOKUP($D{line},'{REGISTRY_TAB}'!$A:$F,6,FALSE),\"\")"
+
+
+def column_i_formula(category, line):
+    """Column I: what the question is worth, in the units its tab grades in.
+
+    A maximum on a points tab, and a weight on every other kind - which is to
+    say a scale tab's column I is the one a letter tab has, untouched. The whole
+    difference on a scale tab is in H.
+    """
+    return (max_points_formula(line) if category in POINTS_CATEGORIES
+            else weight_formula(line))
+
+
+def band_expression(ratio, bands):
+    """A ratio banded into a letter, as a formula fragment.
+
+    One shape for both rubrics, which is the point: the thresholds and the
+    letters are the org's, and they disagree - Homes for Living's C- has no
+    counterpart in the arts bands, and A starts a point higher there. Mirrors
+    bandExpression() in appsscript/Code.gs; the two render the same string.
+    """
+    letters = ";".join(f'"{letter}"' for _, letter in bands)
+    thresholds = ";".join(f"{threshold:g}" for threshold, _ in bands)
+    return f'IFERROR(INDEX({{{letters}}},MATCH({ratio},{{{thresholds}}},1)),"")'
+
+
+def points_rollup_formula(category, line):
     """Category Grades' cumulative letter for a points-scored category.
 
-    Mirrors scoredCategoryFormula() in appsscript/Code.gs. Sum the scores,
+    Mirrors pointsCategoryFormula() in appsscript/Code.gs. Sum the scores,
     divide by what the questions that carry one were worth, and band the ratio
     at 85/70/60/50.
 
@@ -530,9 +600,46 @@ def scored_rollup_formula(category, line):
     where = f"{tab}!$B:$B,$B{line},{tab}!$C:$C,$C{line}"
     points = f"SUMIFS({tab}!$H:$H,{where})"
     maximum = f'SUMIFS({tab}!$I:$I,{where},{tab}!$H:$H,"<>")'
-    bands = "{0;0.5;0.6;0.7;0.85}"
-    return (f'=IFERROR(INDEX({{"F";"C-";"C";"B";"A"}},'
-            f'MATCH({points}/{maximum},{bands},1)),"")')
+    return "=" + band_expression(f"{points}/{maximum}", POINTS_BANDS)
+
+
+def scale_rollup_formula(category, line):
+    """Category Grades' cumulative letter for a category scored on a fixed scale.
+
+    Mirrors scaleCategoryFormula() in appsscript/Code.gs. Victori'us score every
+    arts question 0-3 and weight the questions against each other, so the topic
+    grade is the weighted average of the scores read as a share of a straight 3,
+    banded at 86/70/60.
+
+    Two things are worth spelling out about the shape:
+
+    The score is read through MATCH into {0;1;2;3} rather than multiplied
+    directly, exactly as the letter rollup reads a letter through MATCH into
+    {"F","C-","C","B","A"}. SUMPRODUCT evaluates the whole column, and a column
+    of mostly-empty cells cannot be multiplied - one "" anywhere in it and the
+    arithmetic is #VALUE! before the filter ever gets a say.
+
+    ISNUMBER, not <>"", is what decides whether a row counts. Both keep the
+    unscored rows out, and only ISNUMBER also keeps out a letter left behind
+    from before the rubric changed: that row drops out of the weight it is
+    divided by as well as the total, which is the same courtesy an ungraded row
+    gets rather than a silent zero dragging the candidate down.
+    """
+    ceiling = SCALE_CATEGORIES[category]
+    tab = f"'{GRADE_TAB_PREFIX}{category}'"
+    score, weight = f"{tab}!$H$2:$H", f"{tab}!$I$2:$I"
+    scale = ";".join(str(n) for n in range(ceiling + 1))
+    rows = (f"({tab}!$B$2:$B=$B{line})*({tab}!$C$2:$C=$C{line})"
+            f"*ISNUMBER({score})")
+    earned = f"SUMPRODUCT({rows}*IFERROR(MATCH({score},{{{scale}}},0)-1,0)*{weight})"
+    available = f"({ceiling}*SUMPRODUCT({rows}*{weight}))"
+    return "=" + band_expression(f"{earned}/{available}", SCALE_BANDS)
+
+
+def rollup_formula(category, line):
+    """Category Grades' cell for a category its graders score rather than grade."""
+    return (points_rollup_formula(category, line) if category in POINTS_CATEGORIES
+            else scale_rollup_formula(category, line))
 
 
 def seed_max_points(registry):
@@ -559,7 +666,7 @@ def seed_max_points(registry):
     for offset, row in enumerate(values, start=2):
         label = row[0].strip() if row else ""
         category = row[1].strip() if len(row) > 1 else ""
-        if category not in SCORED_CATEGORIES or label not in SCORE_MAX_POINTS:
+        if category not in POINTS_CATEGORIES or label not in SCORE_MAX_POINTS:
             continue
         current = row[REGISTRY_MAX_COLUMN - 1].strip() \
             if len(row) >= REGISTRY_MAX_COLUMN else ""
@@ -574,15 +681,20 @@ def seed_max_points(registry):
              else "already set on every scored row"))
 
 
-def scored_rows_needing_max(sheet):
-    """Rows on a scored grading tab whose column I is not the Max points lookup.
+def rows_needing_column_i(sheet, category):
+    """Rows on a scored grading tab whose column I is not this rubric's lookup.
 
-    Every row already on the tab, the first time this runs: the housing tab was
+    Every row already on the housing tab, the first time this ran: the tab was
     filled with one row per candidate per question while column I still held the
     weight lookup every letter-graded tab uses. Code.gs writes the right formula
     only on rows it appends - by design, so a sync never overwrites a grader -
     so the rows that predate the rubric would keep pointing at a weight nobody
     sets.
+
+    Nothing at all on a scale tab, and that is the rubric being honest rather
+    than a check that does not apply: an arts row's column I is the weight
+    lookup it always was, so the formula it should hold is the formula already
+    in it. Only H changes there.
     """
     values = sheet.get_values("A2:I", value_render_option=ValueRenderOption.formula)
     lines = []
@@ -590,53 +702,108 @@ def scored_rows_needing_max(sheet):
         if not (row and str(row[0]).strip()):
             continue
         current = str(row[8]).strip() if len(row) > 8 else ""
-        if current != max_points_formula(offset):
+        if current != column_i_formula(category, offset):
             lines.append(offset)
     return lines
 
 
-def align_scored_tab(sh, sheet, category):
-    """Point an existing grading tab's H and I at points rather than letters.
+def letters_left_in_scores(sheet):
+    """Rows on a scale tab whose H still holds a letter rather than a score.
 
-    Three things, none of which the Apps Script can do for rows it has already
-    written: rename the two headers so a grader can see what the columns now
-    hold, swap the letter dropdown on H for a 0-8 number, and rewrite the
-    lookup in I on every row that still points at Weight.
+    Three of them on Grade - Arts when Victori'us' rubric arrived, from the pass
+    that graded the first candidate in letters. They are left where they are:
+    the new validation stops the next one being typed, and quietly deleting
+    somebody's grading is worse than reporting it and letting them retype it as
+    a score. Until they do, ISNUMBER in the rollup keeps those rows out of the
+    grade entirely rather than scoring them zero.
+    """
+    values = sheet.get_values("A2:H")
+    out = []
+    for offset, row in enumerate(values, start=2):
+        if not (row and str(row[0]).strip()):
+            continue
+        current = str(row[7]).strip() if len(row) > 7 else ""
+        if not current:
+            continue
+        try:
+            float(current)
+        except ValueError:
+            out.append((offset, str(row[1]).strip(), str(row[3]).strip(), current))
+    return out
+
+
+def align_scored_tab(sh, sheet, category):
+    """Point an existing grading tab's H, and its I, at what its rubric grades in.
+
+    None of it is something the Apps Script can do for rows it has already
+    written: rename the headers so a grader can see what the columns now hold,
+    swap the letter dropdown on H for the rubric's number, and rewrite the
+    lookup in I on every row that still points at the wrong one - which on a
+    scale tab is none of them, because a weight is what it wanted all along.
 
     Scores already typed in H are untouched. So is anything in J-L.
     """
-    sheet.update([SCORED_GRADE_HEADERS], "H1:I1", value_input_option="RAW")
-    sh.batch_update({"requests": score_validation_requests(sheet.id, sheet.row_count)})
+    headers = grade_headers_for(category)
+    sheet.update([headers[7:9]], "H1:I1", value_input_option="RAW")
+    sh.batch_update({"requests":
+                     score_validation_requests(sheet.id, sheet.row_count, category)})
 
-    lines = scored_rows_needing_max(sheet)
+    lines = rows_needing_column_i(sheet, category)
     if lines:
         first, last = min(lines), max(lines)
         wanted = set(lines)
-        block = [[max_points_formula(line)] if line in wanted else [""]
+        block = [[column_i_formula(category, line)] if line in wanted else [""]
                  for line in range(first, last + 1)]
         sheet.update(block, f"I{first}:I{last}", value_input_option="USER_ENTERED")
     print(f"{GRADE_TAB_PREFIX}{category}: headers set to "
-          f"{', '.join(SCORED_GRADE_HEADERS)}, "
-          + (f"{len(lines)} row(s) repointed at {MAX_POINTS_HEADER}" if lines
-             else f"every row already reads {MAX_POINTS_HEADER}"))
+          f"{', '.join(headers[7:9])}, "
+          + (f"{len(lines)} row(s) repointed at {headers[8]}" if lines
+             else f"every row already reads {headers[8]}"))
+
+    if category in SCALE_CATEGORIES:
+        stale = letters_left_in_scores(sheet)
+        for line, candidate, label, value in stale:
+            print(f"  row {line}: {candidate} {label} still reads {value!r}, "
+                  f"which is a letter and not a score. Left alone; it counts "
+                  f"towards nothing until somebody retypes it as "
+                  f"0-{SCALE_CATEGORIES[category]}.")
 
 
-def score_validation_requests(sheet_id, row_count):
-    """A whole number from 0 to the ceiling in H, and no percent format on I."""
+def score_validation_requests(sheet_id, row_count, category):
+    """A whole number in H, and the format column I wants under this rubric.
+
+    The ceiling is the rubric's, not one number for every scored tab: a points
+    tab is validated against the largest any one question is worth, and a scale
+    tab against the top of its own scale, which is the only number a grader is
+    ever allowed to type there.
+
+    Column I is a maximum on a points tab, so it loses the percent format every
+    letter tab gives it. On a scale tab it is still a weight and keeps one, to
+    two places rather than the whole percent a letter tab shows: the eight arts
+    weights are sixths and fifteenths, and rounded to whole percents they read
+    7 + 17 + 13 + 10 + 17 + 10 + 10 + 17, which is 101% of a topic. The
+    questionnaire page already publishes them from the registry to two places,
+    and the candidate pages take theirs from this column.
+    """
     body = {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count}
+    points = category in POINTS_CATEGORIES
+    ceiling = SCORE_CEILING if points else SCALE_CATEGORIES[category]
+    out_of = "this question's maximum" if points else f"{ceiling}"
+    column_i = ({"type": "NUMBER", "pattern": "0"} if points
+                else {"type": "PERCENT", "pattern": SCALE_WEIGHT_PATTERN})
     return [
         {"setDataValidation": {
             "range": dict(body, startColumnIndex=7, endColumnIndex=8),
             "rule": {
                 "condition": {"type": "NUMBER_BETWEEN", "values": [
                     {"userEnteredValue": "0"},
-                    {"userEnteredValue": str(SCORE_CEILING)}]},
+                    {"userEnteredValue": str(ceiling)}]},
                 "strict": True, "showCustomUi": False,
-                "inputMessage": f"Score out of this question's maximum "
-                                f"(0-{SCORE_CEILING}), or blank if it does not apply"}}},
+                "inputMessage": f"Score out of {out_of} "
+                                f"(0-{ceiling}), or blank if it does not apply"}}},
         {"repeatCell": {
             "range": dict(body, startColumnIndex=8, endColumnIndex=9),
-            "cell": {"userEnteredFormat": {"numberFormat": {"type": "NUMBER", "pattern": "0"}}},
+            "cell": {"userEnteredFormat": {"numberFormat": column_i}},
             "fields": "userEnteredFormat.numberFormat"}},
     ]
 
@@ -648,7 +815,7 @@ def refresh_scored_rollup(sh, categories):
     formula every other category uses, and it never re-touches a cell it has
     written: a partner org typing their own letter over the rollup is the
     intended override, and a sync that undid it would be a bug. That is exactly
-    why the switch to points cannot come from a sync and has to come from here.
+    why a switch of rubric cannot come from a sync and has to come from here.
 
     A cell holding a letter somebody typed is left alone and reported, because
     it is the override the rule above exists to protect. Only a cell still
@@ -670,7 +837,7 @@ def refresh_scored_rollup(sh, categories):
             if not (row and str(row[0]).strip()):
                 continue
             current = str(row[column]).strip() if len(row) > column else ""
-            wanted = scored_rollup_formula(category, offset)
+            wanted = rollup_formula(category, offset)
             if current == wanted:
                 continue
             if current and not current.startswith("="):
@@ -882,8 +1049,13 @@ def main():
 
     scored = [c for c in categories if c in SCORED_CATEGORIES]
     for c in scored:
-        print(f"  {c} is scored in points: H is a score out of I, and the "
-              f"{CATEGORY_TAB} letter is banded from the two.")
+        if c in POINTS_CATEGORIES:
+            print(f"  {c} is scored in points: H is a score out of I, and the "
+                  f"{CATEGORY_TAB} letter is banded from the two.")
+        else:
+            print(f"  {c} is scored 0-{SCALE_CATEGORIES[c]}: H is that score, I "
+                  f"stays the question's weight, and the {CATEGORY_TAB} letter is "
+                  f"banded from the weighted average of the two.")
 
     existing = {ws.title for ws in sh.worksheets()}
     wanted = [REGISTRY_TAB] + [GRADE_TAB_PREFIX + c for c in categories] + [CATEGORY_TAB, LOG_TAB]
@@ -911,12 +1083,17 @@ def main():
         ws = sheet_by_title(sh, GRADE_TAB_PREFIX + category)
         if ws is None:
             continue
+        expected = grade_headers_for(category)[7:9]
         have = [str(h).strip() for h in ws.row_values(1)[7:9]]
         print(f"{GRADE_TAB_PREFIX}{category}: H and I read {', '.join(have)}"
-              + ("" if have == SCORED_GRADE_HEADERS
-                 else f" and would become {', '.join(SCORED_GRADE_HEADERS)}")
-              + f", {len(scored_rows_needing_max(ws))} row(s) to repoint at "
-                f"{MAX_POINTS_HEADER}")
+              + ("" if have == expected else f" and would become {', '.join(expected)}")
+              + f", {len(rows_needing_column_i(ws, category))} row(s) to repoint "
+                f"at {expected[1]}")
+        for line, candidate, label, value in (letters_left_in_scores(ws)
+                                              if category in SCALE_CATEGORIES else []):
+            print(f"  row {line}: {candidate} {label} reads {value!r}, a letter "
+                  f"on a tab that now scores 0-{SCALE_CATEGORIES[category]}. "
+                  f"Left alone, and counts towards nothing until it is retyped.")
 
     if args.dry_run:
         print("\n--dry-run: nothing written.")
@@ -966,15 +1143,15 @@ def main():
               + (f", {refreshed} refreshed" if args.refresh else ""))
 
     # Before the grading tabs: their Max points lookups point at this column.
-    if scored:
+    # Only a points category has any; a scale category's questions are weighted
+    # like every letter-graded one and want nothing in M.
+    if [c for c in scored if c in POINTS_CATEGORIES]:
         seed_max_points(registry)
 
     for category in categories:
         title = GRADE_TAB_PREFIX + category
         is_scored = category in SCORED_CATEGORIES
-        headers = GRADE_HEADERS[:]
-        if is_scored:
-            headers[7:9] = SCORED_GRADE_HEADERS
+        headers = grade_headers_for(category)
         ws = sheet_by_title(sh, title)
         if ws is not None:
             if is_scored:
@@ -984,7 +1161,7 @@ def main():
             continue
         ws = sh.add_worksheet(title, rows=GRADE_TAB_ROWS, cols=len(headers))
         sh.batch_update({"requests": header_row_requests(ws.id, headers)
-                         + grade_tab_requests(ws.id, GRADE_TAB_ROWS, scored=is_scored)})
+                         + grade_tab_requests(ws.id, GRADE_TAB_ROWS, category)})
         print(f"{title}: created")
 
     # Read back what the registry actually says now (including any hand edits,
@@ -1003,7 +1180,7 @@ def main():
     else:
         append_category_gates(sh, cg, cg_headers)
 
-    # Last, because it points at the Points columns the steps above just made.
+    # Last, because it points at the score columns the steps above just made.
     if scored:
         refresh_scored_rollup(sh, scored)
 
@@ -1015,9 +1192,9 @@ def main():
     else:
         print(f"{LOG_TAB}: already exists, left alone")
 
-    print("\nNext: set a Weight on every registry row of a letter-graded category "
-          "(each should total 100%; " + ", ".join(sorted(SCORED_CATEGORIES))
-          + f" wants a {MAX_POINTS_HEADER} instead), then deploy "
+    print("\nNext: set a Weight on every registry row that wants one - every "
+          "category but " + ", ".join(sorted(POINTS_CATEGORIES)) + ", which wants "
+          f"a {MAX_POINTS_HEADER} instead - each totalling 100%, then deploy "
           "scripts/questionnaire/appsscript/Code.gs.")
 
 

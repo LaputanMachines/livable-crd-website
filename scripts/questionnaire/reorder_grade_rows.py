@@ -46,11 +46,10 @@ import gspread
 from gspread.utils import ValueRenderOption
 
 from grading_tabs import (
-    CATEGORY_ORDER, GRADE_HEADERS, GRADE_TAB_PREFIX, REGISTRY_TAB,
-    SCORED_CATEGORIES, SCORED_GRADE_HEADERS, a1, max_points_formula,
-    sheet_by_title,
+    CATEGORY_ORDER, GRADE_HEADERS, GRADE_TAB_PREFIX, REGISTRY_TAB, a1,
+    column_i_formula, grade_headers_for, sheet_by_title,
 )
-from move_question import owner_formula, weight_formula
+from move_question import owner_formula
 
 # Registry columns, 1-based.
 R_LABEL, R_CATEGORY = 1, 2
@@ -75,13 +74,6 @@ def backup(sh):
     return path
 
 
-def header_for(category):
-    headers = list(GRADE_HEADERS)
-    if category in SCORED_CATEGORIES:
-        headers[7:9] = SCORED_GRADE_HEADERS
-    return headers
-
-
 def registry_order(registry_values, category):
     """Labels of `category`, in the order the registry lists them."""
     order = []
@@ -95,7 +87,7 @@ def registry_order(registry_values, category):
     return order
 
 
-def rebuilt(row, line, scored):
+def rebuilt(row, line, category):
     """One row rewritten for the line it is about to land on.
 
     Everything is carried across verbatim except G and I, which are VLOOKUPs
@@ -104,8 +96,7 @@ def rebuilt(row, line, scored):
     cell = lambda i: row[i] if i < len(row) else ""
     out = [cell(i) for i in range(WIDTH)]
     out[G_OWNER - 1] = owner_formula(line)
-    out[G_WEIGHT - 1] = (max_points_formula(line) if scored
-                         else weight_formula(line))
+    out[G_WEIGHT - 1] = column_i_formula(category, line)
     return out
 
 
@@ -169,7 +160,7 @@ def main():
         sys.exit(f"{REGISTRY_TAB} lists no {args.category} question.")
 
     values = tab.get_values(value_render_option=ValueRenderOption.formula)
-    expected = header_for(args.category)
+    expected = grade_headers_for(args.category)
     if not values or [c.strip() for c in values[0][:WIDTH]] != expected:
         sys.exit(f"{GRADE_TAB_PREFIX}{args.category}: header is not the expected "
                  f"{', '.join(expected)}. Refusing to touch it.")
@@ -235,13 +226,12 @@ def main():
         print(f"    ... and {len(moves) - 12} more")
 
     first, last = min(n for _, n in moves), max(n for _, n in moves)
-    scored = args.category in SCORED_CATEGORIES
-    block = [rebuilt(row, line, scored)
+    block = [rebuilt(row, line, args.category)
              for line, (_, row) in enumerate(ordered, start=2)
              if first <= line <= last]
     rng = f"A{first}:{a1(WIDTH - 1)}{last}"
     print(f"  rewriting {rng} ({len(block)} row(s)); "
-          f"Owner and {'Max points' if scored else 'Weight'} re-derived for "
+          f"Owner and {grade_headers_for(args.category)[8]} re-derived for "
           f"their new row numbers")
 
     if not args.apply:

@@ -35,8 +35,8 @@ import sys
 import gspread
 
 from grading_tabs import (
-    CATEGORY_ORDER, GRADE_HEADERS, GRADE_TAB_PREFIX, REGISTRY_TAB,
-    SCORED_CATEGORIES, a1, max_points_formula, sheet_by_title,
+    CATEGORY_ORDER, GRADE_HEADERS, GRADE_TAB_PREFIX, POINTS_CATEGORIES,
+    REGISTRY_TAB, a1, column_i_formula, sheet_by_title, weight_formula,
 )
 
 # Registry columns, 1-based, for the two cells this script writes.
@@ -50,36 +50,27 @@ def owner_formula(line):
     return f"=IFERROR(VLOOKUP($D{line},'{REGISTRY_TAB}'!$A:$I,9,FALSE),\"\")"
 
 
-def weight_formula(line):
-    return f"=IFERROR(VLOOKUP($D{line},'{REGISTRY_TAB}'!$A:$F,6,FALSE),\"\")"
-
-
-def column_i(line, scored):
-    """Column I: what the question is worth, in the units its tab grades in."""
-    return max_points_formula(line) if scored else weight_formula(line)
-
-
-def moved_row(row, line, scored):
+def moved_row(row, line, category):
     """One source row rewritten for the line it is about to land on.
 
     A-F and the hash come across untouched: they are the candidate, the question
     and the answer, and none of that changed. G and I are lookups keyed on the
     row they sit in, so they are rebuilt rather than copied - and I is rebuilt
-    against the units the destination grades in, a weight on a letter tab and a
-    maximum on a scored one. H and J-L are the grader's work and are the whole
-    reason this is a move and not a re-sync.
+    against the units the destination grades in, a maximum on a points tab and a
+    weight on every other kind. H and J-L are the grader's work and are the
+    whole reason this is a move and not a re-sync.
 
-    H is carried across as it stands, which for a question moving between a
-    letter tab and a scored one is a letter landing in a cell that now wants a
-    number. Nothing is dropped on the way: the only question this has had to
-    move, HFL-12, had no grade typed on any of its rows, and silently discarding
-    a grader's work would be worse than landing it somewhere visible.
+    H is carried across as it stands, which for a question moving between tabs
+    that grade in different units is a value landing in a cell that now wants a
+    different one. Nothing is dropped on the way: the only question this has had
+    to move, HFL-12, had no grade typed on any of its rows, and silently
+    discarding a grader's work would be worse than landing it somewhere visible.
     """
     cell = lambda i: row[i] if i < len(row) else ""
     out = [cell(i) for i in range(6)]                    # key .. answer
     out.append(owner_formula(line))                      # owner
     out.append(cell(7))                                  # grade or score
-    out.append(column_i(line, scored))                   # weight or max points
+    out.append(column_i_formula(category, line))         # weight or max points
     out += [cell(9), cell(10), cell(11)]                 # rationale, grader, graded at
     out.append(cell(12))                                 # answer hash
     return out
@@ -143,7 +134,11 @@ def main():
     if source is None or target is None:
         sys.exit(f'Need both "{GRADE_TAB_PREFIX}{category}" and "{GRADE_TAB_PREFIX}{args.to}".')
 
-    scored = args.to in SCORED_CATEGORIES
+    # Only a points category's questions trade their weight for a maximum. A
+    # scale category weights its questions exactly as a letter-graded one does,
+    # so a question moving into Arts keeps its weight and joins that category's
+    # 100%.
+    points = args.to in POINTS_CATEGORIES
     width = len(GRADE_HEADERS)
 
     moving = [(i, row) for i, row in enumerate(source.get_values()[1:], start=2)
@@ -157,7 +152,7 @@ def main():
     staying = [i for i, row in enumerate(registry_values[1:], start=2)
                if row and row[R_CATEGORY - 1].strip() == category
                and row[R_LABEL - 1].strip() != args.label]
-    reweight = category not in SCORED_CATEGORIES and staying
+    reweight = category not in POINTS_CATEGORIES and staying
 
     print(f"{args.label}: {category} -> {args.to}")
     print(f"  {GRADE_TAB_PREFIX}{category}: {len(moving)} row(s) to move, "
@@ -168,10 +163,10 @@ def main():
         print(f"    ... and {len(moving) - 5} more")
     first = max(len(target.get_values()) + 1, 2)
     print(f"  {GRADE_TAB_PREFIX}{args.to}: appending {len(moving)} row(s) at row {first}"
-          + (", with Max points in column I" if scored else ""))
+          + (", with Max points in column I" if points else ""))
     print(f"  {REGISTRY_TAB} row {line_for_label}: Category {category!r} -> {args.to!r}"
           + (", Weight cleared (scored in points; set its Max points instead)"
-             if scored else ""))
+             if points else ""))
     if reweight:
         print(f"  {REGISTRY_TAB}: {len(staying)} remaining {category} row(s) "
               f"reweighted to =1/{len(staying)}")
@@ -182,7 +177,7 @@ def main():
 
     print(f"\nBacked up to {backup(sh)}")
 
-    values = [moved_row(row, first + n, scored) for n, (_, row) in enumerate(moving)]
+    values = [moved_row(row, first + n, args.to) for n, (_, row) in enumerate(moving)]
     if values:
         target.update(values, f"A{first}:{a1(width - 1)}{first + len(values) - 1}",
                       value_input_option="USER_ENTERED")
@@ -191,7 +186,7 @@ def main():
         print(f"{GRADE_TAB_PREFIX}{category}: {len(moving)} row(s) deleted")
 
     updates = [{"range": f"B{line_for_label}", "values": [[args.to]]}]
-    if scored:
+    if points:
         updates.append({"range": f"F{line_for_label}", "values": [[""]]})
     for line in staying:
         updates.append({"range": f"F{line}", "values": [[f"=1/{len(staying)}"]]})

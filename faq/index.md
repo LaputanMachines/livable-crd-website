@@ -214,6 +214,7 @@ description: >-
         <li>Most topics are graded question by question. Each question carries a letter grade and a stated share of its topic, and the topic grade is the weighted average of them.</li>
         <li>Housing is graded differently, on Homes for Living's own rubric: each question is worth a set number of points, and the topic grade is the share of the points available that a candidate earned &mdash; 85% or better is an A, 70% a B, 60% a C, 50% a C&#8209;, and anything below that an F.</li>
         <li>How many points are available depends on where someone is running. Several housing questions are asked only in the municipalities they are about, so a candidate is always scored against the questions they were actually asked.</li>
+        <li>Arts and culture is graded on Victori'us' own rubric, which scores each answer from 0 to 3 rather than lettering it. The questions still carry the stated shares of the topic published beside them, and the topic grade is the weighted average of those scores &mdash; 86% or better is an A, 70% a B, 60% a C, and anything below that an F.</li>
         <li>Points are awarded for positions that advance coalition goals, and deducted for positions that would clearly undermine progress on housing, mobility, climate, healthcare access, or other priorities covered in the survey.</li>
       </ul>
 
