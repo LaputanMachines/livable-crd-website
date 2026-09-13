@@ -118,13 +118,15 @@ As of August 2026 the tracking sheet no longer has the per-topic grade columns (
 
 ### What gets published, and what decides it
 
-**The spreadsheet decides, not this repo.** Each subject on the `Category Grades` tab is followed by a `<Subject> - Deploy to website` checkbox. A subject is written to `scores.yml` only when that box is ticked, and unticking it removes the subject from the site on the next run. Grading in progress cannot reach a public page by accident.
+**Publication is one switch, and it is off.** `PUBLISH_GRADES` at the top of [`scripts/sync-questionnaire.py`](scripts/sync-questionnaire.py) decides: while it is `False`, no grade and no free-text answer is written to `scores.yml` at all, so grading in progress cannot reach a public page. On the coalition's release date, flip it to `True` in one commit and the next run publishes every candidate and every subject at once; flipping it back removes them just as completely. To see what a release would produce without committing anything, run `PUBLISH_GRADES=1 python3 scripts/sync-questionnaire.py --dry-run`.
+
+This replaces the per-subject `<Subject> - Deploy to website` checkboxes the `Category Grades` tab used to carry, which released one partner org's work at a time; those columns are gone from the sheet, and any left behind are ignored.
 
 A published subject brings with it the top-level letter (`B` for Transit) **and** every graded question behind it: the question, the candidate's answer, the grade, the weight, and the grader's rationale where one was written. Weight and rationale are simply omitted where the sheet leaves them blank.
 
 ### The three states a topic can be in
 
-Having a row on `Category Grades` at all means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list if no box is ticked. That gives the scorecard three states rather than two, on the matrix and on each candidate's page alike:
+Having a row on `Category Grades` at all means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. That gives the scorecard three states rather than two, on the matrix and on each candidate's page alike:
 
 | Shown | Means |
 |---|---|
@@ -145,7 +147,7 @@ Three kinds, and none of them reaches the Question Registry, which lists what ge
 
 `HLT-01` is the exception in the other direction: it *is* in the registry, hand-marked `Graded=No`, so its wording comes from there and only its answer is read off the raw tab.
 
-All of them are gated exactly like grades. General and Healthcare access have their own `- Deploy to website` checkbox on `Category Grades` with no grade column beside it; a `<TOPIC>-GEN` comment rides its topic's existing checkbox, so nothing a candidate wrote about transit appears before the transit section is signed off.
+All of them are held back by the same switch as the grades: `PUBLISH_GRADES` off means nothing a candidate wrote is published either. General and Healthcare access have no column on `Category Grades` at all — nobody grades them — so a publishing run reaches them through `_data/subjects.yml`, and a topic a candidate neither was graded on nor wrote anything under is left out of their scorecard rather than published empty.
 
 Before this, a candidate who filled the questionnaire in and a candidate who ignored it were drawn identically, which was the one thing the scorecard could not afford to get wrong about somebody who did the work.
 
@@ -194,7 +196,7 @@ Stdlib-only, no dependencies to install:
 QUESTIONNAIRE_SUBMISSIONS_SHEET_ID="…" python3 scripts/sync-questionnaire.py --dry-run
 ```
 
-The run **fails without writing either file** if a registry category maps to no subject in [`_data/subjects.yml`](_data/subjects.yml), if the `Category Grades` tab has no `<Subject> - Deploy to website` columns, or if GEN-02's twelve line-item columns are not all present and adjacent. Anything recoverable — an unmatched candidate, an unknown grade, an email-shaped owner — warns and is skipped.
+The run **fails without writing either file** if a registry category maps to no subject in [`_data/subjects.yml`](_data/subjects.yml), if the `Category Grades` tab names no subject at all after its three identity columns, or if GEN-02's twelve line-item columns are not all present and adjacent. Anything recoverable — an unmatched candidate, an unknown grade, an email-shaped owner — warns and is skipped.
 
 Each tab is checked against its expected first header before being parsed. Asking for a tab that does not exist does not fail: the spreadsheet answers with its *first* sheet instead, so a renamed tab would otherwise feed 236 columns of the wrong data into a parser expecting nine. A mismatch is treated as a missing tab.
 

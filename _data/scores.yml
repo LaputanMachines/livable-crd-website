@@ -6,14 +6,15 @@
 # (CI: .github/workflows/sync-questionnaire.yml).
 # Edit the spreadsheet, not this file; manual changes are overwritten.
 #
-# PUBLICATION IS GATED BY THE SHEET, NOT BY THIS FILE. A subject appears under a
-# candidate only when its "<Subject> - Deploy to website" checkbox is ticked on
-# the Category Grades tab. Grading in progress never reaches the site, and
-# unticking a box removes that subject from the site on the next run. Nothing
-# else in the repo decides what is publishable.
+# PUBLICATION IS ALL OR NOTHING, AND IS CURRENTLY OFF. The per-subject "<Subject>
+# - Deploy to website" checkboxes are gone from the Category Grades tab, and
+# PUBLISH_GRADES in scripts/sync-questionnaire.py replaces them: while it is
+# False no grade and no free-text answer is written here at all, so grading in
+# progress never reaches the site. It is flipped on the coalition's release date,
+# and flipping it back removes every published subject on the next run.
 #
-# EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, including one with
-# nothing ticked at all, whose `subjects` is an empty list. Having a row means
+# EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, with `subjects` an empty
+# list for all of them while publication is off. Having a row means
 # the candidate returned the questionnaire, and the site says so: "returned it,
 # still being graded" and "never replied" are different facts about a candidate
 # and the scorecard draws them differently. What it does not say is anything

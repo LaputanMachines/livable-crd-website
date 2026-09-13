@@ -9,11 +9,11 @@ current. Four tabs matter here:
   Question Registry     One row per question the coalition grades. Published in
                         full: it is most of the list of what candidates were
                         asked, and the source for every graded question.
-  Category Grades       One row per candidate, one column per graded subject,
-                        each followed by a "<Subject> - Deploy to website"
-                        checkbox. General and Healthcare access have a checkbox
-                        and no grade column: nobody grades them, but their
-                        answers are published and still need releasing.
+  Category Grades       One row per candidate, one column per graded subject.
+                        The "<Subject> - Deploy to website" checkbox that used to
+                        follow each of them is gone from the sheet; PUBLISH_GRADES
+                        below replaces it, releasing every subject at once rather
+                        than one partner org's work at a time.
   Grade - <Subject>     One row per candidate per question, carrying the answer,
                         the grade, the weight and the grader's rationale. These
                         are the sub-grades shown under a published subject.
@@ -23,10 +23,12 @@ current. Four tabs matter here:
                         which lists what gets graded, so both their wording and
                         the answers to them are read from the form's own columns.
 
-Nothing here decides what is publishable. The checkbox does. An unticked subject
-is not written to _data/scores.yml at all, so neither a grade in progress nor an
-unreviewed free-text answer can reach the site by accident, and unticking one
-removes it on the next run.
+PUBLISH_GRADES decides what is publishable, and it is off. Nothing graded and no
+free-text answer is written to _data/scores.yml at all, so neither a grade in
+progress nor an unreviewed answer can reach the site. Every candidate with a row
+is still written out with an empty `subjects`, which is the site's "returned it,
+still being graded". Flipping the switch on the coalition's release date
+publishes every subject at once; flipping it back removes them on the next run.
 
 WHAT IS DELIBERATELY NOT PUBLISHED
   - Candidate email addresses and the rest of the raw tab's contact columns. The
@@ -121,8 +123,17 @@ PREFIX_SUBJECT = {
     "HLT": "healthcare-access",
 }
 
-# Mirrors CATEGORY_DEPLOY_SUFFIX in scripts/questionnaire/grading_tabs.py and
-# appsscript/Code.gs. Change all three together.
+# The publication switch, in place of the per-subject "<Subject> - Deploy to
+# website" checkboxes the Category Grades tab used to carry. While this is False
+# no candidate result is published; it is flipped to True in one commit on the
+# release date. PUBLISH_GRADES=1 in the environment, or --publish, overrides it
+# for a single run without committing anything.
+PUBLISH_GRADES = False
+
+# Those checkbox columns are gone from the sheet, but grading_tabs.py and
+# appsscript/Code.gs still know the suffix and would write them again if a tab
+# were bootstrapped from scratch. A column whose header ends in it is ignored
+# rather than read as a subject, so the sync is the same either way.
 DEPLOY_SUFFIX = " - Deploy to website"
 
 # Registry columns, 0-based. Mirrors REGISTRY_HEADERS in grading_tabs.py.
@@ -346,14 +357,15 @@ SCORES_HEADER = """\
 # (CI: .github/workflows/sync-questionnaire.yml).
 # Edit the spreadsheet, not this file; manual changes are overwritten.
 #
-# PUBLICATION IS GATED BY THE SHEET, NOT BY THIS FILE. A subject appears under a
-# candidate only when its "<Subject> - Deploy to website" checkbox is ticked on
-# the Category Grades tab. Grading in progress never reaches the site, and
-# unticking a box removes that subject from the site on the next run. Nothing
-# else in the repo decides what is publishable.
+# PUBLICATION IS ALL OR NOTHING, AND IS CURRENTLY OFF. The per-subject "<Subject>
+# - Deploy to website" checkboxes are gone from the Category Grades tab, and
+# PUBLISH_GRADES in scripts/sync-questionnaire.py replaces them: while it is
+# False no grade and no free-text answer is written here at all, so grading in
+# progress never reaches the site. It is flipped on the coalition's release date,
+# and flipping it back removes every published subject on the next run.
 #
-# EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, including one with
-# nothing ticked at all, whose `subjects` is an empty list. Having a row means
+# EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, with `subjects` an empty
+# list for all of them while publication is off. Having a row means
 # the candidate returned the questionnaire, and the site says so: "returned it,
 # still being graded" and "never replied" are different facts about a candidate
 # and the scorecard draws them differently. What it does not say is anything
@@ -1192,34 +1204,22 @@ def render_questions(items, subject_order):
 
 # --- Scores ------------------------------------------------------------------
 
-def deploy_gates(header):
-    """[(subject display name, grade column or None, deploy column)].
+def subject_columns(header):
+    """[(subject display name, column)] for every subject the tab grades.
 
-    Keyed off the deploy columns rather than off (grade, deploy) pairs, because
-    the two ungraded subjects have a gate and no grade column beside it: nobody
-    grades General or Healthcare access, so there is nothing to roll up, but
-    their answers are published verbatim and still need releasing. Code.gs tells
-    the two kinds of header apart by the same suffix.
+    The header is the list, as it has always been: which subjects are graded,
+    and in what order, is the sheet's business and not this script's. What has
+    changed is that a subject is one column rather than a (grade, checkbox) pair,
+    so everything after the three identity columns is a grade column - except a
+    leftover checkbox, which is skipped by its suffix the way Code.gs recognises
+    it, so a tab that still has some syncs identically to one that does not.
     """
-    index = {}
-    for i, cell in enumerate(header):
+    columns = []
+    for i, cell in enumerate(header[C_MUNICIPALITY + 1:], start=C_MUNICIPALITY + 1):
         name = tidy(cell)
-        if name and name not in index:
-            index[name] = i
-
-    gates = []
-    for i, cell in enumerate(header):
-        name = tidy(cell)
-        if not name.endswith(DEPLOY_SUFFIX):
-            continue
-        subject = name[: -len(DEPLOY_SUFFIX)]
-        if subject:
-            gates.append((subject, index.get(subject), i))
-    return gates
-
-
-def is_ticked(value):
-    return norm(value) in {"true", "yes", "checked", "1"}
+        if name and not name.endswith(DEPLOY_SUFFIX):
+            columns.append((name, i))
+    return columns
 
 
 # How Code.gs writes a multi-select answer: the written parts on their own
@@ -1296,27 +1296,18 @@ def grade_or_none(value, where, warnings):
     return letter
 
 
-def ticked_subjects(category):
-    """Subject display names at least one candidate has released for publication.
+def graded_tab_subjects(category):
+    """Subject display names with a `Grade - <Subject>` tab worth opening.
 
-    Used to decide which `Grade - <Subject>` tabs to read at all. Reading the
-    ones nobody has published is a wasted API call per tab against a quota this
-    job shares with everything else touching the spreadsheet, and early in a
-    cycle that is every tab.
+    The subjects the tab has a grade column for, and no others: General and
+    Healthcare access carry no graded question, so their answers come off the raw
+    tab rather than out of a per-question grading sheet, and opening a tab for
+    them would be an API call against a shared quota for nothing.
+
+    Sorted, so the warnings a run emits come out in the same order every time and
+    two runs over the same sheet produce comparable logs.
     """
-    gates = deploy_gates(category[0])
-    names = set()
-    for row in category[1:]:
-        for name, grade_col, gate in gates:
-            # An ungraded subject has no Grade tab worth opening: its answers
-            # come off the raw tab, not out of a per-question grading sheet.
-            if grade_col is None:
-                continue
-            if gate < len(row) and is_ticked(row[gate]):
-                names.add(name)
-    # Sorted, so the warnings a run emits come out in the same order every time
-    # and two runs over the same sheet produce comparable logs.
-    return sorted(names)
+    return sorted({name for name, _ in subject_columns(category[0])})
 
 
 def load_grade_rows(sheet_id, subject_names, warnings):
@@ -1383,22 +1374,30 @@ def unscored_answers(answers, subject_id, ungraded, candidate, warnings):
 
 
 def build_scores(category, grade_rows, answers, ungraded, subject_order,
-                 muni_lookup, candidates, question_labels, warnings, errors):
+                 muni_lookup, candidates, question_labels, publish,
+                 warnings, errors):
     header = category[0]
-    gates = deploy_gates(header)
-    if not gates:
-        errors.append(f"{CATEGORY_TAB}: no '<Subject>{DEPLOY_SUFFIX}' columns found.")
-        return [], []
+    columns = subject_columns(header)
+    if not columns:
+        errors.append(f"{CATEGORY_TAB}: no subject columns after Key/Candidate/"
+                      f"Municipality, so nothing on the tab names a subject.")
+        return []
 
-    subject_ids = {}
-    for name, _, _ in gates:
+    graded = {}
+    for name, col in columns:
         sid = SUBJECT_FOR_CATEGORY.get(norm(name))
         if not sid:
             errors.append(f"{CATEGORY_TAB}: column {name!r} maps to no subject id.")
         elif sid not in subject_order:
             errors.append(f"{CATEGORY_TAB}: subject {sid!r} is not in _data/subjects.yml.")
         else:
-            subject_ids[name] = sid
+            graded[sid] = (name, col)
+
+    # What a publishing run walks, in _data/subjects.yml order: every subject
+    # with a grade column, and the ones without one too. Nobody grades General or
+    # Healthcare access, so neither has a column to be graded in, but what
+    # candidates wrote under them is published like any other topic's answers.
+    targets = [(sid,) + graded.get(sid, (sid, None)) for sid in subject_order]
 
     records = []
     seen = {}
@@ -1423,12 +1422,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             continue
 
         published = []
-        for subject_name, grade_col, gate_col in gates:
-            if subject_name not in subject_ids:
-                continue
-            if not is_ticked(row[gate_col] if gate_col < len(row) else ""):
-                continue
-            subject_id = subject_ids[subject_name]
+        for subject_id, subject_name, grade_col in (targets if publish else []):
             where = f"{CATEGORY_TAB} row {i} ({name}, {subject_name})"
             grade = None
             if grade_col is not None:
@@ -1454,17 +1448,24 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
                 # question still being graded rather than one never put to them.
                 questions = [q for q in questions if q["points"] is not None]
 
+            # This subject's ungraded answers: the per-topic "anything to add"
+            # box, and for General and Healthcare access every answer there is.
+            unscored = unscored_answers(
+                answers.get(key, {}), subject_id, ungraded, name, warnings)
+
+            # A subject this candidate was neither graded on nor wrote anything
+            # under is not an empty section, it is no section. Every candidate is
+            # walked against every subject now that no checkbox says which ones
+            # they have something to show for.
+            if grade is None and not questions and not unscored:
+                continue
+
             published.append({
                 "id": subject_id,
                 "grade": grade,
                 "score": score,
                 "questions": questions,
-                # The ungraded answers for this subject, released by the same
-                # checkbox as its grades. A per-topic "anything to add" box only
-                # goes public once its topic does, so nothing a candidate wrote
-                # about transit appears before the transit section is signed off.
-                "unscored": unscored_answers(
-                    answers.get(key, {}), subject_id, ungraded, name, warnings),
+                "unscored": unscored,
             })
 
         # Deliberately kept even with nothing published. Having a row on this tab
@@ -1501,8 +1502,8 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
         if records[where]["subjects"] and published:
             errors.append(
                 f"{CATEGORY_TAB} rows {previous_row} and {i}: both publish subjects for "
-                f"{name} ({muni_slug}), and only one can be shown. Clear the deploy "
-                f"checkboxes on the superseded row, or delete it."
+                f"{name} ({muni_slug}), and only one can be shown. Delete the "
+                f"superseded row, or clear its grades."
             )
         elif published:
             records[where] = record
@@ -1611,8 +1612,7 @@ def subject_score(questions, candidate, subject_name, subject_id, warnings):
     if not scored:
         warnings.append(
             f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} has no score on any "
-            f"question, so the subject is not published even though its deploy box "
-            f"is ticked."
+            f"question, so the subject is not published."
         )
         return None
     if answered_unscored:
@@ -1827,6 +1827,19 @@ def write_if_changed(path, content, dry_run, label):
     return True
 
 
+def env_flag(name, default):
+    """A boolean environment variable, or `default` where it is unset or empty.
+
+    So a run can publish, or not, without editing and committing the switch:
+    what CI does every morning is what this file says, and a local check of what
+    release day would produce is one variable.
+    """
+    value = (os.environ.get(name) or "").strip().lower()
+    if not value:
+        return default
+    return value in {"1", "true", "yes", "on"}
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--sheet-id", default=os.environ.get("QUESTIONNAIRE_SUBMISSIONS_SHEET_ID", ""),
@@ -1835,6 +1848,11 @@ def main(argv=None):
                         help="Tally form id (default: $TALLY_FORM_ID)")
     parser.add_argument("--api-key", default=os.environ.get("TALLY_API_KEY", ""),
                         help="Tally API key (default: $TALLY_API_KEY)")
+    parser.add_argument("--publish", action=argparse.BooleanOptionalAction,
+                        default=env_flag("PUBLISH_GRADES", PUBLISH_GRADES),
+                        help="Write candidate results to _data/scores.yml "
+                             "(default: PUBLISH_GRADES in this script, overridden "
+                             "by $PUBLISH_GRADES)")
     parser.add_argument("--dry-run", action="store_true", help="Report what would change, write nothing")
     args = parser.parse_args(argv)
 
@@ -1913,10 +1931,9 @@ def main(argv=None):
     question_labels = {q["label"] for q in questions}
 
     # Which subjects carry a grade at all, read off the questions rather than off
-    # the Category Grades columns. Those columns now include gates for General
-    # and Healthcare access, which have a publication gate and no grade; asking
-    # the questions instead keeps "being graded" off the two topics nobody
-    # grades, whatever columns the sheet happens to have grown.
+    # the Category Grades columns. The two are the same list today, and asking
+    # the questions keeps "being graded" off General and Healthcare access -
+    # which nobody grades - whatever columns the sheet happens to grow.
     graded_subjects = [sid for sid in subject_order
                        if any(q["graded"] and q["subject"] == sid for q in questions)]
 
@@ -1926,11 +1943,17 @@ def main(argv=None):
         warnings.append(f"{CATEGORY_TAB}: tab missing, no candidate results published")
         records = []
     else:
-        answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
+        # Not read at all while publication is off: no grade and no answer can
+        # reach _data/scores.yml, and each tab is an API call against a quota
+        # this job shares with everything else touching the spreadsheet.
+        grade_rows, answers = {}, {}
+        if args.publish:
+            grade_rows = load_grade_rows(
+                args.sheet_id, graded_tab_subjects(category), warnings)
+            answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
         records = build_scores(
-            category, load_grade_rows(args.sheet_id, ticked_subjects(category), warnings),
-            answers, ungraded, subject_order, muni_lookup, candidates,
-            question_labels, warnings, errors)
+            category, grade_rows, answers, ungraded, subject_order, muni_lookup,
+            candidates, question_labels, args.publish, warnings, errors)
 
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)
@@ -1945,6 +1968,9 @@ def main(argv=None):
     print(f"{len(questions)} question(s) across {len(set(q['subject'] for q in questions))} subject(s); "
           f"{len(records)} candidate(s) returned the questionnaire; "
           f"{published} published subject grade(s), {awaiting} candidate(s) with none yet")
+    if not args.publish:
+        print("publication is off (PUBLISH_GRADES is False): every candidate is "
+              "listed as returned, and no result is published")
 
     write_if_changed(QUESTIONS_OUT, render_questions(questions, subject_order),
                      args.dry_run, "_data/questions.yml")

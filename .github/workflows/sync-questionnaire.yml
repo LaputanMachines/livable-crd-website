@@ -1,10 +1,15 @@
 name: Sync questionnaire and grades from Google Sheet
 
 # Pulls the candidate grading sheet daily, regenerates _data/questions.yml (the
-# published question set) and _data/scores.yml (per-candidate results the
-# coalition has ticked as ready to publish), and — only if either changed —
-# commits to main and redeploys. Mirrors sync-candidates.yml, which does the same
-# for the candidate list from a different spreadsheet.
+# published question set) and _data/scores.yml (per-candidate results), and —
+# only if either changed — commits to main and redeploys. Mirrors
+# sync-candidates.yml, which does the same for the candidate list from a
+# different spreadsheet.
+#
+# Whether results are published at all is PUBLISH_GRADES in the script, not
+# anything here: while it is False every candidate is listed as having returned
+# the questionnaire and no grade is written. It is flipped to True in one commit
+# on the coalition's release date.
 #
 # The bot commit uses GITHUB_TOKEN, which does NOT re-trigger jekyll.yml's
 # `on: push`, so we deploy explicitly via the reusable workflow.

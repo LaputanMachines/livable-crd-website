@@ -355,7 +355,7 @@ python3 scripts/questionnaire/grading_tabs.py --refresh    # re-read the form's 
 | `Raw Submissions` | Tally. Untouched. |
 | `Question Registry` | Generated once, then hand-maintained. |
 | `Grade - <Subject>` | `A-F` and `L` by the Apps Script, `G-I` by graders. Nine of them. |
-| `Category Grades` | `A-C` by the Apps Script, the rest by graders. One row per candidate; its deploy checkboxes are what publish a subject to the website. |
+| `Category Grades` | `A-C` by the Apps Script, the rest by graders. One row per candidate, one column per graded subject. |
 | `Sync Log` | The Apps Script. |
 
 #### `Question Registry`
@@ -668,36 +668,40 @@ this repo.
 
 #### Publishing a graded subject to the website
 
-Grading in this sheet is invisible to the public until somebody says otherwise. The
-`Category Grades` tab pairs every subject column with a **`<Subject> - Deploy to
-website`** checkbox, and that checkbox is the entire publication gate:
+Grading in this sheet is invisible to the public until somebody says otherwise. The gate is
+no longer in this sheet: the per-subject **`<Subject> - Deploy to website`** checkboxes have
+been removed from `Category Grades`, and a single switch in the website repo —
+`PUBLISH_GRADES` at the top of `scripts/sync-questionnaire.py` — releases everything at once
+on the coalition's chosen date.
 
-| Checkbox | What the site shows for that candidate and subject |
+| `PUBLISH_GRADES` | What the site shows for every candidate and subject |
 |---|---|
-| unticked | An hourglass, meaning "returned the questionnaire, this topic is not published yet". No grade, no answers, no rationale. |
-| ticked | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
+| `False` (today) | An hourglass, meaning "returned the questionnaire, this topic is not published yet". No grade, no answers, no rationale. |
+| `True` | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
 
-**General** and **Healthcare access** carry a checkbox with no grade column beside it. Nobody
-grades either, so there is nothing to roll up, but their answers (`GEN-01`, `GEN-02`,
-`HLT-01` and both comment boxes) are published verbatim and still need somebody to release
-them. Until that box is ticked they show the same hourglass as everything else — the
-candidate answered and the site is holding their answers back — and ticking it swaps in a
-speech-bubble mark, meaning "answered, not graded, readable".
+**General** and **Healthcare access** have no column on this tab at all. Nobody grades
+either, so there is nothing to roll up, but their answers (`GEN-01`, `GEN-02`, `HLT-01` and
+both comment boxes) are published verbatim by the same switch, and carry a speech-bubble
+mark rather than a letter, meaning "answered, not graded, readable". A candidate who wrote
+nothing under a topic and was graded on nothing there simply has no section for it.
 
-Unticking it takes the subject back off the site on the next sync. Nothing in the website
-repo overrides this, and nothing else needs editing to publish or unpublish.
+Turning the switch back off takes every subject off the site on the next sync. Nothing in
+this sheet overrides it, and nothing here needs editing to publish or unpublish — what a
+release would produce can be checked first with
+`PUBLISH_GRADES=1 python3 scripts/sync-questionnaire.py --dry-run`.
 
-Note what the unticked state now says. **Having a row on this tab is itself published**, as
+Note what the unpublished state still says. **Having a row on this tab is itself published**, as
 the fact that the candidate returned the questionnaire — the site draws that differently
 from a candidate who never replied, who gets a plain `—`. It says nothing about how the
 grading is going, only that it is under way. A candidate whose row should not say even that
-needs the row gone, not its boxes cleared.
+needs the row gone.
 
 A candidate with two rows (a resubmission) is fine while at most one of them publishes
 anything; the publishing row wins. Two rows both publishing fails the sync with an error
-naming both, rather than silently picking one.
+naming both, rather than silently picking one — so a superseded row should be deleted
+before the switch is flipped.
 
-What reads the box is [`scripts/sync-questionnaire.py`](../sync-questionnaire.py) in the
+What reads this tab is [`scripts/sync-questionnaire.py`](../sync-questionnaire.py) in the
 website repo, running daily in CI. It writes two files there — `_data/questions.yml` from
 `Question Registry`, and `_data/scores.yml` from `Category Grades` and the `Grade - <Subject>`
 tabs — and commits them only when they changed. Full setup is in that repo's README, under
