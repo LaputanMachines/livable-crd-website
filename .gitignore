@@ -24,3 +24,10 @@ __pycache__/
 # so excluding these from the Jekyll build in _config.yml is not enough on its
 # own -- anything committed here is readable on GitHub. Keep them out of git.
 documents/
+
+# Claude Code local state. settings.local.json holds the candidate tracking
+# sheet's id in an allow rule, and that id is the same capability the .env
+# rules above keep out of git. The skills directory IS committed: it is shared
+# working instructions, not local state.
+.claude/settings.local.json
+.claude/RESUME.md
