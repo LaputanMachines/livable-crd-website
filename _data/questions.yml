@@ -400,6 +400,7 @@ items:
     type: pair
     type_label: Answer plus a written follow-up
     graded: true
+    weight: "8.33%"
     owner: Climate Justice Victoria
     options:
       - "Yes, both advertising and sponsorship."
@@ -422,6 +423,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Climate Justice Victoria
     options:
       - "The overriding priority, other decisions should be tested against it."
@@ -437,6 +439,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Common Horizon Victoria
     options:
       - "Yes"
@@ -452,6 +455,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Common Horizon Victoria
     options:
       - "Yes"
@@ -467,6 +471,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Common Horizon Victoria
     options:
       - "Yes"
@@ -480,6 +485,7 @@ items:
       them? Select all you support.
     type: multi
     graded: true
+    weight: "8.33%"
     owner: Climate Justice Victoria
     options:
       - "Subsidized home assessments for heat, air quality and wildfire risk."
@@ -499,6 +505,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Common Horizon Victoria
     options:
       - "Yes"
@@ -513,6 +520,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: Common Horizon Victoria
     options:
       - Support without special conditions.
@@ -529,6 +537,7 @@ items:
     type: text
     type_label: Written answer
     graded: true
+    weight: "8.33%"
     owner: RUSH
   - label: CLI-10
     subject: climate
@@ -539,6 +548,7 @@ items:
     type: text
     type_label: Written answer
     graded: true
+    weight: "8.33%"
     owner: RUSH
   - label: CLI-11
     subject: climate
@@ -548,6 +558,7 @@ items:
     type: text
     type_label: Written answer
     graded: true
+    weight: "8.33%"
     owner: RUSH
   - label: CLI-12
     subject: climate
@@ -559,6 +570,7 @@ items:
     type: single
     type_label: One answer
     graded: true
+    weight: "8.33%"
     owner: RUSH
     options:
       - "Yes"
