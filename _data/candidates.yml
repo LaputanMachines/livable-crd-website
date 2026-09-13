@@ -55,6 +55,14 @@
   slate: null
   website: "https://colettebaty.ca"
 
+- name: Erin Elizabeth Booth
+  display_name: "Booth, Erin Elizabeth"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Susan Brice
   display_name: "Brice, Susan"
   municipality: saanich
@@ -214,6 +222,14 @@
   standing: challenger
   slate: null
   website: "https://harjaspopli.ca"
+
+- name: Nic Renaud
+  display_name: "Renaud, Nic"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
 
 - name: Rishi Sharma
   display_name: "Sharma, Rishi"
@@ -772,6 +788,14 @@
   slate: null
   website: "https://harold4colwood.ca"
 
+- name: Cynthia Day
+  display_name: "Day, Cynthia"
+  municipality: colwood
+  office: Mayor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Terrilynn Gee
   display_name: "Gee, Terrilynn"
   municipality: colwood
@@ -941,11 +965,35 @@
   slate: null
   website: null
 
+- name: Alex Mcleod
+  display_name: "Mcleod, Alex"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Michael Mortimore
+  display_name: "Mortimore, Michael"
+  municipality: langford
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Matt Sahlstrom
   display_name: "Sahlstrom, Matt"
   municipality: langford
   office: Councillor
   standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
+- name: Tanya Sunshine
+  display_name: "Sunshine, Tanya"
+  municipality: langford
+  office: Councillor
+  standing: challenger
   slate: null
   website: null
 
@@ -974,8 +1022,24 @@
   website: "https://stewformayor.ca"
 
 # --- Highlands ---
+- name: Justin Allen
+  display_name: "Allen, Justin"
+  municipality: highlands
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Leslie Anderson
   display_name: "Anderson, Leslie"
+  municipality: highlands
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Ann Baird
+  display_name: "Baird, Ann"
   municipality: highlands
   office: Councillor
   standing: incumbent-councillor
@@ -990,6 +1054,46 @@
   slate: null
   website: "https://gordbaird.ca"
 
+- name: Ken Brotherston
+  display_name: "Brotherston, Ken"
+  municipality: highlands
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
+- name: Marie Brotherston
+  display_name: "Brotherston, Marie"
+  municipality: highlands
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
+- name: Patrick Harriot
+  display_name: "Harriot, Patrick"
+  municipality: highlands
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Genny Holt
+  display_name: "Holt, Genny"
+  municipality: highlands
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Rob Justice
+  display_name: "Justice, Rob"
+  municipality: highlands
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Marcie McLean
   display_name: "McLean, Marcie"
   municipality: highlands
@@ -1000,6 +1104,22 @@
 
 - name: Karel Roessingh
   display_name: "Roessingh, Karel"
+  municipality: highlands
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Adrian Selby
+  display_name: "Selby, Adrian"
+  municipality: highlands
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Rose Stanton
+  display_name: "Stanton, Rose"
   municipality: highlands
   office: Councillor
   standing: incumbent-councillor
@@ -1023,11 +1143,51 @@
   slate: null
   website: null
 
+- name: Ellen Frisch
+  display_name: "Frisch, Ellen"
+  municipality: metchosin
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Steve Gray
+  display_name: "Gray, Steve"
+  municipality: metchosin
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Kyara Kahakauwila
+  display_name: "Kahakauwila, Kyara"
+  municipality: metchosin
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Marie-Térèse Little
   display_name: "Little, Marie-Térèse"
   municipality: metchosin
   office: Mayor
   standing: incumbent-mayor
+  slate: null
+  website: null
+
+- name: Mattie McMillan
+  display_name: "McMillan, Mattie"
+  municipality: metchosin
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Shawn Melinchuk
+  display_name: "Melinchuk, Shawn"
+  municipality: metchosin
+  office: Mayor
+  standing: challenger
   slate: null
   website: null
 
@@ -1186,11 +1346,27 @@
   slate: null
   website: null
 
+- name: Erin Fedotov
+  display_name: "Fedotov, Erin"
+  municipality: sidney
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Scott Garnett
   display_name: "Garnett, Scott"
   municipality: sidney
   office: Councillor
   standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Harninder Jarquot
+  display_name: "Jarquot, Harninder"
+  municipality: sidney
+  office: Councillor
+  standing: challenger
   slate: null
   website: null
 
@@ -1362,6 +1538,14 @@
   standing: challenger
   slate: Sooke Together
   website: "https://www.stevesorensen.ca/"
+
+- name: Tony St-Pierre
+  display_name: "St-Pierre, Tony"
+  municipality: sooke
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
 
 - name: Katherine Strongwind
   display_name: "Strongwind, Katherine"
