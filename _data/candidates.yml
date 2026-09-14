@@ -304,6 +304,14 @@
   slate: null
   website: "https://electjeremy.ca"
 
+- name: Herb Collins
+  display_name: "Collins, Herb"
+  municipality: victoria
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Melissa Cseszko
   display_name: "Cseszko, Melissa"
   municipality: victoria
@@ -327,6 +335,14 @@
   standing: challenger
   slate: null
   website: "https://www.shonadion4victoria.ca/"
+
+- name: Steve Filipovic
+  display_name: "Filipovic, Steve"
+  municipality: victoria
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
 
 - name: Jerry Garcia
   display_name: "Garcia, Jerry"
@@ -360,14 +376,6 @@
   slate: null
   website: "https://martingirardforvictoriacouncil.ca"
 
-- name: Owen Haley
-  display_name: "Haley, Owen"
-  municipality: victoria
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: null
-
 - name: Stephen Hammond
   display_name: "Hammond, Stephen"
   municipality: victoria
@@ -376,10 +384,34 @@
   slate: null
   website: "https://www.votestephenhammond.ca/priorities"
 
+- name: Christopher Hanna
+  display_name: "Hanna, Christopher"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: James Harasymow
+  display_name: "Harasymow, James"
+  municipality: victoria
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Mike Harris
   display_name: "Harris, Mike"
   municipality: victoria
   office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Jason Heit
+  display_name: "Heit, Jason"
+  municipality: victoria
+  office: Councillor
   standing: challenger
   slate: null
   website: null
@@ -1187,6 +1219,14 @@
   display_name: "Melinchuk, Shawn"
   municipality: metchosin
   office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Jesse Pewarchuk
+  display_name: "Pewarchuk, Jesse"
+  municipality: metchosin
+  office: Councillor
   standing: challenger
   slate: null
   website: null
