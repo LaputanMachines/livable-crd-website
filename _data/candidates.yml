@@ -255,6 +255,14 @@
   slate: null
   website: null
 
+- name: Jordan Weaver
+  display_name: "Weaver, Jordan"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://jordanweaver.ca/"
+
 - name: Sierra Wicks-Irving
   display_name: "Wicks-Irving, Sierra"
   municipality: saanich
