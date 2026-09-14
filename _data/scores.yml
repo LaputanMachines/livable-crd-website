@@ -121,6 +121,9 @@ candidates:
   - name: Keith Yacucha
     municipality: langford
     subjects: []
+  - name: Ellen Frisch
+    municipality: metchosin
+    subjects: []
   - name: Karin Sweeney
     municipality: oak-bay
     subjects: []
@@ -188,6 +191,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: Sean Mackenzie
+    municipality: view-royal
+    subjects: []
+  - name: Spencer Dixon
     municipality: view-royal
     subjects: []
   - name: Volker Dammann
