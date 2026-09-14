@@ -21,7 +21,8 @@ description: >-
 <h2>Before you give</h2>
 <p>
   To keep our fundraising transparent and compliant, a few rules apply to every
-  contribution:
+  contribution. Elections BC sets them, and states them itself on
+  <a href="https://elections.bc.ca/local-elections/making-a-sponsorship-contribution/" target="_blank" rel="noopener">Making a Local Sponsorship Contribution</a>:
 </p>
 <ul>
   <li>
