@@ -345,7 +345,7 @@ We're part of Livable CRD, a non-partisan coalition of Capital Region community 
 
 That work costs money. Reaching every candidate, grading responses against a published methodology, and getting the scorecard in front of voters before election day all take real effort, and the coalition is volunteer-run with no institutional backing.
 
-Livable CRD is funded entirely by individual donations from people who live here. It cannot accept contributions from corporations, unions, real estate developers, or candidates, and it does not endorse anyone. Under B.C. election rules, donations are capped at $1,429.70 per person per year; contributions of $99 or less may be published anonymously, though a name is still needed to confirm the money came from an individual.
+Livable CRD is funded entirely by individual donations from people who live here. It cannot accept contributions from corporations, unions, real estate developers, or candidates, and it does not endorse anyone. Under B.C. election rules, donations are capped at $1,429.70 per person per year, contributors must be Canadian citizens or permanent residents living in B.C., and Elections BC publishes the name and amount for every contribution of $100 or more. Online donations cannot be anonymous: a name and residential address is recorded for every contribution, whatever the size.
 
 If you can give, here's where: https://livablecrd.ca/donate/
 

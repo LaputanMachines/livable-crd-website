@@ -30,10 +30,28 @@ description: >-
     political contribution limit.
   </li>
   <li>
-    <strong>Anonymous donation threshold.</strong> Donations of <strong>$99 or
-    less</strong> may be published anonymously, but we still need your name so we
-    can verify that every contribution comes from an individual. For any
-    contribution above $99 we are required to record the donor's name and address.
+    <strong>Who can contribute.</strong> You must be a <strong>Canadian citizen or
+    permanent resident of Canada</strong> and a <strong>resident of British
+    Columbia</strong>. By donating you confirm that both are true of you.
+  </li>
+  <li>
+    <strong>We record every contribution.</strong> Elections BC requires us to
+    collect and keep the <strong>name and residential address of every
+    contributor</strong>, no matter how small the contribution.
+  </li>
+  <li>
+    <strong>Contributions of $100 or more are published.</strong> If you give
+    <strong>$100 or more</strong>, Elections BC publishes your name and the amount
+    in its Financial Reports and Political Contributions (FRPC) system.
+    Contributions of <strong>less than $100</strong> are not published there, but
+    we still record and keep your details.
+  </li>
+  <li>
+    <strong>Donations here are not anonymous.</strong> Under B.C. rules an
+    anonymous contribution must be <strong>$50 or less</strong> and genuinely
+    anonymous, such as cash left in a donation box at an event. Anyone who gives
+    money to us directly, including through this page, cannot ask to be listed as
+    anonymous.
   </li>
   <li>
     <strong>No corporate or union donations.</strong> We can only accept
