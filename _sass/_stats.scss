@@ -1,0 +1,423 @@
+@use "variables" as *;
+
+// --- The stats page (/stats/) ---
+// Markup: stats.md, rendered from site.data.scorecard_stats, which
+// _plugins/scorecard_stats.rb computes at build time.
+//
+// Every chart on the page is the same object: a two-column table whose value
+// cell holds a bar and the number the bar is drawing. There is no chart
+// library and no canvas — the figures are known when the page is built, so the
+// only thing a script could add here is a way for the page to arrive blank.
+//
+// The bars are aria-hidden decoration sitting on top of a real table: the row
+// header names the thing, the value cell states the number, and a reader who
+// gets no bars at all (a screen reader, a printer that drops backgrounds, a
+// stylesheet that fails to load) still gets every figure.
+
+.stats-section {
+  margin: 0 0 $space-xl;
+
+  h3 {
+    margin-top: $space-lg;
+  }
+}
+
+// --- The headline panel -----------------------------------------------------
+// The reply rate, the sentence that reads it, and the three counts it is
+// measured against, in one panel.
+//
+// Built like the scorecard matrix this page summarises: the same heavy frame,
+// an inky header band with white display type across the top, a white body
+// under it, and the matrix's own hairline rules between the counts. It reads
+// as the scorecard's own furniture rather than as a component this page
+// invented for itself.
+.stat-hero {
+  border: $border-weight-heavy solid $color-text;
+  border-radius: $radius;
+  background: $color-surface;
+  color: $color-text;
+  // The same gap above as below. The paragraph above it only carries a
+  // paragraph's own bottom margin, which left the panel sitting closer to the
+  // copy it follows than to the chart it introduces.
+  margin: $space-lg 0;
+  overflow: hidden;
+}
+
+// The header band, on the same inky ground and the same 2px underline the
+// matrix gives its `thead th`.
+.stat-hero__title {
+  margin: 0;
+  background: $color-accent-alt;
+  color: #fff;
+  border-bottom: 2px solid $color-text;
+  padding: 0.45rem $space-md;
+  font-family: $font-display;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-hero__body {
+  padding: $space-md;
+  // The figure and the sentence sit side by side once there is room for both,
+  // and stack under each other when there is not.
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: $space-xs $space-lg;
+}
+
+.stat-hero__figure {
+  font-family: $font-display;
+  font-size: clamp(3.25rem, 11vw, 5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  color: $color-accent;
+  margin: 0;
+  // Proportional figures deliberately: tabular digits are for numbers that
+  // stack in a column, and at this size they leave a visible gap inside a
+  // figure like "16".
+  font-variant-numeric: proportional-nums;
+}
+
+.stat-hero__caption {
+  margin: 0 0 $space-sm;
+  max-width: 44ch;
+  font-size: clamp(0.95rem, 2.5vw, 1.05rem);
+  line-height: 1.5;
+  color: $color-text;
+}
+
+// A meter: one ratio against one limit, in the two colours every bar further
+// down the page uses, so "the rest of the field" is not drawn as a second
+// thing with a meaning of its own.
+.stat-meter {
+  display: block;
+  height: 10px;
+  border-radius: $radius;
+  background: $color-bg-warm;
+  overflow: hidden;
+}
+
+.stat-meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: $radius;
+  background: $color-accent;
+  // Grows from the axis once, on arrival. Scaled rather than animated on
+  // width, which would relayout the panel on every frame; the reduced-motion
+  // block in _animations.scss cuts it to nothing for anyone who asks.
+  transform-origin: left center;
+  animation: statMeterGrow 0.7s $transition-med backwards;
+  // Kept on the page when printed: a meter that prints as an empty track is
+  // worse than no meter, because it reads as zero rather than as missing.
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+@keyframes statMeterGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+// --- The denominators -------------------------------------------------------
+// Inside the panel, under a rule: three counts that exist to be the
+// denominators of the figure above them, which is exactly how they read here
+// and is not how they read as three boxes of their own below it. The rules
+// between them are the matrix's own cell separators, at the same weight.
+.stat-tiles {
+  grid-column: 1 / -1;
+  list-style: none;
+  padding: $space-sm 0 0;
+  margin: $space-md 0 0;
+  border-top: 1px solid rgba(17, 17, 17, 0.12);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+}
+
+.stat-tile {
+  padding: 0 $space-sm;
+  border-left: 1px solid rgba(17, 17, 17, 0.12);
+
+  &:first-child {
+    padding-left: 0;
+    border-left: 0;
+  }
+}
+
+.stat-tile__figure {
+  display: block;
+  font-family: $font-display;
+  font-size: clamp(1.4rem, 4vw, 1.75rem);
+  font-weight: 700;
+  line-height: 1.1;
+  color: $color-text;
+  font-variant-numeric: proportional-nums;
+}
+
+.stat-tile__label {
+  display: block;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: $color-muted;
+  margin-top: 0.15rem;
+}
+
+// --- The bar charts ---------------------------------------------------------
+// These are charts that happen to be tables, so the site's table dress comes
+// off first: _components.scss gives every table a 3px frame, a rule under each
+// row and — the one that matters here — a th painted inky purple with white
+// text, which is right for a header row and wrong for a row header that is this
+// chart's y-axis label. Reset, rather than a new element: the table is what
+// carries the values to a screen reader and to a printer.
+.statbars {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 $space-md;
+  background: transparent;
+  border: 0;
+  font-size: 1rem;
+
+  td,
+  th {
+    // No rules between rows. The bars already line the table up, and a grid
+    // drawn as heavily as this site draws its tables would be louder than the
+    // data sitting inside it.
+    border: 0;
+    padding: 0.4rem 0;
+    vertical-align: middle;
+    background: transparent;
+  }
+
+  th {
+    color: $color-text;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: normal;
+    font-size: 0.9rem;
+  }
+
+  // The site's row hover tints a row in $color-bg-warm, which is the colour of
+  // the empty part of every track on it: on this table it reads as every bar
+  // in the row filling to 100%.
+  tr:hover td,
+  tr:hover th {
+    background: transparent;
+  }
+}
+
+.statbars__label {
+  width: 9rem;
+  padding-right: $space-sm !important;
+  text-align: left;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: $color-text;
+
+  // An axis label that is also a link to that municipality's own page. Drawn
+  // without the site's link underline: thirteen underlined labels down the
+  // left of a chart read as thirteen things demanding to be clicked, and the
+  // underline comes back on hover and focus where it is asked for.
+  a {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+      text-decoration: underline;
+    }
+  }
+}
+
+// A grade's row header is its chip and the word the chip means, so the key on
+// the scorecard and this axis label read the same way.
+//
+// Laid out inline rather than as a flex row: `display: flex` on a <th> takes
+// the cell out of the table's own layout, and the row header then sits on its
+// own line above the bar it labels instead of beside it.
+.statbars__label--grade {
+  white-space: nowrap;
+
+  .grade {
+    vertical-align: middle;
+    margin-right: $space-xs;
+  }
+}
+
+.statbars__grade-name {
+  font-weight: 500;
+  vertical-align: middle;
+}
+
+.statbars__cell {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.statbars__track {
+  flex: 1 1 auto;
+  // A minimum, not a fixed width: the track shares the cell with the value
+  // beside it, and below about 26rem of page the value is what has to win.
+  min-width: 4rem;
+  height: 10px;
+  border-radius: $radius;
+  background: $color-bg-warm;
+}
+
+.statbars__fill {
+  display: block;
+  height: 100%;
+  // Thin marks, rounded at the data end only: the bar grows from the axis, and
+  // rounding the end it grows from would lift it off the baseline it is
+  // measured against.
+  border-radius: 0 $radius $radius 0;
+  background: $color-accent;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+// Letter grades keep the colour they wear in every cell of the scorecard
+// matrix. A grade is the one thing on this site whose colour already carries
+// meaning; repainting it here would make a reader learn a second scale for the
+// same five marks. C− shares C's colour, exactly as .grade-c-minus does.
+.statbars__fill--a,
+.statbars__seg--a { background: $grade-a; }
+.statbars__fill--b,
+.statbars__seg--b { background: $grade-b; }
+.statbars__fill--c,
+.statbars__seg--c,
+.statbars__fill--c-minus,
+.statbars__seg--c-minus { background: $grade-c; }
+.statbars__fill--f,
+.statbars__seg--f { background: $grade-f; }
+
+// A stacked bar: one topic's whole set of grades, best to worst.
+.statbars__stack {
+  flex: 1 1 auto;
+  min-width: 4rem;
+  height: 10px;
+  border-radius: $radius;
+  background: $color-bg-warm;
+  overflow: hidden;
+  display: flex;
+  // The 2px gap between segments is surface showing through, not a border
+  // drawn around each one. Segments shrink to absorb it, so the widths stay
+  // proportional however many segments a topic has.
+  gap: 2px;
+}
+
+.statbars__seg {
+  display: block;
+  height: 100%;
+  // A single grade in a set of thirty is a third of a percent wide and would
+  // otherwise be rounded away to nothing. It has to be visible: "one candidate
+  // got an F here" is exactly the kind of thing this chart is read for.
+  min-width: 3px;
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+.statbars__value {
+  flex: 0 0 auto;
+  font-size: 0.85rem;
+  color: $color-text;
+  white-space: nowrap;
+  // These stack vertically down the column, which is where equal-width digits
+  // earn their keep.
+  font-variant-numeric: tabular-nums;
+}
+
+.statbars__unit,
+.statbars__pct {
+  color: $color-muted;
+}
+
+// Sits between two figures rather than after one ("13 · 12 graded"), so the
+// pair does not read as a single number with a space in it.
+.statbars__unit--sep::before {
+  content: "\00b7";
+  margin: 0 0.35rem;
+}
+
+.statbars__pct {
+  display: inline-block;
+  min-width: 2.75rem;
+  text-align: right;
+}
+
+// The per-letter counts under a stacked bar. They wrap rather than truncate:
+// a topic can carry five letters, and a reader on a phone should get all five
+// on two lines rather than four and an ellipsis.
+.statbars__value--counts {
+  white-space: normal;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem $space-xs;
+  justify-content: flex-end;
+  max-width: 11rem;
+}
+
+.statbars__count {
+  color: $color-muted;
+}
+
+@media (max-width: 46rem) {
+  // The panel stacks: the figure, then the sentence that reads it, then the
+  // counts. Side by side below this width leaves the sentence four words wide.
+  .stat-hero__body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: $space-sm;
+  }
+
+  .stat-tiles {
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: $space-sm;
+  }
+
+  // Stacked, the vertical rule between counts becomes a rule above each one.
+  .stat-tile {
+    padding: $space-xs 0;
+    border-left: 0;
+    border-top: 1px solid rgba(17, 17, 17, 0.12);
+
+    &:first-child {
+      padding-top: 0;
+      border-top: 0;
+    }
+  }
+}
+
+@media (max-width: 40rem) {
+  .statbars__label {
+    width: 6rem;
+    font-size: 0.8rem;
+  }
+
+  .statbars__cell {
+    gap: $space-xs;
+    // The bar and its value share a row until the row runs out, and then the
+    // value drops below rather than squeezing the bar into a stub.
+    flex-wrap: wrap;
+  }
+
+  .statbars__value {
+    font-size: 0.8rem;
+  }
+
+  .statbars__pct {
+    min-width: 2.25rem;
+  }
+
+  // A stacked bar carries up to five counts beside it, which at this width
+  // leaves the bar about a thumb wide. The counts take their own line under it
+  // instead, full width, reading left to right in the order the segments do.
+  .statbars__value--counts {
+    flex: 1 0 100%;
+    max-width: none;
+    justify-content: flex-start;
+    margin-top: 0.15rem;
+  }
+}

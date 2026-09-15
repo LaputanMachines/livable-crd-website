@@ -32,23 +32,14 @@ description: >-
 </div>
 
 <div class="container page-content">
-  <p>
-    Confirmed candidates for the upcoming municipal elections across the Capital
-    Regional District. Each candidate is graded across the policy areas the
-    coalition evaluates. Search by name or slate, filter by municipality or
-    office, or narrow to candidates who meet a minimum grade in a given topic.
-    Every candidate is sent
-    <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>,
-    and a candidate's own page shows how each of their answers was graded.
-  </p>
-
   {%- comment -%}
     The release date, in the intro rather than only in the #deadlines panel at
     the foot of the page: a reader arriving at a table of dashes and hourglasses
     asks when the grades appear before they ask anything else, and the answer
     was three screens below them.
 
-    Dropped once the date has gone, because after the release it answers a
+    Inside the opening paragraph rather than beside it as a second one, and
+    dropped once the date has gone, because after the release it answers a
     question nobody on this page is asking any more and the grades themselves
     are the answer. The same end-of-day sum as _includes/deadline-list.html —
     24 hours to the end of the day plus 8 for PST — so the two never disagree
@@ -57,16 +48,20 @@ description: >-
   {%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
   {%- assign release_end = grades_released.date | date: "%s" | plus: 115200 -%}
   {%- assign now_ts = site.time | date: "%s" | plus: 0 -%}
-  {%- if now_ts < release_end %}
   <p>
-    <strong>Responses and grades are not published as they come in.</strong>
-    Everything is released together on
-    {{ grades_released.date | date: "%B %-d, %Y" }}, so until then a candidate
-    who has returned the questionnaire shows an hourglass rather than a letter.
-    <a href="{{ '/faq/#deadlines' | relative_url }}">The key dates</a> explain
-    the rest of the schedule.
+    Confirmed candidates across the Capital Regional District, graded on the
+    policy areas the coalition evaluates. Search by name or slate, or filter by
+    municipality, office and grade. Every candidate is sent
+    <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>,
+    and their own page shows how each answer was graded.
+    {%- if now_ts < release_end %}
+    <strong>Nothing is published as it comes in.</strong> Responses and grades
+    go up together on {{ grades_released.date | date: "%B %-d, %Y" }}, so until
+    then a candidate who replied shows an hourglass rather than a letter.
+    <a href="{{ '/faq/#deadlines' | relative_url }}">The key dates</a> have the
+    rest of the schedule.
+    {%- endif %}
   </p>
-  {%- endif %}
 
   <div class="scorecard-controls">
     <label for="candidate-search" class="sr-only">Search candidates by name or slate</label>
@@ -525,6 +520,7 @@ description: >-
   <p class="content-follow-up scorecard-faq-link">
     Have any questions? We've got answers!
     <a href="{{ '/faq/' | relative_url }}">Click here to see our FAQ</a>.
+    Or see <a href="{{ '/stats/' | relative_url }}">the scorecard in numbers</a>.
   </p>
 </div>
 
