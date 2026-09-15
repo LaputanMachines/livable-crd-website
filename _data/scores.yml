@@ -163,6 +163,9 @@ candidates:
   - name: Bella Lee
     municipality: victoria
     subjects: []
+  - name: Bruce McGuigan
+    municipality: victoria
+    subjects: []
   - name: Jack Sandor
     municipality: victoria
     subjects: []
@@ -185,6 +188,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: Don Brown
+    municipality: view-royal
+    subjects: []
+  - name: Josh Peterson
     municipality: view-royal
     subjects: []
   - name: Sacha Christensen
