@@ -139,6 +139,9 @@ candidates:
   - name: Garnett Humenick
     municipality: saanich
     subjects: []
+  - name: Jordan Weaver
+    municipality: saanich
+    subjects: []
   - name: Judy Brownoff
     municipality: saanich
     subjects: []
@@ -185,6 +188,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: David Screech
+    municipality: view-royal
+    subjects: []
+  - name: Diane Fownes
     municipality: view-royal
     subjects: []
   - name: Don Brown
