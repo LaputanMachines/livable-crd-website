@@ -150,7 +150,7 @@ description: >-
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" state="review" %}
-            <span class="grade-def__label">Not published yet</span>
+            <span class="grade-def__label">Submitted, Grading In-Progress</span>
           </dt>
           <dd class="grade-def__desc">
             This candidate returned the questionnaire and this topic has not been
@@ -167,7 +167,7 @@ description: >-
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" state="answers" %}
-            <span class="grade-def__label">Answered, not graded</span>
+            <span class="grade-def__label">Answered</span>
           </dt>
           <dd class="grade-def__desc">
             The candidate answered, this is a topic we do not assign a letter in,
@@ -183,7 +183,7 @@ description: >-
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" %}
-            <span class="grade-def__label">Not graded</span>
+            <span class="grade-def__label">Awaiting Response</span>
           </dt>
           <dd class="grade-def__desc">
             No completed questionnaire has come back from this candidate yet, so

@@ -46,7 +46,7 @@
   roughly half the chip's width, and a bubble is mostly the space it encloses,
   so a lighter stroke had almost nothing left of it at matrix size.
 {%- endcomment -%}
-<span class="grade grade--answers" title="Answered; this topic is not graded" aria-label="Answered, not graded">
+<span class="grade grade--answers" title="Answered; this topic is not graded" aria-label="Answered">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
@@ -79,7 +79,7 @@
   the chip's colour: `currentColor` is what makes it accent purple on screen and
   plain black on the leaflet, where the print rules restyle .grade to ink.
 {%- endcomment -%}
-<span class="grade grade--review" title="Questionnaire returned; this topic has not been published yet" aria-label="Returned, not published yet">
+<span class="grade grade--review" title="Questionnaire returned; this topic has not been published yet" aria-label="Submitted, grading in-progress">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <path d="M5 22h14"/>
     <path d="M5 2h14"/>
@@ -88,7 +88,7 @@
   </svg>
 </span>
 {% elsif no_grade %}
-<span class="grade grade--pending" aria-label="Grade pending">—</span>
+<span class="grade grade--pending" aria-label="Awaiting response">—</span>
 {% elsif g_upper == 'N/A' or g_upper == 'NA' %}
 <span class="grade grade--na" aria-label="Not applicable">N/A</span>
 {% else %}
