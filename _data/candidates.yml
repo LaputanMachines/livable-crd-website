@@ -39,14 +39,6 @@
 # Within each municipality, candidates are ordered alphabetically by last name.
 
 # --- Saanich ---
-- name: Mehdi Bagheri
-  display_name: "Bagheri, Mehdi"
-  municipality: saanich
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: "https://www.med4saanich.com"
-
 - name: Colette Baty
   display_name: "Baty, Colette"
   municipality: saanich
@@ -513,6 +505,14 @@
   slate: null
   website: null
 
+- name: Dan Bruyere
+  display_name: "Bruyere, Dan"
+  municipality: esquimalt
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Duncan Cavens
   display_name: "Cavens, Duncan"
   municipality: esquimalt
@@ -561,6 +561,14 @@
   slate: null
   website: "https://www.facebook.com/groups/34953210528/user/61591412316974/"
 
+- name: Bruce McIldon
+  display_name: "McIldon, Bruce"
+  municipality: esquimalt
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: "https://www.facebook.com/share/1GGvDPfYTL/?mibextid=wwXIfr"
+
 - name: Tim Morrison
   display_name: "Morrison, Tim"
   municipality: esquimalt
@@ -576,6 +584,14 @@
   standing: challenger
   slate: null
   website: "https://www.facebook.com/groups/1054760926974870/"
+
+- name: Tyler Russell
+  display_name: "Russell, Tyler"
+  municipality: esquimalt
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://tyler4esquimalt.ca/"
 
 - name: Kody Thomson
   display_name: "Thomson, Kody"
@@ -673,6 +689,14 @@
   standing: challenger
   slate: null
   website: "https://karinforoakbay.com"
+
+- name: Katherinea Weller
+  display_name: "Weller, Katherinea"
+  municipality: oak-bay
+  office: Councillor
+  standing: null
+  slate: null
+  website: null
 
 # --- View Royal ---
 - name: Anna Becker
@@ -1288,13 +1312,21 @@
   slate: Sustain Our Central Saanich
   website: null
 
+- name: Ben Michell
+  display_name: "Michell, Ben"
+  municipality: central-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Sarah Riddell
   display_name: "Riddell, Sarah"
   municipality: central-saanich
   office: Councillor
   standing: incumbent-councillor
   slate: null
-  website: null
+  website: "https://www.sarahriddell.ca/"
 
 - name: Anny Scoones
   display_name: "Scoones, Anny"
@@ -1309,6 +1341,14 @@
   municipality: central-saanich
   office: Councillor
   standing: challenger
+  slate: null
+  website: null
+
+- name: Robert (Bob) Thompson
+  display_name: "Thompson, Robert (Bob)"
+  municipality: central-saanich
+  office: Councillor
+  standing: incumbent-councillor
   slate: null
   website: null
 
@@ -1329,6 +1369,46 @@
   website: null
 
 # --- North Saanich ---
+- name: Jane J Burns (Isabella)
+  display_name: "(Isabella), Jane J Burns"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://janeburnes.ca"
+
+- name: Dawn Gould
+  display_name: "Gould, Dawn"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Gerald Hannig
+  display_name: "Hannig, Gerald"
+  municipality: north-saanich
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
+- name: Walter Langer
+  display_name: "Langer, Walter"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Stuart Mackinnon
+  display_name: "Mackinnon, Stuart"
+  municipality: north-saanich
+  office: Councillor
+  standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
 - name: Felice B Mazzoni
   display_name: "Mazzoni, Felice B"
   municipality: north-saanich
@@ -1353,6 +1433,14 @@
   slate: North Saanich Strong
   website: null
 
+- name: Brian Robinson
+  display_name: "Robinson, Brian"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Sanjiv Shrivastava
   display_name: "Shrivastava, Sanjiv"
   municipality: north-saanich
@@ -1366,6 +1454,14 @@
   municipality: north-saanich
   office: Councillor
   standing: incumbent-councillor
+  slate: null
+  website: null
+
+- name: Greg Warner
+  display_name: "Warner, Greg"
+  municipality: north-saanich
+  office: Councillor
+  standing: challenger
   slate: null
   website: null
 
