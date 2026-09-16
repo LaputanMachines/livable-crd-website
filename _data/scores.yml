@@ -103,6 +103,9 @@ candidates:
   - name: Holly Courtright
     municipality: esquimalt
     subjects: []
+  - name: Kody Thomson
+    municipality: esquimalt
+    subjects: []
   - name: Meagan Brame
     municipality: esquimalt
     subjects: []
@@ -167,6 +170,9 @@ candidates:
     municipality: victoria
     subjects: []
   - name: Bruce McGuigan
+    municipality: victoria
+    subjects: []
+  - name: Dave Thompson
     municipality: victoria
     subjects: []
   - name: Jack Sandor
