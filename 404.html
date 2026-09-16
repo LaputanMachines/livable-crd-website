@@ -1,0 +1,103 @@
+---
+layout: default
+title: Page not found
+description: >-
+  That address is not a page on livablecrd.ca. Find the 2026 Capital Regional
+  District candidate scorecard, the questionnaire, our methodology, and how to
+  reach the coalition.
+# GitHub Pages serves this file for any address that does not exist, but only
+# if it is published at exactly /404.html. The site-wide `permalink: pretty`
+# in _config.yml would otherwise render it to /404/index.html, where nothing
+# would ever ask for it, so the permalink is pinned here.
+#
+# It is deliberately not excluded from the sitemap: jekyll-sitemap already
+# drops /404.html by name (see lib/sitemap.xml in the gem), so a `sitemap:
+# false` here would only be a second lock on a door that is already shut.
+permalink: /404.html
+---
+
+<div class="page-header">
+  <div class="container container--narrow">
+    <h1>Page not found</h1>
+    {%- comment -%}
+      Same standing request the scorecard header carries, for the same reason:
+      the reader is the only person who knows which link sent them here, and
+      this is the one moment they are looking at the evidence. A broken link
+      pointing at us is worth more to fix than the one visit it cost.
+    {%- endcomment -%}
+    <p class="page-header__note">
+      Followed a link to get here?
+      <a href="mailto:{{ site.email }}?subject=Broken%20link">Tell us where from</a>
+      and we will fix it.
+    </p>
+  </div>
+</div>
+
+<div class="container container--narrow page-content">
+  <p>
+    There is nothing at that address. The usual reasons, in the order they
+    actually happen:
+  </p>
+  <ul>
+    <li>
+      <strong>The candidate does not have a page yet.</strong> Candidates are
+      added as they are confirmed, so a name can be in the news before it is on
+      this site. See
+      <a href="{{ '/faq/#how-candidates-are-added' | relative_url }}">how candidates get added</a>.
+    </li>
+    <li>
+      <strong>The address was mistyped or cut off.</strong> Links pasted into
+      social posts and email clients lose their tail surprisingly often.
+    </li>
+    <li>
+      <strong>The page moved.</strong> This site is rebuilt through an election
+      cycle, and some addresses changed along the way.
+    </li>
+  </ul>
+
+  <h2>Where you were probably going</h2>
+  {%- comment -%}
+    Four destinations, not a sitemap. The header nav is still above this page
+    and lists everything; repeating all of it here would bury the one link that
+    almost every visitor who lands on a 404 actually wants, which is the
+    scorecard.
+  {%- endcomment -%}
+  <div class="card-grid">
+    <article class="card">
+      <h3>Candidate scorecard</h3>
+      <p>
+        Every confirmed candidate in the Capital Regional District, searchable
+        by name and filterable by municipality.
+      </p>
+      <a class="card-link" href="{{ '/scorecard/' | relative_url }}">See the scorecard <span aria-hidden="true">→</span></a>
+    </article>
+    <article class="card">
+      <h3>The questionnaire</h3>
+      <p>
+        Every question we put to every candidate, in full, on transit, housing,
+        climate, arts, and the rest.
+      </p>
+      <a class="card-link" href="{{ '/questionnaire/' | relative_url }}">Read the questions <span aria-hidden="true">→</span></a>
+    </article>
+    <article class="card">
+      <h3>How we grade</h3>
+      <p>
+        Our published methodology: what each letter grade means, who assigns it,
+        and what each topic covers.
+      </p>
+      <a class="card-link" href="{{ '/faq/#methodology' | relative_url }}">Read the methodology <span aria-hidden="true">→</span></a>
+    </article>
+    <article class="card">
+      <h3>Contact us</h3>
+      <p>
+        Corrections, missing candidates, press on deadline, and volunteering all
+        go to the same inbox, read by real people.
+      </p>
+      <a class="card-link" href="{{ '/contact/' | relative_url }}">Get in touch <span aria-hidden="true">→</span></a>
+    </article>
+  </div>
+
+  <p class="content-follow-up">
+    Or go back to the <a href="{{ '/' | relative_url }}">homepage</a>.
+  </p>
+</div>
