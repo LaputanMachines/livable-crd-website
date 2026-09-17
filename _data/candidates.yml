@@ -1369,19 +1369,19 @@
   slate: null
   website: "https://janeburnes.ca"
 
-- name: Dawn Gould
-  display_name: "Gould, Dawn"
-  municipality: north-saanich
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: null
-
 - name: Gerald Hannig
   display_name: "Hannig, Gerald"
   municipality: north-saanich
   office: Councillor
   standing: ex-incumbent-councillor
+  slate: null
+  website: null
+
+- name: Peter Jones
+  display_name: "Jones, Peter"
+  municipality: north-saanich
+  office: Mayor
+  standing: incumbent-mayor
   slate: null
   website: null
 
@@ -1399,6 +1399,14 @@
   office: Councillor
   standing: ex-incumbent-councillor
   slate: null
+  website: null
+
+- name: Kristine Marshall
+  display_name: "Marshall, Kristine"
+  municipality: north-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: North Saanich Strong
   website: null
 
 - name: Felice B Mazzoni
