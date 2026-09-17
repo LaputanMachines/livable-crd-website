@@ -13,12 +13,9 @@ description: >-
 <section class="hero hero--home">
   <div class="hero-inner animate-in">
     <p class="badge">Easy, Informed Election Decisions</p>
-    <h1>Candidate scorecard for a livable capital region</h1>
+    <h1>Get Ready For The Election</h1>
     <p class="lead">
-      <strong>Livable CRD</strong> is a coalition of community groups preparing a
-      transparent scorecard for municipal election candidates across the Capital
-      Regional District, so voters can see where candidates stand on the issues
-      that shape daily life here.
+      <strong>Livable CRD</strong> has all the information you need before you vote on October 17th. Candidates, their views, and their scores.
     </p>
     {%- comment -%}
       One call to action, not four. The hero's job is to send a visitor to the

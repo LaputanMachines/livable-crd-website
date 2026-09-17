@@ -550,6 +550,18 @@ main {
   padding: $space-hero-y $space-gutter $space-xl;
 }
 
+// The homepage hero is the only one on the site that has to carry a headline,
+// a lead, a button and the grade strip, and at the shared .hero-inner rhythm
+// that stack sat tight against the header above it and the border below it.
+// A flat pixel value rather than a $space-* token because the scale tops out
+// at 3rem, well short of the band this wants to be. Only the home variant is
+// loosened; .page-header on every other page keeps the original spacing so the
+// two do not drift apart.
+.hero--home .hero-inner {
+  padding-top: 125px;
+  padding-bottom: 125px;
+}
+
 .hero h1 {
   max-width: 15ch;
   margin-bottom: $space-md;
@@ -596,9 +608,11 @@ main {
   border-color: #fff;
   // Bigger than a body button (.btn is 0.92rem / 0.8rem 1.65rem) because it is
   // the one thing the hero asks for, but only by a step. At 1.05rem the label
-  // read as a banner rather than a button and crowded the line above it.
+  // read as a banner rather than a button and crowded the line above it; the
+  // size carries on the padding rather than the type, so the label stays a
+  // hair above body-button size and the pill stays the largest thing here.
   padding: 0.9rem 2.05rem;
-  font-size: 0.98rem;
+  font-size: 0.94rem;
   // The label runs to four words, which wraps on a narrow phone; centred so it
   // wraps into a block rather than a ragged left edge inside the pill.
   text-align: center;
@@ -891,7 +905,7 @@ main {
     display: block;
     padding-left: $space-sm;
     padding-right: $space-sm;
-    font-size: 0.92rem;
+    font-size: 0.88rem;
   }
 
   .page-header {
