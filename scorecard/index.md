@@ -520,7 +520,6 @@ description: >-
   <p class="content-follow-up scorecard-faq-link">
     Have any questions? We've got answers!
     <a href="{{ '/faq/' | relative_url }}">Click here to see our FAQ</a>.
-    Or see <a href="{{ '/stats/' | relative_url }}">the scorecard in numbers</a>.
   </p>
 </div>
 

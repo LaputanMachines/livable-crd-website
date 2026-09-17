@@ -1,13 +1,20 @@
 @use "variables" as *;
 
-// --- The stats page (/stats/) ---
-// Markup: stats.md, rendered from site.data.scorecard_stats, which
-// _plugins/scorecard_stats.rb computes at build time.
+// --- The charts on a municipality index ---
+// Markup: the "<Municipality> by the numbers" section of
+// _layouts/municipality.html, rendered from
+// site.data.municipality_stats[<slug>], which _plugins/municipality_stats.rb
+// computes at build time.
 //
-// Every chart on the page is the same object: a two-column table whose value
-// cell holds a bar and the number the bar is drawing. There is no chart
-// library and no canvas — the figures are known when the page is built, so the
-// only thing a script could add here is a way for the page to arrive blank.
+// These styles dressed a single site-wide /stats/ page before that page was
+// folded into the municipality indexes. Nothing in here is about one page:
+// every rule below is a chart component, and the file keeps its name because
+// the components do.
+//
+// Every chart is the same object: a two-column table whose value cell holds a
+// bar and the number the bar is drawing. There is no chart library and no
+// canvas — the figures are known when the page is built, so the only thing a
+// script could add here is a way for the section to arrive blank.
 //
 // The bars are aria-hidden decoration sitting on top of a real table: the row
 // header names the thing, the value cell states the number, and a reader who
@@ -17,7 +24,10 @@
 .stats-section {
   margin: 0 0 $space-xl;
 
-  h3 {
+  // Direct children only. `.stat-hero__title` is an h3 too, and it is the
+  // panel's own header band: a top margin on it would push the band off the
+  // frame it is painted inside.
+  > h3 {
     margin-top: $space-lg;
   }
 }
@@ -26,7 +36,7 @@
 // The reply rate, the sentence that reads it, and the three counts it is
 // measured against, in one panel.
 //
-// Built like the scorecard matrix this page summarises: the same heavy frame,
+// Built like the scorecard matrix these figures summarise: the same heavy frame,
 // an inky header band with white display type across the top, a white body
 // under it, and the matrix's own hairline rules between the counts. It reads
 // as the scorecard's own furniture rather than as a component this page
@@ -90,8 +100,8 @@
 }
 
 // A meter: one ratio against one limit, in the two colours every bar further
-// down the page uses, so "the rest of the field" is not drawn as a second
-// thing with a meaning of its own.
+// down uses, so "the rest of the field" is not drawn as a second thing with a
+// meaning of its own.
 .stat-meter {
   display: block;
   height: 10px;
@@ -215,20 +225,6 @@
   font-size: 0.9rem;
   font-weight: 600;
   color: $color-text;
-
-  // An axis label that is also a link to that municipality's own page. Drawn
-  // without the site's link underline: thirteen underlined labels down the
-  // left of a chart read as thirteen things demanding to be clicked, and the
-  // underline comes back on hover and focus where it is asked for.
-  a {
-    color: inherit;
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible {
-      text-decoration: underline;
-    }
-  }
 }
 
 // A grade's row header is its chip and the word the chip means, so the key on
@@ -330,19 +326,8 @@
   font-variant-numeric: tabular-nums;
 }
 
-.statbars__unit,
 .statbars__pct {
   color: $color-muted;
-}
-
-// Sits between two figures rather than after one ("13 · 12 graded"), so the
-// pair does not read as a single number with a space in it.
-.statbars__unit--sep::before {
-  content: "\00b7";
-  margin: 0 0.35rem;
-}
-
-.statbars__pct {
   display: inline-block;
   min-width: 2.75rem;
   text-align: right;

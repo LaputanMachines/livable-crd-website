@@ -214,6 +214,335 @@ layout: default
   {%- endfor %}
 
   {%- comment -%}
+    This municipality, counted. Everything here comes from
+    site.data.municipality_stats[<slug>], which _plugins/municipality_stats.rb
+    derives at build time from the same files the list above, the candidate
+    pages and /scorecard/ render: nothing on this page is typed in, so it cannot
+    drift from the rows it sits under and it moves on its own with the nightly
+    syncs.
+
+    These figures used to be a single site-wide /stats/ page covering the whole
+    region. They are worth more here: a reader on this page has already chosen a
+    municipality, and "43% of Saanich has replied, against 31% across the
+    region" answers the question they arrived with, where a regional average
+    alone answers it about twelve other places at once. The region has not gone
+    away — it is the rate and the ranking this municipality is read against.
+
+    Below the names rather than above them. This page exists to answer "who is
+    on the ballot here", and a reader who came for that should not have to
+    scroll past a screen of aggregate charts to reach the one name they came
+    for. The charts are for the second question, and they are in second place.
+
+    Charts are plain HTML and CSS: a table of real rows with a bar drawn in the
+    value cell. No chart library, no canvas, nothing that needs JavaScript to
+    paint a number that was known at build time. Every bar's value is printed
+    beside it as text, so the bars can fail to load, fail to print or be
+    invisible to a reader and the section still says everything it knows.
+  {%- endcomment -%}
+  {%- assign stats = site.data.municipality_stats[page.municipality_slug] -%}
+  {%- if stats %}
+  {%- assign region = stats.region -%}
+  {%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
+  <section class="stats-section" aria-labelledby="by-the-numbers">
+    <h2 class="muni-office__heading muni-office__heading--section" id="by-the-numbers">{{ page.municipality_name }} by the numbers</h2>
+    <p>
+      The {{ page.municipality_name }} field as numbers: who has replied, how
+      that compares with the rest of the region, and how the grades fall here
+      once they are published. Every figure is counted from the same data the
+      list above is built from. No candidate is named in this section; for how
+      one person answered, open their page from the list.
+      {%- comment -%}
+        The release-date sentence, on the same terms as the one in the intro to
+        /scorecard/: it answers the question a reader arrives with before the
+        release, and afterwards it answers a question nobody is asking any
+        more, so it is dropped once the date has passed. The same end-of-day
+        sum as _includes/deadline-list.html and scorecard/index.md — 24 hours
+        to the end of the day plus 8 for PST — so the three never disagree
+        about whether the date has passed.
+      {%- endcomment -%}
+      {%- assign release_end = grades_released.date | date: "%s" | plus: 115200 -%}
+      {%- assign now_ts = site.time | date: "%s" | plus: 0 -%}
+      {%- if now_ts < release_end %}
+      <strong>The grade figures stay empty until the release date.</strong> We
+      publish responses and grades together on
+      {{ grades_released.date | date: "%B %-d, %Y" }}, so until then these
+      counts are about who has replied, not how anyone scored.
+      {%- endif %}
+    </p>
+
+    {%- comment -%}
+      The reply rate as a hero figure rather than as one tile among four: it is
+      the number this section exists to report, it is the one that moves between
+      builds, and it is the one a reader can do something about. The counts
+      below it are context for it — the regional rate it is measured against,
+      the place it earns among the other municipalities, and the length of the
+      questionnaire all of them were sent.
+
+      One panel, built like the scorecard matrix it summarises: an inky header
+      band over a white body inside the same heavy frame, with hairline rules
+      between the counts.
+    {%- endcomment -%}
+    <div class="stat-hero">
+      <h3 class="stat-hero__title">Questionnaire replies</h3>
+      <div class="stat-hero__body">
+        <p class="stat-hero__figure">{{ stats.returned_percent | round }}%</p>
+
+        <div class="stat-hero__detail">
+          <p class="stat-hero__caption">
+            of confirmed {{ page.municipality_name }} candidates have returned
+            the coalition questionnaire:
+            <strong>{{ stats.returned_count }}</strong> of
+            <strong>{{ stats.candidate_count }}</strong>, with
+            {{ stats.outstanding_count }} still outstanding.
+          </p>
+          {%- comment -%}
+            A meter, not a two-slice pie: one ratio against one limit. Track and
+            fill are the same two colours every bar further down uses, so "the
+            rest of the field" is not drawn as a second thing with a meaning of
+            its own.
+          {%- endcomment -%}
+          <span class="stat-meter" aria-hidden="true">
+            <span class="stat-meter__fill" style="width: {{ stats.returned_percent }}%"></span>
+          </span>
+        </div>
+
+        <ul class="stat-tiles">
+          <li class="stat-tile">
+            <span class="stat-tile__figure">{{ region.returned_percent | round }}%</span>
+            <span class="stat-tile__label">across the region: {{ region.returned_count }} of {{ region.candidate_count }}</span>
+          </li>
+          {%- comment -%}
+            Where this municipality places on reply rate. Competition ranking,
+            so two municipalities on the same rate are both third — ties are
+            common in a race of four candidates, where only five rates exist,
+            and breaking them by name would invent a difference the data does
+            not have.
+          {%- endcomment -%}
+          <li class="stat-tile">
+            <span class="stat-tile__figure">{{ stats.rank.label }}</span>
+            <span class="stat-tile__label">of {{ stats.rank.of }} municipalities by reply rate</span>
+          </li>
+          <li class="stat-tile">
+            <span class="stat-tile__figure">{{ region.questions.total }}</span>
+            <span class="stat-tile__label">questions asked, {{ region.questions.graded }} graded</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    {%- comment -%}
+      The grade distribution. Keyed off the published count rather than off the
+      release date: the date says when grades are meant to appear, the count
+      says whether any actually have, and only one of those two is a fact about
+      this build. A calendar check would announce grades on a day the sheet had
+      not released them.
+    {%- endcomment -%}
+    <h3 class="muni-office__heading">Grades in {{ page.municipality_name }}</h3>
+    {%- if stats.grades.total == 0 %}
+    <div class="callout">
+      <p>
+        <strong>No grades are published yet.</strong> Responses and grades are
+        released together on
+        <strong>{{ grades_released.date | date: "%B %-d, %Y" }}</strong>, so
+        until then every returned questionnaire shows an hourglass rather than a
+        letter and there is no distribution to draw. The reply counts above are
+        live in the meantime.
+        <a href="{{ '/faq/#methodology' | relative_url }}">How the grading works</a>
+        explains what happens between a reply arriving and a letter appearing.
+      </p>
+    </div>
+    {%- else %}
+    <p>
+      {%- comment -%}
+        "a candidate in Saanich" rather than "a Saanich candidate": the article
+        would have to agree with the municipality's name, and Esquimalt, Oak Bay
+        and North Saanich do not all take the same one.
+      {%- endcomment -%}
+      Every published letter held by a candidate in {{ page.municipality_name }},
+      counted once per candidate per topic:
+      <strong>{{ stats.grades.total }}</strong> grades across
+      {{ stats.published_count }} candidates here. Only the
+      {{ region.graded_subject_count }} topics the coalition grades are counted
+      {%- if region.ungraded_subjects.size > 0 %} —
+      {{ region.ungraded_subjects | array_to_sentence_string }}
+      carr{% if region.ungraded_subjects.size == 1 %}ies{% else %}y{% endif %}
+      no graded question, so no letter is ever awarded in
+      {% if region.ungraded_subjects.size == 1 %}it{% else %}them{% endif %}
+      {%- endif %}.
+    </p>
+    <table class="statbars statbars--grades">
+      <caption class="sr-only">Distribution of published letter grades in {{ page.municipality_name }}</caption>
+      <thead class="sr-only">
+        <tr>
+          <th scope="col">Grade</th>
+          <th scope="col">Grades awarded</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in stats.grades.letters %}
+        <tr>
+          <th scope="row" class="statbars__label statbars__label--grade">
+            {% include grade-badge.html grade=row.letter %}
+            <span class="statbars__grade-name">{{ row.label }}</span>
+          </th>
+          <td class="statbars__cell">
+            {%- comment -%}
+              The letter's own colour, which is the colour the same grade wears
+              in every cell of the scorecard matrix. A grade is the one thing on
+              this site whose colour already carries meaning, and repainting it
+              here in the brand purple would make the reader learn a second
+              scale for the same five marks.
+            {%- endcomment -%}
+            {%- assign grade_class = row.letter | downcase -%}
+            {%- if row.letter == 'C-' -%}{%- assign grade_class = 'c-minus' -%}{%- endif -%}
+            <span class="statbars__track" aria-hidden="true">
+              <span class="statbars__fill statbars__fill--{{ grade_class }}" style="width: {{ row.percent }}%"></span>
+            </span>
+            <span class="statbars__value">
+              {{ row.count }}
+              <span class="statbars__pct">{{ row.percent | round }}%</span>
+            </span>
+          </td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+
+    {%- if stats.grades.subjects.size > 0 %}
+    <h3 class="muni-office__heading">Grades by topic</h3>
+    <p>
+      The same grades, split by the topic they were awarded in. Each bar is one
+      topic's full set of grades in {{ page.municipality_name }}, so the
+      segments read left to right from the best mark to the worst. A topic with
+      nothing published here yet is left out rather than drawn empty.
+    </p>
+    <table class="statbars statbars--stacked">
+      <caption class="sr-only">Distribution of published letter grades by topic in {{ page.municipality_name }}</caption>
+      <thead class="sr-only">
+        <tr>
+          <th scope="col">Topic</th>
+          <th scope="col">Grades awarded, by letter</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for subject in stats.grades.subjects %}
+        <tr>
+          {%- comment -%}
+            Escaped: "Rolling & cycling" carries a bare ampersand in
+            _data/subjects.yml, and this layout is HTML rather than Markdown, so
+            nothing upstream turns it into an entity.
+          {%- endcomment -%}
+          <th scope="row" class="statbars__label">{{ subject.name | escape }}</th>
+          <td class="statbars__cell">
+            <span class="statbars__stack" aria-hidden="true">
+              {%- for row in subject.letters -%}
+              {%- if row.count > 0 -%}
+              {%- assign grade_class = row.letter | downcase -%}
+              {%- if row.letter == 'C-' -%}{%- assign grade_class = 'c-minus' -%}{%- endif -%}
+              <span class="statbars__seg statbars__seg--{{ grade_class }}" style="width: {{ row.percent }}%"></span>
+              {%- endif -%}
+              {%- endfor -%}
+            </span>
+            {%- comment -%}
+              The counts spelled out rather than labelled inside the segments. A
+              segment holding one grade out of thirty is a few pixels wide and
+              cannot carry a legible label, and a label that only appears on the
+              wide segments tells the reader the narrow ones are worth less than
+              they are.
+            {%- endcomment -%}
+            <span class="statbars__value statbars__value--counts">
+              {%- for row in subject.letters -%}
+              {%- if row.count > 0 %}<span class="statbars__count">{{ row.letter }} {{ row.count }}</span>{% endif -%}
+              {%- endfor -%}
+            </span>
+          </td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+    {%- endif %}
+    {%- endif %}
+
+    {%- comment -%}
+      Who is standing, beyond what the list above already says. Office sought is
+      deliberately absent: it is stated in the "Confirmed candidates" line at
+      the top of this page and again in the heading over each list of names, and
+      a third rendering of it as a two-bar chart would say nothing new.
+
+      "Not stated" is exactly that — the coalition's tracking sheet does not
+      say, and this site does not guess.
+    {%- endcomment -%}
+    <h3 class="muni-office__heading">Incumbency</h3>
+    <p>
+      Grouped by whether a candidate holds elected office now, used to, or is
+      standing for the first time. Incumbency is role-specific on a candidate's
+      own row — a sitting councillor running for mayor is not the incumbent
+      mayor — and those two land in the same bucket here.
+    </p>
+    <table class="statbars">
+      <caption class="sr-only">Confirmed {{ page.municipality_name }} candidates by incumbency</caption>
+      <thead class="sr-only">
+        <tr>
+          <th scope="col">Standing</th>
+          <th scope="col">Candidates</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in stats.standings %}
+        <tr>
+          <th scope="row" class="statbars__label">{{ row.label | escape }}</th>
+          <td class="statbars__cell">
+            <span class="statbars__track" aria-hidden="true">
+              <span class="statbars__fill" style="width: {{ row.percent }}%"></span>
+            </span>
+            <span class="statbars__value">
+              {{ row.count }}
+              <span class="statbars__pct">{{ row.percent | round }}%</span>
+            </span>
+          </td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+
+    {%- if stats.slates.size > 0 %}
+    <h3 class="muni-office__heading">Electoral organizations</h3>
+    <p>
+      Slates, as a share of the whole {{ page.municipality_name }} field rather
+      than of each other: most candidates in this region have no slate recorded,
+      and a chart of slate against slate would imply a race organized into them.
+      Naming a slate is not an endorsement.
+    </p>
+    <table class="statbars">
+      <caption class="sr-only">Confirmed {{ page.municipality_name }} candidates by electoral organization, as a share of all candidates here</caption>
+      <thead class="sr-only">
+        <tr>
+          <th scope="col">Electoral organization</th>
+          <th scope="col">Candidates</th>
+        </tr>
+      </thead>
+      <tbody>
+        {%- for row in stats.slates %}
+        <tr>
+          <th scope="row" class="statbars__label">{{ row.label | escape }}</th>
+          <td class="statbars__cell">
+            <span class="statbars__track" aria-hidden="true">
+              <span class="statbars__fill" style="width: {{ row.percent }}%"></span>
+            </span>
+            <span class="statbars__value">
+              {{ row.count }}
+              <span class="statbars__pct">{{ row.percent | round }}%</span>
+            </span>
+          </td>
+        </tr>
+        {%- endfor %}
+      </tbody>
+    </table>
+    {%- endif %}
+  </section>
+  {%- endif %}
+
+  {%- comment -%}
     Every other municipality that has candidates. A reader comparing where they
     live with where they work should not have to go back through the region-wide
     table to do it, and these are the links that let a crawler reach every one of
