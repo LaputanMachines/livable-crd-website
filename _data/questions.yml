@@ -120,7 +120,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "30%"
     owner: Better Transit YYJ
     options:
       - "Yes, across the whole corridor."
@@ -138,7 +138,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "30%"
     owner: Better Transit YYJ
     options:
       - "Yes"
@@ -153,7 +153,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "10%"
     owner: Better Transit YYJ
     options:
       - "Yes"
@@ -168,7 +168,7 @@ items:
     type: single
     type_label: One answer
     graded: true
-    weight: "20%"
+    weight: "10%"
     owner: Better Transit YYJ
     options:
       - "Yes"
