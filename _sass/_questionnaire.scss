@@ -605,9 +605,14 @@
   // is a live link with a deadline on it, and paper outlives both. Scoped to
   // this page, because the band on the homepage is somebody's whole reason for
   // printing that page.
+  //
+  // And so does the RUSH callout: three links to maps a reader fills in on a
+  // phone are nothing on paper, and this one sits above the question set, so
+  // left in it would cost the worksheet its first inch.
   .page-questionnaire .site-header,
   .page-questionnaire .site-footer,
   .page-questionnaire .other-orgs,
+  .callout--rush,
   .questionnaire-candidate-note,
   .questionnaire-search,
   .questionnaire-search__status,

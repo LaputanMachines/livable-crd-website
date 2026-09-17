@@ -210,9 +210,13 @@ description: >-
   Directly before the coalition partners, so the two lists of organizations sit
   together and a reader who wonders which of them we work with reads the answer
   in the next section. The lead paragraph below states it outright rather than
-  leaving it to that adjacency, and has to: the heading does not say it. These
-  organizations are not coalition partners (see _data/partners.yml for those)
-  and none of this work is ours.
+  leaving it to that adjacency, and has to: the heading does not say it.
+
+  What the section claims is that none of this work is ours. It used to claim
+  more than that — that no organization in it was a coalition partner — and that
+  broke when RUSH's maps landed at the foot of it. Membership is not what this
+  band is sorted by; authorship is. Keep the wording on authorship, and let each
+  entry say where it comes from.
 
   Below the sponsor notice rather than above it, which is the trade this move
   makes. That notice says election advertising on this site is authorized by
@@ -230,12 +234,40 @@ description: >-
     <h2 class="section-title">Partner initiatives</h2>
     <p>
       Other organizations are putting their own questions to candidates in this
-      election, and running the campaigns that decide how many people vote in
-      it. None of it is Livable CRD's work and none of these organizations is a
-      coalition partner: we are listing them because a voter comparing
-      candidates here should know what else is being asked and organized.
+      election, running the campaigns that decide how many people vote in it,
+      and collecting what residents know about the places they live. None of it
+      is Livable CRD's work: some of these organizations are coalition partners
+      and some are not, and either way what follows is theirs. We list it
+      because a voter comparing candidates here should know what else is being
+      asked and organized.
     </p>
     {% include other-orgs-notice.html %}
+
+    {%- comment -%}
+      RUSH's mapping surveys, under the cards above rather than beside them.
+
+      They are the odd set in this section and the paragraph has to say so: the
+      cards above are things being put to candidates or to voters before
+      October, and these are open year-round to anyone, from an organization
+      that is in the coalition. Everything else in the band is one card per
+      organization, so three cards carrying no organization name between them
+      would read as three more groups.
+
+      A <strong> lead rather than an <h3>: this is the same set of things the
+      heading above already names, and a second heading inside the section
+      would put it in the page outline as a section of its own.
+    {%- endcomment -%}
+    <p class="rush-surveys-note">
+      <strong>Resilient Urban Systems &amp; Habitat (RUSH)</strong>, a coalition
+      partner, runs three public maps that anyone here can add to. No candidate
+      answers them and nobody is graded on them: you drop a pin on a place you
+      know and say what is there. The questionnaire asks candidates about these
+      same streets, habitat and gathering places.
+    </p>
+    {% include rush-surveys.html %}
+    <p class="content-follow-up">
+      <a href="https://whatstherush.earth/" target="_blank" rel="noopener">More about RUSH's mapping platform <span aria-hidden="true">&rarr;</span></a>
+    </p>
   </div>
 </section>
 

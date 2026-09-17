@@ -1,0 +1,59 @@
+{%- comment -%}
+  RUSH's public mapping surveys. Content comes from _data/rush-surveys.yml.
+
+  A list of links and nothing else: no heading and no lead paragraph, because
+  the two pages that include it introduce them differently and have to. The
+  homepage tells a visitor that a coalition partner is collecting this
+  year-round; the questionnaire page tells a reader who came for the candidate
+  questions that these are a different thing entirely. One shared sentence would
+  be wrong on at least one of those pages.
+
+  The whole card is the link rather than a button in a corner of it: the
+  destination is the same for every part of a card, and a tap target the size of
+  the card is the difference between working and not working on a phone.
+
+  Renders nothing when the data file is empty, so pulling the surveys is one
+  edit rather than one edit per page.
+
+  Params:
+    class - extra class names on the wrapper
+{%- endcomment -%}
+{%- comment -%}
+  Bracket lookup because `site.data.rush-surveys` parses as a subtraction in
+  Liquid, not as a hyphenated filename. Same trap as other-orgs-notice.html.
+{%- endcomment -%}
+{%- assign rush_surveys = site.data["rush-surveys"] -%}
+{%- if rush_surveys and rush_surveys.size > 0 -%}
+<ul class="rush-surveys{% if include.class %} {{ include.class }}{% endif %}">
+  {%- for survey in rush_surveys -%}
+  <li class="rush-surveys__item">
+    <a class="rush-survey" href="{{ survey.url }}" target="_blank" rel="noopener">
+      {%- comment -%}
+        A masked <span> rather than the <img> the topic cards use. The icon has
+        to sit on the same accent as the card's left border, in both its resting
+        and its hover shade, and an <img> takes no colour from the page it is
+        on: `currentColor` inside a linked SVG resolves against that file, not
+        against this card. The mask paints the card's own `color` through the
+        shape, so the two stay in step by construction rather than by a hex
+        repeated in an SVG that nobody will remember to change.
+
+        The URL rides in on a custom property, which is how questionnaire
+        sections already pass a per-item colour (`--card-accent`).
+      {%- endcomment -%}
+      <span class="rush-survey__icon" aria-hidden="true"
+            style="--rush-icon: url('{{ '/assets/images/icons/' | append: survey.icon | relative_url }}')"></span>
+      <span class="rush-survey__title">{{ survey.title }}</span>
+      <span class="rush-survey__prompt">{{ survey.prompt }}</span>
+      {%- comment -%}
+        The card is already the link, so this is a label rather than a second
+        control: it names what happens on a click for a reader who is scanning
+        card feet rather than reading them, and gives the set a common baseline.
+        aria-hidden on the arrow, which is decoration; the sentence reads
+        without it.
+      {%- endcomment -%}
+      <span class="rush-survey__cta">Open the map <span aria-hidden="true">&rarr;</span></span>
+    </a>
+  </li>
+  {%- endfor -%}
+</ul>
+{%- endif -%}

@@ -1,0 +1,61 @@
+# RUSH's public mapping surveys, run on Green Map.
+#
+# Resilient Urban Systems & Habitat (RUSH) IS a coalition partner — see
+# _data/partners.yml — which is what separates this file from
+# _data/other-orgs.yml, whose whole premise is work by organizations we are not
+# in coalition with. Do not move entries between the two files without moving
+# the copy that frames them.
+#
+# These are not candidate questionnaires and the copy around them must never
+# imply they are. Nobody is graded on them: a resident opens one, drops a pin on
+# a map and describes a place. They are listed on this site because the
+# coalition's questionnaire asks candidates about the same streets, habitat and
+# gathering places, and a reader who has opinions about those has somewhere to
+# put them between elections.
+#
+# Rendered by _includes/rush-surveys.html, at the foot of the homepage's
+# "Partner initiatives" band and in a callout at the top of the questionnaire
+# page. Delete every entry to pull both.
+#
+# The homepage band is shared with other-orgs.yml, whose entries are by
+# non-partners. What that section claims is that none of the work in it is
+# Livable CRD's — not that none of it is a partner's. Keep it that way if these
+# ever move again.
+#
+# Fields:
+#   id      Stable slug. Not used for filtering today; kept so a page can single
+#           one out the way other-orgs-notice.html does.
+#   title   The survey's name (required). Green Map's own wording, so someone
+#           who follows the link lands on the heading they just read.
+#   prompt  What the survey asks a resident to do (required), in a sentence.
+#   icon    Filename in assets/images/icons/ (required). Drawn in the same
+#           24x24, 2px-stroke line style as the topic icons, but painted through
+#           a CSS mask rather than dropped in an <img> — see .rush-survey__icon
+#           in _components.scss for why.
+#   url     The survey itself (required). Unlike an other-orgs entry, there is
+#           no pending state here: these are live, and an entry with no link is
+#           an entry with nothing to offer. Pull it instead.
+
+- id: improved-accessibility
+  icon: map-accessibility.svg
+  title: Improved accessibility
+  prompt: >-
+    Plot a place that could do better on inclusion or physical mobility — a
+    barrier to walking, biking or wheeling your own way through the region.
+  url: "https://greenmap.org/explore/survey/6a9105a1e903bd0100dc68d7"
+
+- id: local-ecosystems
+  icon: map-ecosystems.svg
+  title: Local ecosystems
+  prompt: >-
+    Mark where native plants and animals already are, so the places the
+    region's habitat is joined up — and the places it is not — can be seen.
+  url: "https://greenmap.org/explore/survey/6a9108c2e903bd0100dc6933"
+
+- id: community-spaces
+  icon: map-community.svg
+  title: Community spaces
+  prompt: >-
+    Photograph a favourite public space, third place, patch of nature or spot
+    to hang out, and put it on the map.
+  url: "https://greenmap.org/explore/survey/6a8a398469a93b0100a4d3ba"

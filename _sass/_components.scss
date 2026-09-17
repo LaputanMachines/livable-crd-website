@@ -1324,6 +1324,126 @@ $category-colors: (
 
 .other-org__org-link { font-weight: 600; }
 
+// RUSH's mapping surveys (_includes/rush-surveys.html), on the homepage band
+// and inside the questionnaire page's callout.
+//
+// A 16rem track floor rather than the 20rem .other-orgs uses: there are always
+// three of these and they carry a sentence each instead of a paragraph, and at
+// 20rem the set broke to two rows inside the questionnaire callout, whose
+// padding eats a gutter the homepage container does not. Three at 16rem plus
+// the gaps need 800px, which both containers clear.
+// The line that introduces the set, inside the partner-initiatives band. The
+// cards above it are a grid with its own gap, so this needs the larger margin
+// to read as the start of something rather than as the last card's footnote.
+.rush-surveys-note {
+  margin-top: $space-lg;
+}
+
+.rush-surveys {
+  list-style: none;
+  margin: $space-md 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: $space-md;
+}
+
+// The card is an <a>, so the grid item is only here to make it fill the track:
+// a link is inline by default and would otherwise sit at its own height, and
+// three cards of three different heights in a row is the thing this set most
+// needs to avoid.
+.rush-surveys__item {
+  display: flex;
+}
+
+// Column with the call to action pushed to the bottom, so the three feet line
+// up whatever the prompts run to — same reason .other-org is a column.
+.rush-survey {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background: $color-surface;
+  border: $border-weight solid $color-text;
+  border-left-width: $space-xs;
+  border-left-color: $color-accent;
+  padding: $space-md $space-gutter;
+  color: $color-text;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    background: $color-bg-warm;
+    border-left-color: $color-accent-dark;
+  }
+}
+
+// Painted, not loaded: the shape comes in as a mask and the colour is this
+// rule's, so the icon carries exactly the accent the card's left border does
+// and changes with it on hover. An <img> could not — an SVG behind a src gets
+// no colour from the page it is placed on.
+//
+// align-self, because the card is a flex column and the default stretch would
+// pull a 2rem-wide box the full width of it, scaling the mask with it.
+//
+// The -webkit- prefix is still load-bearing: Safari only dropped it in 15.4,
+// and the unprefixed line after it wins wherever both are understood.
+.rush-survey__icon {
+  align-self: flex-start;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: $space-sm;
+  background: $color-accent;
+  -webkit-mask: var(--rush-icon) no-repeat center / contain;
+  mask: var(--rush-icon) no-repeat center / contain;
+}
+
+.rush-survey:hover .rush-survey__icon,
+.rush-survey:focus-visible .rush-survey__icon {
+  background: $color-accent-dark;
+}
+
+.rush-survey__title {
+  font-family: $font-display;
+  font-size: 1.15rem;
+  line-height: 1.2;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: $space-xs;
+}
+
+.rush-survey__prompt {
+  color: $color-muted;
+  font-size: 0.95rem;
+}
+
+// auto top margin pins this to the bottom of the card. Underlined on hover
+// rather than always, because the whole card is already the link and a
+// permanent underline here reads as a second, separate destination.
+.rush-survey__cta {
+  margin-top: auto;
+  padding-top: $space-sm;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  color: $color-accent;
+
+  .rush-survey:hover &,
+  .rush-survey:focus-visible & {
+    text-decoration: underline;
+  }
+}
+
+// Inside the questionnaire page's callout the cards sit on $color-bg-warm, the
+// same colour the base card hovers to. Hover to the page background instead, so
+// the state is still a change.
+.callout--rush .rush-survey:hover,
+.callout--rush .rush-survey:focus-visible {
+  background: $color-bg;
+}
+
 .contact-panel {
   background: $color-surface;
   border-radius: 0;

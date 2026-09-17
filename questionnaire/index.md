@@ -98,6 +98,33 @@ body_class: page-questionnaire
     for the link to your fillable questionnaire.
   </p>
 
+
+  {%- comment -%}
+    RUSH's mapping surveys, at the top because this is the page people land on
+    when they search for "the questionnaire" and want to say something about
+    where they live. The candidate questions below are read-only and there is
+    nothing on this page a resident can fill in; these are.
+
+    The first sentence has to do the separating work. A reader who has arrived
+    looking for a form is primed to read anything link-shaped near the top as
+    the form, which is the same misreading the popup above already exists to
+    correct — so the callout says what these are not before it says what they
+    are.
+
+    Above the counts and the print button rather than below them: those two are
+    about working through sixty-six questions, and a reader who is going to do
+    that has stopped scanning by the time they reach them.
+  {%- endcomment -%}
+  <div class="callout callout--rush">
+    <p>
+      <strong>Not a candidate? You can still put something on the map.</strong>
+      Coalition partner Resilient Urban Systems &amp; Habitat (RUSH) runs three
+      public mapping surveys, open to everyone and unrelated to the grading
+      below.
+    </p>
+    {% include rush-surveys.html class="rush-surveys--callout" %}
+  </div>
+
   {%- if items == nil or items.size == 0 %}
   <div class="callout">
     <p>
