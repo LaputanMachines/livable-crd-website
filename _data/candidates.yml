@@ -360,6 +360,14 @@
   slate: null
   website: "https://marggardiner.ca/"
 
+- name: Darren Gervais-Harrison
+  display_name: "Gervais-Harrison, Darren"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Peter Rose Gibbs
   display_name: "Gibbs, Peter Rose"
   municipality: victoria
@@ -463,6 +471,14 @@
   standing: challenger
   slate: null
   website: "https://www.arthurmcinnis.ca"
+
+- name: Gregoor Miller
+  display_name: "Miller, Gregoor"
+  municipality: victoria
+  office: Mayor
+  standing: challenger
+  slate: null
+  website: null
 
 - name: Karen Rothe
   display_name: "Rothe, Karen"
