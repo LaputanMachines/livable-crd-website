@@ -892,14 +892,6 @@
   slate: null
   website: null
 
-- name: Deborah Law
-  display_name: "Law, Deborah"
-  municipality: colwood
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: null
-
 - name: Rob Martin
   display_name: "Martin, Rob"
   municipality: colwood
@@ -1369,8 +1361,8 @@
   website: null
 
 # --- North Saanich ---
-- name: Jane J Burns (Isabella)
-  display_name: "(Isabella), Jane J Burns"
+- name: Jane Burnes
+  display_name: "Burnes, Jane"
   municipality: north-saanich
   office: Councillor
   standing: challenger
