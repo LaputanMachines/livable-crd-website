@@ -112,10 +112,16 @@ candidates:
   - name: Meagan Brame
     municipality: esquimalt
     subjects: []
+  - name: Meredith James
+    municipality: esquimalt
+    subjects: []
   - name: Robb Johnstone
     municipality: esquimalt
     subjects: []
   - name: Tim Morrison
+    municipality: esquimalt
+    subjects: []
+  - name: Zachary Mulder
     municipality: esquimalt
     subjects: []
   - name: Gord Baird
@@ -136,6 +142,9 @@ candidates:
   - name: Sam Holland
     municipality: oak-bay
     subjects: []
+  - name: Sarah Starkweather
+    municipality: oak-bay
+    subjects: []
   - name: Colette Baty
     municipality: saanich
     subjects: []
@@ -145,10 +154,16 @@ candidates:
   - name: Garnett Humenick
     municipality: saanich
     subjects: []
+  - name: Harjas Popli
+    municipality: saanich
+    subjects: []
   - name: Jordan Weaver
     municipality: saanich
     subjects: []
   - name: Judy Brownoff
+    municipality: saanich
+    subjects: []
+  - name: Karen Harper
     municipality: saanich
     subjects: []
   - name: Mauricio Curbelo
@@ -184,7 +199,13 @@ candidates:
   - name: Katherine Strongwind
     municipality: sooke
     subjects: []
+  - name: Landon Grams
+    municipality: sooke
+    subjects: []
   - name: Nick Dickinson-Wilde
+    municipality: sooke
+    subjects: []
+  - name: Susan Belford
     municipality: sooke
     subjects: []
   - name: Bella Lee
@@ -212,6 +233,9 @@ candidates:
     municipality: victoria
     subjects: []
   - name: Mike Harris
+    municipality: victoria
+    subjects: []
+  - name: Shona Dion
     municipality: victoria
     subjects: []
   - name: Amy McCooey
