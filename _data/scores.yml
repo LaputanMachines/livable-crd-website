@@ -103,6 +103,9 @@ candidates:
   - name: David Grove
     municipality: colwood
     subjects: []
+  - name: Jennifer Parlee
+    municipality: colwood
+    subjects: []
   - name: Holly Courtright
     municipality: esquimalt
     subjects: []
@@ -131,6 +134,9 @@ candidates:
     municipality: langford
     subjects: []
   - name: Keith Yacucha
+    municipality: langford
+    subjects: []
+  - name: Mary Wagner
     municipality: langford
     subjects: []
   - name: Ellen Frisch
@@ -236,6 +242,9 @@ candidates:
     municipality: victoria
     subjects: []
   - name: Shona Dion
+    municipality: victoria
+    subjects: []
+  - name: Susan Kim
     municipality: victoria
     subjects: []
   - name: Amy McCooey
