@@ -125,7 +125,19 @@ var ROSTER_INCUMBENT_RE = /^incumbent(-|$)/;
 
 // Registry column holding what a points-scored question is worth, 1-based.
 // grading_tabs.py writes the header and seeds the values.
-var REGISTRY_MAX_COLUMN = 13;
+var REGISTRY_MAX_COLUMN = 14;
+
+// Registry column holding Owner, 1-based, for the lookup column G carries on
+// every grading row. Named rather than written into the formula because it has
+// moved once already: Methodology was inserted beside Weight on 2026-09-18 and
+// pushed Owner from I to J. A VLOOKUP's column number is the one thing Sheets
+// does not adjust when a column is inserted inside its range, so every existing
+// formula had to be rewritten - see scripts/questionnaire/add_methodology.py.
+var REGISTRY_OWNER_COLUMN = 10;
+
+// How many registry columns readRegistry and menuCheckSetup read by position:
+// A (Label) through I (Notes). Owner is past it and neither one needs it.
+var REGISTRY_READ_WIDTH = 9;
 
 // Each org's grade bands, as a share of what was available, with the letters
 // they band into. Ascending, because MATCH with a 1 finds the last threshold at
@@ -665,7 +677,7 @@ function writeRows(sheet, rows) {
     var line = first + i;
     return [
       r.key, r.candidate, r.municipality, r.label, r.question, r.answer,
-      "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$I,9,FALSE),\"\")",
+      ownerFormula(line),
       '',  // grade on a letter tab, score on a scored one. Typed by a grader.
       columnIFormula(category, line),
       '',  // rationale
@@ -675,6 +687,19 @@ function writeRows(sheet, rows) {
     ];
   });
   sheet.getRange(first, 1, values.length, G_WIDTH).setValues(values);
+}
+
+
+/**
+ * Column G on every grading tab: who wrote and grades this question.
+ *
+ * A VLOOKUP into the registry rather than a copy, like the two beside it, so
+ * correcting an owner there corrects every grading row at once. Mirrors
+ * owner_formula() in grading_tabs.py; the two render the same string.
+ */
+function ownerFormula(line) {
+  return "=IFERROR(VLOOKUP($D" + line + ",'" + REGISTRY_TAB + "'!$A:$" +
+      columnLetter(REGISTRY_OWNER_COLUMN) + "," + REGISTRY_OWNER_COLUMN + ",FALSE),\"\")";
 }
 
 
@@ -1255,7 +1280,7 @@ function readRegistry(header) {
     var last = sh.getLastRow();
     if (last < 2) return [];
 
-    var values = sh.getRange(2, 1, last - 1, 8).getValues();
+    var values = sh.getRange(2, 1, last - 1, REGISTRY_READ_WIDTH).getValues();
     var questions = [];
 
     for (var i = 0; i < values.length; i++) {
@@ -1263,7 +1288,7 @@ function readRegistry(header) {
       var category = String(values[i][1] || '').trim();
       var text = String(values[i][2] || '').trim();
       var graded = String(values[i][4] || '').trim().toLowerCase();
-      var span = String(values[i][6] || '').trim();
+      var span = String(values[i][7] || '').trim();
       if (!label || !category || graded !== 'yes') continue;
 
       // The incumbent record is the one graded row with no columns behind it:
@@ -1483,7 +1508,8 @@ function menuCheckSetup() {
 
   var weights = {}, counts = {};
   var reg = sheet(REGISTRY_TAB);
-  var rows = reg.getRange(2, 1, Math.max(reg.getLastRow() - 1, 1), 8).getValues();
+  var rows = reg.getRange(2, 1, Math.max(reg.getLastRow() - 1, 1),
+                          REGISTRY_READ_WIDTH).getValues();
   for (var i = 0; i < rows.length; i++) {
     var category = String(rows[i][1] || '').trim();
     if (!category) continue;

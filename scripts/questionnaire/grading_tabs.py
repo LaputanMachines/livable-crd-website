@@ -214,9 +214,22 @@ UNGRADED_GATES = ["General", "Healthcare access"]
 # fresh sheet and never touches the values, including on --refresh. Anything
 # further right must start at column M: J:L holds the per-category tally block.
 REGISTRY_HEADERS = [
-    "Label", "Category", "Question", "Type", "Graded", "Weight",
+    "Label", "Category", "Question", "Type", "Graded", "Weight", "Methodology",
     "Raw columns", "Notes", "Owner",
 ]
+
+# Where Owner sits, 1-based, for the lookup every grading row's column G holds.
+# Named rather than written into the formula, because it has moved once already:
+# Methodology was inserted beside Weight on 2026-09-18 and pushed it from I to J,
+# and a VLOOKUP's column number is the one thing Sheets does NOT adjust when a
+# column is inserted inside its range. See scripts/questionnaire/add_methodology.py.
+REGISTRY_OWNER_COLUMN = 10
+
+# Methodology: optional, hand-maintained, and read by nobody. Graders describe
+# how a question is scored in their own words, beside the Weight that says what
+# it is worth. Nothing generated is written into it and nothing published reads
+# it; --refresh leaves it alone with Category, Graded, Weight and Owner.
+REGISTRY_METHODOLOGY_COLUMN = 7
 
 GRADE_HEADERS = [
     "Key", "Candidate", "Municipality", "Label", "Question", "Answer", "Owner",
@@ -237,7 +250,7 @@ POINTS_GRADE_HEADERS = ["Score", "Max points"]
 # Registry column holding what a scored question is worth, 1-based. Sits past
 # the J:L weight tally, in the "column M or beyond" the schema reserves for
 # anything added after A:I.
-REGISTRY_MAX_COLUMN = 13
+REGISTRY_MAX_COLUMN = 14
 MAX_POINTS_HEADER = "Max points"
 
 LOG_HEADERS = ["Timestamp", "Trigger", "Event", "Detail"]
@@ -413,6 +426,7 @@ def registry_rows(header):
             kind,
             "Yes",
             "",  # weight, set by hand
+            "",  # methodology, set by hand
             f"{first + 1}-{last + 1}",
             notes,
         ])
@@ -435,7 +449,7 @@ def record_registry_row():
     was not given a figure for.
     """
     return [RECORD_LABEL, RECORD_CATEGORY, RECORD_QUESTION, RECORD_TYPE,
-            "Yes", "", "", RECORD_NOTES]
+            "Yes", "", "", "", RECORD_NOTES]
 
 
 def a1(col_index):
@@ -478,7 +492,12 @@ def header_row_requests(sheet_id, headers, freeze=True):
 
 
 def registry_requests(sheet_id, row_count):
-    """Percent format on the weight column, plus the per-category tally block."""
+    """Percent format on the weight column, plus the per-category tally block.
+
+    The tally block sits at K:M, one column right of where it started: inserting
+    Methodology beside Weight moved it, and a registry built from scratch has to
+    land where the live one now is.
+    """
     body = {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count}
     weight = dict(body, startColumnIndex=5, endColumnIndex=6)
     return [
@@ -497,24 +516,27 @@ def registry_requests(sheet_id, row_count):
                     {"userEnteredValue": {"formulaValue":
                         '=SORT(UNIQUE(FILTER($B$2:$B,$B$2:$B<>"")))'}},
                     {"userEnteredValue": {"formulaValue":
-                        '=ARRAYFORMULA(IF($J$2:$J="","",COUNTIF($B$2:$B,$J$2:$J)))'}},
+                        '=ARRAYFORMULA(IF($K$2:$K="","",COUNTIF($B$2:$B,$K$2:$K)))'}},
                     {"userEnteredValue": {"formulaValue":
-                        '=ARRAYFORMULA(IF($J$2:$J="","",SUMIF($B$2:$B,$J$2:$J,$F$2:$F)))'}},
+                        '=ARRAYFORMULA(IF($K$2:$K="","",SUMIF($B$2:$B,$K$2:$K,$F$2:$F)))'}},
                 ]},
             ],
             "fields": "userEnteredValue,userEnteredFormat.backgroundColor,"
                       "userEnteredFormat.textFormat,userEnteredFormat.wrapStrategy",
-            "start": {"sheetId": sheet_id, "rowIndex": 0, "columnIndex": 9}}},
+            "start": {"sheetId": sheet_id, "rowIndex": 0, "columnIndex": 10}}},
         {"repeatCell": {
             "range": {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count,
-                      "startColumnIndex": 11, "endColumnIndex": 12},
+                      "startColumnIndex": 12, "endColumnIndex": 13},
             "cell": {"userEnteredFormat": {"numberFormat": {"type": "PERCENT", "pattern": "0%"}}},
             "fields": "userEnteredFormat.numberFormat"}},
         {"updateDimensionProperties": {
             "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 2, "endIndex": 3},
             "properties": {"pixelSize": 460}, "fields": "pixelSize"}},
         {"updateDimensionProperties": {
-            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 7, "endIndex": 8},
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 6, "endIndex": 7},
+            "properties": {"pixelSize": 320}, "fields": "pixelSize"}},
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 8, "endIndex": 9},
             "properties": {"pixelSize": 320}, "fields": "pixelSize"}},
     ]
 
@@ -648,6 +670,21 @@ def max_points_formula(line):
     """
     return (f"=IFERROR(VLOOKUP($D{line},'{REGISTRY_TAB}'"
             f"!$A:${a1(REGISTRY_MAX_COLUMN - 1)},{REGISTRY_MAX_COLUMN},FALSE),\"\")")
+
+
+def owner_formula(line):
+    """Column G on every grading tab: who wrote and grades this question.
+
+    A VLOOKUP into the registry rather than a copy, like the two beside it, so
+    correcting an owner there corrects every grading row at once. Mirrors the
+    string writeRows() builds in appsscript/Code.gs.
+
+    The column number comes from REGISTRY_OWNER_COLUMN rather than being written
+    in, because inserting a column into the registry moves Owner and Sheets does
+    not renumber a VLOOKUP when it widens its range.
+    """
+    return (f"=IFERROR(VLOOKUP($D{line},'{REGISTRY_TAB}'"
+            f"!$A:${a1(REGISTRY_OWNER_COLUMN - 1)},{REGISTRY_OWNER_COLUMN},FALSE),\"\")")
 
 
 def weight_formula(line):
@@ -910,7 +947,7 @@ def record_report(registry):
                      f"as a {RECORD_CATEGORY} row with no raw columns")
     else:
         maximum = cell(row, REGISTRY_MAX_COLUMN - 1)
-        owner = cell(row, 8)
+        owner = cell(row, REGISTRY_OWNER_COLUMN - 1)
         lines.append(
             f"{RECORD_LABEL}: on the registry, {MAX_POINTS_HEADER} "
             + (f"{maximum}" if maximum
@@ -928,6 +965,28 @@ def record_report(registry):
             lines.append(f"  {label}: {MAX_POINTS_HEADER} {maximum} is above the "
                          f"{SCORE_CEILING} column H accepts, so the top of its own "
                          f"scale cannot be typed. Raise RECORD_CEILING and re-run.")
+    return lines
+
+
+def rows_needing_owner(sheet):
+    """Rows on a grading tab whose column G is not the current Owner lookup.
+
+    Every row on every tab, the day Methodology was inserted into the registry:
+    Owner moved from column I to column J, and Sheets widened each VLOOKUP's
+    range without renumbering it, so all of them quietly returned Notes instead.
+    Code.gs writes column G only on rows it appends, by design, so nothing would
+    ever have corrected them.
+
+    Returns the line numbers, so the caller can rewrite one contiguous block.
+    """
+    values = sheet.get_values("A2:G", value_render_option=ValueRenderOption.formula)
+    lines = []
+    for offset, row in enumerate(values, start=2):
+        if not (row and str(row[0]).strip()):
+            continue
+        current = str(row[6]).strip() if len(row) > 6 else ""
+        if current != owner_formula(offset):
+            lines.append(offset)
     return lines
 
 
@@ -1401,8 +1460,8 @@ def main():
     ap.add_argument("--refresh", action="store_true",
                     help="also rewrite Question, Type, Raw columns and Notes on rows that "
                          "already exist, for when the form's wording or columns changed. "
-                         "Category, Graded, Weight and Owner are hand-maintained and never "
-                         "touched.")
+                         "Category, Graded, Weight, Methodology and Owner are "
+                         "hand-maintained and never touched.")
     ap.add_argument("--sheet-id", default=os.environ.get("QUESTIONNAIRE_SUBMISSIONS_SHEET_ID"),
                     help="submission sheet key (default: $QUESTIONNAIRE_SUBMISSIONS_SHEET_ID)")
     args = ap.parse_args()
@@ -1506,7 +1565,7 @@ def main():
                                     cols=REGISTRY_MAX_COLUMN + 1)
         sh.batch_update({"requests": header_row_requests(registry.id, REGISTRY_HEADERS)
                          + registry_requests(registry.id, registry.row_count)})
-        registry.update(rows, f"A2:H{len(rows) + 1}", value_input_option="USER_ENTERED")
+        registry.update(rows, f"A2:I{len(rows) + 1}", value_input_option="USER_ENTERED")
         print(f"{REGISTRY_TAB}: created with {len(rows)} questions")
     else:
         listed = [r[0].strip() for r in registry.get_values("A2:A") if r and r[0].strip()]
@@ -1514,7 +1573,7 @@ def main():
         new = [r for r in rows if r[0] not in have]
         if new:
             first = len(listed) + 2
-            registry.update(new, f"A{first}:H{first + len(new) - 1}",
+            registry.update(new, f"A{first}:I{first + len(new) - 1}",
                             value_input_option="USER_ENTERED")
         refreshed = 0
         if args.refresh:
@@ -1525,9 +1584,9 @@ def main():
                 if not row:
                     continue
                 line = offset + 2
-                # C-D and G-H only: B, E and F are the hand-maintained ones.
+                # C-D and H-I only: B, E, F, G and J are the hand-maintained ones.
                 updates.append({"range": f"C{line}:D{line}", "values": [[row[2], row[3]]]})
-                updates.append({"range": f"G{line}:H{line}", "values": [[row[6], row[7]]]})
+                updates.append({"range": f"H{line}:I{line}", "values": [[row[7], row[8]]]})
                 refreshed += 1
             if updates:
                 registry.batch_update(updates, value_input_option="USER_ENTERED")

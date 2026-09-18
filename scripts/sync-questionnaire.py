@@ -137,7 +137,23 @@ PUBLISH_GRADES = False
 DEPLOY_SUFFIX = " - Deploy to website"
 
 # Registry columns, 0-based. Mirrors REGISTRY_HEADERS in grading_tabs.py.
-R_LABEL, R_CATEGORY, R_QUESTION, R_TYPE, R_GRADED, R_WEIGHT, R_RAW, R_NOTES, R_OWNER = range(9)
+#
+# Methodology was inserted between Weight and Raw columns on 2026-09-18, which
+# moved Raw columns, Notes and Owner one right. Nothing here reads Methodology -
+# it is graders' own prose about how a question is scored, and the site does not
+# publish it - but Owner moving is exactly the kind of shift that publishes the
+# wrong column without erroring, so REGISTRY_HEADERS below is checked against
+# the sheet before any of these indexes is trusted.
+R_LABEL, R_CATEGORY, R_QUESTION, R_TYPE, R_GRADED, R_WEIGHT, R_METHODOLOGY, \
+    R_RAW, R_NOTES, R_OWNER = range(10)
+
+# The header this file's indexes describe, in order. Compared against the tab on
+# every run, because reading Notes as Owner would publish a paragraph of
+# internal commentary as the name of the organization that wrote a question.
+REGISTRY_HEADERS = [
+    "Label", "Category", "Question", "Type", "Graded", "Weight", "Methodology",
+    "Raw columns", "Notes", "Owner",
+]
 
 # Grading-tab columns, 0-based. Mirrors GRADE_HEADERS in grading_tabs.py.
 G_KEY, G_CANDIDATE, G_MUNICIPALITY, G_LABEL, G_QUESTION, G_ANSWER, G_OWNER, \
@@ -1992,6 +2008,13 @@ def main(argv=None):
     if registry is None:
         print(f"error: no '{REGISTRY_TAB}' tab in that spreadsheet", file=sys.stderr)
         return 1
+    header = [tidy(h) for h in registry[0]][:len(REGISTRY_HEADERS)]
+    if header != REGISTRY_HEADERS:
+        print(f"error: '{REGISTRY_TAB}' reads {header}, expected {REGISTRY_HEADERS}. "
+              f"A column has moved; fix the R_* indexes rather than publishing the "
+              f"wrong one.", file=sys.stderr)
+        return 1
+
     graded_labels = {tidy(r[R_LABEL]) for r in registry[1:]
                      if r and tidy(r[R_LABEL]) and norm(r[R_GRADED] if R_GRADED < len(r) else "")
                      in {"yes", "true", "y"}}

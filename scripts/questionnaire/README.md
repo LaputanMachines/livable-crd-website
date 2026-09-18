@@ -364,7 +364,7 @@ python3 scripts/questionnaire/grading_tabs.py --refresh    # re-read the form's 
 One row per graded question - 55 at present - and the single source of truth for what
 gets graded and what it is worth:
 
-`Label | Category | Question | Type | Graded | Weight | Raw columns | Notes | Owner`
+`Label | Category | Question | Type | Graded | Weight | Methodology | Raw columns | Notes | Owner`
 
 Weight lives here, once per question, rather than repeated on every candidate's row. The
 block at `J1:L` totals the weights per category; each category should reach 100%.
@@ -387,12 +387,28 @@ sheets' refs disagree (the committee sheet's `HFL-09` is the parking-minimums qu
 the form's is non-market housing). Questions that reached the form without going through
 that tab are blank and filled in by hand.
 
-Anything added to this tab goes in column **M or beyond**: `A:I` is the schema both
-scripts read by position, and `J:L` holds the tally block.
+`Methodology` is optional and hand-maintained: a grader's own description of how a
+question is scored, sitting beside the `Weight` that says what it is worth. Nothing
+generated writes it, nothing published reads it, and `--refresh` leaves it alone with
+`Category`, `Graded`, `Weight` and `Owner`.
+
+Anything added to this tab goes in column **N or beyond**: `A:J` is the schema both
+scripts read by position, and `K:M` holds the tally block.
+
+**Inserting a column into `A:J` is not a one-cell edit.** Every grading row's `Owner`
+and every housing row's `Max points` is a `VLOOKUP` into the registry *by column
+number*, and Sheets widens such a lookup's range on insert without ever renumbering
+it - so the lookup goes on pointing at whatever now sits in that position, silently.
+`Methodology` moved `Owner` from `I` to `J` and `Max points` from `M` to `N`, which
+meant rewriting 3,421 `Owner` lookups across eight tabs and 775 `Max points` lookups on
+`Grade - Housing`. `add_methodology.py` is that migration, kept as the record of it.
+The next such insert is the same job: change `REGISTRY_HEADERS` and
+`REGISTRY_OWNER_COLUMN` here and in `Code.gs`, the `R_*` indexes in
+`sync-questionnaire.py`, and rewrite both lookup families on every grading row.
 
 `--refresh` rewrites `Question`, `Type`, `Raw columns` and `Notes` from the current form,
-for when wording or columns changed. It never touches `Category`, `Graded`, `Weight` or
-`Owner`.
+for when wording or columns changed. It never touches `Category`, `Graded`, `Weight`,
+`Methodology` or `Owner`.
 
 #### Grading tabs
 
@@ -581,7 +597,7 @@ python3 scripts/questionnaire/grading_tabs.py
    **Deploy > Manage deployments > (pencil) > Version: New version**. Until this
    is done no `HFL-INC` row is created for anybody: step 1 writes the registry row
    and the formula, and the Apps Script is what fans the row out.
-3. Homes for Living type the record's **`Max points`** into column `M` of its
+3. Homes for Living type the record's **`Max points`** into column `N` of its
    registry row, and `Homes for Living` into its `Owner`. The script writes
    neither: a maximum is the rubric, and an owner is a claim about who graded it.
    Until the maximum is there, no incumbent's record counts towards their grade.
@@ -598,8 +614,8 @@ their own scale cannot be typed.
 
 #### `Max points` on the registry
 
-Column **M** of `Question Registry`, past the `J:L` weight tally, on the same "anything
-after `A:I` goes in M or beyond" rule as everything else added to that tab. One number per
+Column **N** of `Question Registry`, past the `K:M` weight tally, on the same "anything
+after `A:J` goes in N or beyond" rule as everything else added to that tab. One number per
 question, and the single thing that decides what a question is worth for every candidate.
 
 `grading_tabs.py` seeds it from Homes for Living's workbook - 8, 8, 6, 5, 3, 6, 3, 2, 6, 7
