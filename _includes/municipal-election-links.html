@@ -1,0 +1,37 @@
+{%- comment -%}
+  Every municipality's own election page, in one list.
+
+  Voting places, advance voting days, mail-ballot rules and the official
+  candidate list are set by each municipality's Chief Election Officer and
+  published by that municipality. This site is not the authority on any of
+  them, so both /resources/ pages that raise the question end by handing the
+  reader to the office that answers it.
+
+  Sourced from `elections_url` in _data/municipalities.yml, the same field the
+  municipality indexes link from, so there is one copy of each URL to keep
+  right. A municipality with no URL on file is left out rather than named: this
+  is navigation, and a row that goes nowhere is not. The three electoral areas
+  have no municipal election page of their own - the CRD runs their elections -
+  so the note below carries them instead.
+
+  rel="noopener" and no target, matching _layouts/municipality.html: a link to
+  a municipal government implies no endorsement, so it is not nofollowed.
+{%- endcomment -%}
+<ul class="muni-official-links">
+  {%- for muni in site.data.municipalities %}
+  {%- if muni.elections_url %}
+  <li>
+    <a href="{{ muni.elections_url }}" rel="noopener">{{ muni.name }}</a>
+  </li>
+  {%- endif %}
+  {%- endfor %}
+</ul>
+<p>
+  The three electoral areas - Juan de Fuca, Salt Spring Island and the Southern
+  Gulf Islands - have no municipal hall of their own. Their elections are run by
+  the Capital Regional District, which publishes
+  <a href="https://www.crd.ca/government-administration/public-participation-voting/2026-general-local-elections" rel="noopener">its own
+  2026 election page</a> and
+  <a href="https://www.crd.ca/government-administration/public-participation-voting/voter-information" rel="noopener">voter
+  information</a>, including mail ballots.
+</p>

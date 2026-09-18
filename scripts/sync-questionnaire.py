@@ -151,7 +151,11 @@ G_KEY, G_CANDIDATE, G_MUNICIPALITY, G_LABEL, G_QUESTION, G_ANSWER, G_OWNER, \
 # housing - Homes for Living score each question out of a stated number of
 # points, ask different questions in different municipalities, and hand back one
 # cumulative grade. G_GRADE holds the score and G_WEIGHT what it is out of, and
-# the letter is the share of the available points banded at 85/70/60/50.
+# the letter is the share of the available points banded at 85/70/60/50. A
+# housing score can be negative, and housing is the only subject where one can:
+# their rubric has options that cost a candidate points rather than earning
+# none, so an answer can be worth less than no answer. The arts scale has no
+# such option and starts at 0.
 #
 # arts - Victori'us score each question 0-3 against their own rubric and weight
 # the questions against each other. G_GRADE holds the score and G_WEIGHT is the
@@ -410,7 +414,10 @@ SCORES_HEADER = """\
 #                 of `max`. The maximum is the candidate's own: the
 #                 municipality-specific questions are not asked everywhere, so a
 #                 Sooke candidate is scored out of 54 where a Victoria one is
-#                 scored out of 66.
+#                 scored out of 66. `points`, and with it `percent`, can be
+#                 negative, because their rubric has answers that cost points;
+#                 `max` cannot. `grade` still bottoms out at F, so a negative
+#                 percentage sits under an F rather than under a blank.
 #
 #                 Arts, scored by Victori'us, carries `percent` alone. Each
 #                 question is scored 0-3 and weighted, so the percentage is the
@@ -426,7 +433,8 @@ SCORES_HEADER = """\
 #       grade     Letter, or null where the question has not been graded yet.
 #                 Absent on a scored subject, which carries the two fields below
 #                 instead.
-#       points    What the question earned, on a scored subject.
+#       points    What the question earned, on a scored subject. Negative on a
+#                 housing question whose answer cost the candidate points.
 #       max_points What it was worth: the question's own maximum on housing, and
 #                 the top of the scale - the same 3 on every arts question - on
 #                 arts.
@@ -1604,6 +1612,13 @@ def subject_score(questions, candidate, subject_name, subject_id, warnings):
     subject has no meaningful running total to publish - a raw 19 out of 24 is
     the unweighted figure, and the weighting is the whole rubric - so it
     publishes the weighted percentage and nothing else.
+
+    A points total, and the percentage with it, can come out negative: Homes for
+    Living score some answers below zero. Neither is floored here, because the
+    two figures are the arithmetic of what the graders typed and a reader is
+    owed it. The letter is a separate question and is floored, at F, in the
+    Category Grades formula - see points_rollup_formula() in
+    scripts/questionnaire/grading_tabs.py.
     """
     scored = [q for q in questions if q["points"] is not None]
     answered_unscored = [q for q in questions

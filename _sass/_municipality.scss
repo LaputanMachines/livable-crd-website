@@ -407,3 +407,24 @@ a.muni-index__link:hover {
     transition: opacity $transition-fast;
   }
 }
+
+// --- Official election-page links --------------------------------------------
+// The list rendered by _includes/municipal-election-links.html on the Resources
+// pages: one link per municipality, out to the office that is the authority on
+// voting places and advance voting days.
+//
+// A grid rather than a stack because it is thirteen short names and a column of
+// thirteen lines reads as a wall; the same auto-fill shape as .muni-index above,
+// narrower because these rows carry a name and nothing else.
+.muni-official-links {
+  list-style: none;
+  margin: $space-md 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: $space-xs $space-sm;
+
+  a {
+    font-weight: 600;
+  }
+}

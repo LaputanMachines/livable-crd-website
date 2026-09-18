@@ -53,7 +53,9 @@ var CATEGORY_TAB = 'Category Grades';
 // Housing - Homes for Living. Each question is worth a stated number of points,
 // so H is a score out of the Max points in I, and the topic grade is the share
 // of the points the candidate had available to them. Housing questions carry no
-// Weight: the points are the weighting.
+// Weight: the points are the weighting. A housing score can be negative - their
+// rubric has options that cost a candidate points - and it is the only kind of
+// score that can. grading_tabs.py's SCORE_FLOOR is what the column accepts.
 //
 // Arts - Victori'us. Each question is scored 0-3 and carries a Weight exactly as
 // on a letter tab, so I is the same weight lookup as everywhere else and only H
@@ -774,6 +776,14 @@ function categoryFormula(category, row) {
  * maximum, so it leaves both sums alone - the same courtesy the letter rollup
  * pays a partly-graded candidate.
  *
+ * The ratio is floored at 0 before it is banded, because housing scores can be
+ * negative and so can their total. MATCH against a band table starting at 0
+ * returns #N/A below it, IFERROR would blank the cell, and a blank cell here
+ * means "not graded yet" - so the candidate who had most clearly earned an F
+ * would be the one showing no grade. MAX pins them to the bottom band. The
+ * points and the percentage the website publishes are untouched; only the
+ * letter stops, at the F it would have stopped at anyway.
+ *
  * Typed-over-able, exactly as the letter rollup is: the partner org replacing
  * this with their own call is the intended use, not a mistake.
  */
@@ -781,7 +791,8 @@ function pointsCategoryFormula(tab, row) {
   var where = tab + '!$B:$B,$B' + row + ',' + tab + '!$C:$C,$C' + row;
   var points = 'SUMIFS(' + tab + '!$H:$H,' + where + ')';
   var max = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + tab + '!$H:$H,"<>")';
-  return '=' + bandExpression(points + '/' + max, POINTS_LETTERS, POINTS_BANDS);
+  var ratio = 'MAX(' + points + '/' + max + ',0)';
+  return '=' + bandExpression(ratio, POINTS_LETTERS, POINTS_BANDS);
 }
 
 
@@ -970,8 +981,9 @@ function groupVariants(header, from, to) {
  *
  * Municipality variants: the candidate answered exactly one, so the first
  * variant with anything in it wins. Multi-selects list the options actually
- * chosen. A question with a written follow-up (GOV-01, CLI-01, ART-01, ROL-01)
- * keeps both parts, because they earn one grade between them.
+ * chosen, and a ticked "Other" carries what was written beside it rather than
+ * its own label. A question with a written follow-up (GOV-01, CLI-01, ART-01,
+ * ROL-01) keeps both parts, because they earn one grade between them.
  */
 function buildAnswer(header, row, question) {
   for (var v = 0; v < question.variants.length; v++) {
@@ -985,7 +997,14 @@ function buildAnswer(header, row, question) {
 
     var chosen = [];
     for (var o = 0; o < variant.options.length; o++) {
-      if (isTicked(row[variant.options[o].column - 1])) chosen.push(variant.options[o].text);
+      var opt = variant.options[o];
+      if (!isTicked(row[opt.column - 1])) continue;
+      if (/^other\b/i.test(opt.text) && variant.plain.length) {
+        var written = otherText(row[variant.plain[0].column - 1], variant, row, opt.column);
+        chosen.push(written ? 'Other: ' + written : opt.text);
+      } else {
+        chosen.push(opt.text);
+      }
     }
     if (chosen.length) parts.push('Selected: ' + chosen.join('; '));
 
@@ -1003,6 +1022,34 @@ function buildAnswer(header, row, question) {
 function isTicked(value) {
   var v = String(value === null || value === undefined ? '' : value).trim().toLowerCase();
   return FALSEY.indexOf(v) === -1;
+}
+
+
+/**
+ * What a candidate wrote beside a ticked "Other".
+ *
+ * Tally gives an "Other" option no column of its own. The checkbox column says
+ * only that it was ticked; the text itself is joined into the question's own
+ * column, comma-separated, among the labels of every other option ticked and in
+ * no fixed position. So subtract those labels and what is left is what they
+ * wrote: HFL-04, ART-05 and ART-08 are the three questions this applies to.
+ *
+ * Returns '' when the subtraction leaves nothing - a candidate who ticked
+ * "Other" and typed nothing - so the caller can fall back to the bare label.
+ */
+function otherText(summary, variant, row, otherColumn) {
+  var rest = String(summary === null || summary === undefined ? '' : summary);
+
+  for (var i = 0; i < variant.options.length; i++) {
+    var opt = variant.options[i];
+    if (opt.column === otherColumn || !isTicked(row[opt.column - 1])) continue;
+    // First occurrence only: a label that also appears inside the written text
+    // should lose the standalone copy, which Tally joins in first.
+    var at = rest.indexOf(opt.text);
+    if (at >= 0) rest = rest.substring(0, at) + rest.substring(at + opt.text.length);
+  }
+
+  return rest.replace(/\s*,\s*/g, ', ').replace(/^[\s,]+/, '').replace(/[\s,]+$/, '');
 }
 
 

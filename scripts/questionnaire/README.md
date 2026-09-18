@@ -411,6 +411,29 @@ either there corrects every grading row at once, including rows already graded.
 `Key` is `<Submission ID>|<Label>`, and it is what makes the sync safe: rows are matched by
 key, never by position.
 
+#### "Other" on a multi-select
+
+Tally gives an `Other` option no column of its own. Its checkbox column says only that
+it was ticked; what the candidate actually typed is joined into the *question's* own
+column, comma-separated, among the labels of every other option they ticked and in no
+fixed position. Nothing marks it apart from a label.
+
+So `buildAnswer` subtracts the ticked labels from that column and what is left is what
+they wrote, which the `Selected:` line carries as `Other: <their words>` rather than a
+bare `Other, please specify.`. Three questions have such an option - `HFL-04`, `ART-05`
+and `ART-08` - and 23 answers across them were affected.
+
+Subtraction removes each label's **first** occurrence only, so a candidate who quotes an
+option inside their own text (`Mandated requirements should be carefully designed.`, with
+*Mandated requirements.* also ticked) keeps their sentence: Tally joins the standalone
+label in first. A tick with nothing typed falls back to the option's own label rather
+than reading `Other:` and then stopping.
+
+The question's own column is still reproduced verbatim on the answer's first line, as it
+is for every multi-select, so the two lines say the same thing twice. That is the older
+behaviour and is left alone: changing it would change the answer hash on every
+multi-select row on every tab and flag them all as drift.
+
 #### Housing is scored in points
 
 Two subjects are scored rather than graded, on the rubrics their partner orgs already use.
@@ -427,7 +450,7 @@ mean something else on it, and their headers say so:
 
 | Column | Letter-graded tab | `Grade - Housing` |
 |---|---|---|
-| `H` | `Grade` - a letter from the dropdown | `Score` - a whole number, validated 0-8 |
+| `H` | `Grade` - a letter from the dropdown | `Score` - a whole number, validated -8 to 8 |
 | `I` | `Weight` - `VLOOKUP` of the registry's `Weight` | `Max points` - `VLOOKUP` of the registry's `Max points` |
 
 Everything else is unchanged: same width, same indices, same `Rationale`, same
@@ -450,6 +473,33 @@ The same rule is why a question a candidate **did** answer must never be left bl
 would quietly shrink the denominator and flatter them. `sync-questionnaire.py` refuses to
 publish the topic when that happens and says which question it was. A zero is a score and
 counts; blank means "not scored".
+
+#### Housing, and only housing, scores below zero
+
+Homes for Living's rubric has options that *cost* a candidate points rather than earning
+none - `HFL-12`'s five options score 5, 1, -2, 0 and 1 - so a housing answer can be worth
+less than no answer at all, and a housing score can be negative. No other tab's can: a
+letter tab has no numbers in `H`, and Victori'us score 0-3 with nothing below.
+
+Three places carry that, and they are the three to change together:
+
+- **The column's validation**, `SCORE_FLOOR` in `grading_tabs.py`. It mirrors
+  `SCORE_CEILING`, so `H` on `Grade - Housing` takes -8 to 8, and a scale tab's floor stays
+  0. One floor for the whole column rather than each question's own, for the same reason
+  there is one ceiling: validation runs down a column and cannot know which question a row
+  holds, so it is a typo guard, not the rubric. What any one answer may cost is Homes for
+  Living's call as they score the row.
+- **The `Category Grades` band**, `MAX(points/maximum, 0)` in both `points_rollup_formula()`
+  and `pointsCategoryFormula()`. A negative total lands below the bottom threshold, `MATCH`
+  returns `#N/A`, and the `IFERROR` around it would leave the cell **blank** - which on that
+  tab means "not graded yet". The candidate who had most clearly earned an `F` would be the
+  one showing no grade at all. The floor pins them to `F` instead.
+- **What the site publishes**, `subject_score()` in `sync-questionnaire.py`. Neither the
+  points nor the percentage is floored: they are the arithmetic of what the graders typed,
+  and a candidate page reads `-3 of 66 points (-5%)` under an `F`. Only the letter stops.
+
+A negative score is a score, so it counts in both the total and the maximum, exactly as a
+zero does. Blank still means "not scored" and still drops out of both.
 
 #### `Max points` on the registry
 

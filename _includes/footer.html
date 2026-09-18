@@ -27,6 +27,15 @@
           <li><a href="{{ '/' | relative_url }}">Home</a></li>
           <li><a href="{{ '/questionnaire/' | relative_url }}">Questionnaire</a></li>
           <li><a href="{{ '/faq/' | relative_url }}">FAQ</a></li>
+          {%- comment -%}
+            The three /resources/ pages, listed flat like everything else here.
+            The header groups them behind one label ("Voting"); this column has never had
+            hierarchy and does not need it, and a flat list is what a reader
+            scanning a footer for "how to vote" actually reads.
+          {%- endcomment -%}
+          <li><a href="{{ '/resources/find-your-municipality/' | relative_url }}">Find your municipality</a></li>
+          <li><a href="{{ '/resources/how-to-vote/' | relative_url }}">How to vote</a></li>
+          <li><a href="{{ '/resources/election-day/' | relative_url }}">Election day</a></li>
           <li><a href="{{ '/scorecard/' | relative_url }}">Scorecard</a></li>
           <li><a href="{{ '/donate/' | relative_url }}">Donate</a></li>
           <li><a href="{{ '/signup/' | relative_url }}">Join</a></li>

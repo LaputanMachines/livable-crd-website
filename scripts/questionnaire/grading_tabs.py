@@ -122,7 +122,8 @@ SKIP_LABELS = {"GEN-01", "GEN-02"}
 # candidate gets one cumulative grade from their share of the points available
 # to them. Column I holds that question's Max points, and housing questions
 # carry no Weight at all: the points ARE the weighting, so the registry's
-# per-category "should total 100%" check is skipped for them.
+# per-category "should total 100%" check is skipped for them. A housing score
+# can also be negative, and it is the only kind that can - see SCORE_FLOOR.
 #
 # Arts - Victori'us. Every question is scored 0-3 against their rubric and
 # carries a Weight exactly as on a letter tab, and the topic grade is the
@@ -539,6 +540,20 @@ SCORE_MAX_POINTS = {
 # number without a per-question rule Sheets cannot express down a column.
 SCORE_CEILING = max(SCORE_MAX_POINTS.values())
 
+# Housing, and only housing, can score below zero. Homes for Living's rubric has
+# options that cost a candidate points rather than earning none - HFL-12's five
+# options score 5, 1, -2, 0 and 1 - so an answer can be worse than not answering,
+# and their scoring has always said so. The other scored tab does not: Victori'us
+# score 0-3 and nothing below, so a scale tab's floor stays 0.
+#
+# The floor mirrors the ceiling, for the reason the ceiling is a single number:
+# validation runs down a whole column and cannot know which question a row holds,
+# so it is a typo guard and not the rubric. What any one question can cost is
+# Homes for Living's to decide as they score the row, the same way what it can
+# earn is theirs; this only has to be wide enough never to refuse a score they
+# meant to type.
+SCORE_FLOOR = -SCORE_CEILING
+
 
 def max_points_formula(line):
     """Column I on a scored tab: what this row's question is worth.
@@ -595,12 +610,22 @@ def points_rollup_formula(category, line):
     regardless and never scored, so it leaves the total and the maximum alone,
     and they are graded out of the 54 they were actually asked rather than the
     66 somebody in Victoria was.
+
+    The ratio is floored at 0 before it is banded, and that is not cosmetic: the
+    scores can be negative (see SCORE_FLOOR), so a candidate can end below zero,
+    and MATCH against a band table starting at 0 returns #N/A for anything under
+    it. IFERROR would then leave the cell blank, which reads as "not graded yet"
+    on a tab where blank means exactly that - the one candidate who has earned an
+    F outright would be the one with no grade at all. MAX pins them to the bottom
+    band instead. Nothing above 0 moves, and the published points and percentage
+    are still the real ones: only the letter stops at F, which is where it stops
+    anyway.
     """
     tab = f"'{GRADE_TAB_PREFIX}{category}'"
     where = f"{tab}!$B:$B,$B{line},{tab}!$C:$C,$C{line}"
     points = f"SUMIFS({tab}!$H:$H,{where})"
     maximum = f'SUMIFS({tab}!$I:$I,{where},{tab}!$H:$H,"<>")'
-    return "=" + band_expression(f"{points}/{maximum}", POINTS_BANDS)
+    return "=" + band_expression(f"MAX({points}/{maximum},0)", POINTS_BANDS)
 
 
 def scale_rollup_formula(category, line):
@@ -772,10 +797,16 @@ def align_scored_tab(sh, sheet, category):
 def score_validation_requests(sheet_id, row_count, category):
     """A whole number in H, and the format column I wants under this rubric.
 
-    The ceiling is the rubric's, not one number for every scored tab: a points
-    tab is validated against the largest any one question is worth, and a scale
-    tab against the top of its own scale, which is the only number a grader is
-    ever allowed to type there.
+    The range is the rubric's, not one range for every scored tab: a points tab
+    is validated against the largest any one question is worth, and a scale tab
+    against the top of its own scale, which is the only number a grader is ever
+    allowed to type there.
+
+    The floor is where the two rubrics differ most. A points tab accepts a
+    negative score, because Homes for Living's options include ones that cost a
+    candidate points; a scale tab does not, because 0 is the bottom of the
+    Victori'us scale. See SCORE_FLOOR for why a points tab is validated against
+    one floor rather than each question's own.
 
     Column I is a maximum on a points tab, so it loses the percent format every
     letter tab gives it. On a scale tab it is still a weight and keeps one, to
@@ -788,6 +819,7 @@ def score_validation_requests(sheet_id, row_count, category):
     body = {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count}
     points = category in POINTS_CATEGORIES
     ceiling = SCORE_CEILING if points else SCALE_CATEGORIES[category]
+    floor = SCORE_FLOOR if points else 0
     out_of = "this question's maximum" if points else f"{ceiling}"
     column_i = ({"type": "NUMBER", "pattern": "0"} if points
                 else {"type": "PERCENT", "pattern": SCALE_WEIGHT_PATTERN})
@@ -796,11 +828,12 @@ def score_validation_requests(sheet_id, row_count, category):
             "range": dict(body, startColumnIndex=7, endColumnIndex=8),
             "rule": {
                 "condition": {"type": "NUMBER_BETWEEN", "values": [
-                    {"userEnteredValue": "0"},
+                    {"userEnteredValue": str(floor)},
                     {"userEnteredValue": str(ceiling)}]},
                 "strict": True, "showCustomUi": False,
                 "inputMessage": f"Score out of {out_of} "
-                                f"(0-{ceiling}), or blank if it does not apply"}}},
+                                f"({floor} to {ceiling}), or blank if it does "
+                                f"not apply"}}},
         {"repeatCell": {
             "range": dict(body, startColumnIndex=8, endColumnIndex=9),
             "cell": {"userEnteredFormat": {"numberFormat": column_i}},
@@ -1050,7 +1083,8 @@ def main():
     scored = [c for c in categories if c in SCORED_CATEGORIES]
     for c in scored:
         if c in POINTS_CATEGORIES:
-            print(f"  {c} is scored in points: H is a score out of I, and the "
+            print(f"  {c} is scored in points: H is a score from {SCORE_FLOOR} "
+                  f"to {SCORE_CEILING} out of I, negatives included, and the "
                   f"{CATEGORY_TAB} letter is banded from the two.")
         else:
             print(f"  {c} is scored 0-{SCALE_CATEGORIES[c]}: H is that score, I "

@@ -78,63 +78,7 @@ description: >-
       {{ site.election_day | date: "%A, %B %-d, %Y" }}.
       {%- endif %}
     </p>
-    {%- comment -%}
-      Address lookup. Ships `hidden` and is unhidden by assets/js/muni-finder.js,
-      the same progressive-enhancement contract the questionnaire search and the
-      favourite stars use: the list below is the page, and this only narrows it.
-
-      Worth the network call because the boundaries are not where people think
-      they are — 3400 Douglas St has a Victoria mailing address and is in
-      Saanich, and half of "Victoria" in conversation is Saanich, Esquimalt or
-      Oak Bay. Someone who picks the wrong index reads the wrong ballot.
-    {%- endcomment -%}
-    <form class="muni-finder" id="muni-finder" hidden>
-      <label class="muni-finder__label" for="muni-finder-input">
-        Not sure which one you vote in? Enter your address.
-      </label>
-      <div class="muni-finder__row">
-        <input class="muni-finder__input" id="muni-finder-input" type="search" name="address"
-               placeholder="e.g. 3400 Douglas St, Victoria" autocomplete="street-address"
-               enterkeyhint="search" spellcheck="false">
-        <button class="btn btn-secondary muni-finder__submit" type="submit">Find mine</button>
-      </div>
-      {%- comment -%}
-        role="status" so the answer is announced: for a screen-reader user the
-        result of this form is a visual change to a list further down the page,
-        which is no result at all unless it is also said.
-      {%- endcomment -%}
-      <p class="muni-finder__status" role="status" aria-live="polite"></p>
-      <p class="muni-finder__note">
-        Your address is sent to the Province of B.C.'s public
-        <a href="https://www2.gov.bc.ca/gov/content?id=118DD57CD9674D57BDBD511C2E78DC0D" target="_blank" rel="noopener">address geocoder</a>
-        to work out the municipality, and nowhere else. We do not store it.
-      </p>
-    </form>
-    <ul class="muni-index" id="muni-index">
-      {%- for muni in site.data.municipalities %}
-      {%- assign mc = site.data.candidates | where: "municipality", muni.slug %}
-      {%- comment -%}
-        data-muni-name is what the finder matches the geocoder's answer against,
-        after both sides are stripped to letters and digits. That stripping is
-        the whole alias table: the geocoder returns "Saltspring Island" for what
-        this file calls "Salt Spring Island", and resolves "Saanichton" to
-        "Central Saanich" before we ever see it.
-      {%- endcomment -%}
-      <li class="muni-index__item" data-muni-name="{{ muni.name }}">
-        {%- if mc.size > 0 %}
-        <a class="muni-index__link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">
-          <span class="muni-index__name">{{ muni.name }}</span>
-          <span class="muni-index__count">{{ mc.size }} candidate{% if mc.size != 1 %}s{% endif %}</span>
-        </a>
-        {%- else %}
-        <span class="muni-index__link muni-index__link--empty">
-          <span class="muni-index__name">{{ muni.name }}</span>
-          <span class="muni-index__count">None confirmed yet</span>
-        </span>
-        {%- endif %}
-      </li>
-      {%- endfor %}
-    </ul>
+    {% include muni-finder.html %}
     <p class="content-follow-up">
       <a href="{{ '/scorecard/' | relative_url }}">Compare every candidate in the region <span aria-hidden="true">&rarr;</span></a>
     </p>

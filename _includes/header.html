@@ -14,11 +14,37 @@
         {% assign current = page.url %}
         {% assign in_more = false %}
         {% if current == '/questionnaire/' or current == '/faq/' or current == '/about/' or current == '/coalition/' or current contains '/blog' or current == '/press/' or current == '/contact/' %}{% assign in_more = true %}{% endif %}
+        {% assign in_resources = false %}
+        {% if current contains '/resources/' %}{% assign in_resources = true %}{% endif %}
         <ul class="site-nav">
           <li><a href="{{ '/' | relative_url }}" {% if current == '/' %}class="active"{% endif %}>Home</a></li>
           <li><a href="{{ '/scorecard/' | relative_url }}" class="nav-highlight{% if current contains '/scorecard' %} active{% endif %}">Scorecard</a></li>
           <li><a href="{{ '/donate/' | relative_url }}" class="nav-highlight-donate{% if current == '/donate/' %} active{% endif %}">Donate</a></li>
           <li><a href="{{ '/signup/' | relative_url }}" class="nav-highlight-newsletter{% if current == '/signup/' %} active{% endif %}">Join</a></li>
+
+          {%- comment -%}
+            Everything a reader needs in order to cast the ballot this site is
+            about, as opposed to everything about the site itself. It is a group
+            rather than a top-row link because it is three pages, and no one of
+            them is the door to the other two: somebody arrives wanting the
+            address lookup, or the voting rules, or the day and the hours, and
+            the menu lets them go straight there.
+
+            Labelled "Voting", which is what the three pages are actually
+            about; the URLs stay under /resources/ so nothing already shared
+            breaks. A noun rather than an imperative ("Vote"): this coalition is
+            a registered third party in this election, and a word in the
+            navigation that tells a reader what to do is not one to spend
+            lightly.
+          {%- endcomment -%}
+          <li class="nav-group">
+            <button type="button" class="nav-group-label{% if in_resources %} active{% endif %}" aria-haspopup="true">Voting</button>
+            <ul class="nav-submenu">
+              <li><a href="{{ '/resources/find-your-municipality/' | relative_url }}" {% if current == '/resources/find-your-municipality/' %}class="active"{% endif %}>Find your municipality</a></li>
+              <li><a href="{{ '/resources/how-to-vote/' | relative_url }}" {% if current == '/resources/how-to-vote/' %}class="active"{% endif %}>How to vote</a></li>
+              <li><a href="{{ '/resources/election-day/' | relative_url }}" {% if current == '/resources/election-day/' %}class="active"{% endif %}>Election day</a></li>
+            </ul>
+          </li>
 
           {%- comment -%}
             The top row is capped at four destinations — see the scores, donate,
