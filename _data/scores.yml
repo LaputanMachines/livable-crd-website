@@ -59,7 +59,10 @@
 #                 of `max`. The maximum is the candidate's own: the
 #                 municipality-specific questions are not asked everywhere, so a
 #                 Sooke candidate is scored out of 54 where a Victoria one is
-#                 scored out of 66.
+#                 scored out of 66. `points`, and with it `percent`, can be
+#                 negative, because their rubric has answers that cost points;
+#                 `max` cannot. `grade` still bottoms out at F, so a negative
+#                 percentage sits under an F rather than under a blank.
 #
 #                 Arts, scored by Victori'us, carries `percent` alone. Each
 #                 question is scored 0-3 and weighted, so the percentage is the
@@ -75,7 +78,8 @@
 #       grade     Letter, or null where the question has not been graded yet.
 #                 Absent on a scored subject, which carries the two fields below
 #                 instead.
-#       points    What the question earned, on a scored subject.
+#       points    What the question earned, on a scored subject. Negative on a
+#                 housing question whose answer cost the candidate points.
 #       max_points What it was worth: the question's own maximum on housing, and
 #                 the top of the scale - the same 3 on every arts question - on
 #                 arts.
@@ -226,6 +230,9 @@ candidates:
   - name: Jack Sandor
     municipality: victoria
     subjects: []
+  - name: Jason Heit
+    municipality: victoria
+    subjects: []
   - name: Jeremy Caradonna
     municipality: victoria
     subjects: []
@@ -239,6 +246,9 @@ candidates:
     municipality: victoria
     subjects: []
   - name: Mike Harris
+    municipality: victoria
+    subjects: []
+  - name: Peter Rose Gibbs
     municipality: victoria
     subjects: []
   - name: Shona Dion
