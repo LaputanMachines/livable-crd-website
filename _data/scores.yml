@@ -100,6 +100,9 @@ graded_subjects:
   - governance
 
 candidates:
+  - name: David Grove
+    municipality: colwood
+    subjects: []
   - name: Holly Courtright
     municipality: esquimalt
     subjects: []
@@ -159,6 +162,9 @@ candidates:
     subjects: []
   - name: Teale Phelps Bondaroff
     municipality: saanich
+    subjects: []
+  - name: Eric Diller
+    municipality: sidney
     subjects: []
   - name: Jamie Wellbourn
     municipality: sidney
@@ -224,6 +230,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: Josh Peterson
+    municipality: view-royal
+    subjects: []
+  - name: Ron Mattson
     municipality: view-royal
     subjects: []
   - name: Sacha Christensen
