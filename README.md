@@ -124,6 +124,34 @@ This replaces the per-subject `<Subject> - Deploy to website` checkboxes the `Ca
 
 A published subject brings with it the top-level letter (`B` for Transit) **and** every graded question behind it: the question, the candidate's answer, the grade, the weight, and the grader's rationale where one was written. Weight and rationale are simply omitted where the sheet leaves them blank.
 
+### Housing counts an incumbent's record
+
+Homes for Living score two things for a sitting councillor: the questionnaire, and what
+that councillor actually did about housing during the term just ending. The second is one
+extra row on the `Grade - Housing` tab, labelled `HFL-INC`, and it carries **30% of the
+housing grade on its own** — the questionnaire carries the other 70%. A challenger, or an
+incumbent whose record nobody has scored yet, is graded on the questionnaire alone at
+100%.
+
+The two are blended rather than added, because a record worth 30% is not ten more points
+on a sixty-point total, and they are published as the separate fractions they are:
+
+> 38 of 60 questionnaire points (63%) · 7 of 10 on record (70%) · 65% overall
+
+The record is **not** a question and is deliberately absent from
+[`/questionnaire/`](questionnaire/index.md): that page is what candidates were asked, and
+nobody was asked this. It reaches `scores.yml` as a `record` block under the housing
+subject, with its own points, maximum, share and rationale, and renders under the graded
+answers on the candidate's page rather than among them.
+
+Who is an incumbent is read from `standing` in [`_data/candidates.yml`](_data/candidates.yml)
+— this repository's own published roster, which the nightly candidate sync regenerates from
+the tracking sheet. The Apps Script inside the grading sheet fetches that file directly, so
+no credential and no new column anywhere is involved; a candidate whose submitted name does
+not match the roster gets no record row and is named in the sheet's `Sync Log` and by
+`Grading > Check setup`. Full detail, and the order to switch it on in, is in
+[`scripts/questionnaire/README.md`](scripts/questionnaire/README.md).
+
 ### The three states a topic can be in
 
 Having a row on `Category Grades` at all means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. That gives the scorecard three states rather than two, on the matrix and on each candidate's page alike:

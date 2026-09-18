@@ -75,6 +75,12 @@ is just "Yes". A pasted line across rows is the failure mode here.
   subject are blank the category grade renders empty however well you grade it,
   and Climate is in exactly that state. Say so rather than reporting the topic
   as finished. Housing is the exception; it is scored in points.
+- **`HFL-INC` on `Grade - Housing` is not a question.** It is Homes for
+  Living's score for a sitting incumbent's record over the term, it exists
+  only on incumbents' rows, and it carries 30% of the housing grade on its
+  own with the questionnaire carrying 70%. Do not grade it as an answer, do
+  not add it to `rubrics.py`, and leave it blank unless Homes for Living
+  have scored it. Its `Max points` is theirs to set on the registry.
 - `ANSWER NOT IN RUBRIC` in the output means a Tally option got reworded. Add
   the entry to `rubrics.py`; do not grade that row by hand and move on.
 

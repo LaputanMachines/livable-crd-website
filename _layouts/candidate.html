@@ -288,22 +288,47 @@ layout: default
             still earns its place there because each of those questions carries
             its own visible score.
           {%- endcomment -%}
+          {%- comment -%}
+            An incumbent scored on their record reads three figures, not one.
+            Homes for Living score a sitting councillor's actual term as well as
+            their answers, and the record carries 30% of the topic on its own,
+            so the questionnaire fraction beside it is no longer the whole
+            grade. Folding the two into a single "45 of 70" would be the wrong
+            arithmetic - 10 points worth 30% are not 10 points among 70 - and a
+            reader would be unable to reconcile it with the letter above. Each
+            fraction is therefore stated against its own maximum, and the blend
+            they produce is stated after them.
+          {%- endcomment -%}
           {%- assign reasoned = detail.questions | where_exp: "q", "q.rationale" %}
+          {%- comment -%}
+            The record carries reasoning of its own, and it counts: a topic
+            whose only written argument is the one under the record is not a
+            topic with none.
+          {%- endcomment -%}
+          {%- assign reasoning = reasoned.size %}
+          {%- if detail.score.record.rationale %}{% assign reasoning = reasoning | plus: 1 %}{% endif %}
           <p class="candidate-grade__meta">
-            {%- if detail.score.max %}
+            {%- if detail.score.record %}
+            {{ detail.score.points }} of {{ detail.score.max }} questionnaire points ({{ detail.score.percent }}%)
+            · {{ detail.score.record.points }} of {{ detail.score.record.max }} on record ({{ detail.score.record.percent }}%)
+            · {{ detail.score.overall }}% overall
+            {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
+            {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
+            {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
+            {%- elsif detail.score.max %}
             {{ detail.score.points }} of {{ detail.score.max }} points ({{ detail.score.percent }}%)
             {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
-            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
+            {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
             {%- elsif detail.score %}
             {{ detail.score.percent }}% weighted score across {{ detail.questions.size }} question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
-            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
+            {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
             {%- elsif detail.questions.size > 0 %}
             {{ detail.questions.size }} graded question{% if detail.questions.size != 1 %}s{% endif %}
             {%- if credited %} · Graded by {{ owners[0] }}{% endif %}
-            {%- if reasoned.size == 0 %} · No written reasoning yet{% endif %}
+            {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
             {%- else %}
             {{ detail.unscored.size }} answer{% if detail.unscored.size != 1 %}s{% endif %} · Not graded
@@ -395,6 +420,35 @@ layout: default
             </li>
             {%- endfor %}
           </ol>
+          {%- endif %}
+
+          {%- if detail.score.record %}
+          {%- comment -%}
+            The incumbent record. Deliberately outside the list above: that list
+            is what the candidate was asked and what they answered, and this was
+            asked of nobody. It carries a share instead of a weight pill, says in
+            a line what it is so the score is not read as a grade on a hidden
+            question, and shows Homes for Living's reasoning the way a scored
+            answer does.
+          {%- endcomment -%}
+          <div class="candidate-record">
+            <div class="candidate-answer">
+              <div class="candidate-answer__head">
+                <span class="candidate-answer__weight">{{ detail.score.record.share }}% of this topic</span>
+                <span class="candidate-answer__label">Incumbent record</span>
+                <span class="candidate-answer__leader" aria-hidden="true"></span>
+                <span class="candidate-answer__points">{{ detail.score.record.points }}<span class="candidate-answer__points-of"> / {{ detail.score.record.max }}</span></span>
+              </div>
+              <p class="candidate-answer__question">
+                What {{ c.name }} did about housing during their current term, scored by
+                {% if owners[0] %}{{ owners[0] }}{% else %}the topic's graders{% endif %}.
+                This is not a questionnaire answer: no candidate was asked it.
+              </p>
+              {%- if detail.score.record.rationale %}
+              <p class="candidate-answer__rationale"><strong>Why this score:</strong> {{ detail.score.record.rationale }}</p>
+              {%- endif %}
+            </div>
+          </div>
           {%- endif %}
 
           {%- if detail.unscored.size > 0 %}

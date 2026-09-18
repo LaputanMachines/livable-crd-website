@@ -356,6 +356,7 @@ python3 scripts/questionnaire/grading_tabs.py --refresh    # re-read the form's 
 | `Question Registry` | Generated once, then hand-maintained. |
 | `Grade - <Subject>` | `A-F` and `L` by the Apps Script, `G-I` by graders. Nine of them. |
 | `Category Grades` | `A-C` by the Apps Script, the rest by graders. One row per candidate, one column per graded subject. |
+| `Category Stats` | Generated, all of it. The same grid, showing each grade's underlying percentage. |
 | `Sync Log` | The Apps Script. |
 
 #### `Question Registry`
@@ -445,6 +446,11 @@ of points, the municipality-specific ones are only asked where they apply, and a
 gets **one cumulative grade** from their share of the points available to them rather than
 a letter on each answer.
 
+It is also the one tab carrying a row nobody was asked: `HFL-INC`, Homes for Living's
+score for a sitting councillor's record over the term just ending, worth 30% of the
+housing grade on its own. See "The incumbent record, and the 70/30 split" below;
+everything in this section describes the questionnaire's 70%.
+
 `Grade - Housing` is the same thirteen columns as every other grading tab. Two of them
 mean something else on it, and their headers say so:
 
@@ -500,6 +506,95 @@ Three places carry that, and they are the three to change together:
 
 A negative score is a score, so it counts in both the total and the maximum, exactly as a
 zero does. Blank still means "not scored" and still drops out of both.
+
+#### The incumbent record, and the 70/30 split
+
+Homes for Living also score what a sitting councillor actually did about housing
+this term, not only what they say they will do next one. That score lives on
+`Grade - Housing` as one more row per incumbent, labelled **`HFL-INC`**, scored in
+column `H` out of the `Max points` in `I` like every other housing row.
+
+It is the only row on any grading tab that is not a question. Nobody was asked it,
+so it has no `Raw columns` on the registry, and column `F` carries a fixed line
+saying as much rather than a blank that would read as an unanswered question.
+`readRegistry` in `Code.gs` lets that one label through without a column span;
+every other row without one is still skipped, which is what stops a half-filled
+registry row fanning empty answers out to everybody.
+
+**It is not summed in with the questions.** The record carries 30% of the housing
+grade on its own and the questionnaire carries the other 70%, whatever each is
+scored out of, so the two shares are worked out against their own maxima and
+blended:
+
+```
+0.7 x (questionnaire points / questionnaire maximum)
+  + 0.3 x (record points / record maximum)
+```
+
+Adding the record's points to the total instead would give it whatever share its
+points happened to be of the sum - a different number for every candidate, and
+30% for none of them. The formula is `points_rollup_formula()` in
+`grading_tabs.py` and `pointsCategoryFormula()` in `Code.gs`, which render the
+same string; both still floor the ratio at 0 for the same reason they always did.
+
+A candidate with no scored record is graded on the questionnaire alone, at 100%.
+That is every challenger, every incumbent nobody has scored yet, and - by the
+same branch - an incumbent whose record was scored with no `Max points` beside
+it, which `Grading > Check setup` reports and `sync-questionnaire.py` refuses to
+publish.
+
+#### Who counts as an incumbent
+
+Nothing in this spreadsheet says, and nothing should be added to it that does.
+The coalition tracks it in the candidate tracking sheet, whose id is a capability
+over contact details, and the website republishes the same fact as `standing` in
+[`_data/candidates.yml`](../../_data/candidates.yml) - a public file in a public
+repository, regenerated from that sheet daily by CI.
+
+So `Code.gs` reads it from there, over `raw.githubusercontent.com`, cached for six
+hours. No credential, no second spreadsheet, and it follows the tracking sheet on
+its own. A standing starting `incumbent` is sitting; `ex-incumbent-councillor` is
+a former one and gets no record row, because the record is of a term they are not
+serving.
+
+Two failure modes, and both are quiet rather than wrong:
+
+- **The roster cannot be read.** `incumbentIndex()` returns null, the sweep creates
+  no `HFL-INC` row for anybody that run, and `Sync Log` says so. Appending them to
+  everyone on a bad read would be far worse: the rows are append-only, so a wrong
+  one has to be deleted by hand.
+- **A submission matches no confirmed candidate.** Candidates type their own name
+  into Tally, so a spelling the tracking sheet does not carry cannot be looked up
+  at all. They get no record row, `Sync Log` names them, and `Grading > Check setup`
+  lists them as a problem. All 63 submissions match today.
+
+#### Switching the incumbent record on, in order
+
+```bash
+# 1. The HFL-INC registry row, the -10..10 validation on column H, and the
+#    blended rollup on every Category Grades row that already exists.
+python3 scripts/questionnaire/grading_tabs.py --dry-run
+python3 scripts/questionnaire/grading_tabs.py
+```
+
+2. Paste `appsscript/Code.gs` into the sheet's Apps Script editor and save, then
+   **Deploy > Manage deployments > (pencil) > Version: New version**. Until this
+   is done no `HFL-INC` row is created for anybody: step 1 writes the registry row
+   and the formula, and the Apps Script is what fans the row out.
+3. Homes for Living type the record's **`Max points`** into column `M` of its
+   registry row, and `Homes for Living` into its `Owner`. The script writes
+   neither: a maximum is the rubric, and an owner is a claim about who graded it.
+   Until the maximum is there, no incumbent's record counts towards their grade.
+4. `Grading > Sync now`, which appends one `HFL-INC` row per sitting incumbent who
+   has submitted - 19 of the 63 today.
+5. `Grading > Check setup`. It now also reports the roster, the record's missing
+   maximum, and any submission it could not find on the roster.
+
+The column's validation accepts -10 to 10, which is `RECORD_CEILING` in
+`grading_tabs.py` widening `SCORE_CEILING` from the 8 the questions needed. It is
+a typo guard down a whole column, not the rubric: if Homes for Living score the
+record out of more than 10, raise that constant and re-run step 1, or the top of
+their own scale cannot be typed.
 
 #### `Max points` on the registry
 
@@ -589,6 +684,54 @@ python3 scripts/questionnaire/grading_tabs.py
 4. Tell Victori'us where to type: column `H` of `Grade - Arts`, one row per candidate per
    question, a whole number 0-3. The three cells that still hold a letter are named in
    step 1's output and want retyping as scores.
+
+#### `Category Stats`: the percentage behind each letter
+
+A band is a wide thing to be inside. Two candidates both reading `A` on housing
+can be 85% and 99%, and `Category Grades` cannot show the difference, because a
+letter is all it holds. Somebody choosing between two `A` candidates wants that
+difference, so it has a tab of its own.
+
+The same grid as `Category Grades` - `Key | Candidate | Municipality`, then one
+column per graded subject - with each cell holding the figure that subject's
+letter was banded from, to two decimal places. No deploy checkboxes: nothing on
+this tab is published and nothing on it gates anything.
+
+**The columns are not all the same measure**, and the tab is not worth reading as
+if they were:
+
+| Subject | What its percentage is |
+|---|---|
+| Housing | Points earned over points available, with the incumbent record blended in at its 30% |
+| Arts | The weighted average of the 0-3 scores, as a share of a straight 3 |
+| Everything else | Where the weighted average sits on the A-F scale: `A` 100%, `B` 75%, `C` 50%, `C-` 25%, `F` 0% |
+
+The first two are shares of something a candidate could have earned. The third is
+a position on a scale, and its usefulness is narrower but real: it is the
+unrounded number the letter was rounded from, so two candidates who both round to
+`B` rarely share it.
+
+Every figure is the rollup's own expression with the banding taken off, which is
+enforced rather than promised: `points_ratio()`, `scale_ratio()` and
+`letter_ratio()` are the fragments both the letter and the percentage are built
+from, in `grading_tabs.py` and in `Code.gs` alike, and the four renderings are
+diffed against each other rather than kept in step by hand.
+
+Two consequences worth knowing:
+
+- **A typed-over letter is not reflected here.** `Category Grades` is meant to be
+  overridden - a partner org typing their own top-level call over the rollup is
+  the intended use - and this tab goes on showing what the question-level grading
+  computes. That is the point of it, but it means the two can disagree, and where
+  they do, the letter is the coalition's and this is the arithmetic.
+- **A blank cell means nothing has been graded**, not 0%. An ungraded subject
+  divides by zero and the `IFERROR` blanks it, exactly as the letter blanks.
+
+`grading_tabs.py` creates the tab and backfills every candidate already on
+`Category Grades`; `ensureStatsRows` in `Code.gs` appends each new submission's
+row alongside its `Category Grades` one. Re-running the script levels the two
+tabs again and rewrites any formula that has fallen behind, and leaves anything
+somebody typed where it is, reporting it.
 
 #### `move_question.py`: changing a question's subject
 

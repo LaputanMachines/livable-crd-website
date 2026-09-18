@@ -428,6 +428,22 @@ summary.candidate-grade {
 // above it, because a run of answers with no grade chip beside them otherwise
 // reads as grading that has not happened yet rather than as grading that is
 // never going to.
+// The incumbent record, under the questions rather than among them: it is
+// scored like an answer and was asked of nobody, so it is set apart by the same
+// dashed rule the ungraded block uses rather than styled as a new thing. The
+// answer row inside it keeps .candidate-answer, which is where its head, its
+// fraction and its reasoning are already drawn.
+.candidate-record {
+  margin-top: $space-md;
+  padding-top: $space-sm;
+  border-top: 1px dashed rgba($color-border, 0.4);
+
+  .candidate-answer {
+    padding: 0;
+    border-bottom: none;
+  }
+}
+
 .candidate-unscored {
   margin-top: $space-md;
   padding-top: $space-sm;

@@ -171,6 +171,30 @@ SCALE = "scale"
 POINTS_SUBJECTS = {"housing"}
 SCALE_SUBJECTS = {"arts": 3}
 
+# The incumbent record. One row on Grade - Housing that no candidate answered:
+# Homes for Living score a sitting councillor's record on housing over the term
+# just ending, and the Apps Script creates the row only for candidates this
+# repository's own _data/candidates.yml lists as sitting incumbents.
+#
+# It is scored in points like every other housing row and it is NOT summed in
+# with them. RECORD_SHARE of the topic is the record and the rest is the
+# questionnaire, whatever each is scored out of, so the two are worked out
+# against their own maxima and blended - see subject_score(). Summing it in
+# would give it the share its points happen to be of the total, a different
+# number on every candidate and none of them 30%.
+#
+# A candidate with no scored record row is published on the questionnaire alone,
+# at 100%: every challenger, and every incumbent nobody has scored yet.
+#
+# It is also not published as a question. /questionnaire/ is what candidates
+# were asked, and this was asked of nobody, so it is kept out of
+# _data/questions.yml and carried in its own `record` block on the subject.
+#
+# Mirrors RECORD_LABEL / RECORD_SHARE in scripts/questionnaire/grading_tabs.py
+# and appsscript/Code.gs; the three change together.
+RECORD_LABEL = "HFL-INC"
+RECORD_SHARE = 0.3
+
 # Category Grades identity columns, 0-based.
 C_KEY, C_CANDIDATE, C_MUNICIPALITY = range(3)
 
@@ -428,6 +452,17 @@ SCORES_HEADER = """\
 #                 was asked carries a score; half-scored is not published,
 #                 because a missing question drops out of the denominator as
 #                 well as the total and reads as a better result than it is.
+#
+#                 `record` and `overall` appear on a sitting incumbent whose
+#                 housing record Homes for Living have scored, and on nobody
+#                 else. `record` is that score - `points` out of `max`, its own
+#                 `percent`, the `share` of the topic it carries, and the
+#                 grader's `rationale` - and `overall` is the blend `grade` was
+#                 banded from: the record's share of it, and the questionnaire's
+#                 `percent` for the rest. The two fractions are published
+#                 separately because they do not add up into one; a record worth
+#                 30% on its own is not 10 more points on a 60-point total.
+#                 Without them, `percent` is the whole of the grade.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
@@ -1081,6 +1116,12 @@ def build_questions(registry, extra, choices, subject_order, warnings, errors):
         label = cell(R_LABEL)
         if not label:
             continue
+        if label == RECORD_LABEL:
+            # Scored, but never asked. /questionnaire/ is the question set the
+            # coalition put to candidates, and listing a row nobody answered
+            # there would make the page say something untrue about itself. It is
+            # published under its subject's own `record` block instead.
+            continue
 
         category = cell(R_CATEGORY)
         subject = SUBJECT_FOR_CATEGORY.get(norm(category))
@@ -1436,7 +1477,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             if grade_col is not None:
                 grade = grade_or_none(row[grade_col] if grade_col < len(row) else "",
                                       where, warnings)
-            questions = subject_questions(
+            questions, record = subject_questions(
                 grade_rows.get((key, subject_name), []), name, subject_name,
                 subject_id, question_labels, warnings)
 
@@ -1446,7 +1487,8 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             # this says whether the numbers behind it agree.
             score = None
             if rubric_for(subject_id):
-                score = subject_score(questions, name, subject_name, subject_id, warnings)
+                score = subject_score(questions, record, name, subject_name,
+                                      subject_id, warnings)
                 if score is None:
                     continue
                 # Questions this candidate's municipality was never asked. The
@@ -1531,12 +1573,30 @@ def rubric_for(subject_id):
 
 
 def subject_questions(rows, candidate, subject_name, subject_id, question_labels, warnings):
+    """(the questions this candidate was graded on, their incumbent record).
+
+    The record is the one row on a grading tab that is not a question - see
+    RECORD_LABEL - so it is lifted out here rather than published alongside
+    them. A challenger has no such row and gets None, which is what makes their
+    questionnaire the whole of their grade.
+    """
     rubric = rubric_for(subject_id)
     out = []
+    record = None
     for row in rows:
         cell = lambda idx: tidy(row[idx]) if idx < len(row) else ""
         label = cell(G_LABEL)
         if not label:
+            continue
+        if label == RECORD_LABEL:
+            where = f"{GRADE_TAB_PREFIX}{subject_name} ({candidate}, {label})"
+            record = {
+                "label": label,
+                "points": number_or_none(cell(G_GRADE), where, "score", warnings),
+                "max_points": number_or_none(cell(G_WEIGHT), where, "max points",
+                                             warnings),
+                "rationale": clean_text(row[G_RATIONALE] if G_RATIONALE < len(row) else ""),
+            }
             continue
         if label not in question_labels:
             warnings.append(
@@ -1571,7 +1631,7 @@ def subject_questions(rows, candidate, subject_name, subject_id, question_labels
             # an answer says nothing without it.
             question["max_points"] = SCALE_SUBJECTS[subject_id]
         out.append(question)
-    return out
+    return out, record
 
 
 def number_or_none(value, where, what, warnings):
@@ -1592,7 +1652,7 @@ def number_or_none(value, where, what, warnings):
     return int(number) if number == int(number) else number
 
 
-def subject_score(questions, candidate, subject_name, subject_id, warnings):
+def subject_score(questions, record, candidate, subject_name, subject_id, warnings):
     """The cumulative figure behind one candidate's letter on a scored subject.
 
     A question with no score drops out of the total and out of what the total is
@@ -1619,6 +1679,15 @@ def subject_score(questions, candidate, subject_name, subject_id, warnings):
     owed it. The letter is a separate question and is floored, at F, in the
     Category Grades formula - see points_rollup_formula() in
     scripts/questionnaire/grading_tabs.py.
+
+    An incumbent's scored record is published beside the questionnaire rather
+    than folded into it, with `overall` stating the blend the letter came from.
+    Three figures rather than one because the blend is not arithmetic a reader
+    can do from a single fraction: 38 of 60 and 7 of 10 are not 45 of 70 once
+    the second is worth RECORD_SHARE on its own. A record scored with no maximum
+    beside it stops the subject publishing, exactly as a question in that state
+    does - there the total would be flattered, here the letter on the sheet and
+    the figures on the page would be computed from different rules.
     """
     scored = [q for q in questions if q["points"] is not None]
     answered_unscored = [q for q in questions
@@ -1655,11 +1724,34 @@ def subject_score(questions, candidate, subject_name, subject_id, warnings):
 
     points = sum(q["points"] for q in scored)
     maximum = sum(q["max_points"] for q in scored)
-    return {
-        "points": points,
-        "max": maximum,
-        "percent": round(100 * points / maximum) if maximum else 0,
+    share = 100 * points / maximum if maximum else 0
+    score = {"points": points, "max": maximum, "percent": round(share)}
+
+    if record is None or record["points"] is None:
+        return score
+    if not record["max_points"]:
+        warnings.append(
+            f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} is scored "
+            f"{record['points']} on {RECORD_LABEL}, which has no Max points on "
+            f"its {REGISTRY_TAB} row, so the subject is not published. The "
+            f"record would count for nothing, and the sheet's own letter says "
+            f"so too."
+        )
+        return None
+
+    record_share = 100 * record["points"] / record["max_points"]
+    score["record"] = {
+        "points": record["points"],
+        "max": record["max_points"],
+        "percent": round(record_share),
+        "share": round(100 * RECORD_SHARE),
+        "rationale": record["rationale"],
     }
+    # Rounded once, from the unrounded shares, so the published figure is the
+    # one the sheet banded into the letter above it rather than a blend of two
+    # numbers that have each already lost their decimals.
+    score["overall"] = round((1 - RECORD_SHARE) * share + RECORD_SHARE * record_share)
+    return score
 
 
 def scale_score(scored, candidate, subject_name, ceiling, warnings):
@@ -1774,6 +1866,21 @@ def render_scores(graded_subjects, records):
                     parts.append(f"          points: {score['points']}")
                     parts.append(f"          max: {score['max']}")
                 parts.append(f"          percent: {score['percent']}")
+                # An incumbent scored on their record: what the questionnaire
+                # above is worth stops being the whole grade, so both halves and
+                # the blend are stated rather than one fraction a reader cannot
+                # reconcile with the letter.
+                if score.get("record"):
+                    incumbency = score["record"]
+                    parts.append(f"          overall: {score['overall']}")
+                    parts.append("          record:")
+                    parts.append(f"            points: {incumbency['points']}")
+                    parts.append(f"            max: {incumbency['max']}")
+                    parts.append(f"            percent: {incumbency['percent']}")
+                    parts.append(f"            share: {incumbency['share']}")
+                    if incumbency["rationale"]:
+                        parts.append(f"            rationale: "
+                                     f"{text_value(incumbency['rationale'], 14)}")
 
             if subject["questions"]:
                 parts.append("        questions:")

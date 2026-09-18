@@ -46,6 +46,20 @@ var REGISTRY_TAB = 'Question Registry';
 var LOG_TAB = 'Sync Log';
 var GRADE_PREFIX = 'Grade - ';
 var CATEGORY_TAB = 'Category Grades';
+
+// The same grid as Category Grades, holding the figure each letter was banded
+// from rather than the letter. A band is a wide thing to be inside - two
+// candidates both reading A on housing can be 85% and 99% - and the tab that
+// decides the grade cannot show the difference. Nothing here is published or
+// gates anything, so it carries no deploy checkboxes. grading_tabs.py creates
+// it and backfills the candidates already on the sheet; this appends each new
+// one. See statsFormula().
+var STATS_TAB = 'Category Stats';
+
+// How many letters the scale has, so a letter-graded subject's average can be
+// read as a share of the top of it. Mirrors VALID_GRADES in grading_tabs.py and
+// sync-candidates.py: A, B, C, C-, F and nothing else.
+var VALID_GRADE_COUNT = 5;
 // Categories whose graders type a number in H rather than a letter, and what
 // that number is out of. Two partner orgs score rather than grade, and they do
 // it differently enough to need a map each.
@@ -65,6 +79,49 @@ var CATEGORY_TAB = 'Category Grades';
 // grading_tabs.py holds both; change them together.
 var POINTS_CATEGORIES = { 'Housing': true };
 var SCALE_CATEGORIES = { 'Arts': 3 };
+
+// The incumbent record: one more row on Grade - Housing, and the only row on any
+// grading tab that no candidate answered.
+//
+// Homes for Living wanted a sitting councillor's record on housing scored
+// alongside what they say they will do next term, so this row carries their
+// judgement of the term itself. It is scored in points in column H like every
+// other housing row, out of a Max points they set on its registry row.
+//
+// What it is worth is not its points. RECORD_SHARE of the housing grade is the
+// record and the rest is the questionnaire, whatever each is scored out of - see
+// pointsCategoryFormula(). grading_tabs.py holds the same two constants and
+// renders the same formula; change them together.
+var RECORD_LABEL = 'HFL-INC';
+var RECORD_SHARE = 0.3;
+
+// Column F on a record row. Every other row holds what the candidate wrote, and
+// a blank cell there would read as an unanswered question rather than as a row
+// that never had a question to answer.
+var RECORD_ANSWER = 'No candidate answer. Homes for Living score this ' +
+    "incumbent's record on housing during their current term.";
+
+// Who is an incumbent, and where that is read from.
+//
+// Nothing in this spreadsheet says. The coalition tracks it in the candidate
+// tracking sheet, whose id is a capability over contact details and has no
+// business in a grading script, and the website republishes the same fact as
+// `standing` in _data/candidates.yml - a public file in a public repository,
+// regenerated from that sheet daily by CI. So the roster is read from there:
+// no credential, no second sheet, and it follows the tracking sheet on its own.
+//
+// A sitting incumbent's standing starts "incumbent"; "ex-incumbent-councillor"
+// is a former one and is not scored on a record they are no longer making.
+//
+// If the fetch or the parse fails, incumbentIndex() returns null and the sync
+// creates NO record rows at all that run. Appending them to everybody on a bad
+// read would be far worse than appending them late: the rows are append-only,
+// so a wrong one has to be deleted by hand.
+var ROSTER_URL = 'https://raw.githubusercontent.com/LaputanMachines/' +
+    'livable-crd-website/main/_data/candidates.yml';
+var ROSTER_CACHE_KEY = 'roster-standing-v1';
+var ROSTER_CACHE_SECONDS = 21600;  // six hours; the file is rewritten daily
+var ROSTER_INCUMBENT_RE = /^incumbent(-|$)/;
 
 // Registry column holding what a points-scored question is worth, 1-based.
 // grading_tabs.py writes the header and seeds the values.
@@ -209,10 +266,18 @@ function syncFromPayload(data) {
     var answers = payloadAnswers(fields);
     var candidate = payloadCandidate(fields);
 
+    // Whether this one submitter is a sitting incumbent, on the same roster the
+    // sweep reads. Unknown - roster unreadable, or a name it does not list -
+    // means no record row now; the next sweep adds it if the answer changes.
+    var roster = incumbentIndex();
+    var isIncumbent = !!(roster &&
+        roster[rosterKey(candidate.name, candidate.municipality)]);
+
     var pending = {}, byTab = {}, skipped = 0;
 
     for (var q = 0; q < questions.length; q++) {
       var question = questions[q];
+      if (question.record && !isIncumbent) continue;
       var tabName = GRADE_PREFIX + question.category;
       if (!byTab[tabName]) {
         var target = ss.getSheetByName(tabName);
@@ -236,7 +301,7 @@ function syncFromPayload(data) {
         municipality: candidate.municipality,
         label: question.label,
         question: question.text,
-        answer: answers[question.label] || '',
+        answer: question.record ? RECORD_ANSWER : (answers[question.label] || ''),
         hash: ''   // unreconciled: syncAll() fills this in from the sheet
       });
     }
@@ -250,12 +315,13 @@ function syncFromPayload(data) {
     }
     if (appended) PropertiesService.getScriptProperties().setProperty(PROP_PENDING, '1');
 
-    var categoryRow = ensureCategoryRows(ss, [
-      { key: submissionId, candidate: candidate.name, municipality: candidate.municipality }
-    ], 'webhook');
+    var one = [{ key: submissionId, candidate: candidate.name,
+                 municipality: candidate.municipality }];
+    var categoryRow = ensureCategoryRows(ss, one, 'webhook');
+    var statsRow = ensureStatsRows(ss, one, 'webhook');
 
     return { submissionId: submissionId, appended: appended, tabs: tabs, skipped: skipped,
-             category: categoryRow };
+             category: categoryRow, stats: statsRow };
   } finally {
     lock.releaseLock();
   }
@@ -453,6 +519,32 @@ function syncAll(trigger) {
     var questions = readRegistry(header);
     var appended = 0, tabs = 0, drifted = 0, reconciled = 0;
 
+    // Who gets a record row, worked out once for the whole sweep rather than
+    // per question: the roster is one fetch, and the answer is the same on
+    // every pass down the submissions. A null index means the roster could not
+    // be read, and standing[] stays empty, so no record row is created at all.
+    var roster = incumbentIndex();
+    var standing = {}, unrostered = [];
+    if (roster) {
+      for (var d = 1; d < rawValues.length; d++) {
+        var who = rosterKey(candidateName(rawValues[d]),
+                            String(rawValues[d][COL_MUNICIPALITY - 1] || ''));
+        if (!(who in roster)) {
+          if (unrostered.indexOf(who) === -1) unrostered.push(who);
+          continue;
+        }
+        standing[d] = roster[who];
+      }
+    }
+    if (unrostered.length) {
+      // Not an error in itself - a submission can arrive before the tracking
+      // sheet confirms the candidate - but while it lasts, nothing here knows
+      // whether that person is an incumbent, so they get no record row.
+      log(trigger, 'not on the roster', unrostered.length + ' submission(s) match ' +
+          'no confirmed candidate, so no ' + RECORD_LABEL + ' row: ' +
+          unrostered.join(', '));
+    }
+
     // Group the rows to append by target tab, so each tab is one write.
     var pending = {};
     var byTab = {};
@@ -478,8 +570,13 @@ function syncAll(trigger) {
         var submissionId = String(row[COL_SUBMISSION_ID - 1] || '').trim();
         if (!submissionId) continue;
 
+        // The record row exists for sitting incumbents and nobody else. A
+        // challenger has no term to be scored on, and somebody the roster does
+        // not list yet cannot be told apart from one.
+        if (question.record && !standing[r]) continue;
+
         var key = submissionId + '|' + question.label;
-        var answer = buildAnswer(header, row, question);
+        var answer = question.record ? RECORD_ANSWER : buildAnswer(header, row, question);
         var hash = digest(answer);
 
         var known = tab.existing[key];
@@ -539,6 +636,7 @@ function syncAll(trigger) {
       });
     }
     var categoryRows = ensureCategoryRows(ss, submissions, trigger);
+    var statsRows = ensureStatsRows(ss, submissions, trigger);
 
     var props = PropertiesService.getScriptProperties();
     props.setProperty(PROP_LAST_ROW, String(raw.getLastRow()));
@@ -546,13 +644,13 @@ function syncAll(trigger) {
     // still awaiting reconciliation is whatever the webhook writes next.
     props.setProperty(PROP_PENDING, '0');
 
-    if (appended || drifted || reconciled || categoryRows) {
+    if (appended || drifted || reconciled || categoryRows || statsRows) {
       log(trigger, 'synced', appended + ' row(s) appended across ' + tabs +
           ' tab(s); ' + reconciled + ' reconciled; ' + drifted + ' answer(s) changed; ' +
-          categoryRows + ' category row(s) added');
+          categoryRows + ' category row(s) added; ' + statsRows + ' stats row(s) added');
     }
     return { appended: appended, tabs: tabs, drifted: drifted, reconciled: reconciled,
-             category: categoryRows };
+             category: categoryRows, stats: statsRows };
   } finally {
     lock.releaseLock();
   }
@@ -737,6 +835,68 @@ function ensureCategoryRows(ss, submissions, trigger) {
 
 
 /**
+ * One Category Stats row per submission, appended as Category Grades' rows are.
+ *
+ * Deliberately a second pass over the same submissions rather than more columns
+ * on Category Grades: that tab is what a partner org types their own call into,
+ * and a percentage beside a letter they overrode would sit there contradicting
+ * them. Here every cell is computed, and the tab says so.
+ *
+ * Append-only and keyed, exactly like ensureCategoryRows: a row already carrying
+ * this submission's key is left alone, formula and all. The tab is created by
+ * grading_tabs.py, which also backfills the candidates already on the sheet; if
+ * it is missing, this does nothing and says so rather than inventing a header.
+ */
+function ensureStatsRows(ss, submissions, trigger) {
+  var sheet = ss.getSheetByName(STATS_TAB);
+  if (!sheet) {
+    log(trigger, 'skipped', 'no tab "' + STATS_TAB + '" (run grading_tabs.py)');
+    return 0;
+  }
+
+  var lastCol = sheet.getLastColumn();
+  if (lastCol < 4) return 0;  // header has no subject columns yet
+  var header = sheet.getRange(1, 1, 1, lastCol).getValues()[0];
+
+  var existing = {};
+  var lastRow = sheet.getLastRow();
+  if (lastRow >= 2) {
+    var keys = sheet.getRange(2, CG_KEY, lastRow - 1, 1).getValues();
+    for (var i = 0; i < keys.length; i++) {
+      var k = String(keys[i][0] || '').trim();
+      if (k) existing[k] = true;
+    }
+  }
+
+  var toAdd = [];
+  for (var s = 0; s < submissions.length; s++) {
+    var sub = submissions[s];
+    if (existing[sub.key]) continue;
+    existing[sub.key] = true;  // guard duplicates within this same batch
+    toAdd.push(sub);
+  }
+  if (!toAdd.length) return 0;
+
+  var first = Math.max(sheet.getLastRow() + 1, 2);
+  var values = toAdd.map(function (sub, i) {
+    var line = first + i;
+    var out = new Array(lastCol).fill('');
+    out[CG_KEY - 1] = sub.key;
+    out[CG_CANDIDATE - 1] = sub.candidate;
+    out[CG_MUNICIPALITY - 1] = sub.municipality;
+    for (var c = 4; c <= lastCol; c++) {
+      var label = String(header[c - 1] || '').trim();
+      if (label) out[c - 1] = statsFormula(label, line);
+    }
+    return out;
+  });
+  sheet.getRange(first, 1, values.length, lastCol).setValues(values);
+
+  return values.length;
+}
+
+
+/**
  * One candidate's Category Grades cell, in whatever the category's rubric is.
  * Two of them score rather than grade and hand off below; this is the letter
  * rollup every other category uses.
@@ -752,6 +912,19 @@ function categoryFormula(category, row) {
   var tab = "'" + GRADE_PREFIX + category + "'";
   if (POINTS_CATEGORIES[category]) return pointsCategoryFormula(tab, row);
   if (SCALE_CATEGORIES[category]) return scaleCategoryFormula(tab, row, SCALE_CATEGORIES[category]);
+  return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},ROUND(' +
+      letterAverage(tab, row) + ',0)+1),"")';
+}
+
+
+/**
+ * The weighted average of a letter-graded subject's grades, 0 (F) to 4 (A).
+ *
+ * The letter above rounds it; Category Stats divides it by the top of the scale
+ * and shows it. Split out so the two cannot drift, the same reason the scored
+ * rubrics' ratios are their own functions.
+ */
+function letterAverage(tab, row) {
   var scale = '{"F","C-","C","B","A"}';
   var candidateCol = tab + '!$B$2:$B', municipalityCol = tab + '!$C$2:$C';
   var gradeCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
@@ -761,8 +934,7 @@ function categoryFormula(category, row) {
   var value = 'IFERROR(MATCH(' + gradeCol + ',' + scale + ',0)-1,0)';
   var numerator = 'SUMPRODUCT(' + filter + '*' + value + '*' + weightCol + ')';
   var denominator = 'SUMPRODUCT(' + filter + '*' + weightCol + ')';
-
-  return '=IFERROR(INDEX({"F";"C-";"C";"B";"A"},ROUND(' + numerator + '/' + denominator + ',0)+1),"")';
+  return numerator + '/' + denominator;
 }
 
 
@@ -784,15 +956,42 @@ function categoryFormula(category, row) {
  * points and the percentage the website publishes are untouched; only the
  * letter stops, at the F it would have stopped at anyway.
  *
+ * The incumbent record is the one row not summed in with the rest. It carries
+ * RECORD_SHARE of the topic whatever it is scored out of, so the two shares are
+ * worked out against their own maxima and blended 70/30. Summing it in would
+ * instead give it the share its points happen to be of the total, which is a
+ * different number on every candidate and none of them 30%.
+ *
+ * An unscored record leaves its maximum at 0 and the blend collapses to the
+ * questionnaire alone: the whole of the rule for a challenger, and the right
+ * reading for an incumbent nobody has scored yet. A record scored with no Max
+ * points collapses the same way rather than dividing by zero and blanking the
+ * grade; Grading > Check setup reports it.
+ *
  * Typed-over-able, exactly as the letter rollup is: the partner org replacing
  * this with their own call is the intended use, not a mistake.
  */
 function pointsCategoryFormula(tab, row) {
+  return '=' + bandExpression(pointsRatio(tab, row), POINTS_LETTERS, POINTS_BANDS);
+}
+
+
+/** The share of the available points, blend and floor included, as a fragment. */
+function pointsRatio(tab, row) {
   var where = tab + '!$B:$B,$B' + row + ',' + tab + '!$C:$C,$C' + row;
-  var points = 'SUMIFS(' + tab + '!$H:$H,' + where + ')';
-  var max = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + tab + '!$H:$H,"<>")';
-  var ratio = 'MAX(' + points + '/' + max + ',0)';
-  return '=' + bandExpression(ratio, POINTS_LETTERS, POINTS_BANDS);
+  var asked = tab + '!$D:$D,"<>' + RECORD_LABEL + '"';
+  var record = tab + '!$D:$D,"' + RECORD_LABEL + '"';
+  var scored = tab + '!$H:$H,"<>"';
+
+  var points = 'SUMIFS(' + tab + '!$H:$H,' + where + ',' + asked + ')';
+  var max = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + asked + ',' + scored + ')';
+  var recordPoints = 'SUMIFS(' + tab + '!$H:$H,' + where + ',' + record + ')';
+  var recordMax = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + record + ',' + scored + ')';
+
+  var questionnaire = points + '/' + max;
+  var blended = (1 - RECORD_SHARE) + '*' + questionnaire + '+' +
+      RECORD_SHARE + '*' + recordPoints + '/' + recordMax;
+  return 'MAX(IF(' + recordMax + '=0,' + questionnaire + ',' + blended + '),0)';
 }
 
 
@@ -829,6 +1028,12 @@ function bandExpression(ratio, letters, bands) {
  * this with their own call is the intended use, not a mistake.
  */
 function scaleCategoryFormula(tab, row, ceiling) {
+  return '=' + bandExpression(scaleRatio(tab, row, ceiling), SCALE_LETTERS, SCALE_BANDS);
+}
+
+
+/** The weighted average as a share of the scale, as a formula fragment. */
+function scaleRatio(tab, row, ceiling) {
   var scoreCol = tab + '!$H$2:$H', weightCol = tab + '!$I$2:$I';
   var scale = [];
   for (var n = 0; n <= ceiling; n++) scale.push(n);
@@ -839,7 +1044,34 @@ function scaleCategoryFormula(tab, row, ceiling) {
   var earned = 'SUMPRODUCT(' + rows + '*' + value + '*' + weightCol + ')';
   var available = '(' + ceiling + '*SUMPRODUCT(' + rows + '*' + weightCol + '))';
 
-  return '=' + bandExpression(earned + '/' + available, SCALE_LETTERS, SCALE_BANDS);
+  return earned + '/' + available;
+}
+
+
+/**
+ * One cell of Category Stats: the figure the letter beside it was banded from.
+ *
+ * Three rubrics, three meanings, one column: a share of the points available on
+ * a points subject, a share of the scale on a scale subject, and a position on
+ * the A-F scale on a letter-graded one, which is why the tab's own header says
+ * the columns are not all the same measure. Mirrors subject_ratio() and
+ * stats_formula() in grading_tabs.py; the two render the same string.
+ *
+ * IFERROR and no floor: a candidate nobody has graded on this subject divides by
+ * zero, and blank is the honest answer. Housing's floor is inside pointsRatio(),
+ * where the letter reads it too.
+ */
+function statsFormula(category, row) {
+  var tab = "'" + GRADE_PREFIX + category + "'";
+  var ratio;
+  if (POINTS_CATEGORIES[category]) {
+    ratio = pointsRatio(tab, row);
+  } else if (SCALE_CATEGORIES[category]) {
+    ratio = scaleRatio(tab, row, SCALE_CATEGORIES[category]);
+  } else {
+    ratio = letterAverage(tab, row) + '/' + (VALID_GRADE_COUNT - 1);
+  }
+  return '=IFERROR(' + ratio + ',"")';
 }
 
 
@@ -864,12 +1096,145 @@ function maxPointsProblems(category) {
     if (!label || String(rows[i][1] || '').trim() !== category) continue;
     if (String(rows[i][4] || '').trim().toLowerCase() !== 'yes') continue;
     if (!Number(rows[i][REGISTRY_MAX_COLUMN - 1])) {
-      problems.push(label + ' has no Max points, so it counts towards the ' +
-                    category + ' score without adding to what that score is out of.');
+      // The record row fails differently: it is not summed into the total, so a
+      // missing maximum does not flatter anybody. It just stops the record
+      // counting at all, and every incumbent is quietly graded on the
+      // questionnaire alone.
+      problems.push(label === RECORD_LABEL
+        ? label + ' has no Max points, so no incumbent\'s record counts towards ' +
+          'their ' + category + ' grade. Homes for Living set that number.'
+        : label + ' has no Max points, so it counts towards the ' + category +
+          ' score without adding to what that score is out of.');
     }
   }
   return problems;
 }
+
+/* --------------------------------------------------------------------- roster */
+
+/**
+ * Every confirmed candidate, keyed name|municipality, to whether they are sitting.
+ *
+ * A boolean per candidate rather than a set of incumbents, so the caller can
+ * tell "on the roster, a challenger" from "not on the roster at all". The
+ * second is worth knowing: it means a submission's name or municipality does
+ * not match what the coalition publishes, and until it does, nobody can tell
+ * from here whether that person is an incumbent.
+ *
+ * Returns null when the roster could not be read, which the callers treat as
+ * "create no record rows this run" rather than as "nobody is an incumbent".
+ * Cached for ROSTER_CACHE_SECONDS: the file changes daily at most, and every
+ * sweep of a 60-row sheet would otherwise fetch it again.
+ */
+function incumbentIndex() {
+  var cache = CacheService.getScriptCache();
+  var cached = cache.get(ROSTER_CACHE_KEY);
+  if (cached) {
+    try { return JSON.parse(cached); } catch (err) { /* refetch below */ }
+  }
+
+  var text;
+  try {
+    var response = UrlFetchApp.fetch(ROSTER_URL, {
+      muteHttpExceptions: true, followRedirects: true
+    });
+    if (response.getResponseCode() !== 200) {
+      log('system', 'roster unavailable', 'HTTP ' + response.getResponseCode() +
+          ' from the published candidate roster; no ' + RECORD_LABEL +
+          ' rows created this run');
+      return null;
+    }
+    text = response.getContentText();
+  } catch (err) {
+    log('system', 'roster unavailable', 'could not read the published candidate ' +
+        'roster (' + err + '); no ' + RECORD_LABEL + ' rows created this run');
+    return null;
+  }
+
+  var index = parseRoster(text);
+  if (!index) {
+    log('system', 'roster unavailable', 'the published candidate roster parsed ' +
+        'to no candidates; no ' + RECORD_LABEL + ' rows created this run');
+    return null;
+  }
+  cache.put(ROSTER_CACHE_KEY, JSON.stringify(index), ROSTER_CACHE_SECONDS);
+  return index;
+}
+
+
+/**
+ * _data/candidates.yml as {name|municipality: is a sitting incumbent}.
+ *
+ * Line-based rather than a YAML parser, because Apps Script has none and the
+ * file is a flat list of "- name:" blocks with two-space keys under each. The
+ * same shape load_candidate_index() in sync-questionnaire.py reads, and the
+ * file's own header comment promises it stays that way.
+ *
+ * Null rather than an empty object when nothing parsed: an empty index would be
+ * indistinguishable from a roster in which nobody is an incumbent.
+ */
+function parseRoster(text) {
+  var lines = String(text || '').split(/\r?\n/);
+  var index = {}, current = null, total = 0;
+
+  var flush = function () {
+    if (!current || !current.name || !current.municipality) return;
+    index[rosterKey(current.name, current.municipality)] =
+        ROSTER_INCUMBENT_RE.test(current.standing || '');
+    total++;
+  };
+
+  for (var i = 0; i < lines.length; i++) {
+    var trimmed = lines[i].replace(/^\s+/, '');
+    if (!trimmed || trimmed.charAt(0) === '#') continue;
+
+    if (trimmed.indexOf('- name:') === 0) {
+      flush();
+      current = { name: yamlValue(trimmed.substring('- name:'.length)) };
+    } else if (!current) {
+      continue;
+    } else if (trimmed.indexOf('municipality:') === 0) {
+      current.municipality = yamlValue(trimmed.substring('municipality:'.length));
+    } else if (trimmed.indexOf('standing:') === 0) {
+      current.standing = yamlValue(trimmed.substring('standing:'.length));
+    }
+  }
+  flush();
+
+  return total ? index : null;
+}
+
+
+/** A scalar YAML value: quotes off, and `null` read as absent. */
+function yamlValue(text) {
+  var value = String(text || '').trim().replace(/^["']|["']$/g, '');
+  return (value === 'null' || value === '~') ? '' : value;
+}
+
+
+/**
+ * How a candidate is looked up in the roster.
+ *
+ * The two sides spell a municipality differently - the submission sheet holds
+ * what the form offered ("View Royal"), the roster holds the site's slug
+ * ("view-royal") - so both are slugged rather than compared as written. The
+ * name is only case- and space-normalised, which is what sync-questionnaire.py
+ * matches Category Grades on, and it matches all 63 submissions today.
+ */
+function rosterKey(name, municipality) {
+  return normText(name) + '|' + slugify(municipality);
+}
+
+
+function normText(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim().toLowerCase();
+}
+
+
+function slugify(value) {
+  return normText(value).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 
 /* ------------------------------------------------------------------ the registry */
 
@@ -899,20 +1264,32 @@ function readRegistry(header) {
       var text = String(values[i][2] || '').trim();
       var graded = String(values[i][4] || '').trim().toLowerCase();
       var span = String(values[i][6] || '').trim();
-      if (!label || !category || graded !== 'yes' || !span) continue;
+      if (!label || !category || graded !== 'yes') continue;
 
-      var bounds = span.split('-');
-      var from = parseInt(bounds[0], 10);
-      var to = parseInt(bounds[bounds.length - 1], 10);
-      if (!from || !to) continue;
+      // The incumbent record is the one graded row with no columns behind it:
+      // nobody was asked it, so there is no answer to read and no variants to
+      // group. Every other row without a span is a half-filled registry row and
+      // is skipped, which is what stops it fanning empty answers out to
+      // everybody.
+      var isRecord = (label === RECORD_LABEL);
+      var variants = [];
+      if (!isRecord) {
+        if (!span) continue;
+        var bounds = span.split('-');
+        var from = parseInt(bounds[0], 10);
+        var to = parseInt(bounds[bounds.length - 1], 10);
+        if (!from || !to) continue;
+        // The payload path matches on labels and never touches raw columns, so it
+        // passes no header and gets no variant grouping.
+        variants = header ? groupVariants(header, from, to) : [];
+      }
 
       questions.push({
         label: label,
         category: category,
         text: text,
-        // The payload path matches on labels and never touches raw columns, so it
-        // passes no header and gets no variant grouping.
-        variants: header ? groupVariants(header, from, to) : []
+        record: isRecord,
+        variants: variants
       });
     }
     return questions;
@@ -1137,10 +1514,41 @@ function menuCheckSetup() {
   if (triggers.indexOf('timerSync') === -1) problems.push('No daily timer (Grading > Set up).');
   if (triggers.indexOf('onGradeEdit') === -1) problems.push('No grader-stamp trigger (Grading > Set up).');
 
+  // The record row depends on a file this spreadsheet does not own, so say what
+  // that file currently says rather than leaving it to be discovered when the
+  // rows do not appear.
+  var roster = incumbentIndex();
+  var summary = '';
+  if (!roster) {
+    problems.push('The published candidate roster could not be read, so no ' +
+                  RECORD_LABEL + ' row is being created for anybody. See Sync Log.');
+  } else {
+    var listed = 0, sitting = 0, missing = [];
+    for (var who in roster) {
+      listed++;
+      if (roster[who]) sitting++;
+    }
+    var raw = ss.getSheetByName(RAW_TAB).getDataRange().getValues();
+    for (var r = 1; r < raw.length; r++) {
+      var key = rosterKey(candidateName(raw[r]),
+                          String(raw[r][COL_MUNICIPALITY - 1] || ''));
+      if (!(key in roster) && missing.indexOf(key) === -1) missing.push(key);
+    }
+    if (missing.length) {
+      problems.push(missing.length + ' submission(s) match no confirmed candidate ' +
+                    'on the roster, so nothing here knows whether they are ' +
+                    'incumbents: ' + missing.join(', '));
+    }
+    summary = '\n\nRoster: ' + listed + ' confirmed candidates, ' + sitting +
+        ' sitting incumbents. Each of those who has submitted gets a ' +
+        RECORD_LABEL + ' row worth ' + Math.round(RECORD_SHARE * 100) +
+        '% of their housing grade.';
+  }
+
   SpreadsheetApp.getUi().alert(problems.length
     ? 'Problems:\n\n- ' + problems.join('\n- ')
     : 'All good.\n\n' + questions.length + ' graded questions across ' +
-      Object.keys(counts).length + ' subjects.');
+      Object.keys(counts).length + ' subjects.' + summary);
 }
 
 

@@ -32,6 +32,10 @@ Tabs created:
                       gating publication on the website. General and Healthcare
                       access have no graded question and so no grade column,
                       but do get a gate: their answers are published verbatim.
+  Category Stats      The same grid as Category Grades, holding the figure each
+                      letter was banded from rather than the letter. Nothing on
+                      it is published; it is there so 99% and 85% can be told
+                      apart when both read A.
   Sync Log            What the Apps Script did, and what it refused to do.
 
 Idempotent: existing tabs are left alone, and the registry only gains rows for
@@ -135,6 +139,41 @@ SKIP_LABELS = {"GEN-01", "GEN-02"}
 POINTS_CATEGORIES = {"Housing"}
 SCALE_CATEGORIES = {"Arts": 3}
 SCORED_CATEGORIES = POINTS_CATEGORIES | set(SCALE_CATEGORIES)
+
+# The incumbent record: one more row on Grade - Housing, and the only row on any
+# grading tab that is not a question anybody was asked.
+#
+# Homes for Living wanted a sitting councillor's actual record on housing scored
+# alongside what they said they would do, so this row carries their judgement of
+# the term itself. It is scored in points in column H like every other housing
+# row, out of a Max points they set on its registry row, and it is fanned out
+# ONLY to candidates the published roster calls incumbents - Code.gs reads
+# _data/candidates.yml from this site's own repository to decide, because the
+# submission sheet holds nothing that says who is sitting.
+#
+# What it is worth is not its points. RECORD_SHARE of the housing grade is the
+# record and the rest is the questionnaire, whatever the two are scored out of,
+# so the row cannot simply join the points total - see points_rollup_formula().
+# A candidate with no scored record row is graded on the questionnaire alone, at
+# 100%, which is every challenger and every incumbent nobody has scored yet.
+#
+# Mirrored in appsscript/Code.gs (RECORD_LABEL) and sync-questionnaire.py
+# (RECORD_LABEL / RECORD_SHARE); the three change together.
+RECORD_LABEL = "HFL-INC"
+RECORD_CATEGORY = "Housing"
+RECORD_SHARE = 0.3
+RECORD_OWNER = "Homes for Living"
+RECORD_QUESTION = (
+    "Incumbent record: what this candidate has done on housing during their "
+    "current term. Scored by Homes for Living, not answered by the candidate."
+)
+RECORD_TYPE = "record"
+RECORD_NOTES = (
+    f"Not a form question: no raw columns, and the row is only created for "
+    f"candidates _data/candidates.yml lists as sitting incumbents. Worth "
+    f"{RECORD_SHARE:.0%} of the housing grade on its own; the questionnaire "
+    f"carries the other {1 - RECORD_SHARE:.0%}."
+)
 
 # Where each rubric's bands fall, as a share of what was available. Ascending,
 # because MATCH with a 1 finds the last threshold at or below the value.
@@ -245,6 +284,22 @@ CATEGORY_GENERATED_COLUMNS = (0, 3)
 # column (gets a rollup formula) from a deploy-gate column (defaults to
 # unchecked) when it appends a new candidate's row.
 CATEGORY_DEPLOY_SUFFIX = " - Deploy to website"
+
+# `Category Stats`: the same grid as `Category Grades`, holding the figure each
+# letter was banded from rather than the letter.
+#
+# It exists because a band is a wide thing to be inside. Two candidates both
+# reading A on housing can be 85% and 99%, and the tab that decides the grade
+# cannot show the difference; somebody choosing between two A candidates wants
+# it. Nothing here is published - sync-questionnaire.py does not read this tab -
+# and nothing here gates anything, so it carries no deploy checkboxes.
+#
+# The three rubrics do not measure the same thing, and the tab cannot pretend
+# otherwise: housing is a share of the points available, arts a share of the
+# 0-3 scale, and a letter-graded subject a position on the A-F scale. See
+# subject_ratio(). Two decimal places because that is the point of the tab.
+STATS_TAB = "Category Stats"
+STATS_PATTERN = "0.00%"
 
 
 def is_graded(label):
@@ -361,7 +416,26 @@ def registry_rows(header):
             f"{first + 1}-{last + 1}",
             notes,
         ])
+    rows.append(record_registry_row())
     return rows
+
+
+def record_registry_row():
+    """The incumbent record's registry row: a graded row with no raw columns.
+
+    Every other row on this tab describes columns of the form. This one
+    describes nothing on it, because no candidate answered it - see
+    RECORD_LABEL. Raw columns is therefore blank, and both readers know to
+    expect that of this label alone: readRegistry() in Code.gs otherwise skips a
+    row with no span, which is what keeps a half-filled registry row from
+    quietly fanning empty answers out to every candidate.
+
+    Max points is left blank on purpose. It is Homes for Living's number, the
+    registry is where they type it, and seed_max_points() never fills a cell it
+    was not given a figure for.
+    """
+    return [RECORD_LABEL, RECORD_CATEGORY, RECORD_QUESTION, RECORD_TYPE,
+            "Yes", "", "", RECORD_NOTES]
 
 
 def a1(col_index):
@@ -536,9 +610,18 @@ SCORE_MAX_POINTS = {
     "HFL-11": 6, "HFL-12": 6,
 }
 
+# How wide column H stays for the incumbent record, which is NOT what that row
+# is worth: its Max points is Homes for Living's to type, and the registry ships
+# it blank. This only has to be wide enough that the obvious choice - a record
+# scored out of ten - is not refused by a validation rule that predates it. A
+# maximum above this is fine on the registry and is reported by --dry-run and by
+# Grading > Check setup, because the column would then refuse the top of its own
+# scale until this number is raised.
+RECORD_CEILING = 10
+
 # The largest any question is worth, so the score cell can be validated as a
 # number without a per-question rule Sheets cannot express down a column.
-SCORE_CEILING = max(SCORE_MAX_POINTS.values())
+SCORE_CEILING = max(max(SCORE_MAX_POINTS.values()), RECORD_CEILING)
 
 # Housing, and only housing, can score below zero. Homes for Living's rubric has
 # options that cost a candidate points rather than earning none - HFL-12's five
@@ -620,12 +703,46 @@ def points_rollup_formula(category, line):
     band instead. Nothing above 0 moves, and the published points and percentage
     are still the real ones: only the letter stops at F, which is where it stops
     anyway.
+
+    The incumbent record is the one row that is not summed in with the rest. It
+    carries RECORD_SHARE of the topic whatever it is scored out of, so the two
+    shares are worked out separately and blended: the questionnaire's share of
+    its own maximum, and the record's share of its own, weighted 70/30. Summing
+    the record in with the questions would instead give it the share its points
+    happen to be of the total, which is a different number on every candidate
+    and none of them 30%.
+
+    An unscored record leaves the maximum at 0, and the blend collapses to the
+    questionnaire alone - which is the whole of the rule for a challenger, and
+    the right reading for an incumbent nobody has scored yet. A record scored
+    with no Max points beside it collapses the same way rather than dividing by
+    zero and blanking the grade; Grading > Check setup reports it, and
+    sync-questionnaire.py refuses to publish the subject until it is fixed.
+    """
+    return "=" + band_expression(points_ratio(category, line), POINTS_BANDS)
+
+
+def points_ratio(category, line):
+    """The share of the available points, as a formula fragment.
+
+    Split out from the letter so `Category Stats` can publish the number the
+    letter was banded from without a second implementation of it drifting from
+    this one. Everything the docstring above says about the blend and the floor
+    is this expression.
     """
     tab = f"'{GRADE_TAB_PREFIX}{category}'"
     where = f"{tab}!$B:$B,$B{line},{tab}!$C:$C,$C{line}"
-    points = f"SUMIFS({tab}!$H:$H,{where})"
-    maximum = f'SUMIFS({tab}!$I:$I,{where},{tab}!$H:$H,"<>")'
-    return "=" + band_expression(f"MAX({points}/{maximum},0)", POINTS_BANDS)
+    asked = f'{tab}!$D:$D,"<>{RECORD_LABEL}"'
+    record = f'{tab}!$D:$D,"{RECORD_LABEL}"'
+    scored = f'{tab}!$H:$H,"<>"'
+    points = f"SUMIFS({tab}!$H:$H,{where},{asked})"
+    maximum = f"SUMIFS({tab}!$I:$I,{where},{asked},{scored})"
+    record_points = f"SUMIFS({tab}!$H:$H,{where},{record})"
+    record_max = f"SUMIFS({tab}!$I:$I,{where},{record},{scored})"
+    questionnaire = f"{points}/{maximum}"
+    blended = (f"{1 - RECORD_SHARE:g}*{questionnaire}"
+               f"+{RECORD_SHARE:g}*{record_points}/{record_max}")
+    return f"MAX(IF({record_max}=0,{questionnaire},{blended}),0)"
 
 
 def scale_rollup_formula(category, line):
@@ -650,6 +767,15 @@ def scale_rollup_formula(category, line):
     divided by as well as the total, which is the same courtesy an ungraded row
     gets rather than a silent zero dragging the candidate down.
     """
+    return "=" + band_expression(scale_ratio(category, line), SCALE_BANDS)
+
+
+def scale_ratio(category, line):
+    """The weighted average as a share of the scale, as a formula fragment.
+
+    Split out for the same reason points_ratio() is: `Category Stats` shows this
+    number, and it has to be this number and not one like it.
+    """
     ceiling = SCALE_CATEGORIES[category]
     tab = f"'{GRADE_TAB_PREFIX}{category}'"
     score, weight = f"{tab}!$H$2:$H", f"{tab}!$I$2:$I"
@@ -658,7 +784,62 @@ def scale_rollup_formula(category, line):
             f"*ISNUMBER({score})")
     earned = f"SUMPRODUCT({rows}*IFERROR(MATCH({score},{{{scale}}},0)-1,0)*{weight})"
     available = f"({ceiling}*SUMPRODUCT({rows}*{weight}))"
-    return "=" + band_expression(f"{earned}/{available}", SCALE_BANDS)
+    return f"{earned}/{available}"
+
+
+def letter_ratio(category, line):
+    """Where a letter-graded subject's weighted average sits on the A-F scale.
+
+    The letter rollup lives in Code.gs, because it is written once per candidate
+    by the sync and never refreshed from here. Its ratio lives here as well as
+    there, because `Category Stats` is written from both: by this script for the
+    candidates already on the sheet, and by the sync for each new one. The two
+    render the same string, and letters_ratio's shape is the letter formula's
+    with the ROUND and the INDEX taken off.
+
+    Divided by four because the scale is F=0 to A=4, so the weighted average is
+    a position on it rather than a share of anything earned. That is a different
+    measure from the two scored subjects' and the tab's header says so; what
+    makes it worth showing is that it is the unrounded number the letter came
+    from, and two candidates who both round to A do not generally share it.
+
+    An N/A in the grade column matches nothing, scores 0 and still counts in the
+    weight, exactly as it does in the letter. That is the existing rule about
+    what N/A means, not a new one: only a blank cell drops a row out.
+    """
+    tab = f"'{GRADE_TAB_PREFIX}{category}'"
+    scale = '{"F","C-","C","B","A"}'
+    grade, weight = f"{tab}!$H$2:$H", f"{tab}!$I$2:$I"
+    rows = (f"({tab}!$B$2:$B=$B{line})*({tab}!$C$2:$C=$C{line})"
+            f'*({grade}<>"")')
+    earned = f"SUMPRODUCT({rows}*IFERROR(MATCH({grade},{scale},0)-1,0)*{weight})"
+    available = f"SUMPRODUCT({rows}*{weight})"
+    return f"{earned}/{available}/{len(VALID_GRADES) - 1}"
+
+
+def subject_ratio(category, line):
+    """The figure behind one subject's letter, in whatever its rubric measures.
+
+    Three rubrics, three meanings, one column on `Category Stats`: a share of
+    the points available on a points subject, a share of the scale on a scale
+    subject, and a position on the A-F scale on a letter-graded one. Mirrors
+    subjectRatio() in appsscript/Code.gs.
+    """
+    if category in POINTS_CATEGORIES:
+        return points_ratio(category, line)
+    if category in SCALE_CATEGORIES:
+        return scale_ratio(category, line)
+    return letter_ratio(category, line)
+
+
+def stats_formula(category, line):
+    """One cell of `Category Stats`: the ratio, or blank where there is none.
+
+    IFERROR rather than a floor, and deliberately: a candidate nobody has graded
+    on this subject divides by zero, and a blank cell is the honest answer.
+    Housing's own floor is inside points_ratio(), where the letter reads it too.
+    """
+    return f'=IFERROR({subject_ratio(category, line)},"")'
 
 
 def rollup_formula(category, line):
@@ -704,6 +885,50 @@ def seed_max_points(registry):
     print(f"{REGISTRY_TAB}: {MAX_POINTS_HEADER} "
           + (f"seeded on {len(updates)} row(s)" if updates
              else "already set on every scored row"))
+
+
+def record_report(registry):
+    """What still has to be typed by hand before the incumbent record scores.
+
+    Two cells, both Homes for Living's: the Max points the record is scored out
+    of, and the Owner every grading row's column G looks up. Neither is written
+    by this script - a maximum is the rubric and an owner is a claim about who
+    graded it - so both are reported until they are there.
+
+    Also reports any maximum the H column would refuse. Validation runs down the
+    whole column against one ceiling, so a question worth more than RECORD_CEILING
+    is scoreable only up to it; see SCORE_CEILING.
+    """
+    lines = []
+    values = registry.get_values(f"A2:{a1(REGISTRY_MAX_COLUMN - 1)}")
+    rows = {row[0].strip(): row for row in values if row and row[0].strip()}
+
+    cell = lambda row, index: row[index].strip() if len(row) > index else ""
+    row = rows.get(RECORD_LABEL)
+    if row is None:
+        lines.append(f"{RECORD_LABEL}: not on the registry yet, would be appended "
+                     f"as a {RECORD_CATEGORY} row with no raw columns")
+    else:
+        maximum = cell(row, REGISTRY_MAX_COLUMN - 1)
+        owner = cell(row, 8)
+        lines.append(
+            f"{RECORD_LABEL}: on the registry, {MAX_POINTS_HEADER} "
+            + (f"{maximum}" if maximum
+               else f"NOT SET - {RECORD_OWNER} type it, and no incumbent's "
+                    f"housing grade counts the record until they do")
+            + ", Owner " + (owner or f"NOT SET - put \"{RECORD_OWNER}\" there"))
+
+    for label, row in sorted(rows.items()):
+        maximum = cell(row, REGISTRY_MAX_COLUMN - 1)
+        try:
+            value = float(maximum)
+        except ValueError:
+            continue
+        if value > SCORE_CEILING:
+            lines.append(f"  {label}: {MAX_POINTS_HEADER} {maximum} is above the "
+                         f"{SCORE_CEILING} column H accepts, so the top of its own "
+                         f"scale cannot be typed. Raise RECORD_CEILING and re-run.")
+    return lines
 
 
 def rows_needing_column_i(sheet, category):
@@ -1001,6 +1226,127 @@ def append_category_gates(sh, sheet, headers):
           + (f", unchecked on {filled} existing row(s)" if filled else ""))
 
 
+def stats_headers(categories):
+    """`Category Stats` header row: the identity columns, then one per subject.
+
+    No deploy checkboxes. Nothing on this tab is published or gates anything;
+    it exists so a reader can tell 99% from 85% where both say A.
+    """
+    return ["Key", "Candidate", "Municipality"] + list(categories)
+
+
+def stats_tab_requests(sheet_id, categories):
+    """Widths, the percent format down every subject column, and the warning.
+
+    The whole tab is generated, unlike `Category Grades`, where typing a letter
+    over the rollup is the intended override. There is nothing here to override:
+    a figure somebody typed over a formula would be a claim about arithmetic
+    rather than a judgement, so all of it carries the edit warning.
+    """
+    requests = [
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 0, "endIndex": 1},
+            "properties": {"pixelSize": 150}, "fields": "pixelSize"}},
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 1, "endIndex": 2},
+            "properties": {"pixelSize": 170}, "fields": "pixelSize"}},
+        {"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": 2, "endIndex": 3},
+            "properties": {"pixelSize": 130}, "fields": "pixelSize"}},
+        {"addProtectedRange": {
+            "protectedRange": {
+                "range": {"sheetId": sheet_id},
+                "description": "Written by the sync script. Edits are overwritten.",
+                "warningOnly": True}}},
+    ]
+    for i in range(len(categories)):
+        column = 3 + i
+        requests.append({"updateDimensionProperties": {
+            "range": {"sheetId": sheet_id, "dimension": "COLUMNS",
+                      "startIndex": column, "endIndex": column + 1},
+            "properties": {"pixelSize": 100}, "fields": "pixelSize"}})
+        requests.append({"repeatCell": {
+            "range": {"sheetId": sheet_id, "startRowIndex": 1,
+                      "startColumnIndex": column, "endColumnIndex": column + 1},
+            "cell": {"userEnteredFormat": {
+                "numberFormat": {"type": "PERCENT", "pattern": STATS_PATTERN}}},
+            "fields": "userEnteredFormat.numberFormat"}})
+    return requests
+
+
+def sync_stats_tab(sh, categories):
+    """Create `Category Stats` if it is missing, and keep it level with the grades.
+
+    Every candidate on `Category Grades` gets a row here, and every row gets the
+    formula for every subject. Both halves are additive and idempotent: a row is
+    added for a key this tab does not carry, and a cell is rewritten only when it
+    is a formula that is not the current one.
+
+    A cell holding something typed is reported and left, the same courtesy
+    refresh_scored_rollup() pays a partner org's own letter. Nothing here is
+    meant to be typed over, but discovering that somebody did by overwriting it
+    is not how this script finds out.
+    """
+    grades = sheet_by_title(sh, CATEGORY_TAB)
+    if grades is None:
+        print(f"{STATS_TAB}: no {CATEGORY_TAB} to mirror, skipped")
+        return
+
+    headers = stats_headers(categories)
+    identity = [row[:3] for row in grades.get_values("A2:C")
+                if row and str(row[0]).strip()]
+
+    sheet = sheet_by_title(sh, STATS_TAB)
+    if sheet is None:
+        sheet = sh.add_worksheet(STATS_TAB, rows=GRADE_TAB_ROWS, cols=len(headers))
+        sh.batch_update({"requests": header_row_requests(sheet.id, headers)
+                         + stats_tab_requests(sheet.id, categories)})
+        print(f"{STATS_TAB}: created with columns {', '.join(categories)}")
+    else:
+        missing = missing_category_headers(sheet.row_values(1), headers)
+        if missing:
+            print(f"{STATS_TAB}: missing column(s) {', '.join(missing)}; delete the "
+                  f"tab and re-run to rebuild it")
+            return
+
+    header = [str(h).strip() for h in sheet.row_values(1)]
+    existing = sheet.get_values(f"A2:{a1(len(header) - 1)}",
+                                value_render_option=ValueRenderOption.formula)
+    rows_by_key = {str(row[0]).strip(): (offset, row)
+                   for offset, row in enumerate(existing, start=2)
+                   if row and str(row[0]).strip()}
+
+    updates, typed, added = [], [], 0
+    line = max(len(existing) + 2, 2)
+    for key, candidate, municipality in identity:
+        key = str(key).strip()
+        if key in rows_by_key:
+            at, row = rows_by_key[key]
+        else:
+            at, row = line, []
+            line += 1
+            added += 1
+            updates.append({"range": f"A{at}:C{at}",
+                            "values": [[key, candidate, municipality]]})
+
+        for column, category in enumerate(categories, start=3):
+            current = str(row[column]).strip() if len(row) > column else ""
+            wanted = stats_formula(category, at)
+            if current == wanted:
+                continue
+            if current and not current.startswith("="):
+                typed.append(f"row {at} ({candidate}, {category}: {current})")
+                continue
+            updates.append({"range": f"{a1(column)}{at}", "values": [[wanted]]})
+
+    if updates:
+        sheet.batch_update(updates, value_input_option="USER_ENTERED")
+    print(f"{STATS_TAB}: {len(identity)} candidate(s), {added} row(s) added, "
+          f"{len(updates) - added} cell(s) written"
+          + (f"; left {len(typed)} typed value(s) alone: {', '.join(typed)}"
+             if typed else ""))
+
+
 def category_tab_requests(sheet_id, row_count, categories):
     """Widths and the identity-column edit warning.
 
@@ -1092,7 +1438,8 @@ def main():
                   f"banded from the weighted average of the two.")
 
     existing = {ws.title for ws in sh.worksheets()}
-    wanted = [REGISTRY_TAB] + [GRADE_TAB_PREFIX + c for c in categories] + [CATEGORY_TAB, LOG_TAB]
+    wanted = ([REGISTRY_TAB] + [GRADE_TAB_PREFIX + c for c in categories]
+              + [CATEGORY_TAB, STATS_TAB, LOG_TAB])
     missing = [t for t in wanted if t not in existing]
     print(f"\nTabs: {len(wanted)} wanted, {len(wanted) - len(missing)} present, "
           f"{len(missing)} to create")
@@ -1112,6 +1459,17 @@ def main():
         print(f"\n{CATEGORY_TAB}: "
               + (f"{len(pending)} column(s) to append: {', '.join(pending)}"
                  if pending else "every column already present"))
+        subjects = graded_categories(cg_registry.get_values("A2:E"))
+        stats = sheet_by_title(sh, STATS_TAB)
+        filled = len([k for k in cg_preview.col_values(1)[1:] if str(k).strip()])
+        print(f"{STATS_TAB}: "
+              + (f"would be created with {len(subjects)} subject column(s) and "
+                 f"{filled} candidate row(s): {', '.join(subjects)}"
+                 if stats is None
+                 else f"exists; would be levelled with {CATEGORY_TAB}'s "
+                      f"{filled} candidate row(s)"))
+        for line in record_report(cg_registry):
+            print(line)
 
     for category in scored:
         ws = sheet_by_title(sh, GRADE_TAB_PREFIX + category)
@@ -1181,6 +1539,8 @@ def main():
     # like every letter-graded one and want nothing in M.
     if [c for c in scored if c in POINTS_CATEGORIES]:
         seed_max_points(registry)
+        for line in record_report(registry):
+            print(line)
 
     for category in categories:
         title = GRADE_TAB_PREFIX + category
@@ -1218,6 +1578,9 @@ def main():
     if scored:
         refresh_scored_rollup(sh, scored)
 
+    # After Category Grades, whose rows it mirrors and whose subjects it reads.
+    sync_stats_tab(sh, cg_categories)
+
     log = sheet_by_title(sh, LOG_TAB)
     if log is None:
         log = sh.add_worksheet(LOG_TAB, rows=2000, cols=len(LOG_HEADERS))
@@ -1229,7 +1592,10 @@ def main():
     print("\nNext: set a Weight on every registry row that wants one - every "
           "category but " + ", ".join(sorted(POINTS_CATEGORIES)) + ", which wants "
           f"a {MAX_POINTS_HEADER} instead - each totalling 100%, then deploy "
-          "scripts/questionnaire/appsscript/Code.gs.")
+          "scripts/questionnaire/appsscript/Code.gs. Until that deploy, no "
+          f"{RECORD_LABEL} row is created for anybody: this script writes the "
+          "registry row and the rollup, and the Apps Script is what fans the "
+          "row out to the incumbents.")
 
 
 if __name__ == "__main__":
