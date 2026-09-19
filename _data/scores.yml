@@ -124,6 +124,12 @@ candidates:
   - name: Jennifer Parlee
     municipality: colwood
     subjects: []
+  - name: Dan Igaz
+    municipality: esquimalt
+    subjects: []
+  - name: Duncan Cavens
+    municipality: esquimalt
+    subjects: []
   - name: Holly Courtright
     municipality: esquimalt
     subjects: []
@@ -161,6 +167,9 @@ candidates:
     municipality: langford
     subjects: []
   - name: Mary Wagner
+    municipality: langford
+    subjects: []
+  - name: Tanya Sunshine
     municipality: langford
     subjects: []
   - name: Ellen Frisch
@@ -311,6 +320,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: Josh Peterson
+    municipality: view-royal
+    subjects: []
+  - name: Owen Marshall
     municipality: view-royal
     subjects: []
   - name: Ron Mattson
