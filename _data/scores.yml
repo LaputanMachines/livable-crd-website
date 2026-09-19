@@ -118,6 +118,9 @@ candidates:
   - name: David Grove
     municipality: colwood
     subjects: []
+  - name: Eugene Tseng
+    municipality: colwood
+    subjects: []
   - name: Jennifer Parlee
     municipality: colwood
     subjects: []
@@ -164,6 +167,9 @@ candidates:
     municipality: metchosin
     subjects: []
   - name: Karin Sweeney
+    municipality: oak-bay
+    subjects: []
+  - name: Katerina Weller
     municipality: oak-bay
     subjects: []
   - name: Sam Holland
@@ -266,6 +272,9 @@ candidates:
     municipality: victoria
     subjects: []
   - name: Krista Loughton
+    municipality: victoria
+    subjects: []
+  - name: Marianne Alto
     municipality: victoria
     subjects: []
   - name: Martin Girard
