@@ -93,16 +93,19 @@
 
 # The end of the schedule, and the only entry after the cut-off: everything
 # above is the coalition and the candidates working towards a date, and this is
-# the day the result of that work reaches voters. Two days after the cut-off
+# the day the result of that work reaches voters. Four days after the cut-off
 # rather than the same day, because the answers that arrive on the cut-off still
-# have to be graded.
+# have to be graded. It was two days until the cut-off brought in far more
+# last-minute responses than the schedule assumed, and grading all of them well
+# was worth more than holding the original date; moving it is announced in
+# _posts/2026-09-18-project-update-grades-published-september-22.md.
 #
 # It is also the single publication date for the whole project: responses and
 # grades are held back until this day and released together, rather than going
 # up as they are finished. Every page that tells a reader when to expect
 # results quotes this entry, so the date is written once.
 - id: grades-released
-  date: 2026-09-20
+  date: 2026-09-22
   audience: coalition
   label: Responses and grades published on the scorecard
   detail: >-
