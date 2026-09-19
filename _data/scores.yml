@@ -73,6 +73,17 @@
 #                 was asked carries a score; half-scored is not published,
 #                 because a missing question drops out of the denominator as
 #                 well as the total and reads as a better result than it is.
+#
+#                 `record` and `overall` appear on a sitting incumbent whose
+#                 housing record Homes for Living have scored, and on nobody
+#                 else. `record` is that score - `points` out of `max`, its own
+#                 `percent`, the `share` of the topic it carries, and the
+#                 grader's `rationale` - and `overall` is the blend `grade` was
+#                 banded from: the record's share of it, and the questionnaire's
+#                 `percent` for the rest. The two fractions are published
+#                 separately because they do not add up into one; a record worth
+#                 30% on its own is not 10 more points on a 60-point total.
+#                 Without them, `percent` is the whole of the grade.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
@@ -137,7 +148,13 @@ candidates:
   - name: Andrew Jackson
     municipality: langford
     subjects: []
+  - name: Colby Harder
+    municipality: langford
+    subjects: []
   - name: Keith Yacucha
+    municipality: langford
+    subjects: []
+  - name: Kimberley Guiry
     municipality: langford
     subjects: []
   - name: Mary Wagner
@@ -167,6 +184,9 @@ candidates:
   - name: Harjas Popli
     municipality: saanich
     subjects: []
+  - name: Hollis Hodson
+    municipality: saanich
+    subjects: []
   - name: Jordan Weaver
     municipality: saanich
     subjects: []
@@ -176,7 +196,13 @@ candidates:
   - name: Karen Harper
     municipality: saanich
     subjects: []
+  - name: Kathleen Burton
+    municipality: saanich
+    subjects: []
   - name: Mauricio Curbelo
+    municipality: saanich
+    subjects: []
+  - name: Noah Fruttarol
     municipality: saanich
     subjects: []
   - name: Rishi Sharma
@@ -186,6 +212,9 @@ candidates:
     municipality: saanich
     subjects: []
   - name: Teale Phelps Bondaroff
+    municipality: saanich
+    subjects: []
+  - name: Zac De Vries
     municipality: saanich
     subjects: []
   - name: Eric Diller
@@ -276,6 +305,9 @@ candidates:
     municipality: view-royal
     subjects: []
   - name: Ron Mattson
+    municipality: view-royal
+    subjects: []
+  - name: Ryan Painter
     municipality: view-royal
     subjects: []
   - name: Sacha Christensen
