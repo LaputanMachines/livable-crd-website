@@ -135,6 +135,14 @@
   slate: Save Our Saanich
   website: null
 
+- name: Finn Fairbairn
+  display_name: "Fairbairn, Finn"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Noah Fruttarol
   display_name: "Fruttarol, Noah"
   municipality: saanich
