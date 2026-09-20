@@ -606,11 +606,17 @@ python3 scripts/questionnaire/grading_tabs.py
 5. `Grading > Check setup`. It now also reports the roster, the record's missing
    maximum, and any submission it could not find on the roster.
 
-The column's validation accepts -10 to 10, which is `RECORD_CEILING` in
-`grading_tabs.py` widening `SCORE_CEILING` from the 8 the questions needed. It is
-a typo guard down a whole column, not the rubric: if Homes for Living score the
-record out of more than 10, raise that constant and re-run step 1, or the top of
-their own scale cannot be typed.
+Column `H`'s validation is one range for the whole column, because validation runs
+down a column and cannot know which question a row holds. It is a typo guard, not
+the rubric. `points_ceiling()` sizes it from the maxima actually on the registry,
+so a `Max points` the partner org raises widens the column on the next run of
+`grading_tabs.py` - which is the run that has to happen before a grader can type
+the top of a scale they have just widened. `SCORE_CEILING` is the floor of that
+calculation rather than the answer, so a maximum deleted from the registry never
+narrows the column under a grader part-way through typing.
+
+`HFL-INC` went from 8 to 29 the day after it shipped, and `-29` to `29` is what
+the column takes today.
 
 #### `Max points` on the registry
 

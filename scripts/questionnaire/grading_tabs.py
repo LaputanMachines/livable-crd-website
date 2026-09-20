@@ -641,8 +641,11 @@ SCORE_MAX_POINTS = {
 # scale until this number is raised.
 RECORD_CEILING = 10
 
-# The largest any question is worth, so the score cell can be validated as a
-# number without a per-question rule Sheets cannot express down a column.
+# The widest column H is ever validated to without the registry having a say:
+# enough for the seeded questions and for a record scored out of RECORD_CEILING.
+# On a sheet that already exists, points_ceiling() reads what the registry
+# actually says and widens this, because the numbers there are the partner org's
+# and they change them - HFL-INC went from 8 to 29 the day after it shipped.
 SCORE_CEILING = max(max(SCORE_MAX_POINTS.values()), RECORD_CEILING)
 
 # Housing, and only housing, can score below zero. Homes for Living's rubric has
@@ -658,6 +661,40 @@ SCORE_CEILING = max(max(SCORE_MAX_POINTS.values()), RECORD_CEILING)
 # earn is theirs; this only has to be wide enough never to refuse a score they
 # meant to type.
 SCORE_FLOOR = -SCORE_CEILING
+
+
+def points_ceiling(registry):
+    """How wide column H has to be on a points tab, read from the registry.
+
+    Validation runs down a whole column and cannot know which question a row
+    holds, so it is one number for the column: a typo guard, not the rubric. What
+    it must never do is refuse a score somebody meant to type, and the only way
+    to know how big that can be is to read the maxima the partner org has set.
+
+    SCORE_CEILING is the floor of this rather than the answer. A maximum typed
+    into the registry widens the column on the next run; one deleted from it does
+    not narrow the column below what the seeded questions need, because a grader
+    part-way through typing is worse served by a rule that tightens under them.
+
+    Returns None when the registry cannot be read, which leaves the constant in
+    charge - the same answer a from-scratch bootstrap gets.
+    """
+    if registry is None:
+        return None
+    try:
+        values = registry.get_values(f"A2:{a1(REGISTRY_MAX_COLUMN - 1)}")
+    except Exception:
+        return None
+    maxima = []
+    for row in values:
+        if len(row) < REGISTRY_MAX_COLUMN or \
+                (row[1].strip() if len(row) > 1 else "") not in POINTS_CATEGORIES:
+            continue
+        try:
+            maxima.append(abs(float(row[REGISTRY_MAX_COLUMN - 1].strip())))
+        except ValueError:
+            continue
+    return max([SCORE_CEILING] + [int(m) if m == int(m) else m for m in maxima])
 
 
 def max_points_formula(line):
@@ -932,9 +969,10 @@ def record_report(registry):
     by this script - a maximum is the rubric and an owner is a claim about who
     graded it - so both are reported until they are there.
 
-    Also reports any maximum the H column would refuse. Validation runs down the
-    whole column against one ceiling, so a question worth more than RECORD_CEILING
-    is scoreable only up to it; see SCORE_CEILING.
+    Also reports any maximum wider than the column is validated to today. That is
+    no longer a problem to fix by hand - points_ceiling() reads these same cells
+    and widens the column on the next run - but it is worth saying which run has
+    to happen before a grader can type the top of their own scale.
     """
     lines = []
     values = registry.get_values(f"A2:{a1(REGISTRY_MAX_COLUMN - 1)}")
@@ -963,8 +1001,9 @@ def record_report(registry):
             continue
         if value > SCORE_CEILING:
             lines.append(f"  {label}: {MAX_POINTS_HEADER} {maximum} is above the "
-                         f"{SCORE_CEILING} column H accepts, so the top of its own "
-                         f"scale cannot be typed. Raise RECORD_CEILING and re-run.")
+                         f"{SCORE_CEILING} column H is validated to by default. "
+                         f"This run widens it to {int(value) if value == int(value) else value}; "
+                         f"until it does, a grader cannot type the top of that scale.")
     return lines
 
 
@@ -1041,7 +1080,7 @@ def letters_left_in_scores(sheet):
     return out
 
 
-def align_scored_tab(sh, sheet, category):
+def align_scored_tab(sh, sheet, category, ceiling=None):
     """Point an existing grading tab's H, and its I, at what its rubric grades in.
 
     None of it is something the Apps Script can do for rows it has already
@@ -1055,7 +1094,8 @@ def align_scored_tab(sh, sheet, category):
     headers = grade_headers_for(category)
     sheet.update([headers[7:9]], "H1:I1", value_input_option="RAW")
     sh.batch_update({"requests":
-                     score_validation_requests(sheet.id, sheet.row_count, category)})
+                     score_validation_requests(sheet.id, sheet.row_count, category,
+                                               ceiling)})
 
     lines = rows_needing_column_i(sheet, category)
     if lines:
@@ -1078,7 +1118,7 @@ def align_scored_tab(sh, sheet, category):
                   f"0-{SCALE_CATEGORIES[category]}.")
 
 
-def score_validation_requests(sheet_id, row_count, category):
+def score_validation_requests(sheet_id, row_count, category, ceiling=None):
     """A whole number in H, and the format column I wants under this rubric.
 
     The range is the rubric's, not one range for every scored tab: a points tab
@@ -1102,8 +1142,13 @@ def score_validation_requests(sheet_id, row_count, category):
     """
     body = {"sheetId": sheet_id, "startRowIndex": 1, "endRowIndex": row_count}
     points = category in POINTS_CATEGORIES
-    ceiling = SCORE_CEILING if points else SCALE_CATEGORIES[category]
-    floor = SCORE_FLOOR if points else 0
+    if points:
+        # points_ceiling() when the caller had a registry to read; the constant
+        # when it did not, which is a sheet being built from scratch.
+        ceiling = ceiling or SCORE_CEILING
+        floor = -ceiling
+    else:
+        ceiling, floor = SCALE_CATEGORIES[category], 0
     out_of = "this question's maximum" if points else f"{ceiling}"
     column_i = ({"type": "NUMBER", "pattern": "0"} if points
                 else {"type": "PERCENT", "pattern": SCALE_WEIGHT_PATTERN})
@@ -1485,11 +1530,16 @@ def main():
     if unmapped:
         print(f"  UNMAPPED: {', '.join(unmapped)} - fix PREFIX_CATEGORY or set by hand")
 
+    # Looked up here rather than with the other tabs below, because the points
+    # rubric's summary line states the width its maxima require.
+    cg_registry = sheet_by_title(sh, REGISTRY_TAB)
+    width = points_ceiling(cg_registry) or SCORE_CEILING
+
     scored = [c for c in categories if c in SCORED_CATEGORIES]
     for c in scored:
         if c in POINTS_CATEGORIES:
-            print(f"  {c} is scored in points: H is a score from {SCORE_FLOOR} "
-                  f"to {SCORE_CEILING} out of I, negatives included, and the "
+            print(f"  {c} is scored in points: H is a score from {-width} "
+                  f"to {width} out of I, negatives included, and the "
                   f"{CATEGORY_TAB} letter is banded from the two.")
         else:
             print(f"  {c} is scored 0-{SCALE_CATEGORIES[c]}: H is that score, I "
@@ -1510,7 +1560,6 @@ def main():
     # long before the code that would run it, and the one thing worth previewing
     # about a write to a tab full of grades is which columns it adds.
     cg_preview = sheet_by_title(sh, CATEGORY_TAB)
-    cg_registry = sheet_by_title(sh, REGISTRY_TAB)
     if cg_preview is not None and cg_registry is not None:
         pending = missing_category_headers(
             cg_preview.row_values(1),
@@ -1601,6 +1650,11 @@ def main():
         for line in record_report(registry):
             print(line)
 
+    # Read before the grading tabs, because their column H validation is sized
+    # from it. Homes for Living's maxima are theirs to change, and the column has
+    # to stay wide enough to accept whatever they set.
+    ceiling = points_ceiling(registry)
+
     for category in categories:
         title = GRADE_TAB_PREFIX + category
         is_scored = category in SCORED_CATEGORIES
@@ -1608,7 +1662,7 @@ def main():
         ws = sheet_by_title(sh, title)
         if ws is not None:
             if is_scored:
-                align_scored_tab(sh, ws, category)
+                align_scored_tab(sh, ws, category, ceiling)
             else:
                 print(f"{title}: already exists, left alone")
             continue
