@@ -545,8 +545,8 @@
   slate: null
   website: null
 
-- name: David Gautier
-  display_name: "Gautier, David"
+- name: David Gauthier
+  display_name: "Gauthier, David"
   municipality: esquimalt
   office: Mayor
   standing: challenger
@@ -1377,6 +1377,14 @@
   slate: null
   website: "https://janeburnes.ca"
 
+- name: Phil DiBattista
+  display_name: "DiBattista, Phil"
+  municipality: north-saanich
+  office: Councillor
+  standing: incumbent-councillor
+  slate: null
+  website: null
+
 - name: Gerald Hannig
   display_name: "Hannig, Gerald"
   municipality: north-saanich
@@ -1551,6 +1559,14 @@
   municipality: sidney
   office: Councillor
   standing: ex-incumbent-mayor
+  slate: null
+  website: null
+
+- name: Chad Rintoul
+  display_name: "Rintoul, Chad"
+  municipality: sidney
+  office: null
+  standing: incumbent-councillor
   slate: null
   website: null
 
