@@ -295,9 +295,13 @@ description: >-
 
                   `questionnaire_returned` is attached by
                   _plugins/questionnaire_scores.rb to every candidate the grading
-                  sheet has a row for, which is the same flag the hourglass
-                  badges are drawn from: the number here can never disagree with
-                  the cells below it.
+                  sheet has a row for because they replied, which is the same
+                  flag the hourglass badges are drawn from: the number here can
+                  never disagree with the cells below it. A sitting incumbent on
+                  that sheet only because Homes for Living scored their housing
+                  record does not carry it, and is counted here among the
+                  candidates who have not replied - which is what they are, grade
+                  or no grade.
 
                   Static, like the slate counts and the municipality filter
                   pills: it describes the municipality, not the current search,

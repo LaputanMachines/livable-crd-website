@@ -81,6 +81,13 @@ is just "Yes". A pasted line across rows is the failure mode here.
   own with the questionnaire carrying 70%. Do not grade it as an answer, do
   not add it to `rubrics.py`, and leave it blank unless Homes for Living
   have scored it. Its `Max points` is theirs to set on the registry.
+- **Every sitting incumbent has an `HFL-INC` row, including the ones who never
+  returned the questionnaire.** Their rows are keyed `INC-<name>-<municipality>`
+  rather than by a submission id, they have no other row on any grading tab, and
+  their record is 100% of their housing grade rather than 30%. On their
+  `Category Grades` row every subject but Housing is a formula that resolves to
+  `N/A` once the record is scored — leave it alone, and do not type `N/A` into
+  column H on a grading tab to mean the same thing.
 - `ANSWER NOT IN RUBRIC` in the output means a Tally option got reworded. Add
   the entry to `rubrics.py`; do not grade that row by hand and move on.
 

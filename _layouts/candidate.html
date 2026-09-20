@@ -193,6 +193,21 @@ layout: default
     {%- assign cell = c.scores[subject.id] %}
     {%- assign detail = c.published_subjects[subject.id] %}
     {%- comment -%}
+      A topic published as N/A with nothing under it. That is a sitting
+      incumbent who never returned the questionnaire: Homes for Living score
+      their housing record whether they replied or not, so housing carries a
+      real letter and every other topic carries the N/A that says there is
+      nothing to grade and never will be.
+
+      Dropped back to the plain row below, on the same reasoning that row
+      already carries: a toggle that opens onto one sentence of apology is
+      worse than no toggle. The chip still says N/A, which is the whole of what
+      the page knows about that topic.
+    {%- endcomment -%}
+    {%- assign openable = false %}
+    {%- if detail.questions.size > 0 or detail.unscored.size > 0 or detail.score %}{% assign openable = true %}{% endif %}
+    {%- if detail and cell == 'N/A' and openable == false %}{% assign detail = nil %}{% endif %}
+    {%- comment -%}
       Same rule as the scorecard matrix: a returned questionnaire shows an
       hourglass on every topic still waiting on us, graded or not; one of the two
       ungraded topics shows a speech bubble once its answers are published, since
@@ -308,13 +323,25 @@ layout: default
           {%- assign reasoning = reasoned.size %}
           {%- if detail.score.record.rationale %}{% assign reasoning = reasoning | plus: 1 %}{% endif %}
           <p class="candidate-grade__meta">
-            {%- if detail.score.record %}
+            {%- if detail.score.record and detail.score.max %}
             {{ detail.score.points }} of {{ detail.score.max }} questionnaire points ({{ detail.score.percent }}%)
             · {{ detail.score.record.points }} of {{ detail.score.record.max }} on record ({{ detail.score.record.percent }}%)
             · {{ detail.score.overall }}% overall
             {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
             {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
             {%- if detail.unscored.size > 0 %} · plus {{ detail.unscored.size }} ungraded{% endif %}
+            {%- elsif detail.score.record %}
+            {%- comment -%}
+              The record with no questionnaire beside it: a sitting incumbent
+              who never replied. There is no fraction to state for the other
+              70% because there is no other 70%, so the record's own fraction
+              is the grade, and the line says why rather than leaving a reader
+              to wonder which questions produced it.
+            {%- endcomment -%}
+            {{ detail.score.record.points }} of {{ detail.score.record.max }} on record ({{ detail.score.record.percent }}%)
+            · No questionnaire returned
+            {%- if detail.score.record.owner %} · Scored by {{ detail.score.record.owner }}{% endif %}
+            {%- if reasoning == 0 %} · No written reasoning yet{% endif %}
             {%- elsif detail.score.max %}
             {{ detail.score.points }} of {{ detail.score.max }} points ({{ detail.score.percent }}%)
             {%- if credited %} · Scored by {{ owners[0] }}{% endif %}
@@ -336,7 +363,7 @@ layout: default
             · <a href="{{ '/questionnaire/' | relative_url }}#questions-{{ subject.id }}">See these questions</a>
           </p>
 
-          {%- if detail.questions.size == 0 and detail.unscored.size == 0 %}
+          {%- if detail.questions.size == 0 and detail.unscored.size == 0 and detail.score.record == nil %}
           <p class="candidate-grade__empty">
             This topic's grade is published, but the per-question breakdown
             behind it is not available.
@@ -441,8 +468,10 @@ layout: default
               </div>
               <p class="candidate-answer__question">
                 What {{ c.name }} did about housing during their current term, scored by
-                {% if owners[0] %}{{ owners[0] }}{% else %}the topic's graders{% endif %}.
+                {% if detail.score.record.owner %}{{ detail.score.record.owner }}{% elsif owners[0] %}{{ owners[0] }}{% else %}the topic's graders{% endif %}.
                 This is not a questionnaire answer: no candidate was asked it.
+                {%- if detail.questions.size == 0 %} It is the whole of this grade:
+                {{ c.name }} did not return the questionnaire.{% endif %}
               </p>
               {%- if detail.score.record.rationale %}
               <p class="candidate-answer__rationale"><strong>Why this score:</strong> {{ detail.score.record.rationale }}</p>
@@ -532,9 +561,14 @@ layout: default
       </details>
       {%- else %}
       {%- comment -%}
-        Nothing published for this topic, so the row is not a control: a plain
+        Nothing to open for this topic, so the row is not a control: a plain
         <div>, not an empty <details>, because a toggle that opens onto nothing
         is worse than no toggle.
+
+        Two states reach this, and the chip tells them apart. Usually nothing is
+        published yet and the row becomes openable when grading finishes. The
+        other is an N/A chip on a candidate who never returned the
+        questionnaire, where nothing is coming and the row stays as it is.
 
         It still draws the chevron, faded to a disabled state. Two reasons, and
         the first is the one that matters: without it this row's grade chip sits

@@ -133,6 +133,13 @@ housing grade on its own** — the questionnaire carries the other 70%. A challe
 incumbent whose record nobody has scored yet, is graded on the questionnaire alone at
 100%.
 
+It runs the other way too. **Every sitting incumbent gets an `HFL-INC` row, whether or not
+they returned the questionnaire**, because a councillor who never replied still has a term
+behind them. For those candidates there is no questionnaire for the other 70% to be a share
+of, so the record is the whole of their housing grade at 100%, and every other topic on
+their row reads `N/A`: there are no answers to grade and there never will be. They are
+still counted among the candidates who have not replied, because that is what they are.
+
 The two are blended rather than added, because a record worth 30% is not ten more points
 on a sixty-point total, and they are published as the separate fractions they are:
 
@@ -152,15 +159,16 @@ not match the roster gets no record row and is named in the sheet's `Sync Log` a
 `Grading > Check setup`. Full detail, and the order to switch it on in, is in
 [`scripts/questionnaire/README.md`](scripts/questionnaire/README.md).
 
-### The three states a topic can be in
+### The four states a topic can be in
 
-Having a row on `Category Grades` at all means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. That gives the scorecard three states rather than two, on the matrix and on each candidate's page alike:
+Having a row on `Category Grades` usually means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. The exception is a sitting incumbent on the sheet only for their housing record, written with `returned: false` so the scorecard leaves them where they belong. That gives the scorecard four states rather than two, on the matrix and on each candidate's page alike:
 
 | Shown | Means |
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
 | speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
+| `N/A` | Nothing to grade, and nothing coming. A sitting incumbent whose housing record was scored without a questionnaire behind it reads this on every other topic. |
 | `—` | No completed questionnaire has come back. |
 
 The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.

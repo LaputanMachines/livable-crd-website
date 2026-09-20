@@ -200,7 +200,10 @@ SCALE_SUBJECTS = {"arts": 3}
 # number on every candidate and none of them 30%.
 #
 # A candidate with no scored record row is published on the questionnaire alone,
-# at 100%: every challenger, and every incumbent nobody has scored yet.
+# at 100%: every challenger, and every incumbent nobody has scored yet. It runs
+# the other way too, for a sitting incumbent who never returned the
+# questionnaire: there is nothing for the other 70% to be a share of, so the
+# record is the whole of their housing grade. See subject_score().
 #
 # It is also not published as a question. /questionnaire/ is what candidates
 # were asked, and this was asked of nobody, so it is kept out of
@@ -210,6 +213,21 @@ SCALE_SUBJECTS = {"arts": 3}
 # and appsscript/Code.gs; the three change together.
 RECORD_LABEL = "HFL-INC"
 RECORD_SHARE = 0.3
+
+# Column A on a row the Apps Script created from the published roster rather
+# than from a submission: a sitting incumbent who never returned the
+# questionnaire has no submission id to key a row on, and Homes for Living score
+# their record all the same. Mirrors ROSTER_KEY_PREFIX in
+# scripts/questionnaire/grading_tabs.py and appsscript/Code.gs, which builds the
+# keys.
+#
+# What this file needs it for is the one fact the rest of the row cannot carry:
+# these candidates did NOT return the questionnaire, and the site draws
+# "returned it, still being graded" very differently from "never replied". A row
+# on Category Grades has always meant the first; for these rows it means neither,
+# so they are published with `returned: false` and the scorecard leaves them in
+# the "never replied" column they belong in.
+ROSTER_KEY_PREFIX = "INC-"
 
 # Category Grades identity columns, 0-based.
 C_KEY, C_CANDIDATE, C_MUNICIPALITY = range(3)
@@ -409,11 +427,18 @@ SCORES_HEADER = """\
 # and flipping it back removes every published subject on the next run.
 #
 # EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, with `subjects` an empty
-# list for all of them while publication is off. Having a row means
+# list for all of them while publication is off. Having a row usually means
 # the candidate returned the questionnaire, and the site says so: "returned it,
 # still being graded" and "never replied" are different facts about a candidate
 # and the scorecard draws them differently. What it does not say is anything
 # about how a topic is going before it is published.
+#
+# The exception carries `returned: false`. Homes for Living score a sitting
+# councillor's record on housing whether or not that councillor replied, so
+# every sitting incumbent has a row on the grading sheet and some of them never
+# answered anything. Those entries publish a housing grade off the record alone
+# and nothing else, and the scorecard leaves them among the candidates who
+# never replied, because that is what they are.
 #
 # _plugins/questionnaire_scores.rb joins these entries onto _data/candidates.yml
 # by name and municipality at build time, which is why this file is separate:
@@ -437,6 +462,9 @@ SCORES_HEADER = """\
 #                 candidate with no match there is dropped, because there is no
 #                 scorecard page to show the result on.
 #   municipality  Slug from _data/municipalities.yml.
+#   returned      Absent for the candidates who returned the questionnaire, and
+#                 `false` for a sitting incumbent who did not and is on the
+#                 sheet only because their housing record is scored.
 #   scores        {subject id: letter}. The top-level grade per published
 #                 subject, which is what the scorecard matrix renders. A subject
 #                 deployed with no top-level letter typed yet is absent here but
@@ -449,6 +477,12 @@ SCORES_HEADER = """\
 #     score       Present only on a subject whose graders score each question
 #                 rather than grading it, and `percent` - the figure `grade` is
 #                 banded from - is the only field both kinds carry.
+#
+#                 A subject carried by an incumbent record alone - see
+#                 `returned` above - has no `points`, `max` or `percent` at all,
+#                 because there is no questionnaire behind any of them. It
+#                 carries `record` with `share: 100` and an `overall` equal to
+#                 the record's own percentage, and that is the whole grade.
 #
 #                 Housing, scored by Homes for Living, also carries `points` out
 #                 of `max`. The maximum is the candidate's own: the
@@ -472,13 +506,15 @@ SCORES_HEADER = """\
 #                 `record` and `overall` appear on a sitting incumbent whose
 #                 housing record Homes for Living have scored, and on nobody
 #                 else. `record` is that score - `points` out of `max`, its own
-#                 `percent`, the `share` of the topic it carries, and the
-#                 grader's `rationale` - and `overall` is the blend `grade` was
-#                 banded from: the record's share of it, and the questionnaire's
-#                 `percent` for the rest. The two fractions are published
-#                 separately because they do not add up into one; a record worth
-#                 30% on its own is not 10 more points on a 60-point total.
-#                 Without them, `percent` is the whole of the grade.
+#                 `percent`, the `share` of the topic it carries, the `owner`
+#                 who scored it and their `rationale` - and `overall` is the
+#                 blend `grade` was banded from: the record's share of it, and
+#                 the questionnaire's `percent` for the rest. The two fractions
+#                 are published separately because they do not add up into one;
+#                 a record worth 30% on its own is not 10 more points on a
+#                 60-point total. Without them, `percent` is the whole of the
+#                 grade; where the candidate returned nothing, `share` is 100
+#                 and the record is.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
@@ -1497,12 +1533,22 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
                 grade_rows.get((key, subject_name), []), name, subject_name,
                 subject_id, question_labels, warnings)
 
+            # A topic graded N/A on a candidate with no rows at all on its
+            # grading tab is not half-scored, it is out of scope: a sitting
+            # incumbent who never returned the questionnaire cannot be scored on
+            # answers they did not give. The refusal below is about a partly
+            # scored candidate and has nothing to say here, and letting it fire
+            # would drop the topic off the page rather than publish the N/A that
+            # explains it - leaving a dash beside the six topics that do say so.
+            out_of_scope = (grade == NOT_APPLICABLE_LABEL and not questions
+                            and record is None)
+
             # A scored subject publishes a cumulative total, and refuses to
             # publish at all until every question a candidate was asked carries
             # a score. The deploy checkbox says the partner org is finished;
             # this says whether the numbers behind it agree.
             score = None
-            if rubric_for(subject_id):
+            if rubric_for(subject_id) and not out_of_scope:
                 score = subject_score(questions, record, name, subject_name,
                                       subject_id, warnings)
                 if score is None:
@@ -1543,6 +1589,10 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
         record = {
             "name": candidates[(norm(name), muni_slug)],
             "municipality": muni_slug,
+            # A roster row is a sitting incumbent the Apps Script gave a record
+            # row to because they are an incumbent, not because they replied.
+            # Everything else on this tab got here by replying.
+            "returned": not key.startswith(ROSTER_KEY_PREFIX),
             "subjects": published,
         }
 
@@ -1565,6 +1615,33 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             continue
 
         where, previous_row = seen[identity]
+
+        # One of the two rows came off the roster and the other off a
+        # submission, which happens when somebody is given a record row as a
+        # non-respondent and then returns the questionnaire after all. The
+        # submission wins: it is the fuller picture of the same person, and it
+        # is the row every other subject's grades are keyed to.
+        #
+        # Said out loud rather than resolved quietly, because the record score
+        # does not come with it. The grading rows are joined by key here, so the
+        # score sitting on the roster row counts towards nothing until somebody
+        # copies it onto the submission's own record row - while the sheet's own
+        # housing formula, which matches on name and municipality, has already
+        # blended it in. The two would disagree until it is moved.
+        if records[where]["returned"] != record["returned"]:
+            keeping = records[where] if records[where]["returned"] else record
+            warnings.append(
+                f"{CATEGORY_TAB} rows {previous_row} and {i}: {name} ({muni_slug}) "
+                f"has both a roster {RECORD_LABEL} row and a submission of their "
+                f"own. The submission is published; the roster row's record score "
+                f"counts towards nothing until it is copied onto the submission's "
+                f"{RECORD_LABEL} row and the roster row is deleted."
+            )
+            if keeping is record:
+                records[where] = record
+                seen[identity] = (where, i)
+            continue
+
         if records[where]["subjects"] and published:
             errors.append(
                 f"{CATEGORY_TAB} rows {previous_row} and {i}: both publish subjects for "
@@ -1612,6 +1689,11 @@ def subject_questions(rows, candidate, subject_name, subject_id, question_labels
                 "max_points": number_or_none(cell(G_WEIGHT), where, "max points",
                                              warnings),
                 "rationale": clean_text(row[G_RATIONALE] if G_RATIONALE < len(row) else ""),
+                # Its own, off its own registry row, rather than borrowed from
+                # the questions beside it. On a candidate who returned nothing
+                # there are no questions to borrow from, and the record card is
+                # the one thing on the page naming who scored it.
+                "owner": cell(G_OWNER),
             }
             continue
         if label not in question_labels:
@@ -1696,6 +1778,14 @@ def subject_score(questions, record, candidate, subject_name, subject_id, warnin
     Category Grades formula - see points_rollup_formula() in
     scripts/questionnaire/grading_tabs.py.
 
+    An incumbent who never returned the questionnaire has no scored question
+    and a record all the same, and that record is the whole of their grade
+    rather than 30% of it - there is no questionnaire for the other 70% to be a
+    share of. That subject publishes the record and nothing else: no `points`,
+    no `max` and no `percent`, because none of the three exists, and `share`
+    reads 100 rather than 30. It is the only shape here with no questionnaire
+    figure in it, and the candidate page reads that as the whole story.
+
     An incumbent's scored record is published beside the questionnaire rather
     than folded into it, with `overall` stating the blend the letter came from.
     Three figures rather than one because the blend is not arithmetic a reader
@@ -1710,6 +1800,15 @@ def subject_score(questions, record, candidate, subject_name, subject_id, warnin
                          if q["points"] is None and (q["answer"] or q["selected"])]
 
     if not scored:
+        # Nothing to score and a scored record: the candidate has no question
+        # rows at all, which on a grading tab that fans every question out to
+        # everybody means they never submitted. Their record is the whole of the
+        # grade. Deliberately not `not scored` alone - a candidate who did
+        # submit and whose housing answers are all still unscored has question
+        # rows, and publishing their record at 100% would quietly grade them on
+        # a term instead of on the answers nobody has got to yet.
+        if not questions and record is not None and record["points"] is not None:
+            return record_score(record, candidate, subject_name, 100, warnings)
         warnings.append(
             f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} has no score on any "
             f"question, so the subject is not published."
@@ -1745,6 +1844,35 @@ def subject_score(questions, record, candidate, subject_name, subject_id, warnin
 
     if record is None or record["points"] is None:
         return score
+
+    blend = record_score(record, candidate, subject_name,
+                         round(100 * RECORD_SHARE), warnings)
+    if blend is None:
+        return None
+
+    score["record"] = blend["record"]
+    # Rounded once, from the unrounded shares, so the published figure is the
+    # one the sheet banded into the letter above it rather than a blend of two
+    # numbers that have each already lost their decimals.
+    record_share = 100 * record["points"] / record["max_points"]
+    score["overall"] = round((1 - RECORD_SHARE) * share + RECORD_SHARE * record_share)
+    return score
+
+
+def record_score(record, candidate, subject_name, share, warnings):
+    """The incumbent record as a published block, or None if it cannot be.
+
+    `share` is what the record is worth of the topic: RECORD_SHARE beside a
+    questionnaire, and the whole 100 where the candidate returned none. Both
+    callers go through here so the one refusal that matters - a score with no
+    maximum beside it - reads the same either way.
+
+    A record scored with no `Max points` stops the subject publishing, exactly
+    as a question in that state does. There the total would be flattered; here
+    the sheet's letter and the page's figures would be computed from different
+    rules, and on a candidate with no questionnaire there would be no rule left
+    at all.
+    """
     if not record["max_points"]:
         warnings.append(
             f"{GRADE_TAB_PREFIX}{subject_name}: {candidate} is scored "
@@ -1755,19 +1883,18 @@ def subject_score(questions, record, candidate, subject_name, subject_id, warnin
         )
         return None
 
-    record_share = 100 * record["points"] / record["max_points"]
-    score["record"] = {
-        "points": record["points"],
-        "max": record["max_points"],
-        "percent": round(record_share),
-        "share": round(100 * RECORD_SHARE),
-        "rationale": record["rationale"],
+    percent = round(100 * record["points"] / record["max_points"])
+    return {
+        "record": {
+            "points": record["points"],
+            "max": record["max_points"],
+            "percent": percent,
+            "share": share,
+            "rationale": record["rationale"],
+            "owner": record["owner"],
+        },
+        "overall": percent,
     }
-    # Rounded once, from the unrounded shares, so the published figure is the
-    # one the sheet banded into the letter above it rather than a blend of two
-    # numbers that have each already lost their decimals.
-    score["overall"] = round((1 - RECORD_SHARE) * share + RECORD_SHARE * record_share)
-    return score
 
 
 def scale_score(scored, candidate, subject_name, ceiling, warnings):
@@ -1851,6 +1978,10 @@ def render_scores(graded_subjects, records):
     for record in records:
         parts.append(f"  - name: {scalar(record['name'])}")
         parts.append(f"    municipality: {record['municipality']}")
+        # Written only where it is false, so the file is unchanged for everybody
+        # who did reply and the flag reads as the exception it is.
+        if not record["returned"]:
+            parts.append("    returned: false")
 
         # The flat map first, because it is what the scorecard matrix reads and
         # what `c.scores[subject.id]` has always meant. `subjects` below carries
@@ -1881,7 +2012,12 @@ def render_scores(graded_subjects, records):
                 if score.get("max") is not None:
                     parts.append(f"          points: {score['points']}")
                     parts.append(f"          max: {score['max']}")
-                parts.append(f"          percent: {score['percent']}")
+                # Absent on a subject carried by the incumbent record alone:
+                # there is no questionnaire, so there is no share of one, and a
+                # 0% here would read as a candidate who answered badly rather
+                # than as one who did not answer.
+                if score.get("percent") is not None:
+                    parts.append(f"          percent: {score['percent']}")
                 # An incumbent scored on their record: what the questionnaire
                 # above is worth stops being the whole grade, so both halves and
                 # the blend are stated rather than one fraction a reader cannot
@@ -1894,6 +2030,8 @@ def render_scores(graded_subjects, records):
                     parts.append(f"            max: {incumbency['max']}")
                     parts.append(f"            percent: {incumbency['percent']}")
                     parts.append(f"            share: {incumbency['share']}")
+                    if incumbency["owner"]:
+                        parts.append(f"            owner: {scalar(incumbency['owner'])}")
                     if incumbency["rationale"]:
                         parts.append(f"            rationale: "
                                      f"{text_value(incumbency['rationale'], 14)}")
@@ -2110,8 +2248,11 @@ def main(argv=None):
 
     published = sum(len(r["subjects"]) for r in records)
     awaiting = sum(1 for r in records if not r["subjects"])
+    returned = sum(1 for r in records if r["returned"])
     print(f"{len(questions)} question(s) across {len(set(q['subject'] for q in questions))} subject(s); "
-          f"{len(records)} candidate(s) returned the questionnaire; "
+          f"{returned} candidate(s) returned the questionnaire, "
+          f"{len(records) - returned} sitting incumbent(s) on the sheet for their "
+          f"housing record alone; "
           f"{published} published subject grade(s), {awaiting} candidate(s) with none yet")
     if not args.publish:
         print("publication is off (PUBLISH_GRADES is False): every candidate is "

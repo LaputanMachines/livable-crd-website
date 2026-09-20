@@ -11,13 +11,18 @@
 #
 # Three things are attached to each candidate the grading sheet knows about:
 #
-#   questionnaire_returned  true. Every candidate listed in scores.yml has a row
-#                    on the grading sheet, and having one means they returned
-#                    the questionnaire. This is set even when nothing has been
-#                    published for them yet, which is the whole point of it: the
-#                    scorecard draws "returned it, still being graded"
-#                    differently from "never replied", and before this the two
-#                    were the same dash.
+#   questionnaire_returned  true, unless the entry carries `returned: false`.
+#                    Almost every candidate listed in scores.yml has a row on
+#                    the grading sheet because they returned the questionnaire,
+#                    and this is set even when nothing has been published for
+#                    them yet, which is the whole point of it: the scorecard
+#                    draws "returned it, still being graded" differently from
+#                    "never replied", and before this the two were the same
+#                    dash. The exception is a sitting incumbent on the sheet
+#                    only because Homes for Living scored their housing record;
+#                    they never replied, their grades still publish, and the
+#                    flag stays off so the scorecard says the true thing about
+#                    them.
 #   scores           the top-level letter per published subject, merged into the
 #                    map the scorecard matrix and the candidate page already
 #                    read as `c.scores[subject.id]`. Nothing downstream had to
@@ -66,8 +71,11 @@ module LivableCrd
         result = results.delete(join_key(candidate["name"], candidate["municipality"]))
         next unless result
 
-        returned += 1
-        candidate["questionnaire_returned"] = true
+        replied = result["returned"] != false
+        if replied
+          returned += 1
+          candidate["questionnaire_returned"] = true
+        end
         # Merge rather than replace: a subject the grading sheet has not
         # published keeps whatever candidates.yml said about it, which is how a
         # grade sourced from the tracking sheet would still show through.

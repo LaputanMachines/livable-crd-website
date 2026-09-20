@@ -1,5 +1,5 @@
 {%- comment -%}
-  The grading key: four letters and the three states that are not letters.
+  The grading key: four letters and the four states that are not letters.
   Rendered directly above the grades it explains, on the scorecard matrix and on
   every candidate page.
 
@@ -33,6 +33,17 @@
     <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
   </span>
   {% endfor %}
+  {%- comment -%}
+    "Not Applicable" names the N/A chip, which reaches a whole topic on one kind
+    of candidate: a sitting incumbent who never returned the questionnaire but
+    whose housing record Homes for Living scored anyway. Housing carries a real
+    letter for them and every other topic carries this, because there are no
+    answers to grade and there will not be any. The same chip appears on a
+    single question a candidate could not be asked, which is where it started.
+  {%- endcomment -%}
+  <span class="scorecard-legend__item">
+    {% include grade-badge.html grade="N/A" %}Not Applicable
+  </span>
   {%- comment -%}
     "Submitted, Grading In-Progress" names the hourglass, which is the default
     on every topic a returned candidate is waiting on. Two of those topics —

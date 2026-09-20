@@ -464,8 +464,9 @@ a letter on each answer.
 
 It is also the one tab carrying a row nobody was asked: `HFL-INC`, Homes for Living's
 score for a sitting councillor's record over the term just ending, worth 30% of the
-housing grade on its own. See "The incumbent record, and the 70/30 split" below;
-everything in this section describes the questionnaire's 70%.
+housing grade on its own - and the whole of it for a sitting incumbent who never returned
+the questionnaire. See "The incumbent record, and the 70/30 split" below; everything in
+this section describes the questionnaire's 70%.
 
 `Grade - Housing` is the same thirteen columns as every other grading tab. Two of them
 mean something else on it, and their headers say so:
@@ -559,6 +560,44 @@ same branch - an incumbent whose record was scored with no `Max points` beside
 it, which `Grading > Check setup` reports and `sync-questionnaire.py` refuses to
 publish.
 
+#### The incumbents who never replied
+
+The record is a fact about a term in office, not about a questionnaire, so it is
+scored for **every** sitting incumbent and not only for the ones who answered.
+The sweep therefore creates an `HFL-INC` row for each of them - 42 of the 66 on
+the roster today have no submission at all - and for those candidates the blend
+collapses the other way: there is no questionnaire for the 70% to be a share of,
+so the record is 100% of the housing grade. The same `MAX(IF(...))` carries both
+collapses, one per maximum being zero.
+
+Those candidates have no submission id, so their rows are keyed off the roster
+instead: `INC-` then their name and municipality, which is stable run to run and
+cannot be mistaken for one of Tally's seven-character ids. The key is the only
+thing about them that is different; the row is the same thirteen columns, scored
+in the same column H, out of the same `Max points`.
+
+They get a `Category Grades` and a `Category Stats` row too, because a score with
+nothing to roll up to is not a grade. On that row **every subject but Housing
+reads `N/A`** - not blank, which on that tab means "not graded yet" and would be
+a promise nobody is going to keep. It is a formula rather than typed text, so the
+row stays blank all the way across until Homes for Living score the record, and
+a partner org who does grade one of these candidates from the public record types
+their letter straight over it.
+
+The municipality is written the way the Tally form spells it ("Oak Bay", not
+`oak-bay`), taken from the submissions already on the sheet and title-cased where
+no one has submitted from that municipality yet. That is not cosmetic: the
+housing rollup finds a candidate's record row by name **and** municipality, so a
+record filed one way beside answers filed the other counts towards nothing.
+
+One case needs a human. A roster row is only ever created for somebody with no
+submission, but the sweep is append-only, so an incumbent who returns the
+questionnaire *after* being given one ends up with two rows and two identities on
+this sheet. `Grading > Check setup` names them, `sync-questionnaire.py` warns and
+publishes the submission, and the fix is to copy the record score onto the
+submission's own `HFL-INC` row and delete the `INC-` rows from `Grade - Housing`
+and `Category Grades`.
+
 #### Who counts as an incumbent
 
 Nothing in this spreadsheet says, and nothing should be added to it that does.
@@ -601,8 +640,9 @@ python3 scripts/questionnaire/grading_tabs.py
    registry row, and `Homes for Living` into its `Owner`. The script writes
    neither: a maximum is the rubric, and an owner is a claim about who graded it.
    Until the maximum is there, no incumbent's record counts towards their grade.
-4. `Grading > Sync now`, which appends one `HFL-INC` row per sitting incumbent who
-   has submitted - 19 of the 63 today.
+4. `Grading > Sync now`, which appends one `HFL-INC` row per sitting incumbent -
+   24 who submitted and 42 who did not, and a `Category Grades` and `Category
+   Stats` row for each of that second group.
 5. `Grading > Check setup`. It now also reports the roster, the record's missing
    maximum, and any submission it could not find on the roster.
 

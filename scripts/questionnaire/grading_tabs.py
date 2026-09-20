@@ -169,11 +169,22 @@ RECORD_QUESTION = (
 )
 RECORD_TYPE = "record"
 RECORD_NOTES = (
-    f"Not a form question: no raw columns, and the row is only created for "
-    f"candidates _data/candidates.yml lists as sitting incumbents. Worth "
-    f"{RECORD_SHARE:.0%} of the housing grade on its own; the questionnaire "
-    f"carries the other {1 - RECORD_SHARE:.0%}."
+    f"Not a form question: no raw columns, and the row is created for every "
+    f"candidate _data/candidates.yml lists as a sitting incumbent, whether or "
+    f"not they returned the questionnaire. Worth {RECORD_SHARE:.0%} of the "
+    f"housing grade beside a questionnaire that carries the other "
+    f"{1 - RECORD_SHARE:.0%}, and the whole of it where there is no "
+    f"questionnaire to carry anything."
 )
+
+# Column A on a row the Apps Script created from the roster rather than from a
+# submission: a sitting incumbent who never returned the questionnaire has no
+# submission id to key a row on. Mirrors ROSTER_KEY_PREFIX in Code.gs, which
+# builds the keys; nothing here writes one, and what this needs the prefix for
+# is telling those rows apart from the rest on `Category Grades`, where their
+# subjects other than Housing read N/A instead of a rollup.
+ROSTER_KEY_PREFIX = "INC-"
+NOT_APPLICABLE = "N/A"
 
 # Where each rubric's bands fall, as a share of what was available. Ascending,
 # because MATCH with a 1 finds the last threshold at or below the value.
@@ -792,6 +803,12 @@ def points_rollup_formula(category, line):
     with no Max points beside it collapses the same way rather than dividing by
     zero and blanking the grade; Grading > Check setup reports it, and
     sync-questionnaire.py refuses to publish the subject until it is fixed.
+
+    It collapses the other way as well. A sitting incumbent who never returned
+    the questionnaire has no scored question and so no questionnaire maximum,
+    and 70% of nothing is not a grade: their record is the whole of it, at 100%.
+    Both maxima at 0 is a candidate nobody has scored on anything, which divides
+    by zero and leaves the cell blank - which is what blank means here.
     """
     return "=" + band_expression(points_ratio(category, line), POINTS_BANDS)
 
@@ -814,9 +831,34 @@ def points_ratio(category, line):
     record_points = f"SUMIFS({tab}!$H:$H,{where},{record})"
     record_max = f"SUMIFS({tab}!$I:$I,{where},{record},{scored})"
     questionnaire = f"{points}/{maximum}"
-    blended = (f"{1 - RECORD_SHARE:g}*{questionnaire}"
-               f"+{RECORD_SHARE:g}*{record_points}/{record_max}")
-    return f"MAX(IF({record_max}=0,{questionnaire},{blended}),0)"
+    alone = f"{record_points}/{record_max}"
+    blended = f"{1 - RECORD_SHARE:g}*{questionnaire}+{RECORD_SHARE:g}*{alone}"
+    return (f"MAX(IF({record_max}=0,{questionnaire},"
+            f"IF({maximum}=0,{alone},{blended})),0)")
+
+
+def not_applicable_formula(line):
+    """A `Category Grades` cell reading N/A once the incumbent record is scored.
+
+    For the subjects a candidate who returned nothing can never be graded on.
+    Blank on that tab means "not graded yet", and that would be a promise nobody
+    is going to keep; N/A says the question does not apply to this candidate,
+    which is true and is what the site already draws for a question in that
+    state.
+
+    Conditional rather than a typed N/A because the row exists from the moment
+    the roster names the person, and until Homes for Living have scored their
+    record nothing about them has been decided: the row is blank throughout,
+    exactly as a candidate awaiting their first grade is. Mirrors
+    notApplicableFormula() in appsscript/Code.gs, which writes it on a new row;
+    this one is here so refresh_scored_rollup() recognises it and leaves the
+    scored subjects of a roster row alone.
+    """
+    tab = f"'{GRADE_TAB_PREFIX}{RECORD_CATEGORY}'"
+    where = f"{tab}!$B:$B,$B{line},{tab}!$C:$C,$C{line}"
+    record = f'{tab}!$D:$D,"{RECORD_LABEL}"'
+    scored = f'{tab}!$H:$H,"<>"'
+    return f'=IF(COUNTIFS({where},{record},{scored})=0,"","{NOT_APPLICABLE}")'
 
 
 def scale_rollup_formula(category, line):
@@ -1214,6 +1256,12 @@ def refresh_scored_rollup(sh, categories):
     A cell holding a letter somebody typed is left alone and reported, because
     it is the override the rule above exists to protect. Only a cell still
     holding a formula is rewritten.
+
+    A roster row - a sitting incumbent who never returned the questionnaire, see
+    ROSTER_KEY_PREFIX - wants a different formula on every subject but the one
+    their record is scored under: there are no answers to score, so Arts reads
+    N/A rather than a rollup of nothing. Housing is unaffected and gets the
+    ordinary points rollup, which is what carries their record at 100%.
     """
     sheet = sheet_by_title(sh, CATEGORY_TAB)
     if sheet is None:
@@ -1231,7 +1279,10 @@ def refresh_scored_rollup(sh, categories):
             if not (row and str(row[0]).strip()):
                 continue
             current = str(row[column]).strip() if len(row) > column else ""
-            wanted = rollup_formula(category, offset)
+            wanted = (not_applicable_formula(offset)
+                      if (str(row[0]).strip().startswith(ROSTER_KEY_PREFIX)
+                          and category != RECORD_CATEGORY)
+                      else rollup_formula(category, offset))
             if current == wanted:
                 continue
             if current and not current.startswith("="):

@@ -28,6 +28,15 @@
  * the sheet, corrects the cell and stamps the hash. Only a row with a hash is
  * eligible for drift flagging, so reconciliation is silent and drift is not.
  *
+ * Not every row comes from a submission. Homes for Living score a sitting
+ * councillor's record on housing whether or not that councillor returned the
+ * questionnaire, so every sitting incumbent on the published roster gets an
+ * HFL-INC row on `Grade - Housing` - keyed off the roster where there is no
+ * submission id to key it on - and a `Category Grades` row to roll it up to.
+ * For those candidates the record is the whole of the housing grade rather than
+ * 30% of it, and every other subject reads N/A. See recordOnlyIncumbents(),
+ * pointsRatio() and notApplicableFormula().
+ *
  * Both paths also keep `Category Grades` current: one row per candidate (not
  * per question), added the first time any of their answers sync in. Each
  * category is a (grade, deploy checkbox) pair of columns: the grade cell
@@ -94,6 +103,21 @@ var SCALE_CATEGORIES = { 'Arts': 3 };
 // renders the same formula; change them together.
 var RECORD_LABEL = 'HFL-INC';
 var RECORD_SHARE = 0.3;
+var RECORD_CATEGORY = 'Housing';
+
+// A sitting incumbent has a record whether or not they answered anything, so the
+// record row is created for every one of them and not only for the ones who
+// submitted. Somebody who never returned the questionnaire has no submission id
+// to key their row on, so it is keyed off the roster instead: this prefix, their
+// name and their municipality, which is stable across runs and cannot collide
+// with one of Tally's seven-character ids.
+//
+// Their record is then the whole of their housing grade rather than 30% of it -
+// there is no questionnaire for the other 70% - and every other subject on their
+// Category Grades row reads N/A, because there are no answers to grade and never
+// will be. See pointsRatio() and notApplicableFormula().
+var ROSTER_KEY_PREFIX = 'INC-';
+var NOT_APPLICABLE = 'N/A';
 
 // Column F on a record row. Every other row holds what the candidate wrote, and
 // a blank cell there would read as an unanswered question rather than as a row
@@ -119,7 +143,7 @@ var RECORD_ANSWER = 'No candidate answer. Homes for Living score this ' +
 // so a wrong one has to be deleted by hand.
 var ROSTER_URL = 'https://raw.githubusercontent.com/LaputanMachines/' +
     'livable-crd-website/main/_data/candidates.yml';
-var ROSTER_CACHE_KEY = 'roster-standing-v1';
+var ROSTER_CACHE_KEY = 'roster-standing-v2';
 var ROSTER_CACHE_SECONDS = 21600;  // six hours; the file is rewritten daily
 var ROSTER_INCUMBENT_RE = /^incumbent(-|$)/;
 
@@ -282,8 +306,10 @@ function syncFromPayload(data) {
     // sweep reads. Unknown - roster unreadable, or a name it does not list -
     // means no record row now; the next sweep adds it if the answer changes.
     var roster = incumbentIndex();
-    var isIncumbent = !!(roster &&
-        roster[rosterKey(candidate.name, candidate.municipality)]);
+    var listed = roster ? roster[rosterKey(candidate.name, candidate.municipality)] : null;
+    // `.incumbent`, not the entry itself: the roster carries every confirmed
+    // candidate, so its presence says only that the name was found.
+    var isIncumbent = !!(listed && listed.incumbent);
 
     var pending = {}, byTab = {}, skipped = 0;
 
@@ -536,18 +562,27 @@ function syncAll(trigger) {
     // every pass down the submissions. A null index means the roster could not
     // be read, and standing[] stays empty, so no record row is created at all.
     var roster = incumbentIndex();
-    var standing = {}, unrostered = [];
-    if (roster) {
-      for (var d = 1; d < rawValues.length; d++) {
-        var who = rosterKey(candidateName(rawValues[d]),
-                            String(rawValues[d][COL_MUNICIPALITY - 1] || ''));
-        if (!(who in roster)) {
-          if (unrostered.indexOf(who) === -1) unrostered.push(who);
-          continue;
-        }
-        standing[d] = roster[who];
+    var standing = {}, unrostered = [], submitted = {}, municipalities = {};
+    for (var d = 1; d < rawValues.length; d++) {
+      var muni = String(rawValues[d][COL_MUNICIPALITY - 1] || '').trim();
+      var who = rosterKey(candidateName(rawValues[d]), muni);
+      // Collected whether or not the roster could be read: it is what tells a
+      // sitting incumbent who answered from one who did not, and the second
+      // group is the one that gets a record row off the roster below.
+      submitted[who] = true;
+      if (muni) municipalities[slugify(muni)] = muni;
+      if (!roster) continue;
+      if (!(who in roster)) {
+        if (unrostered.indexOf(who) === -1) unrostered.push(who);
+        continue;
       }
+      standing[d] = roster[who].incumbent;
     }
+
+    // The sitting incumbents with nothing on the raw tab. They get the record
+    // row and nothing else, because there are no answers to fan out.
+    var rosterOnly = recordOnlyIncumbents(roster, submitted, municipalities);
+    var hasRecord = false;
     if (unrostered.length) {
       // Not an error in itself - a submission can arrive before the tracking
       // sheet confirms the candidate - but while it lasts, nothing here knows
@@ -620,6 +655,28 @@ function syncAll(trigger) {
           drifted++;
         }
       }
+
+      // The same row again for the sitting incumbents who never submitted,
+      // keyed off the roster rather than off a submission id they do not have.
+      // Only the record row: every other question needs an answer, and they
+      // gave none. Appended here, inside the record question's own pass, so
+      // that a registry with no record row on it creates none of these either.
+      if (!question.record) continue;
+      hasRecord = true;
+      for (var p = 0; p < rosterOnly.length; p++) {
+        var person = rosterOnly[p];
+        var personKey = person.key + '|' + question.label;
+        if (tab.existing[personKey]) continue;
+        pending[tabName].push({
+          key: personKey,
+          candidate: person.candidate,
+          municipality: person.municipality,
+          label: question.label,
+          question: question.text,
+          answer: RECORD_ANSWER,
+          hash: digest(RECORD_ANSWER)
+        });
+      }
     }
 
     for (var name in pending) {
@@ -647,8 +704,14 @@ function syncAll(trigger) {
         municipality: String(srow[COL_MUNICIPALITY - 1] || '').trim()
       });
     }
-    var categoryRows = ensureCategoryRows(ss, submissions, trigger);
-    var statsRows = ensureStatsRows(ss, submissions, trigger);
+    // Roster-only incumbents get a row on both tabs as well, so their record
+    // has somewhere to roll up to. Only once the registry actually carries the
+    // record row: without it they have no HFL-INC row either, and a Category
+    // Grades row for a candidate with nothing on any grading tab would publish
+    // as "returned the questionnaire" when they did the opposite.
+    var everyone = hasRecord ? submissions.concat(rosterOnly) : submissions;
+    var categoryRows = ensureCategoryRows(ss, everyone, trigger);
+    var statsRows = ensureStatsRows(ss, everyone, trigger);
 
     var props = PropertiesService.getScriptProperties();
     props.setProperty(PROP_LAST_ROW, String(raw.getLastRow()));
@@ -659,7 +722,9 @@ function syncAll(trigger) {
     if (appended || drifted || reconciled || categoryRows || statsRows) {
       log(trigger, 'synced', appended + ' row(s) appended across ' + tabs +
           ' tab(s); ' + reconciled + ' reconciled; ' + drifted + ' answer(s) changed; ' +
-          categoryRows + ' category row(s) added; ' + statsRows + ' stats row(s) added');
+          categoryRows + ' category row(s) added; ' + statsRows + ' stats row(s) added; ' +
+          rosterOnly.length + ' sitting incumbent(s) with no submission carry a ' +
+          RECORD_LABEL + ' row of their own');
     }
     return { appended: appended, tabs: tabs, drifted: drifted, reconciled: reconciled,
              category: categoryRows, stats: statsRows };
@@ -835,6 +900,12 @@ function ensureCategoryRows(ss, submissions, trigger) {
       if (!label) continue;
       if (label.endsWith(CATEGORY_DEPLOY_SUFFIX)) {
         out[c - 1] = false;  // unchecked until a partner org signs off
+      } else if (sub.record && label !== RECORD_CATEGORY) {
+        // A candidate who returned nothing cannot be graded on what they did
+        // not say, so every subject but the one their record is scored under
+        // says so rather than sitting blank as though grading were still to
+        // come. See notApplicableFormula().
+        out[c - 1] = notApplicableFormula(line);
       } else {
         out[c - 1] = categoryFormula(label, line);
       }
@@ -993,6 +1064,13 @@ function letterAverage(tab, row) {
  * points collapses the same way rather than dividing by zero and blanking the
  * grade; Grading > Check setup reports it.
  *
+ * It collapses the other way too, and for the mirror-image reason. A sitting
+ * incumbent who never returned the questionnaire has no scored question and so
+ * no questionnaire maximum, and 70% of nothing is not a grade: the record is
+ * the whole of it, at 100%. Both maxima at 0 is a candidate nobody has scored
+ * on anything, which divides by zero and leaves the cell blank - which is what
+ * blank means here, and the right answer.
+ *
  * Typed-over-able, exactly as the letter rollup is: the partner org replacing
  * this with their own call is the intended use, not a mistake.
  */
@@ -1014,9 +1092,39 @@ function pointsRatio(tab, row) {
   var recordMax = 'SUMIFS(' + tab + '!$I:$I,' + where + ',' + record + ',' + scored + ')';
 
   var questionnaire = points + '/' + max;
+  var alone = recordPoints + '/' + recordMax;
   var blended = (1 - RECORD_SHARE) + '*' + questionnaire + '+' +
-      RECORD_SHARE + '*' + recordPoints + '/' + recordMax;
-  return 'MAX(IF(' + recordMax + '=0,' + questionnaire + ',' + blended + '),0)';
+      RECORD_SHARE + '*' + alone;
+  return 'MAX(IF(' + recordMax + '=0,' + questionnaire +
+      ',IF(' + max + '=0,' + alone + ',' + blended + ')),0)';
+}
+
+
+/**
+ * A Category Grades cell reading N/A once the incumbent record is scored.
+ *
+ * For the subjects a candidate who returned nothing can never be graded on.
+ * Blank on that tab means "not graded yet", which would be a promise nobody is
+ * going to keep; N/A says the question does not apply to this candidate, which
+ * is the truth and is what the site already draws for a question in that state.
+ *
+ * Conditional rather than a typed N/A because the row exists from the moment
+ * the roster names the person, and until Homes for Living have scored their
+ * record nothing about them has been decided at all: the row is blank
+ * throughout, exactly as a candidate awaiting their first grade is. The N/A
+ * appears with the score that makes it true.
+ *
+ * Typed-over-able like every other cell on the tab, which is the point of
+ * making it a formula: a partner org who does grade one of these candidates
+ * from the public record types their letter straight over it.
+ */
+function notApplicableFormula(row) {
+  var tab = "'" + GRADE_PREFIX + RECORD_CATEGORY + "'";
+  var where = tab + '!$B:$B,$B' + row + ',' + tab + '!$C:$C,$C' + row;
+  var record = tab + '!$D:$D,"' + RECORD_LABEL + '"';
+  var scored = tab + '!$H:$H,"<>"';
+  return '=IF(COUNTIFS(' + where + ',' + record + ',' + scored + ')=0,"","' +
+      NOT_APPLICABLE + '")';
 }
 
 
@@ -1188,7 +1296,11 @@ function incumbentIndex() {
 
 
 /**
- * _data/candidates.yml as {name|municipality: is a sitting incumbent}.
+ * _data/candidates.yml as {name|municipality: {name, municipality, incumbent}}.
+ *
+ * The name and the municipality are kept, not only the flag they were looked up
+ * by: a sitting incumbent who never submitted has no row anywhere on this sheet
+ * to take either from, and recordOnlyIncumbents() writes them into one.
  *
  * Line-based rather than a YAML parser, because Apps Script has none and the
  * file is a flat list of "- name:" blocks with two-space keys under each. The
@@ -1204,8 +1316,11 @@ function parseRoster(text) {
 
   var flush = function () {
     if (!current || !current.name || !current.municipality) return;
-    index[rosterKey(current.name, current.municipality)] =
-        ROSTER_INCUMBENT_RE.test(current.standing || '');
+    index[rosterKey(current.name, current.municipality)] = {
+      name: current.name,
+      municipality: current.municipality,
+      incumbent: ROSTER_INCUMBENT_RE.test(current.standing || '')
+    };
     total++;
   };
 
@@ -1248,6 +1363,69 @@ function yamlValue(text) {
  */
 function rosterKey(name, municipality) {
   return normText(name) + '|' + slugify(municipality);
+}
+
+
+/**
+ * The sitting incumbents with no row on the raw tab, as rows to be created.
+ *
+ * Homes for Living score what a councillor did about housing this term, and a
+ * councillor who never returned the questionnaire still did something. So the
+ * record row is created for every sitting incumbent, and the ones here are the
+ * ones it is the whole of: no answers, no questionnaire share, the record at
+ * 100% - see pointsRatio().
+ *
+ * An empty list when the roster could not be read, on the same reasoning that
+ * stops a bad read creating record rows for submissions: these rows are
+ * append-only, and a wrong one has to be deleted by hand.
+ */
+function recordOnlyIncumbents(roster, submitted, municipalities) {
+  var out = [];
+  if (!roster) return out;
+  for (var who in roster) {
+    var person = roster[who];
+    if (!person.incumbent || submitted[who]) continue;
+    out.push({
+      key: rosterRowKey(person.name, person.municipality),
+      candidate: person.name,
+      municipality: municipalityName(person.municipality, municipalities),
+      record: true
+    });
+  }
+  return out;
+}
+
+
+/**
+ * Column A for a row that came from the roster instead of from a submission.
+ *
+ * Name and municipality both, because two municipalities can elect people of
+ * the same name, and prefixed because every other key on these tabs is one of
+ * Tally's seven-character submission ids and the two must never be mistaken for
+ * each other. Derived rather than random so the same person produces the same
+ * key on every run, which is what keeps the sweep append-only.
+ */
+function rosterRowKey(name, municipality) {
+  return ROSTER_KEY_PREFIX + slugify(name) + '-' + slugify(municipality);
+}
+
+
+/**
+ * A municipality slug as the grading tabs spell it.
+ *
+ * The roster holds the site's slug ("oak-bay") and the grading tabs hold what
+ * the Tally form offered ("Oak Bay"), and the two have to match exactly: the
+ * housing rollup finds a candidate's record row by name and municipality, so a
+ * record row filed under "oak-bay" beside answers filed under "Oak Bay" would
+ * count towards nothing. The submissions already on the sheet are the authority
+ * on the form's own spelling; title case is the fallback for a municipality
+ * nobody has submitted from yet, and it is exact for all thirteen.
+ */
+function municipalityName(slug, seen) {
+  if (seen && seen[slug]) return seen[slug];
+  return String(slug || '').split('-').map(function (word) {
+    return word ? word.charAt(0).toUpperCase() + word.slice(1) : word;
+  }).join(' ');
 }
 
 
@@ -1549,15 +1727,17 @@ function menuCheckSetup() {
     problems.push('The published candidate roster could not be read, so no ' +
                   RECORD_LABEL + ' row is being created for anybody. See Sync Log.');
   } else {
-    var listed = 0, sitting = 0, missing = [];
+    var listed = 0, sitting = 0, missing = [], submitted = {}, superseded = [];
     for (var who in roster) {
       listed++;
-      if (roster[who]) sitting++;
+      if (roster[who].incumbent) sitting++;
     }
     var raw = ss.getSheetByName(RAW_TAB).getDataRange().getValues();
     for (var r = 1; r < raw.length; r++) {
-      var key = rosterKey(candidateName(raw[r]),
-                          String(raw[r][COL_MUNICIPALITY - 1] || ''));
+      var name = candidateName(raw[r]);
+      var where = String(raw[r][COL_MUNICIPALITY - 1] || '');
+      var key = rosterKey(name, where);
+      submitted[key] = rosterRowKey(name, where);
       if (!(key in roster) && missing.indexOf(key) === -1) missing.push(key);
     }
     if (missing.length) {
@@ -1565,10 +1745,44 @@ function menuCheckSetup() {
                     'on the roster, so nothing here knows whether they are ' +
                     'incumbents: ' + missing.join(', '));
     }
+
+    var answered = 0, recordOnly = 0;
+    for (var inc in roster) {
+      if (!roster[inc].incumbent) continue;
+      if (submitted[inc]) answered++; else recordOnly++;
+    }
+
+    // A roster-keyed row is created only for somebody with no submission, and
+    // a submission that arrives afterwards does not delete it: the sweep is
+    // append-only, so the person now has two rows and two identities on this
+    // sheet. Nothing here can safely pick one, and publishing prefers the
+    // submission, so the roster row's score has to be moved by hand.
+    var grades = ss.getSheetByName(CATEGORY_TAB);
+    if (grades && grades.getLastRow() >= 2) {
+      var keys = grades.getRange(2, CG_KEY, grades.getLastRow() - 1, 2).getValues();
+      var held = {};
+      for (var k = 0; k < keys.length; k++) {
+        held[String(keys[k][0] || '').trim()] = String(keys[k][1] || '').trim();
+      }
+      for (var person in submitted) {
+        if (held[submitted[person]]) superseded.push(held[submitted[person]]);
+      }
+    }
+    if (superseded.length) {
+      problems.push(superseded.length + ' candidate(s) have both a roster ' +
+                    RECORD_LABEL + ' row and a submission of their own: ' +
+                    superseded.join(', ') + '. Copy the record score onto the ' +
+                    'submission\'s row and delete the "' + ROSTER_KEY_PREFIX +
+                    '" row on ' + CATEGORY_TAB + ' and ' + GRADE_PREFIX +
+                    RECORD_CATEGORY + '.');
+    }
+
     summary = '\n\nRoster: ' + listed + ' confirmed candidates, ' + sitting +
-        ' sitting incumbents. Each of those who has submitted gets a ' +
-        RECORD_LABEL + ' row worth ' + Math.round(RECORD_SHARE * 100) +
-        '% of their housing grade.';
+        ' sitting incumbents. Every one of them gets a ' + RECORD_LABEL +
+        ' row: worth ' + Math.round(RECORD_SHARE * 100) + '% of the housing ' +
+        'grade for the ' + answered + ' who submitted, and the whole of it for ' +
+        'the ' + recordOnly + ' who did not, whose other subjects read ' +
+        NOT_APPLICABLE + '.';
   }
 
   SpreadsheetApp.getUi().alert(problems.length
