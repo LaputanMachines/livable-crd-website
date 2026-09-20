@@ -92,9 +92,19 @@ def selected_options(answer):
     Script appends semicolon-separated. The second is parsed, because an option
     containing a comma ("Small homes (< 500 sq. ft.)") splits wrongly out of the
     first. A cell with no "Selected:" line is one option, unsplit.
+
+    Some cells carry only the "Selected:" list and no comma-joined line above
+    it, so the marker starts the cell instead of a line within it. Splitting on
+    the newline form alone leaves that marker glued to the first option, which
+    then matches nothing in a rubric that names its options.
     """
     text = str(answer or "")
-    tail = text.split("\nSelected:", 1)[1] if "\nSelected:" in text else text
+    if "\nSelected:" in text:
+        tail = text.split("\nSelected:", 1)[1]
+    elif text.lstrip().startswith("Selected:"):
+        tail = text.lstrip()[len("Selected:"):]
+    else:
+        tail = text
     return [part.strip().rstrip(".") for part in tail.split(";") if part.strip()]
 
 
@@ -133,6 +143,30 @@ def cli_06(answer):
     if count == 2:
         return "C"
     return "C-"
+
+
+def trn_01(answer):
+    """TRN-01, which fare measures a candidate would push for at the VRTC.
+
+    Every option on this menu is a fare cut for a group that cannot easily pay,
+    so unlike CLI-06 there is no cheap option to guard the top band against and
+    breadth is the whole signal. The ladder is a straight count of ticks, set to
+    match how the 78 rows graded before this rubric existed were actually
+    letters: four ticks was A on every one of them, three was usually B, two
+    usually C and one usually C-.
+    """
+    picked = {normalise(option) for option in selected_options(answer)}
+    picked.discard("none of the above")
+    count = len(picked)
+    if count >= 4:
+        return "A"
+    if count == 3:
+        return "B"
+    if count == 2:
+        return "C"
+    if count == 1:
+        return "C-"
+    return "F"
 
 
 RUBRICS = {
@@ -222,6 +256,125 @@ RUBRICS = {
         },
         "notes": "Graded by RUSH from 2026-09-01; the mapping is recorded here "
                  "so the remaining rows match the ones already typed.",
+    },
+    "ROL-02": {
+        "question": "Will you commit (or continue to commit) to physical "
+                    "protection (not paint alone) as the standard for all new "
+                    "and upgraded cycling infrastructure on busy streets in "
+                    "your municipality?",
+        "answers": {
+            "yes": "A",
+            "yes, except where physically impossible": "B",
+            "no": "F",
+        },
+        "notes": (
+            "Except where physically impossible is a condition that can be "
+            "checked against a street, so it takes the conditional-yes B, and "
+            "that is where the 19 rows graded before this rubric existed put "
+            "it. A No is F because the question sets a construction standard, "
+            "which is infrastructure."
+        ),
+    },
+    "ROL-03": {
+        "question": "Will you oppose efforts (current and future) to remove, "
+                    "narrow or downgrade existing protected bike lanes and "
+                    "other all-ages-and-abilities cycling infrastructure in "
+                    "your municipality during your term?",
+        "answers": {
+            "yes": "A",
+            "depends, case-by-case": "C",
+            "no": "F",
+        },
+        "notes": (
+            "Depends case by case names no test and commits to nothing, which "
+            "is the C it gets on CLI-08 and TRN-02; 13 of the 14 rows graded "
+            "before this rubric existed agree. A No is F because the question "
+            "is about keeping built infrastructure in place. An answer of N/A "
+            "is not listed: it is a claim that the question does not apply to "
+            "that municipality, which is a judgement about a candidate and is "
+            "passed in by hand, like an excused decline."
+        ),
+    },
+    "TRN-01": {
+        "question": "Which fare measures would you actively advocate for at "
+                    "the VRTC? Select all that apply.",
+        "multi": trn_01,
+        "notes": (
+            "A count of ticks, because no option here is cheaper than the "
+            "others in the way CLI-06's are. See trn_01 for where the "
+            "boundaries came from. The rows graded before this rubric was "
+            "written are not perfectly consistent with it at three and two "
+            "ticks; they were left as typed and the majority letter was taken."
+        ),
+    },
+    "TRN-02": {
+        "question": "Do you support removing general on-street parking from "
+                    "frequent transit corridors and main arterial streets, and "
+                    "reallocating that space to bus lanes, loading zones, and "
+                    "walking and cycling infrastructure?",
+        "answers": {
+            "yes, across the whole corridor": "A",
+            "yes, only during peak hours": "B",
+            "kind of, only when a specific project requires it": "C",
+            "no": "F",
+        },
+        "notes": (
+            "Peak hours only is a real, testable limit on a yes, so it takes "
+            "the conditional-yes B. Only when a specific project requires it "
+            "names no project and commits to nothing in advance, which is the "
+            "case-by-case answer CLI-08 puts at C. A No is F because the "
+            "question is about street space, which is infrastructure. Eight "
+            "of the earlier rows put the case-by-case option at B and "
+            "nineteen put it at C; the nineteen were followed."
+        ),
+    },
+    "TRN-03": {
+        "question": "Do you support rapid deployment of transit priority "
+                    "measures on frequent transit corridors, even where this "
+                    "requires removing on-street parking or a general-purpose "
+                    "traffic lane?",
+        "answers": {
+            "yes": "A",
+            "yes, but not at the cost of a general-purpose travel lane": "C-",
+            "no": "F",
+        },
+        "notes": (
+            "The question asks specifically about giving up a traffic lane, so "
+            "a yes that rules the lane out withholds the one thing being "
+            "asked for and cannot take the conditional-yes B. C- rather than "
+            "F because the rest of the toolkit is still on the table. A No is "
+            "F on the infrastructure side of the split."
+        ),
+    },
+    "TRN-04": {
+        "question": "Do you support the creation of a regional transportation "
+                    "authority?",
+        "answers": {
+            "yes": "A",
+            "no": "C-",
+        },
+        "notes": (
+            "A No is C- rather than F because this asks who should decide, not "
+            "what should be built or funded, which puts it on the governance "
+            "side of the CLI-03 split. Three earlier rows typed F and two "
+            "typed C-; the governance rule was followed over the count."
+        ),
+    },
+    "TRN-05": {
+        "question": "Do you support building new bus-only and bike-only "
+                    "connections through parks, golf courses or public land "
+                    "when doing so would substantially shorten transit and "
+                    "cycling trips?",
+        "answers": {
+            "yes": "A",
+            "yes, if no mature trees are lost during construction": "B",
+            "no": "F",
+        },
+        "notes": (
+            "Losing no mature trees is a named and checkable condition, so it "
+            "takes the conditional-yes B. A No is F because the question is "
+            "about building a connection, which is infrastructure."
+        ),
     },
 }
 
