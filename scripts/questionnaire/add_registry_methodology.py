@@ -64,6 +64,11 @@ NON_ANSWER = (
     "means ungraded."
 )
 
+# Questions whose grading is a documented band structure applied by a person
+# rather than a lookup table. They have no entry in RUBRICS on purpose, so the
+# cross-check below has to exempt them rather than treat them as an error.
+FREE_TEXT = {"WLK-02", "ROL-05"}
+
 METHODOLOGY = {
     "CLI-01": (
         "Two commitments in one question, so the menu answer alone cannot reach "
@@ -148,6 +153,69 @@ METHODOLOGY = {
         "question does not apply to that municipality, which is a judgement "
         "about a candidate and is passed in by hand, like an excused decline."
     ),
+    "GOV-02": (
+        "Yes = A. Yes, only if full cost recovery is guaranteed for my "
+        "municipality = B. No = C-. Full cost recovery is a named, checkable "
+        "condition on a yes, so it takes the conditional-yes B. A No is C- "
+        "rather than F because the question is about how services are "
+        "organised and who runs them, which is the governance side of the "
+        "split CLI-03 sits on the other side of. Unsure was typed C on three "
+        "rows before 2026-09-13 and those rows were reset to blank on "
+        "2026-09-20, so the question now follows the shared policy."
+    ),
+    "REC-01": (
+        "Yes = A. No = C-, on the same reasoning as GOV-02 and TRN-04: the "
+        "question is about who sits at the table, not about what gets built "
+        "or funded. No candidate has answered No, so that letter is a rule "
+        "rather than a record of how anyone was graded."
+    ),
+    "WLK-03": (
+        "Yes, a substantial increase, meaning more than double what is "
+        "currently spent = A. Yes, a modest increase, meaning more but less "
+        "than double = B, because that is a real commitment with a ceiling on "
+        "it. No, the current amount is sufficient = F, because the question "
+        "is about money for infrastructure, which is the funding side of the "
+        "split."
+    ),
+    "WLK-04": (
+        "Yes, and I would pursue a permanent expansion or implementation = A. "
+        "Yes, but only temporary, seasonal or pilot closures = B, because it "
+        "is a yes with a stated limit on it. No = F, because the question is "
+        "about street space, which is infrastructure. An answer of N/A is not "
+        "on this list: it is a claim that the municipality has no downtown, "
+        "main street or village centre, which is a judgement about a "
+        "candidate and is passed in by hand. It has been left blank where "
+        "that is true of the municipality and graded F everywhere the "
+        "question plainly does apply. Unsure was typed C on two rows "
+        "before 2026-09-13 and those rows were reset to blank on "
+        "2026-09-20, so the question now follows the shared policy."
+    ),
+    "WLK-02": (
+        "Free text, graded by a person against the two things the question "
+        "asks for: a named local problem, and one change committed to in a "
+        "first term. A = both, with the change specific enough to be "
+        "delivered and usually tied to funding, a named corridor or an "
+        "existing plan. B = the problem is named and the response is concrete "
+        "but soft, narrow, or a review rather than a change. C = a problem is "
+        "named and nothing is committed to, or the framing of the question is "
+        "declined. C- = no local problem is settled on, or the answer is a "
+        "general gesture. F = nothing responsive is offered. The bands come "
+        "from the 31 rows graded before 2026-09-20 and were applied to the "
+        "remaining 51 on that date."
+    ),
+    "ROL-05": (
+        "Free text, graded by a person on what the record shows about "
+        "advancing walking, rolling, cycling or transit. A = delivered work, "
+        "meaning budgets moved, plans adopted, infrastructure built, or a "
+        "sustained organisational role with results behind it. B = "
+        "substantial relevant advocacy or a directly relevant role, with less "
+        "account of what it produced. C = a record from a different office, "
+        "or advocacy confined to one location or issue, or no previous term "
+        "with nothing offered in its place. C- = personal experience or "
+        "unrelated work with no advocacy behind it. F = nothing relevant "
+        "offered, or a record that closed the question rather than advancing "
+        "it. The bands come from the 79 rows graded before 2026-09-20."
+    ),
     "TRN-01": (
         "A count of ticks, because no option here is cheaper than the others "
         "in the way CLI-06's are. Four or more = A. Three = B. Two = C. One = "
@@ -216,8 +284,13 @@ def check_layout(header):
         )
 
 
-def proposals(rows):
-    """(to write, already filled, no rubric), each a list of (row number, label)."""
+def proposals(rows, rewrite=()):
+    """(to write, already filled, no rubric), each a list of (row number, label).
+
+    `rewrite` names labels whose existing cell may be replaced. Only a cell that
+    actually differs from the intended text is rewritten, so naming a label that
+    is already correct does nothing.
+    """
     write, filled, no_rubric = [], [], []
     for i, row in enumerate(rows[1:], start=2):
         row = row + [""] * (len(HEADERS) - len(row))
@@ -225,7 +298,11 @@ def proposals(rows):
         if not label:
             continue
         if row[METHODOLOGY_COLUMN].strip():
-            filled.append((i, label))
+            if (label in rewrite and label in METHODOLOGY
+                    and row[METHODOLOGY_COLUMN].strip() != text_for(label).strip()):
+                write.append((i, label))
+            else:
+                filled.append((i, label))
         elif label not in METHODOLOGY:
             no_rubric.append((i, label))
         else:
@@ -283,6 +360,9 @@ def main():
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--sheet-id", default=default_sheet_id())
+    p.add_argument("--rewrite", default="",
+                   help="comma-separated labels whose existing Methodology "
+                        "cell may be replaced when it no longer matches")
     p.add_argument("--apply", action="store_true", help="write to the sheet")
     args = p.parse_args()
 
@@ -290,16 +370,27 @@ def main():
         sys.exit(f"no sheet id: set QUESTIONNAIRE_SUBMISSIONS_SHEET_ID, pass "
                  f"--sheet-id, or write it to {SHEET_ID_FILE}")
 
-    unknown = sorted(set(METHODOLOGY) - set(rubrics.RUBRICS))
+    unknown = sorted(set(METHODOLOGY) - set(rubrics.RUBRICS) - FREE_TEXT)
     if unknown:
-        sys.exit(f"methodology written for questions with no rubric: {unknown}")
+        sys.exit(f"methodology written for questions with no rubric and not "
+                 f"declared free text: {unknown}")
+    stale = sorted(FREE_TEXT & set(rubrics.RUBRICS))
+    if stale:
+        sys.exit(f"declared free text but now has a rubric, so the text is "
+                 f"out of date: {stale}")
     uncovered = sorted(set(rubrics.RUBRICS) - set(METHODOLOGY))
     if uncovered:
         sys.exit(f"rubric with no methodology text: {uncovered}")
 
+    rewrite = {l.strip() for l in args.rewrite.split(",") if l.strip()}
+    unknown_rewrite = sorted(rewrite - set(METHODOLOGY))
+    if unknown_rewrite:
+        sys.exit(f"--rewrite names labels this has no text for: "
+                 f"{unknown_rewrite}")
+
     rows = fetch_registry(args.sheet_id)
     check_layout(rows[0])
-    write, filled, no_rubric = proposals(rows)
+    write, filled, no_rubric = proposals(rows, rewrite)
 
     for row, label in write:
         print(f"  {label} (row {row}): {text_for(label)[:96]}...")
