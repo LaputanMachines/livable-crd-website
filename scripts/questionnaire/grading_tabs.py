@@ -1080,6 +1080,22 @@ def letters_left_in_scores(sheet):
     return out
 
 
+def contiguous_runs(lines):
+    """[(first, last)] covering `lines` in runs of consecutive row numbers.
+
+    So a caller can write scattered rows without touching what sits between
+    them. A range write to Sheets fills every cell in the range, so the only
+    safe way to leave a row alone is to keep it out of every range.
+    """
+    runs = []
+    for line in sorted(set(lines)):
+        if runs and line == runs[-1][1] + 1:
+            runs[-1][1] = line
+        else:
+            runs.append([line, line])
+    return [(first, last) for first, last in runs]
+
+
 def align_scored_tab(sh, sheet, category, ceiling=None):
     """Point an existing grading tab's H, and its I, at what its rubric grades in.
 
@@ -1099,11 +1115,27 @@ def align_scored_tab(sh, sheet, category, ceiling=None):
 
     lines = rows_needing_column_i(sheet, category)
     if lines:
-        first, last = min(lines), max(lines)
-        wanted = set(lines)
-        block = [[column_i_formula(category, line)] if line in wanted else [""]
-                 for line in range(first, last + 1)]
-        sheet.update(block, f"I{first}:I{last}", value_input_option="USER_ENTERED")
+        # One write per run of consecutive rows, never one write spanning the
+        # first to the last. This used to fill the gaps between them with "",
+        # on the assumption that the rows needing a repoint were one block - true
+        # the day the housing rubric arrived and every row on the tab wanted the
+        # same change, and false ever since.
+        #
+        # On 2026-09-19 the rows needing it were the 24 HFL-INC rows, scattered
+        # from row 80 to row 921, and the gap-filling blanked Max points on the
+        # 818 question rows between them: every housing candidate in that span
+        # lost their denominator, challengers went blank and incumbents came out
+        # of the rollup graded on their record alone. Nothing was unrecoverable,
+        # because column I is the same formula on every row of a points tab and
+        # a second run rewrites it - but a write that clears cells it was never
+        # asked to touch should not be possible in the first place.
+        updates = [
+            {"range": f"I{first}:I{last}",
+             "values": [[column_i_formula(category, line)]
+                        for line in range(first, last + 1)]}
+            for first, last in contiguous_runs(lines)
+        ]
+        sheet.batch_update(updates, value_input_option="USER_ENTERED")
     print(f"{GRADE_TAB_PREFIX}{category}: headers set to "
           f"{', '.join(headers[7:9])}, "
           + (f"{len(lines)} row(s) repointed at {headers[8]}" if lines
