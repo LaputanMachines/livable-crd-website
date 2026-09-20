@@ -216,6 +216,85 @@ def trn_01(answer):
 
 
 RUBRICS = {
+    "GOV-02": {
+        "question": "Do you support creating a regional service that designs, "
+                    "builds and maintains local municipal infrastructure "
+                    "shared across Capital Region municipalities?",
+        "answers": {
+            "yes": "A",
+            "yes, only if full cost recovery is guaranteed for my "
+            "municipality": "B",
+            "no": "C-",
+        },
+        "notes": (
+            "Derived from the 30 rows graded before this rubric existed, which "
+            "agree with each other and with the rest of the questionnaire. "
+            "Full cost recovery is a named, checkable condition on a yes, so "
+            "it takes the conditional-yes B. A No is C- rather than F because "
+            "the question is about how services are organised and who runs "
+            "them, which is the governance side of the split CLI-03 sits on "
+            "the other side of. Unsure was typed C on three rows before "
+            "2026-09-13; those rows were reset to blank on 2026-09-20 so the "
+            "question now follows UNSURE_GRADE like every other."
+        ),
+    },
+    "REC-01": {
+        "question": "Do you support ensuring that local First Nations are "
+                    "represented in transit governance, such as on the "
+                    "Victoria Regional Transit Commission and the CRD?",
+        "answers": {
+            "yes": "A",
+            "no": "C-",
+        },
+        "notes": (
+            "Thirty rows typed Yes as A and nothing else was answered except "
+            "one decline. A No is listed at C- rather than F on the same "
+            "reasoning as GOV-02 and TRN-04: the question is about who sits "
+            "at the table, not about what gets built or funded. No candidate "
+            "has answered No, so that letter is a rule rather than a record."
+        ),
+    },
+    "WLK-03": {
+        "question": "Would you vote to increase the share of your "
+                    "municipality's transportation capital budget dedicated "
+                    "to pedestrian infrastructure?",
+        "answers": {
+            "yes, a substantial increase (i.e. more than double what's "
+            "currently spent)": "A",
+            "yes, a modest increase (i.e. more, but less than double of "
+            "what's currently spent)": "B",
+            "no, the current amount spent on sidewalks is sufficient": "F",
+        },
+        "notes": (
+            "Matches the 31 rows graded before this rubric existed. A modest "
+            "increase is a real but bounded commitment, which is the "
+            "conditional-yes B; doubling the share or better is the A. A No "
+            "is F because the question is about money for infrastructure, "
+            "which is the funding side of the split."
+        ),
+    },
+    "WLK-04": {
+        "question": "Do you support expanding pedestrian-priority and car-free "
+                    "streets in your municipality's downtown, main street or "
+                    "village centre?",
+        "answers": {
+            "yes, and i would pursue a permanent expansion/implementation": "A",
+            "yes, but only temporary, seasonal or pilot closures": "B",
+            "no": "F",
+        },
+        "notes": (
+            "Matches the 25 rows graded before this rubric existed. Temporary, "
+            "seasonal or pilot closures is a yes with a stated limit on it, so "
+            "it takes the conditional-yes B. A No is F because the question is "
+            "about street space, which is infrastructure. An answer of N/A is "
+            "not listed: it is a claim that the municipality has no downtown, "
+            "main street or village centre, which is a judgement about a "
+            "candidate and is passed in by hand, like an excused decline. The "
+            "earlier rows blanked it for Highlands and graded it F everywhere "
+            "else. Unsure was typed C on two rows before 2026-09-13; those "
+            "rows were reset to blank on 2026-09-20."
+        ),
+    },
     "CLI-01": {
         "question": "Would you support ending fossil fuel advertising and "
                     "sponsorship on property, media and events controlled by "
