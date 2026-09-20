@@ -52,6 +52,14 @@ Keep the rationale and excused files somewhere durable. They are the record of
 what was written, and step 1 of the next re-run needs them to tell an old row
 from a new one.
 
+Topics that are mostly free text
+--------------------------------
+Rolling & cycling asks three questions a rubric cannot grade: a named project, a
+record in office, and a yes-or-no with a written follow-up graded together. Pass
+those rows' letters with --grades, the same shape as --rationales and keyed the
+same way, and they are written alongside the rubric-graded ones. The rubric
+still wins wherever it has an answer.
+
 Usage:
   QUESTIONNAIRE_SUBMISSIONS_SHEET_ID=... python3 scripts/questionnaire/apply_rubric.py Climate
   ... apply_rubric.py Climate --labels CLI-03,CLI-04 --rationales r.json --tsv out.tsv
@@ -125,7 +133,7 @@ def fetch_tab(sheet_id, title, timeout=120):
     return rows
 
 
-def proposals(rows, labels, excused, rationales, grader, graded_at):
+def proposals(rows, labels, excused, rationales, grader, graded_at, hand=None):
     """What would be written, one record per row the rubric has an answer for.
 
     A row already holding a grade is skipped rather than overwritten: someone
@@ -141,23 +149,44 @@ def proposals(rows, labels, excused, rationales, grader, graded_at):
     `no_rubric` is kept apart from `unmatched`. A question nobody wrote a rubric
     for is expected and uninteresting; an answer a rubric was written for and
     does not recognise means a form option changed, and somebody needs to look.
+
+    `hand` carries the grades a person decided row by row, keyed on the same Key
+    as the rationales. A topic like Rolling & cycling is mostly free text, and a
+    free-text question gets no rubric on purpose, so without this there is no
+    way to write those rows except by typing into the sheet. It fills in only
+    where the rubric declined to answer; where the rubric did produce a letter
+    it is the authority, and a hand grade that disagrees is an error rather than
+    an override, because one of the two is then wrong and quietly picking the
+    hand-typed one is how a rubric stops meaning anything.
     """
+    hand = hand or {}
     out, skipped, unmatched, no_rubric = [], [], [], set()
+    conflicts = []
     for row in rows[1:]:
         row = row + [""] * (G_GRADED_AT + 1 - len(row))
         label = row[G_LABEL].strip()
+        key = row[G_KEY].strip()
+        has_rubric = label in rubrics.RUBRICS
         if labels and label not in labels:
             continue
-        if label not in rubrics.RUBRICS:
+        if not has_rubric and key not in hand:
             no_rubric.add(label)
             continue
-        key = row[G_KEY].strip()
         if row[G_GRADE].strip() or row[G_RATIONALE].strip():
             skipped.append((key, label, row[G_GRADE].strip()))
             continue
-        grade, note = rubrics.grade_for(
-            label, row[G_ANSWER], excused=key in excused
-        )
+        if has_rubric:
+            grade, note = rubrics.grade_for(
+                label, row[G_ANSWER], excused=key in excused
+            )
+        else:
+            grade, note = None, "no rubric, graded by hand"
+        if grade is not None and key in hand and hand[key] != grade:
+            conflicts.append((key, label, grade, hand[key]))
+            continue
+        if grade is None and key in hand:
+            grade = hand[key]
+            note = note or "graded by hand"
         if grade is None:
             unmatched.append((key, label, note))
             continue
@@ -173,7 +202,7 @@ def proposals(rows, labels, excused, rationales, grader, graded_at):
             "graded_at": graded_at,
             "note": note or "",
         })
-    return out, skipped, unmatched, sorted(no_rubric)
+    return out, skipped, unmatched, sorted(no_rubric), conflicts
 
 
 def write_stub(path, records):
@@ -222,6 +251,24 @@ def backup(sh, stamp):
     return path
 
 
+def worksheet_by_title(sh, title):
+    """The tab named `title`, matched case-insensitively.
+
+    The read side goes through gviz, which finds a tab whatever its casing, and
+    gspread does not. So `Grade - Rolling & cycling` reads fine, reports every
+    row it would write, takes the backup, and only then fails on the write with
+    WorksheetNotFound. Matching the same way on both sides is the fix; the
+    resolved title is printed so a near miss is visible rather than silent.
+    """
+    want = title.strip().lower()
+    for ws in sh.worksheets():
+        if ws.title.strip().lower() == want:
+            if ws.title != title:
+                print(f"tab: {title!r} resolved to {ws.title!r}")
+            return ws
+    raise SystemExit(f"no tab {title!r} on the spreadsheet")
+
+
 def apply(sheet_id, category, records):
     """Write Grade, Rationale, Grader and Graded at, matched on the Key in A.
 
@@ -240,7 +287,7 @@ def apply(sheet_id, category, records):
     stamp = datetime.datetime.now().strftime("%Y%m%dT%H%M%S")
     print(f"backup: {backup(sh, stamp)}")
 
-    ws = sh.worksheet(GRADE_PREFIX + category)
+    ws = worksheet_by_title(sh, GRADE_PREFIX + category)
     keys = {k.strip(): i + 1 for i, k in enumerate(ws.col_values(1))}
 
     updates, date_rows, missing = [], [], []
@@ -286,9 +333,13 @@ def main():
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("category", help="scorecard subject, e.g. Climate")
     p.add_argument("--sheet-id", default=default_sheet_id())
-    p.add_argument("--labels", help="comma-separated question labels; default every label with a rubric")
+    p.add_argument("--labels", help="comma-separated question labels; default every label with a rubric or a hand grade")
     p.add_argument("--rationales", help="JSON object of key to rationale")
     p.add_argument("--excused", help="JSON list of keys whose decline is excused")
+    p.add_argument("--grades", metavar="PATH",
+                   help="JSON object of key to grade, for the free-text "
+                        "questions a rubric cannot grade. Only fills rows the "
+                        "rubric declined; disagreeing with a rubric is an error")
     p.add_argument("--grader", help="override; default is the row's Owner")
     p.add_argument("--date", help="Graded at, YYYY-MM-DD; default today")
     p.add_argument("--tsv", help="write the proposal as a paste-ready TSV")
@@ -310,6 +361,15 @@ def main():
         rationales = {k: v for k, v in json.load(open(args.rationales)).items()
                       if not k.startswith("#")}
     excused = set(json.load(open(args.excused))) if args.excused else set()
+    hand = {}
+    if args.grades:
+        hand = {k: v for k, v in json.load(open(args.grades)).items()
+                if not k.startswith("#")}
+        bad = {k: v for k, v in hand.items()
+               if v not in rubrics.VALID_GRADES and v != rubrics.UNGRADED}
+        if bad:
+            sys.exit(f"--grades holds letters that are not on the scale "
+                     f"{rubrics.VALID_GRADES} and are not blank: {bad}")
     day = (datetime.date.fromisoformat(args.date) if args.date
            else datetime.date.today())
     graded_at = f"{day.month}/{day.day}/{day.year}"
@@ -318,9 +378,15 @@ def main():
     if rows is None:
         sys.exit(f"no tab {GRADE_PREFIX}{args.category!r}, or it is not shared")
 
-    records, skipped, unmatched, no_rubric = proposals(
-        rows, labels, excused, rationales, args.grader, graded_at)
+    records, skipped, unmatched, no_rubric, conflicts = proposals(
+        rows, labels, excused, rationales, args.grader, graded_at, hand=hand)
 
+    if conflicts:
+        for key, label, rubric_grade, hand_grade in conflicts:
+            print(f"  CONFLICT: {label} {key}: rubric says {rubric_grade!r}, "
+                  f"--grades says {hand_grade!r}")
+        sys.exit(f"{len(conflicts)} hand grade(s) disagree with the rubric. "
+                 f"Nothing was written. Fix the grades file, or fix the rubric.")
     if no_rubric:
         print(f"  no rubric, not touched: {', '.join(no_rubric)}")
     for key, label, note in unmatched:
