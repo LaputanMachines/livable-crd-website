@@ -14,11 +14,18 @@
 # and flipping it back removes every published subject on the next run.
 #
 # EVERY CANDIDATE WITH A ROW ON THAT TAB IS LISTED HERE, with `subjects` an empty
-# list for all of them while publication is off. Having a row means
+# list for all of them while publication is off. Having a row usually means
 # the candidate returned the questionnaire, and the site says so: "returned it,
 # still being graded" and "never replied" are different facts about a candidate
 # and the scorecard draws them differently. What it does not say is anything
 # about how a topic is going before it is published.
+#
+# The exception carries `returned: false`. Homes for Living score a sitting
+# councillor's record on housing whether or not that councillor replied, so
+# every sitting incumbent has a row on the grading sheet and some of them never
+# answered anything. Those entries publish a housing grade off the record alone
+# and nothing else, and the scorecard leaves them among the candidates who
+# never replied, because that is what they are.
 #
 # _plugins/questionnaire_scores.rb joins these entries onto _data/candidates.yml
 # by name and municipality at build time, which is why this file is separate:
@@ -42,6 +49,9 @@
 #                 candidate with no match there is dropped, because there is no
 #                 scorecard page to show the result on.
 #   municipality  Slug from _data/municipalities.yml.
+#   returned      Absent for the candidates who returned the questionnaire, and
+#                 `false` for a sitting incumbent who did not and is on the
+#                 sheet only because their housing record is scored.
 #   scores        {subject id: letter}. The top-level grade per published
 #                 subject, which is what the scorecard matrix renders. A subject
 #                 deployed with no top-level letter typed yet is absent here but
@@ -54,6 +64,12 @@
 #     score       Present only on a subject whose graders score each question
 #                 rather than grading it, and `percent` - the figure `grade` is
 #                 banded from - is the only field both kinds carry.
+#
+#                 A subject carried by an incumbent record alone - see
+#                 `returned` above - has no `points`, `max` or `percent` at all,
+#                 because there is no questionnaire behind any of them. It
+#                 carries `record` with `share: 100` and an `overall` equal to
+#                 the record's own percentage, and that is the whole grade.
 #
 #                 Housing, scored by Homes for Living, also carries `points` out
 #                 of `max`. The maximum is the candidate's own: the
@@ -77,13 +93,15 @@
 #                 `record` and `overall` appear on a sitting incumbent whose
 #                 housing record Homes for Living have scored, and on nobody
 #                 else. `record` is that score - `points` out of `max`, its own
-#                 `percent`, the `share` of the topic it carries, and the
-#                 grader's `rationale` - and `overall` is the blend `grade` was
-#                 banded from: the record's share of it, and the questionnaire's
-#                 `percent` for the rest. The two fractions are published
-#                 separately because they do not add up into one; a record worth
-#                 30% on its own is not 10 more points on a 60-point total.
-#                 Without them, `percent` is the whole of the grade.
+#                 `percent`, the `share` of the topic it carries, the `owner`
+#                 who scored it and their `rationale` - and `overall` is the
+#                 blend `grade` was banded from: the record's share of it, and
+#                 the questionnaire's `percent` for the rest. The two fractions
+#                 are published separately because they do not add up into one;
+#                 a record worth 30% on its own is not 10 more points on a
+#                 60-point total. Without them, `percent` is the whole of the
+#                 grade; where the candidate returned nothing, `share` is 100
+#                 and the record is.
 #     questions   One entry per graded question, in form order:
 #       label     Joins to _data/questions.yml.
 #       grade     Letter, or null where the question has not been graded yet.
@@ -115,16 +133,62 @@ graded_subjects:
   - governance
 
 candidates:
+  - name: Ben Michell
+    municipality: central-saanich
+    subjects: []
+  - name: Chris Graham
+    municipality: central-saanich
+    returned: false
+    subjects: []
+  - name: Robert (Bob) Thompson
+    municipality: central-saanich
+    returned: false
+    subjects: []
+  - name: Sarah Riddell
+    municipality: central-saanich
+    returned: false
+    subjects: []
+  - name: Zeb King
+    municipality: central-saanich
+    returned: false
+    subjects: []
+  - name: Cynthia Day
+    municipality: colwood
+    returned: false
+    subjects: []
   - name: David Grove
     municipality: colwood
+    subjects: []
+  - name: Doug Kobayashi
+    municipality: colwood
+    returned: false
     subjects: []
   - name: Eugene Tseng
     municipality: colwood
     subjects: []
+  - name: Ian Ward
+    municipality: colwood
+    returned: false
+    subjects: []
   - name: Jennifer Parlee
     municipality: colwood
     subjects: []
+  - name: Kim Jordison
+    municipality: colwood
+    returned: false
+    subjects: []
+  - name: Misty Olsen
+    municipality: colwood
+    returned: false
+    subjects: []
+  - name: Andrea Boardman
+    municipality: esquimalt
+    returned: false
+    subjects: []
   - name: Dan Igaz
+    municipality: esquimalt
+    subjects: []
+  - name: David Gauthier
     municipality: esquimalt
     subjects: []
   - name: Duncan Cavens
@@ -148,11 +212,38 @@ candidates:
   - name: Tim Morrison
     municipality: esquimalt
     subjects: []
+  - name: Tyler Russell
+    municipality: esquimalt
+    subjects: []
   - name: Zachary Mulder
     municipality: esquimalt
     subjects: []
+  - name: Ann Baird
+    municipality: highlands
+    returned: false
+    subjects: []
   - name: Gord Baird
     municipality: highlands
+    subjects: []
+  - name: Karel Roessingh
+    municipality: highlands
+    returned: false
+    subjects: []
+  - name: Ken Williams
+    municipality: highlands
+    returned: false
+    subjects: []
+  - name: Leslie Anderson
+    municipality: highlands
+    returned: false
+    subjects: []
+  - name: Marcie McLean
+    municipality: highlands
+    returned: false
+    subjects: []
+  - name: Rose Stanton
+    municipality: highlands
+    returned: false
     subjects: []
   - name: Andrew Jackson
     municipality: langford
@@ -169,17 +260,76 @@ candidates:
   - name: Mary Wagner
     municipality: langford
     subjects: []
+  - name: Scott Goodmanson
+    municipality: langford
+    returned: false
+    subjects: []
   - name: Tanya Sunshine
+    municipality: langford
+    subjects: []
+  - name: Trevor Hinton
     municipality: langford
     subjects: []
   - name: Ellen Frisch
     municipality: metchosin
+    subjects: []
+  - name: Marie-Térèse Little
+    municipality: metchosin
+    returned: false
+    subjects: []
+  - name: Shelly Donaldson
+    municipality: metchosin
+    returned: false
+    subjects: []
+  - name: Celia Stock
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Irene McConkey
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Jack McClintock
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Kristine Marshall
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Peter Jones
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Phil DiBattista
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Sanjiv Shrivastava
+    municipality: north-saanich
+    returned: false
+    subjects: []
+  - name: Cairine Green
+    municipality: oak-bay
+    returned: false
+    subjects: []
+  - name: Esther Paterson
+    municipality: oak-bay
+    returned: false
+    subjects: []
+  - name: Hazel Braithwaite
+    municipality: oak-bay
+    returned: false
     subjects: []
   - name: Karin Sweeney
     municipality: oak-bay
     subjects: []
   - name: Katerina Weller
     municipality: oak-bay
+    subjects: []
+  - name: Kevin Murdoch
+    municipality: oak-bay
+    returned: false
     subjects: []
   - name: Sam Holland
     municipality: oak-bay
@@ -220,6 +370,10 @@ candidates:
   - name: Mauricio Curbelo
     municipality: saanich
     subjects: []
+  - name: Nathalie Chambers
+    municipality: saanich
+    returned: false
+    subjects: []
   - name: Noah Fruttarol
     municipality: saanich
     subjects: []
@@ -235,6 +389,10 @@ candidates:
   - name: Zac De Vries
     municipality: saanich
     subjects: []
+  - name: Chad Rintoul
+    municipality: sidney
+    returned: false
+    subjects: []
   - name: Eric Diller
     municipality: sidney
     subjects: []
@@ -247,14 +405,38 @@ candidates:
   - name: Rory Lambert
     municipality: sidney
     subjects: []
+  - name: Scott Garnett
+    municipality: sidney
+    returned: false
+    subjects: []
+  - name: Steve Duck
+    municipality: sidney
+    returned: false
+    subjects: []
+  - name: Terri O’Keeffe
+    municipality: sidney
+    returned: false
+    subjects: []
+  - name: Al Beddows
+    municipality: sooke
+    returned: false
+    subjects: []
   - name: Brian McHattie
     municipality: sooke
     subjects: []
   - name: Helen Ritts
     municipality: sooke
     subjects: []
+  - name: Herb Haldane
+    municipality: sooke
+    returned: false
+    subjects: []
   - name: Katherine Strongwind
     municipality: sooke
+    subjects: []
+  - name: Kevin Pearson
+    municipality: sooke
+    returned: false
     subjects: []
   - name: Landon Grams
     municipality: sooke
@@ -264,6 +446,10 @@ candidates:
     subjects: []
   - name: Susan Belford
     municipality: sooke
+    subjects: []
+  - name: Tony St-Pierre
+    municipality: sooke
+    returned: false
     subjects: []
   - name: Bella Lee
     municipality: victoria
@@ -286,6 +472,10 @@ candidates:
   - name: Krista Loughton
     municipality: victoria
     subjects: []
+  - name: Marg Gardiner
+    municipality: victoria
+    returned: false
+    subjects: []
   - name: Marianne Alto
     municipality: victoria
     subjects: []
@@ -304,10 +494,17 @@ candidates:
   - name: Shona Dion
     municipality: victoria
     subjects: []
+  - name: Stephen Hammond
+    municipality: victoria
+    returned: false
+    subjects: []
   - name: Susan Kim
     municipality: victoria
     subjects: []
   - name: Amy McCooey
+    municipality: view-royal
+    subjects: []
+  - name: Cam Harris
     municipality: view-royal
     subjects: []
   - name: Carolynne Clark
@@ -322,8 +519,9 @@ candidates:
   - name: Don Brown
     municipality: view-royal
     subjects: []
-  - name: Josh Peterson
+  - name: Gery Lemon
     municipality: view-royal
+    returned: false
     subjects: []
   - name: Owen Marshall
     municipality: view-royal
