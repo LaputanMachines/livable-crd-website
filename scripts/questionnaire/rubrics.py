@@ -115,6 +115,52 @@ def selected_options(answer):
 # multi-select instead of a lookup. `notes` is why the letters fall where they
 # do, for the next person to grade this question or a question like it.
 
+CLI_01_FOLLOWUP = "follow-up:"
+
+# CLI-01's main answer one step below where it would otherwise sit, because the
+# question has two halves and the menu only covers the first. A Yes on the
+# follow-up, which asks the candidate to carry the same position to the transit
+# commission, restores the step. So the top grade needs both advertising and
+# sponsorship AND the advocacy, and either one alone is not enough.
+CLI_01_BASE = {
+    "yes, both advertising and sponsorship": "B",
+    "yes, advertising only": "C",
+    "yes, sponsorship only": "C",
+    "no": "F",
+}
+CLI_01_BOOSTED = {"B": "A", "C": "B"}
+
+# Follow-up options that are not a Yes. Anything else written in that box is
+# free text, and whether it amounts to advocating at the commission is a
+# judgement about a candidate, so cli_01 returns None and the caller passes the
+# letter in by hand, the same way an excused decline is handled.
+CLI_01_FOLLOWUP_NOT_YES = {"no", "unsure", "decline to answer",
+                           "other, i have another idea"}
+
+
+def cli_01(answer):
+    """CLI-01, ending fossil fuel advertising and sponsorship.
+
+    The cell holds the menu answer and the written follow-up in one string,
+    separated by "Follow-up:". A bare No has no follow-up and fails outright; a
+    bare Unsure or Decline never reaches here, because `grade_for` applies the
+    shared non-answer policy before any rubric runs.
+    """
+    text = normalise(answer)
+    head, _, tail = text.partition(CLI_01_FOLLOWUP)
+    base = CLI_01_BASE.get(head.strip().rstrip("."))
+    if base is None:
+        return None
+    if base == "F" or not tail.strip():
+        return base
+    follow = tail.strip().rstrip(".")
+    if follow == "yes":
+        return CLI_01_BOOSTED[base]
+    if follow in CLI_01_FOLLOWUP_NOT_YES:
+        return base
+    return None
+
+
 CLI_06_FUNDED = {
     "subsidized home assessments for heat, air quality and wildfire risk",
     "grants or financing for cooling, filtration and building retrofits",
@@ -170,6 +216,38 @@ def trn_01(answer):
 
 
 RUBRICS = {
+    "CLI-01": {
+        "question": "Would you support ending fossil fuel advertising and "
+                    "sponsorship on property, media and events controlled by "
+                    "your municipality, and would you advocate for the same at "
+                    "the Victoria Regional Transit Commission?",
+        "multi": cli_01,
+        "notes": (
+            "Two commitments in one question, so the menu answer alone cannot "
+            "reach the top. See cli_01: the menu sets the base and a Yes on "
+            "the transit commission follow-up lifts it one step. A No is F "
+            "because ending the advertising is something the municipality "
+            "controls outright."
+        ),
+    },
+    "CLI-02": {
+        "question": "How should your municipality treat climate action in its "
+                    "next four year plan?",
+        "answers": {
+            "the overriding priority, other decisions should be tested "
+            "against it": "A",
+            "one of the top three priorities, with a dedicated budget": "B",
+            "one priority among many, addressed where affordable": "C-",
+            "not a municipal priority, it's a federal and/or provincial "
+            "responsibility": "F",
+        },
+        "notes": (
+            "The ladder is the coalition's own, and it skips C: a dedicated "
+            "budget is the line between a priority and a sentiment, so "
+            "'addressed where affordable' drops two steps rather than one. "
+            "Handing the file to another order of government is F."
+        ),
+    },
     "CLI-03": {
         "question": "Will you pledge to never take meetings from fossil fuel "
                     "company lobbyists?",
