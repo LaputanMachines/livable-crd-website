@@ -474,6 +474,7 @@ RUBRICS = {
             "yes, only during peak hours": "B",
             "kind of, only when a specific project requires it": "C",
             "no": "F",
+            "no, never": "F",
         },
         "notes": (
             "Peak hours only is a real, testable limit on a yes, so it takes "
@@ -482,7 +483,9 @@ RUBRICS = {
             "case-by-case answer CLI-08 puts at C. A No is F because the "
             "question is about street space, which is infrastructure. Eight "
             "of the earlier rows put the case-by-case option at B and "
-            "nineteen put it at C; the nineteen were followed."
+            "nineteen put it at C; the nineteen were followed. \"No, never\" "
+            "is the same option as \"No\" after a form edit, and carries the "
+            "same F; the emphasis adds nothing the grade can read."
         ),
     },
     "TRN-03": {
