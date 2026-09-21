@@ -37,6 +37,125 @@
   }
 }
 
+// The stuck bar: who these grades belong to, kept on screen once the hero has
+// scrolled off. Nine topic rows, each opening onto several questions with an
+// answer and a rationale under them, is a page a reader is a long way down while
+// still reading about one person, and the one thing they must not have to scroll
+// back for is whose page this is. Same reasoning as the municipality bands on
+// the scorecard matrix.
+//
+// A separate fixed bar rather than the hero itself made sticky and shrunk. A
+// sticky element is still in flow, so shrinking it on scroll pulls everything
+// below it up by the difference — 213px here, under the reader's finger, on the
+// first scroll. Fixed, it is out of flow: nothing moves, and a topic the
+// scorecard deep-links to lands where it was asked to.
+//
+// Built and filled by assets/js/candidate.js from the hero's own name and meta
+// line, so the two cannot say different things; there is no second copy of them
+// in _layouts/candidate.html. Without scripting there is no bar, and the hero
+// behaves as it always has.
+.candidate-stickybar {
+  position: fixed;
+  // Under the site header, which is sticky at top: 0 at every width. Minus a
+  // pixel so the two overlap rather than meet: both offsets are fractional, and
+  // an exact one leaves a hairline of page showing through the seam at some zoom
+  // levels. The header's z-index is 100 against this bar's 50, so the overlap is
+  // painted over and costs nothing.
+  top: calc(var(--site-header-h, 74px) - 1px);
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: $space-xs $space-gutter;
+  background: $color-accent-alt;
+  color: #fff;
+  border-bottom: $border-weight-heavy solid $color-text;
+
+  // Slid out of the way rather than hidden: `display: none` cannot animate, and
+  // a bar that appears instantly under the header reads as a page jump. It is
+  // inert either way — aria-hidden, because the name in it is the page's <h1>
+  // read twice.
+  transform: translateY(-101%);
+  transition: transform $transition-fast;
+
+  &.is-visible { transform: translateY(0); }
+
+  // Nothing is stuck to a sheet of paper, and the leaflet already opens with the
+  // candidate's name.
+  @media print { display: none; }
+}
+
+.candidate-stickybar__inner {
+  display: flex;
+  align-items: baseline;
+  gap: $space-sm;
+  max-width: $max-width;
+  margin: 0 auto;
+}
+
+// One line, always. A two-line bar is a second header, and the names that would
+// wrap are the long ones — exactly the candidates whose bar is doing the most
+// work. Truncated instead, which keeps the bar the height the topic rows are
+// scroll-margined past.
+.candidate-stickybar__name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-size: clamp(1rem, 3.5vw, 1.35rem);
+  line-height: 1.1;
+}
+
+// The standing line goes first when there is not room for both: a phone gives
+// the bar about 20 characters, and "Councillor · Sooke · Newc…" spends them on
+// the half of the bar that is not the answer to "whose page is this?".
+.candidate-stickybar__meta {
+  display: none;
+  font-family: $font-display;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: clamp(0.65rem, 2vw, 0.8rem);
+  color: $color-warm;
+}
+
+// The slate, in sentence case where the standing beside it is upper. Same
+// reasoning as the hero's own slate line: an organization's name upper-cased
+// next to a candidate's standing stops reading as a name, and the two run
+// together into one string of capitals.
+.candidate-stickybar__slate {
+  display: none;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  color: $color-warm;
+}
+
+@media (min-width: 30rem) {
+  .candidate-stickybar__meta,
+  .candidate-stickybar__slate {
+    display: block;
+    // Shrink before the name does, and truncate rather than wrapping. All of
+    // them need `min-width: 0`: a flex child will not go below its content
+    // width without it.
+    flex: 0 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .candidate-stickybar__name { flex: 0 0 auto; }
+}
+
+// A bar that slides in under a reader who asked for none of it. It still
+// appears — it is what keeps the name on screen — it just arrives without the
+// movement.
+@media (prefers-reduced-motion: reduce) {
+  .candidate-stickybar { transition: none; }
+}
+
 .candidate-hero__name {
   // Names get long ("Teale Phelps Bondaroff") and the shared h1 is a clamp up to
   // 4rem, so a single unbroken surname can outrun a narrow viewport.
@@ -93,25 +212,21 @@
   }
 }
 
-// Both scoped to .candidate-page purely for specificity: .callout and the base
+// The "returned it, still being graded" note, and the only note this page
+// carries: the one that told a reader a candidate had not replied is gone, and
+// the row of dashes says it instead.
+//
+// Scoped to .candidate-page purely for specificity: .callout and the base
 // `.page-content > h2:not(:first-child)` rule would otherwise win on source
 // order and pseudo-class weight respectively.
-.candidate-page .candidate-pending,
-.candidate-page .candidate-returned {
-  // .callout already draws the box. This just closes the doubled gap under the
-  // hero: the explanation has to be read before the wall of dashes below it.
-  margin-top: 0;
-}
-
-// The "returned it, still being graded" note. Same box as the pending one, but
-// its accent edge picks up the brand purple instead of the deep ink: on a page
-// where the difference between "replied" and "did not" is the point, the two
-// notes must not look like the same message twice.
 //
 // Dashed rather than solid, matching the scorecard's own status banner: what it
 // says is provisional, and a solid box drew it with the same finality as the
 // grades underneath it.
 .candidate-page .candidate-returned {
+  // .callout already draws the box. This just closes the doubled gap under the
+  // hero: the explanation has to be read before the grades below it.
+  margin-top: 0;
   border-style: dashed;
   border-left-color: $color-accent;
 }
@@ -127,11 +242,65 @@
   border: $border-weight solid $color-text;
 }
 
+// The row above the block that opens and closes all of it at once. Ranged right,
+// against the block's own right edge, where the chevrons it operates are: a
+// control for a column of toggles belongs over that column, not over the topic
+// names on the other side of the row.
+//
+// The grades block takes its top margin from the key when this is absent and
+// from this when it is present, so the gap under the key is the same either way
+// and the button does not push the grades down the page.
+.candidate-grades-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $space-md;
+}
+
+.candidate-grades-controls + .candidate-grades {
+  margin-top: $space-xs;
+}
+
+// A text control, not a .btn. The buttons under the block are the page's
+// actions — print this, go to the scorecard — and drawing this like one of them
+// would put a third of that weight above a list it only reorganizes.
+.candidate-grades-controls__toggle {
+  padding: $space-xs 0;
+  background: none;
+  border: 0;
+  color: $color-accent;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  // The underline is the affordance: with no box and no background, a line of
+  // small caps in the accent colour is otherwise a heading.
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+
+  &:hover { color: $color-text; }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: 2px;
+  }
+}
+
 // The <li>. It carries the divider and the topic accent, because what sits
 // inside it is either a <summary> (a published topic, which opens) or a plain
 // <div> (one that does not), and both have to draw the same row.
 .candidate-grade-row {
   border-bottom: $border-weight solid $color-text;
+  // Each row is a link target: the scorecard matrix links a grade chip to the
+  // topic it grades. Two things are stuck above it by then — the site header and
+  // this page's own bar — so a row scrolled to the top of the viewport has to
+  // clear both. Both heights are measured and republished (assets/js/
+  // site-header.js, assets/js/candidate.js); the fallbacks in :root are what a
+  // page gets before those run, and a page without scripting, which has no bar
+  // to clear and pays a little air for the fallback instead.
+  scroll-margin-top: calc(var(--site-header-h, 74px) + var(--candidate-bar-h, 56px) + #{$space-xs});
   // Topic accent on the leading edge, matching the homepage topic cards.
   border-left: 5px solid var(--card-accent, $color-accent-alt);
 
@@ -272,8 +441,10 @@ summary.candidate-grade {
 }
 
 // Print-only content: meaningless on screen, where the site header already
-// carries the wordmark. Revealed by the @media print block below.
-.candidate-print-mast { display: none; }
+// carries the wordmark and the page the QR code points at is this one. Revealed
+// by the @media print block below.
+.candidate-print-mast,
+.candidate-print-qr { display: none; }
 
 @media (min-width: 720px) {
   .candidate-grade { padding: $space-xs $space-gutter; }
@@ -413,6 +584,18 @@ summary.candidate-grade {
   color: $color-muted;
 
   strong { color: $color-text; }
+}
+
+// Where a score was taken from, under the incumbent record. Smaller than the
+// rationale above it and without its accent rule: this is a citation, not part
+// of the argument, and it is the last line of the block whether or not there is
+// an argument above it to cite for.
+.candidate-answer__source {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: $color-muted;
+
+  a { color: inherit; }
 }
 
 // The answer, laid out rather than hidden behind a second toggle: opening the
@@ -693,6 +876,7 @@ summary.candidate-grade {
     .site-header,
     .site-footer,
     .page-header__back,
+    .candidate-grades-controls,
     .candidate-actions { display: none; }
 
     // The per-question breakdown, and the chevron that opens it. Both belong on
@@ -792,7 +976,6 @@ summary.candidate-grade {
     .container { max-width: none; padding: 0; }
     .page-content { padding: 0; }
 
-    .candidate-pending,
     .candidate-returned {
       margin: 4mm 0 0;
       padding: 2mm 3mm;
@@ -800,6 +983,28 @@ summary.candidate-grade {
       border: 0.5pt solid #000;
       border-left: 1.5pt solid #000;
       font-size: 9.5pt;
+    }
+
+    // The grading key, and the gap above it. On screen the key sits a comfortable
+    // $space-md under the hero, which is a rem measurement made against a
+    // scrolling page; on paper the hero is plain black text with no band behind
+    // it, so that same gap read as another line of the candidate's details
+    // rather than as the start of the grades. 9mm separates the two blocks.
+    //
+    // Chips here keep the key's own smaller size from _components.scss: the .grade
+    // rule further down sizes the chips in the table to 8mm, and a key drawn at
+    // the size of the thing it explains stops reading as a caption.
+    .scorecard-legend {
+      margin-top: 9mm;
+      gap: 2mm 4mm;
+      font-size: 8pt;
+
+      .grade {
+        width: 5mm;
+        height: 5mm;
+        font-size: 8pt;
+        border-width: 0.75pt;
+      }
     }
 
     // One column of rows on paper, same as on screen. Nine rows at this height
@@ -865,6 +1070,54 @@ summary.candidate-grade {
       // pins it to the right instead, so every chip lines up down the page.
       margin-top: 0;
       margin-left: auto;
+    }
+
+    // The QR code back to this candidate's page, and the only link on the sheet.
+    //
+    // 24mm square. A version 5 code (37 modules plus the quiet zone) at that
+    // size gives each module about 0.53mm, comfortably over the ~0.4mm a phone
+    // camera needs at arm's length, and the code stays readable if the reader
+    // prints the leaflet at 90%. Scaling it down to fit something else is how a
+    // QR code on a leaflet quietly stops working, so it is the fixed part of
+    // this block and the text wraps around it.
+    //
+    // Kept off the fold with the row rule: half a QR code is not a QR code.
+    .candidate-print-qr {
+      display: flex;
+      align-items: center;
+      gap: 4mm;
+      margin-top: 6mm;
+      break-inside: avoid;
+    }
+
+    .qr-code {
+      flex: none;
+      width: 24mm;
+      height: 24mm;
+    }
+
+    .candidate-print-qr__lead {
+      margin: 0;
+      font-family: $font-display;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 12pt;
+      line-height: 1.1;
+    }
+
+    // The address under the caption, for a reader with no phone in their hand
+    // and for a photocopy too tired to scan. Not a link treatment: on paper it
+    // is something to type, not something to click.
+    .candidate-print-qr__url {
+      margin: 1mm 0 0;
+      font-size: 9.5pt;
+      word-break: break-all;
+    }
+
+    .candidate-print-qr__note {
+      margin: 1mm 0 0;
+      font-size: 9pt;
     }
 
     // Required on election advertising, so it prints with everything else:

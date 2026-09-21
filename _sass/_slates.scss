@@ -164,7 +164,10 @@
 // A dot beside "Running with <slate>", tying that page to the colour the reader
 // may have just been scanning in the table. Always shown: there is one slate on
 // the page, so there is nothing to opt out of.
-.candidate-hero__slate .slate-dot {
+// The same dot in both places it names a slate on a candidate's page: the hero
+// line, and the copy assets/js/candidate.js puts in the stuck bar.
+.candidate-hero__slate .slate-dot,
+.candidate-stickybar__slate .slate-dot {
   display: inline-block;
   width: 0.7em;
   height: 0.7em;

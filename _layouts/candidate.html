@@ -130,25 +130,17 @@ layout: default
 
 <div class="container page-content candidate-page">
   {%- comment -%}
-    Three states, and which one this is, is the first thing the page has to
-    settle: a returned questionnaire that nobody has finished grading used to
-    look exactly like no reply at all, which is the one mistake this page cannot
-    afford to make about a candidate who did the work.
+    One note, for a candidate who replied and whose grades are not out yet.
+
+    There was a second one above it, for a candidate who never replied: it said
+    no questionnaire had come back and every topic below would therefore show a
+    dash. The row of dashes says that, the key directly above them names the
+    mark, and a paragraph restating both was the page leading with what a
+    candidate had not done. Its removal is why the note below is now the only
+    one: the state it described is still drawn, in the chips, where every other
+    state on this page is drawn too.
   {%- endcomment -%}
-  {%- unless returned %}
-  <div class="callout candidate-pending">
-    <p>
-      <strong>No reply yet.</strong> We have not received a completed coalition
-      questionnaire from {{ c.name }}, so every topic below shows a dash
-      (<span aria-hidden="true">—</span>) rather than a letter grade. Every
-      candidate's responses and grades are published together on
-      {{ grades_released.date | date: "%B %-d" }}. You can still
-      <a href="{{ '/questionnaire/' | relative_url }}">read every question they were asked</a>.
-      <a href="{{ '/faq/#methodology' | relative_url }}">How we grade</a>.
-    </p>
-  </div>
-  {%- else %}
-  {%- if published == 0 %}
+  {%- if returned and published == 0 %}
   <div class="callout candidate-returned">
     <p>
       <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
@@ -163,7 +155,6 @@ layout: default
     </p>
   </div>
   {%- endif %}
-  {%- endunless %}
 
   {%- comment -%}
     One row per topic: icon and name on the left, grade hard right, a dotted
@@ -184,20 +175,58 @@ layout: default
   {%- comment -%}
     The same key the scorecard matrix carries, above the same chips. A reader
     arriving here from a search result rather than from the table has not seen
-    it, and three of the five states this page can draw are not letters.
+    it, and the states this page can draw that are not letters need naming. The
+    key lists only the ones something is actually in - see legend_states in
+    _plugins/questionnaire_scores.rb - so it is the same list on both pages and
+    neither names a mark the reader will not find.
   {%- endcomment -%}
   {% include grade-legend.html %}
+
+  {%- comment -%}
+    Open or close every topic at once.
+
+    Nine topics, each holding several questions with an answer and a rationale
+    under them, is a page a reader works through one row at a time — and one
+    where somebody comparing two candidates, or reading the whole record before
+    a vote, is otherwise clicking nine times to see it. Ctrl+F does not find
+    what is inside a closed <details> in every browser either, so "expand all"
+    is also what makes the page searchable.
+
+    One button rather than two. It names the action it will take next and swaps
+    when the rows are all open, so there is never a control on the page that
+    would do nothing if pressed. assets/js/candidate.js keeps it in step when
+    rows are opened one at a time.
+
+    Rendered only where there is more than one row to open: with one, the row's
+    own chevron is the shorter path and this is chrome above a list of nine
+    topics that mostly says the same thing. Ships hidden and is revealed by the
+    script, like the print button: without scripting the rows still open
+    individually, which is the whole reason they are a native <details>.
+  {%- endcomment -%}
+  {%- assign openable_count = 0 -%}
+  {%- for subject in subjects -%}
+    {%- assign row = c.published_subjects[subject.id] -%}
+    {%- if row.questions.size > 0 or row.unscored.size > 0 or row.score -%}
+      {%- assign openable_count = openable_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if openable_count > 1 %}
+  <div class="candidate-grades-controls">
+    <button type="button" class="candidate-grades-controls__toggle" id="toggle-all-topics" data-label-expand="Expand all topics" data-label-collapse="Collapse all topics" hidden>Expand all topics</button>
+  </div>
+  {%- endif %}
 
   <ul class="candidate-grades">
     {%- for subject in subjects %}
     {%- assign cell = c.scores[subject.id] %}
     {%- assign detail = c.published_subjects[subject.id] %}
     {%- comment -%}
-      A topic published as N/A with nothing under it. That is a sitting
-      incumbent who never returned the questionnaire: Homes for Living score
-      their housing record whether they replied or not, so housing carries a
-      real letter and every other topic carries the N/A that says there is
-      nothing to grade and never will be.
+      A topic published as N/A with nothing under it: graded, and the answer
+      is that it does not apply. A sitting incumbent scored on their housing
+      record alone no longer reaches this - sync-questionnaire.py publishes no
+      subject at all for the nine topics they were never asked about, so those
+      rows carry the same dash as every other candidate who did not reply, and
+      housing carries the letter their record earned.
 
       Dropped back to the plain row below, on the same reasoning that row
       already carries: a toggle that opens onto one sentence of apology is
@@ -219,7 +248,13 @@ layout: default
       {%- if detail.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
     {%- endunless %}
     {%- if cell_state == "" and returned %}{% assign cell_state = "review" %}{% endif %}
-    <li class="candidate-grade-row" style="--card-accent: {{ subject.accent }}">
+    {%- comment -%}
+      The id is on the row rather than on the <details> inside it, because the
+      scorecard matrix links to one topic per cell and a topic with nothing
+      published has no <details> to carry it. Every row is a target; what the
+      script does on arrival depends on what it finds there.
+    {%- endcomment -%}
+    <li class="candidate-grade-row" id="topic-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
       {%- if detail %}
       {%- comment -%}
         Credit the topic to an organization only when every question in it names
@@ -242,7 +277,7 @@ layout: default
         screen-reader-operable with no JavaScript, and this page has to survive
         without any (see the print button below, which does not).
       {%- endcomment -%}
-      <details class="candidate-grade__disclosure" id="topic-{{ subject.id }}">
+      <details class="candidate-grade__disclosure">
         <summary class="candidate-grade">
           <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
           <h2 class="candidate-grade__name">{{ subject.name }}</h2>
@@ -476,6 +511,28 @@ layout: default
               {%- if detail.score.record.rationale %}
               <p class="candidate-answer__rationale"><strong>Why this score:</strong> {{ detail.score.record.rationale }}</p>
               {%- endif %}
+              {%- comment -%}
+                Where the number came from, under every record score and not only
+                the ones carrying a rationale.
+
+                This is the one score on the page a reader cannot check against
+                anything above it: every other number sits under the question it
+                grades and the candidate's own answer to it, and this one is a
+                term of council votes the page does not list. The tracker is that
+                list, so the score is only as checkable as the link to it.
+
+                The URL lives on the scoring organization's entry in
+                _data/partners.yml, matched by the owner the grading sheet names.
+                An owner spelled differently there publishes no link rather than
+                the wrong organization's.
+              {%- endcomment -%}
+              {%- assign record_owner = detail.score.record.owner | default: owners[0] %}
+              {%- assign record_partner = site.data.partners | where: "name", record_owner | first %}
+              {%- if record_partner.vote_tracker %}
+              <p class="candidate-answer__source">
+                Scored from <a href="{{ record_partner.vote_tracker }}" target="_blank" rel="noopener">{{ record_owner }}'s vote tracker</a>.
+              </p>
+              {%- endif %}
             </div>
           </div>
           {%- endif %}
@@ -567,8 +624,10 @@ layout: default
 
         Two states reach this, and the chip tells them apart. Usually nothing is
         published yet and the row becomes openable when grading finishes. The
-        other is an N/A chip on a candidate who never returned the
-        questionnaire, where nothing is coming and the row stays as it is.
+        other is a dash on a candidate who never returned the questionnaire -
+        including a sitting incumbent published on their housing record alone,
+        whose other nine topics are a dash like anybody else's - where nothing
+        is coming and the row stays as it is.
 
         It still draws the chevron, faded to a disabled state. Two reasons, and
         the first is the one that matters: without it this row's grade chip sits
@@ -591,16 +650,50 @@ layout: default
     {%- endfor %}
   </ul>
 
+  {%- comment -%}
+    Print only: the leaflet's way back to this page.
+
+    The sheet carries nine letters and no reasoning - the per-question detail is
+    dropped from print on purpose, because the working behind the grades runs to
+    several pages and the leaflet is one. That makes "where did this come from?"
+    the obvious question to be holding the paper with, and the code is the only
+    answer a printed page can give: nothing on it is clickable, and the address
+    under the code is 50 characters nobody is going to type.
+
+    The address is printed anyway, under the caption. A code with no readable
+    URL beside it asks the reader to trust an opaque square, and a photocopy of
+    a photocopy stops scanning long before the text stops being legible.
+
+    Deliberately not the same link as the masthead's livablecrd.ca, which is the
+    coalition's front door. This one lands on this candidate, which is what
+    somebody holding this leaflet is asking about.
+  {%- endcomment -%}
+  {%- assign candidate_url = page.url | absolute_url -%}
+  <aside class="candidate-print-qr" aria-hidden="true">
+    {{ candidate_url | qr_svg }}
+    <div class="candidate-print-qr__text">
+      <p class="candidate-print-qr__lead">Read their full responses</p>
+      <p class="candidate-print-qr__url">{{ candidate_url | remove: 'https://' | remove: 'http://' }}</p>
+      <p class="candidate-print-qr__note">Every question {{ c.name }} was asked, their answers, and why each grade was given.</p>
+    </div>
+  </aside>
+
   <div class="btn-group candidate-actions">
     {%- comment -%}
+      Printing is the only action left here. "See the full scorecard" and "Read
+      the questionnaire" stood beside it and both were routes the page already
+      offers: the scorecard is the first of the two links back at the top of the
+      page and a nav item besides, and the questionnaire is linked from every
+      topic's own "See these questions". Three buttons under the grades made the
+      page end in a menu rather than in what the reader came for.
+
       The print button is hidden until assets/js/candidate.js unhides it: the
       leaflet itself is pure CSS, so without scripting the button would be a
       control that does nothing, worse than no control at all. Readers without
-      JS still get the leaflet from their browser's own print command.
+      JS still get the leaflet from their browser's own print command, and this
+      row is then empty and draws nothing.
     {%- endcomment -%}
     <button type="button" class="btn btn-primary" id="print-scorecard" hidden>Print scorecard</button>
-    <a class="btn btn-secondary" href="{{ '/scorecard/' | relative_url }}">See the full scorecard</a>
-    <a class="btn btn-secondary" href="{{ '/questionnaire/' | relative_url }}">Read the questionnaire</a>
   </div>
 
   {%- comment -%}
@@ -611,6 +704,13 @@ layout: default
   {% include sponsor-notice.html class="candidate-sponsor" %}
 </div>
 
+{%- comment -%}
+  Opens the topic a fragment points at, for a reader arriving from a grade chip
+  on the scorecard matrix. Shared with /faq/, which uses it to open a panel;
+  loaded before candidate.js so a topic opened on the way in is already open
+  when the expand-all control works out what its label should say.
+{%- endcomment -%}
+<script src="{{ '/assets/js/details-hash.js' | asset_url }}" defer></script>
 <script src="{{ '/assets/js/candidate.js' | asset_url }}" defer></script>
 
 {%- comment -%}

@@ -26,12 +26,12 @@
 }
 
 // Height of the sticky site header, published so anything that wants to stick
-// below it (the scorecard matrix's topic header row) has an offset to sit at
-// rather than sliding underneath. The value here is only the starting point:
-// nothing about this header is a fixed height, since the nav wraps and every
-// part of it is sized in rem, so assets/js/scorecard.js measures the real one
-// and overwrites this. What is declared here is what that page gets before the
-// script runs, and if it never does.
+// below it (the scorecard matrix's topic header row, the candidate hero) has an
+// offset to sit at rather than sliding underneath. The value here is only the
+// starting point: nothing about this header is a fixed height, since the nav
+// wraps and every part of it is sized in rem, so assets/js/site-header.js
+// measures the real one and overwrites this. What is declared here is what a
+// page gets before the script runs, and if it never does.
 :root {
   --site-header-h: 74px;
   // Height of the matrix's own topic header row, which the municipality bands
@@ -39,6 +39,11 @@
   // terms as the site header above; this is the icon-only phone layout, and
   // _components.scss raises it in the 52.5rem block where the row grows a label.
   --matrix-head-h: 35px;
+  // Height of the candidate page's stuck bar, which its topic rows have to clear
+  // when the scorecard links straight to one of them. Measured and republished
+  // by assets/js/candidate.js, which is also what builds the bar; this is what a
+  // page gets before it runs, and a page without scripting, which has no bar.
+  --candidate-bar-h: 56px;
 }
 
 .site-header {

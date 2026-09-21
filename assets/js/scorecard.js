@@ -7,28 +7,11 @@
   var table = document.getElementById('candidate-grid');
   if (!table) return;
 
-  // The matrix's topic header row sticks below the site header (see the
-  // min-width: 60rem block in _components.scss), so it needs that header's
-  // height as an offset. It is not a constant worth hardcoding: the nav wraps
-  // at some widths and every part of it is sized in rem, so a literal drifts
-  // the moment either changes and leaves either a strip of rows above the
-  // stuck header or a gap of page showing through under it. Measure it, and
-  // remeasure whenever it changes size.
-  var siteHeader = document.querySelector('.site-header');
-  if (siteHeader) {
-    var publishHeaderHeight = function () {
-      // Floored, not rounded. The height is fractional (the nav is sized in
-      // rem, and a fractional device pixel ratio makes it fractional in CSS
-      // pixels too), and rounding it up puts the stuck row a fraction below
-      // the header with the page showing through the seam. Floor errs the
-      // other way, into an overlap the header paints over. The -1px in the
-      // CSS covers the rest of it.
-      var h = Math.floor(siteHeader.getBoundingClientRect().height);
-      document.documentElement.style.setProperty('--site-header-h', h + 'px');
-    };
-    publishHeaderHeight();
-    if (window.ResizeObserver) new ResizeObserver(publishHeaderHeight).observe(siteHeader);
-  }
+  // The matrix's topic header row sticks below the site header, whose height is
+  // measured and published as --site-header-h by assets/js/site-header.js. That
+  // moved out of here when the candidate hero started sticking below the same
+  // header: one measurement, on every page, rather than a copy per page that
+  // needs it.
 
   // The municipality bands stick below the topic header row, so their offset is
   // the site header plus that row. Its height is no more a constant than the

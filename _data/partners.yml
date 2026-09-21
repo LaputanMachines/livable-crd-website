@@ -9,6 +9,12 @@
 #             Both forms work. Omit to fall back to the name heading.
 #   url       Link to the partner's website (optional). When set, a "Visit website"
 #             link is shown below the note (opens in a new tab), e.g. url: https://homesforliving.ca
+#   vote_tracker  Where this partner's scoring of an incumbent's record is
+#             published (optional). Only Homes for Living has one: they score a
+#             sitting councillor's housing record as well as their questionnaire,
+#             and _layouts/candidate.html links this under that score so a reader
+#             can see what it was made of. Matched to the record's `owner` on the
+#             grading sheet by name, so the two spellings have to agree.
 #   category  Focus area, shown as a colored pill (optional). Use a topic id from
 #             _data/subjects.yml so the pill picks up that topic's name and accent color:
 #               general, transit, housing, climate, arts,
@@ -45,6 +51,7 @@
   note: Homes for Living is a registered BC Society dedicated to advocating for more, and more affordable, housing in Greater Victoria and across BC.
   logo: /assets/images/partners/homes-for-living.png
   url: https://www.homesforliving.ca/
+  vote_tracker: https://www.homesforliving.ca/votetracker
   category: housing
 - name: Better Columbia
   note: Urbanist news and commentary on transit, housing, and city-building across British Columbia.

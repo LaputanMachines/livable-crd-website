@@ -2,6 +2,13 @@
 <html lang="en-CA">
 <head>
   {% include head.html %}
+  {%- comment -%}
+    Measures the sticky site header and publishes its height as --site-header-h,
+    which is what the scorecard matrix's stuck rows and the candidate hero sit
+    below. In the head with `defer` rather than beside a page's own script: the
+    header is on every page, and defer runs it before them in document order.
+  {%- endcomment -%}
+  <script src="{{ '/assets/js/site-header.js' | asset_url }}" defer></script>
 </head>
 {%- comment -%}
   `page.body_class` lets a page opt into styling that has to reach outside
