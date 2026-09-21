@@ -130,6 +130,57 @@ layout: default
 
 <div class="container page-content candidate-page">
   {%- comment -%}
+    How many topics have something behind them to open, and how many of those
+    hold something this candidate said. The two differ on one kind of page: a
+    sitting incumbent published for their housing record alone has a row that
+    opens onto a score taken from council votes, and no questions or answers
+    anywhere. Both counts are read below, by the note that says what opening a
+    row gets you and by the control that opens all of them.
+  {%- endcomment -%}
+  {%- assign openable_count = 0 -%}
+  {%- assign answered_count = 0 -%}
+  {%- for subject in subjects -%}
+    {%- assign row = c.published_subjects[subject.id] -%}
+    {%- if row.questions.size > 0 or row.unscored.size > 0 or row.score -%}
+      {%- assign openable_count = openable_count | plus: 1 -%}
+    {%- endif -%}
+    {%- if row.questions.size > 0 or row.unscored.size > 0 -%}
+      {%- assign answered_count = answered_count | plus: 1 -%}
+    {%- endif -%}
+  {%- endfor -%}
+
+  {%- comment -%}
+    How to read the page, in the order a reader meets it: the rows, the key
+    under this, what is inside a row, and what they can do with the result. The
+    scorecard's own index carries the same kind of note for the same reason -
+    this page is a table of marks a reader has to be told the shape of before
+    the marks mean anything.
+
+    The sentence about opening a row is conditional on there being one to open:
+    on a page where nothing is published yet, nine rows that do not open are not
+    a feature to explain, and a note promising otherwise is the first thing on
+    the page and wrong.
+
+    Deliberately says nothing about whether this candidate replied. The chips
+    say it, the key names the marks, and a paragraph here restating it is the
+    page opening with what somebody did not do - which is why the note that used
+    to do exactly that was taken out.
+  {%- endcomment -%}
+  <p class="candidate-howto">
+    <strong>How to read this page.</strong> Each row below is one policy area,
+    with {{ c.name }}'s mark for it on the right; the key underneath says what
+    each mark means.
+    {%- if answered_count > 0 %} Open a row for the questions behind that mark,
+    what they answered, and why each answer scored as it did.
+    {%- elsif openable_count > 0 %} Open a row to see what its mark was scored
+    on.
+    {%- endif %}
+    {%- if openable_count > 1 %} The control above the list opens all of them at
+    once.{% endif %}
+    At the foot of the page you can print this scorecard or share it as an image.
+  </p>
+
+  {%- comment -%}
     One note, for a candidate who replied and whose grades are not out yet.
 
     There was a second one above it, for a candidate who never replied: it said
@@ -203,13 +254,6 @@ layout: default
     script, like the print button: without scripting the rows still open
     individually, which is the whole reason they are a native <details>.
   {%- endcomment -%}
-  {%- assign openable_count = 0 -%}
-  {%- for subject in subjects -%}
-    {%- assign row = c.published_subjects[subject.id] -%}
-    {%- if row.questions.size > 0 or row.unscored.size > 0 or row.score -%}
-      {%- assign openable_count = openable_count | plus: 1 -%}
-    {%- endif -%}
-  {%- endfor -%}
   {%- if openable_count > 1 %}
   <div class="candidate-grades-controls">
     <button type="button" class="candidate-grades-controls__toggle" id="toggle-all-topics" data-label-expand="Expand all topics" data-label-collapse="Collapse all topics" hidden>Expand all topics</button>

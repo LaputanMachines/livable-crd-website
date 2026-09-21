@@ -212,6 +212,18 @@
   }
 }
 
+// How to read the page, above the key it refers to. A plain paragraph rather
+// than a .callout: the boxes on this page are for a state a particular
+// candidate is in, and this says the same thing on all 210 of them.
+.candidate-howto {
+  margin: 0 0 $space-md;
+  color: $color-muted;
+  font-size: 0.95rem;
+  line-height: 1.55;
+
+  strong { color: $color-text; }
+}
+
 // The "returned it, still being graded" note, and the only note this page
 // carries: the one that told a reader a candidate had not replied is gone, and
 // the row of dashes says it instead.
@@ -913,6 +925,7 @@ summary.candidate-grade {
     .page-header__back,
     .candidate-grades-controls,
     .candidate-share-status,
+    .candidate-howto,
     .candidate-actions { display: none; }
 
     // The per-question breakdown, and the chevron that opens it. Both belong on
