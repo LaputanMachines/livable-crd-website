@@ -92,6 +92,30 @@ items:
     type: text
     type_label: Written answer
     graded: false
+  # --- healthcare-access ---
+  - label: HLT-01
+    subject: healthcare-access
+    question: >-
+      What role should your municipality play in establishing new primary care
+      clinics?
+    type: single
+    type_label: One answer
+    graded: false
+    weight: "100%"
+    owner: Family Doctors For Saanich
+    options:
+      - "(Colwood Model) Municipality is the clinic operator, GPs , NPs & support staff are all municipal employees."
+      - "(Langford/Sidney/Central Saanich Model) Municipality indirectly supports PCC with Permissive Tax Exemptions, zoning, below market rent, etc. Clinic is operated by a non-profit such as South Island Primary Care Society or Shoreline Medical Society."
+      - No role. Medical care is the sole responsibility of Province of BC.
+      - Decline to answer.
+  - label: HLT-GEN
+    subject: healthcare-access
+    question: |-
+      If you have anything you'd like to add in regards to healthcare in your municipality, feel free to share your
+      thoughts below.
+    type: text
+    type_label: Written answer
+    graded: false
   # --- transit ---
   - label: TRN-01
     subject: transit
@@ -919,30 +943,6 @@ items:
     question: >-
       If you have anything you'd like to add in regards to walking or
       pedestrian activity in your municipality, feel free to share your
-      thoughts below.
-    type: text
-    type_label: Written answer
-    graded: false
-  # --- healthcare-access ---
-  - label: HLT-01
-    subject: healthcare-access
-    question: >-
-      What role should your municipality play in establishing new primary care
-      clinics?
-    type: single
-    type_label: One answer
-    graded: false
-    weight: "100%"
-    owner: Family Doctors For Saanich
-    options:
-      - "(Colwood Model) Municipality is the clinic operator, GPs , NPs & support staff are all municipal employees."
-      - "(Langford/Sidney/Central Saanich Model) Municipality indirectly supports PCC with Permissive Tax Exemptions, zoning, below market rent, etc. Clinic is operated by a non-profit such as South Island Primary Care Society or Shoreline Medical Society."
-      - No role. Medical care is the sole responsibility of Province of BC.
-      - Decline to answer.
-  - label: HLT-GEN
-    subject: healthcare-access
-    question: |-
-      If you have anything you'd like to add in regards to healthcare in your municipality, feel free to share your
       thoughts below.
     type: text
     type_label: Written answer
