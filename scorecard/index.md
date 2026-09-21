@@ -33,34 +33,50 @@ description: >-
 
 <div class="container page-content">
   {%- comment -%}
-    The release date, in the intro rather than only in the #deadlines panel at
-    the foot of the page: a reader arriving at a table of dashes and hourglasses
-    asks when the grades appear before they ask anything else, and the answer
-    was three screens below them.
+    Two paragraphs: what this is, and how to work it. They used to be one, which
+    ran what the page is into how to search it into when the grades appear, and
+    a reader looking for any of the three read all three.
 
-    Inside the opening paragraph rather than beside it as a second one, and
-    dropped once the date has gone, because after the release it answers a
-    question nobody on this page is asking any more and the grades themselves
-    are the answer. The same end-of-day sum as _includes/deadline-list.html —
-    24 hours to the end of the day plus 8 for PST — so the two never disagree
-    about whether the date has passed.
+    The release date stays in the first, rather than only in the #deadlines panel
+    at the foot of the page: a reader arriving at a table of hourglasses asks
+    when the grades appear before they ask anything else, and the answer was
+    three screens below them. It is dropped once the date has gone, because
+    after the release it answers a question nobody on this page is asking any
+    more and the grades themselves are the answer. The same end-of-day sum as
+    _includes/deadline-list.html — 24 hours to the end of the day plus 8 for PST
+    — so the two never disagree about whether the date has passed.
   {%- endcomment -%}
   {%- assign grades_released = site.data.deadlines | where: "id", "grades-released" | first -%}
   {%- assign release_end = grades_released.date | date: "%s" | plus: 115200 -%}
   {%- assign now_ts = site.time | date: "%s" | plus: 0 -%}
   <p>
-    Confirmed candidates across the Capital Regional District, graded on the
-    policy areas the coalition evaluates. Search by name or slate, or filter by
-    municipality, office and grade. Every candidate is sent
-    <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>,
-    and their own page shows how each answer was graded.
+    Every confirmed candidate in the Capital Regional District, and where they
+    stand across nine policy areas. All of them were sent
+    <a href="{{ '/questionnaire/' | relative_url }}">the same questionnaire</a>.
     {%- if now_ts < release_end %}
-    <strong>Nothing is published as it comes in.</strong> Responses and grades
-    go up together on {{ grades_released.date | date: "%B %-d, %Y" }}, so until
-    then a candidate who replied shows an hourglass rather than a letter.
-    <a href="{{ '/faq/#deadlines' | relative_url }}">The key dates</a> have the
-    rest of the schedule.
+    Responses and grades are published together on
+    {{ grades_released.date | date: "%B %-d, %Y" }}.
     {%- endif %}
+  </p>
+
+  {%- comment -%}
+    How to use the page, in the order a reader meets the controls below it:
+    search, then the filters, then the table, then a candidate's own page. The
+    star is last and named plainly — it is the one control here whose icon does
+    not say what it does, and the only one that changes what the reader sees on
+    a later visit.
+
+    Deliberately not a list. Five short bullets above a filter bar and a
+    115-row table is a page that opens with instructions; a sentence each,
+    read once and never again, is what this needs to be.
+  {%- endcomment -%}
+  <p>
+    <strong>How to use this page.</strong> Search by name or slate, or narrow
+    the table with the filters: a minimum grade in any topic, office, and
+    municipality. Every row is one candidate and every column one topic, and the
+    key under the filters says what each mark means. Open a candidate's name for
+    their full answers, how each one was graded, and a scorecard you can print.
+    The star pins a candidate to the top of the table on this device.
   </p>
 
   <div class="scorecard-controls">
@@ -478,7 +494,36 @@ description: >-
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
             {% endunless %}
             {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
-            <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">{% include grade-badge.html grade=cell state=cell_state %}</td>
+            {%- comment -%}
+              The chip is a link into that candidate's page, at that topic, which
+              opens on arrival (assets/js/candidate.js reads the fragment). A
+              grade is the one thing on this page a reader wants the working for,
+              and the row's name link landed them at the top of a page of nine
+              topics with the one they clicked closed like the rest.
+
+              Every cell links, not only the ones carrying a letter: a dash and
+              an hourglass are answers to "how did they do on transit?" too, and
+              a column where some cells are clickable and others are not is a
+              table the reader has to test cell by cell. The fragment is the row
+              on the candidate's page whether or not it opens.
+
+              Same guard as the name link above: no page is generated for a name
+              that slugifies to nothing, so those rows keep a bare chip rather
+              than a link to a 404.
+
+              No aria-label on the link. The chip inside it already carries one
+              ("Grade A", "Awaiting response"), and naming the link would replace
+              that with the topic and drop the grade - the one fact the cell is
+              there to state. A screen reader reads the row and column headers
+              with it; `title` is for the mouse.
+            {%- endcomment -%}
+            <td class="scorecard-matrix__cell" data-topic="{{ subject.id }}">
+              {%- if cand_slug != '' -%}
+              <a class="scorecard-matrix__cell-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | append: cand_slug | append: '/#topic-' | append: subject.id | relative_url }}" title="{{ subject.name }} for {{ cand_display }}">{% include grade-badge.html grade=cell state=cell_state %}</a>
+              {%- else -%}
+              {% include grade-badge.html grade=cell state=cell_state %}
+              {%- endif -%}
+            </td>
             {% endfor %}
           </tr>
           {% endfor %}
