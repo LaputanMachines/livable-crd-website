@@ -26,50 +26,6 @@ body_class: page-questionnaire
 
 {% include print-mast.html %}
 
-{%- comment -%}
-  The candidate popup.
-
-  This page is the read-only question set, not the form. Candidates keep
-  arriving here expecting to answer, because it is the page that turns up when
-  you search for the questionnaire, and there is nothing on it that would get
-  them the form.
-
-  A <dialog> rather than a band across the top: the band said this to every
-  visitor on every visit, and the great majority of them are voters and
-  journalists who are on exactly the page they wanted. The popup asks the
-  question once, takes a dismissal, and never asks that browser again.
-
-  Native <dialog> and not a hand-rolled overlay: Esc closes it, the backdrop
-  comes free, focus is trapped inside it while it is open and returns to where
-  it was on close. Nothing here reimplements any of that badly.
-
-  It ships closed and inert. assets/js/questionnaire.js opens it, which means a
-  reader without scripting never sees it at all — hence the plain sentence in
-  the body copy below, which is always there for them and for anybody who has
-  already dismissed this.
-{%- endcomment -%}
-<dialog class="candidate-modal" id="candidate-modal" aria-labelledby="candidate-modal-title">
-  <div class="candidate-modal__body">
-    <h2 class="candidate-modal__title" id="candidate-modal-title">Are you a candidate?</h2>
-    <p class="candidate-modal__lead">
-      This page is the questionnaire as a read-only reference. It is not the
-      form. Email us and we will send you the link to your fillable
-      questionnaire.
-    </p>
-    <p class="candidate-modal__action">
-      <a href="mailto:{{ site.email }}?subject=Questionnaire%20link">{{ site.email }}</a>
-    </p>
-    <p class="candidate-modal__note">
-      The questions are published here so voters, journalists and partner
-      organizations can read exactly what every candidate was asked, and so
-      candidates can prepare their answers before they open the form.
-    </p>
-    <div class="btn-group candidate-modal__actions">
-      <button type="button" class="btn btn-primary" data-candidate-modal-close>Got it, read the questions</button>
-    </div>
-  </div>
-</dialog>
-
 <div class="page-header">
   <div class="container">
     <h1>The questionnaire</h1>
@@ -85,31 +41,16 @@ body_class: page-questionnaire
   </p>
 
   {%- comment -%}
-    The candidate line, in the body copy where it always is.
-
-    The popup above says the same thing more loudly, but it only ever fires
-    once per browser and never at all without scripting. This is the copy that
-    is here on the tenth visit, and it is the one a candidate can link a
-    colleague to.
-  {%- endcomment -%}
-  <p class="questionnaire-candidate-note">
-    <strong>Are you a candidate?</strong> This page is a reference, not the form.
-    Email <a href="mailto:{{ site.email }}?subject=Questionnaire%20link">{{ site.email }}</a>
-    for the link to your fillable questionnaire.
-  </p>
-
-
-  {%- comment -%}
     RUSH's mapping surveys, at the top because this is the page people land on
     when they search for "the questionnaire" and want to say something about
     where they live. The candidate questions below are read-only and there is
     nothing on this page a resident can fill in; these are.
 
-    The first sentence has to do the separating work. A reader who has arrived
-    looking for a form is primed to read anything link-shaped near the top as
-    the form, which is the same misreading the popup above already exists to
-    correct — so the callout says what these are not before it says what they
-    are.
+    The first sentence has to do the separating work, and now does all of it:
+    the page no longer carries a line of its own saying this is not the form.
+    A reader who has arrived looking for one is primed to read anything
+    link-shaped near the top as it, so the callout says what these are not
+    before it says what they are.
 
     Above the counts and the print button rather than below them: those two are
     about working through sixty-six questions, and a reader who is going to do

@@ -9,163 +9,6 @@
 // apart while scrolling, and question text set at reading size rather than at
 // the small-print size a "list of questions" would tempt.
 
-// --- The candidate popup ----------------------------------------------------
-// Markup: the <dialog> above .page-header in questionnaire/index.md.
-// Script: assets/js/questionnaire.js opens it and records the dismissal.
-//
-// Replaces a full-width band that ran across the top of the page. The band was
-// loud at every visitor forever; this asks once and then gets out of the way.
-// A <dialog> a browser does not implement is an unknown inline element, which
-// renders its contents as ordinary page text with no way to close them. Tag
-// selectors match unknown elements, so this one rule keeps the popup's copy off
-// the page there, and it is what assets/js/questionnaire.js leans on when it
-// finds no showModal().
-.candidate-modal:not([open]) {
-  display: none;
-}
-
-.candidate-modal {
-  // A dialog's default box is a shrink-to-fit block with a 1px border and a
-  // browser margin: auto. Everything below re-lays it as a card the site could
-  // have drawn itself.
-  width: min(34rem, calc(100vw - #{$space-md * 2}));
-  max-width: none;
-  padding: 0;
-  border: $border-weight-heavy solid $color-text;
-  border-radius: $radius;
-  background: $color-surface;
-  color: $color-text;
-  // Native centring. `margin: auto` on a modal dialog centres it in the
-  // viewport on both axes, which is the one job the UA stylesheet does well.
-  margin: auto;
-  // No drop shadow: $shadow is `none` site-wide, and the heavy border plus the
-  // dimmed backdrop already lift the card off the page.
-
-  // The top edge in Kwetlal, kept from the band it replaces: the card is white
-  // on a dimmed page and wants one stripe of brand on it to not read as a
-  // browser chrome prompt.
-  border-top: $space-xs solid $color-warm;
-
-  &::backdrop {
-    // The page behind stays readable through it. This interrupts a reader; it
-    // should not pretend the thing it interrupted has gone away.
-    background: rgba($inky-purple, 0.55);
-  }
-}
-
-// Movement, so the popup reads as something that arrived rather than as a
-// screen that was always there and only now got painted. Small: it lands in
-// under a quarter-second, from a hand's width below centre.
-//
-// Keyframes on [open] rather than a transition: a <dialog> goes from
-// display:none to displayed, and a plain transition has nothing to run on
-// across that. The close half is driven by .is-closing from
-// assets/js/questionnaire.js, which holds the dialog open long enough for it.
-@keyframes candidate-modal-in {
-  from { opacity: 0; transform: translateY(1.5rem) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes candidate-modal-out {
-  from { opacity: 1; transform: translateY(0) scale(1); }
-  to   { opacity: 0; transform: translateY(0.75rem) scale(0.98); }
-}
-
-@keyframes candidate-modal-backdrop-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
-}
-
-// Easing written out rather than taken from $transition-med: that variable is a
-// full `0.25s ease` shorthand, so dropping it into an `animation` value lands as
-// a 250ms delay and the popup stalls a quarter-second before it appears.
-.candidate-modal[open] {
-  animation: candidate-modal-in 0.24s ease-out;
-
-  // The dim comes up with the card, not before it. A backdrop that lands first
-  // reads as the page being taken away; landing together reads as the card
-  // arriving on top of it.
-  &::backdrop {
-    animation: candidate-modal-backdrop-in 0.24s ease-out;
-  }
-}
-
-.candidate-modal.is-closing {
-  // Slightly quicker on the way out. Leaving is not the part worth watching.
-  animation: candidate-modal-out 0.16s ease-in forwards;
-
-  &::backdrop {
-    animation: candidate-modal-backdrop-in 0.16s ease-in reverse forwards;
-  }
-}
-
-// _animations.scss already collapses every animation under this query with
-// !important, which leaves the popup appearing instantly and the close path in
-// questionnaire.js falling through on its animationend a frame later. This is
-// the local, explicit statement of the same intent, so the promise survives any
-// rework of that global reset.
-@media (prefers-reduced-motion: reduce) {
-  .candidate-modal[open],
-  .candidate-modal[open]::backdrop,
-  .candidate-modal.is-closing,
-  .candidate-modal.is-closing::backdrop {
-    animation: none;
-  }
-}
-
-.candidate-modal__body {
-  padding: $space-lg $space-gutter $space-md;
-  display: flex;
-  flex-direction: column;
-  gap: $space-sm;
-}
-
-.candidate-modal__title {
-  margin: 0;
-  font-size: 1.5rem;
-  line-height: 1.15;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.candidate-modal__lead {
-  margin: 0;
-  line-height: 1.45;
-}
-
-// The address is the action, so it is sized as one rather than left inline in
-// the sentence where it reads as a footnote.
-.candidate-modal__action {
-  margin: 0;
-  font-family: $font-display;
-  font-size: 1.1rem;
-  font-weight: 700;
-  word-break: break-word;
-}
-
-.candidate-modal__note {
-  margin: 0;
-  font-size: 0.9rem;
-  color: $color-muted;
-}
-
-.candidate-modal__actions {
-  margin-top: $space-xs;
-}
-
-// The same sentence in the body copy, for readers without scripting and for
-// everybody who dismissed the popup on a previous visit. Left-edge accent
-// rather than a second box: the page already carries a .callout further down,
-// and two boxed asides in the first screen is a page that shouts.
-.questionnaire-candidate-note {
-  margin: $space-md 0 0;
-  padding-left: $space-sm;
-  border-left: $space-xs solid $color-warm;
-  color: $color-muted;
-
-  strong { color: $color-text; }
-}
-
 .questionnaire-summary {
   p { margin-bottom: 0; }
 }
@@ -595,13 +438,7 @@
   // questions they filtered to. That is the sheet they were looking at, and
   // printing something other than what is on the screen is the worse surprise.
   //
-  // The candidate note goes too. The worksheet is the thing a candidate prints
-  // to draft answers on, so a line telling them this sheet is not the form is
-  // an interruption on paper, and the masthead above already carries the site
-  // to go back to. The popup needs no rule — a closed <dialog> is not rendered,
-  // and printing with it open is not a thing that happens.
-  //
-  // So does the other-organizations card, for the same reason and one more: it
+  // The other-organizations card goes too, for that reason and one more: it
   // is a live link with a deadline on it, and paper outlives both. Scoped to
   // this page, because the band on the homepage is somebody's whole reason for
   // printing that page.
@@ -613,7 +450,6 @@
   .page-questionnaire .site-footer,
   .page-questionnaire .other-orgs,
   .callout--rush,
-  .questionnaire-candidate-note,
   .questionnaire-search,
   .questionnaire-search__status,
   .questionnaire-jump,
