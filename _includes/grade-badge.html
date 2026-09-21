@@ -9,11 +9,11 @@
 
     a letter   the grade the coalition assigned
     N/A        graded, and the answer is that it does not apply to this
-               candidate. Per question, that is ROL-05 asking about a previous
-               term in office. Per topic, it is a sitting incumbent who never
-               returned the questionnaire: Homes for Living score their housing
-               record regardless, so housing carries a letter and every other
-               topic carries this
+               candidate: ROL-05 asks about a previous term in office, and a
+               first-time candidate had none. Per question only - a whole topic
+               used to carry it on a sitting incumbent published for their
+               housing record alone, and those topics are now the dash below,
+               since what is true of them is that no questionnaire came back
     hourglass  the candidate returned the questionnaire and this topic has not
                been published yet. Passed in as state="review" by the caller,
                which is the only one that knows whether a reply came back. It is
@@ -27,8 +27,8 @@
                and only once their answers are published; every other topic
                carries a grade, and a written comment on a graded topic shows
                inside that topic rather than in its cell.
-    —          pending: nothing to report. In practice, no questionnaire came
-               back.
+    —          nothing to report. In practice, no questionnaire came back, which
+               is what the key calls it: "No Response", not "awaiting" one.
 {%- endcomment -%}
 {% assign g = include.grade | default: '' | strip %}
 {% assign g_upper = g | upcase %}
@@ -92,7 +92,7 @@
   </svg>
 </span>
 {% elsif no_grade %}
-<span class="grade grade--pending" aria-label="Awaiting response">—</span>
+<span class="grade grade--pending" aria-label="No response">—</span>
 {% elsif g_upper == 'N/A' or g_upper == 'NA' %}
 <span class="grade grade--na" aria-label="Not applicable">N/A</span>
 {% else %}

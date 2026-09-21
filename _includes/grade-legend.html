@@ -1,7 +1,15 @@
 {%- comment -%}
-  The grading key: four letters and the four states that are not letters.
+  The grading key: four letters and the states that are not letters.
   Rendered directly above the grades it explains, on the scorecard matrix and on
   every candidate page.
+
+  Two of those states are drawn only when something below is in them.
+  `legend_states` in _plugins/questionnaire_scores.rb walks the published data
+  with the templates' own rule and says which chips the pages draw; the key
+  names those and no others, so it cannot explain a mark a reader will not find.
+  The dash is unconditional: somebody has always failed to reply. The hourglass
+  is the exception in the other direction — it is drawn on the page and
+  deliberately left out of the key; see below.
 
   A shared include rather than the same markup in two places. The two empty
   states are the ones a reader most easily misreads — a returned questionnaire
@@ -34,37 +42,43 @@
   </span>
   {% endfor %}
   {%- comment -%}
-    "Not Applicable" names the N/A chip, which reaches a whole topic on one kind
-    of candidate: a sitting incumbent who never returned the questionnaire but
-    whose housing record Homes for Living scored anyway. Housing carries a real
-    letter for them and every other topic carries this, because there are no
-    answers to grade and there will not be any. The same chip appears on a
-    single question a candidate could not be asked, which is where it started.
+    "Not Applicable" names the N/A chip: graded, and the answer is that the
+    question does not apply to this candidate - ROL-05 asks what somebody did in
+    a previous term, and a first-time candidate had none. A per-question mark,
+    and nobody has had to give that answer yet, so today it is drawn nowhere and
+    the key leaves it out. A whole topic could carry it until the sitting
+    incumbents published on their housing record alone were changed to the dash
+    below, which says the true thing about them: no questionnaire came back.
   {%- endcomment -%}
+  {%- if site.data.legend_states.na %}
   <span class="scorecard-legend__item">
     {% include grade-badge.html grade="N/A" %}Not Applicable
   </span>
+  {%- endif %}
   {%- comment -%}
-    "Submitted, Grading In-Progress" names the hourglass, which is the default
-    on every topic a returned candidate is waiting on. Two of those topics —
-    General and Healthcare access — are never graded; their answers are only
-    held back until the sheet releases them, so on those two the label claims
-    grading that is not happening. /faq/#methodology says what each topic is
-    actually waiting on.
+    No hourglass here. It named the chip a returned candidate carries on a topic
+    that has not been published, which is the state this key existed to explain
+    while nothing was out — and on a released scorecard it is a line about the
+    coalition's own workflow at the top of a page of grades. The chip is still
+    drawn where a topic is genuinely unpublished, and /faq/#methodology still
+    defines it under "Submitted, Grading In-Progress"; what is gone is the key
+    entry for it.
   {%- endcomment -%}
-  <span class="scorecard-legend__item">
-    {% include grade-badge.html grade="" state="review" %}Submitted, Grading In-Progress
-  </span>
+  {%- if site.data.legend_states.answers %}
   <span class="scorecard-legend__item">
     {% include grade-badge.html grade="" state="answers" %}Answered
   </span>
+  {%- endif %}
   {%- comment -%}
-    "Awaiting Response": on these two pages the dash means a questionnaire that
-    never came back, since a returned one puts an hourglass or a bubble on every
-    topic. The same chip is drawn elsewhere for a topic nobody grades, where
-    that label does not hold; /faq/#methodology separates the two cases.
+    "No Response": on these two pages the dash means a questionnaire that never
+    came back, since a returned one puts an hourglass or a bubble on every topic.
+    Not "Awaiting Response", which promises a reply that is still coming; by the
+    time these grades are public the deadline is behind us and what the dash
+    records is that nothing arrived. The same chip is drawn elsewhere for a topic
+    nobody grades, where that label does not hold; /faq/#methodology separates
+    the two cases.
   {%- endcomment -%}
   <span class="scorecard-legend__item">
-    {% include grade-badge.html grade="" %}Awaiting Response
+    {% include grade-badge.html grade="" %}No Response
   </span>
 </div>

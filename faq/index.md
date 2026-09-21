@@ -183,11 +183,11 @@ description: >-
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" %}
-            <span class="grade-def__label">Awaiting Response</span>
+            <span class="grade-def__label">No Response</span>
           </dt>
           <dd class="grade-def__desc">
-            No completed questionnaire has come back from this candidate yet, so
-            there is nothing to publish in any topic. A candidate who has replied
+            No completed questionnaire came back from this candidate, so there is
+            nothing to publish in any topic. A candidate who has replied
             carries an hourglass or a speech bubble instead. A dash is never a bad
             grade: the grades are <strong>A</strong> through <strong>F</strong>,
             and a candidate who scores poorly gets a letter saying so.

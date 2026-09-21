@@ -88,6 +88,19 @@ module LivableCrd
       site.data["returned_candidate_count"] = returned
       site.data["published_candidate_count"] = published
 
+      # Which of the three empty chips the key has to name, derived from what
+      # the pages actually draw rather than from a hand-kept list.
+      #
+      # The key is one include on two pages, and naming a mark that appears
+      # nowhere below it sends a reader hunting for a state the site does not
+      # use. Both of the marks this decides are temporary in their own way: N/A
+      # is a per-question answer nobody has had to give yet, and the hourglass
+      # is gone the day everything is published. Deriving it means a grader
+      # typing N/A into ROL-05 puts that chip back in the key on the next build,
+      # and the last topic being released takes the hourglass out of it, with
+      # nobody having to remember either.
+      site.data["legend_states"] = legend_states(site, candidates)
+
       # An unmatched entry means the grading sheet knows a candidate the tracking
       # sheet does not list as confirmed. sync-questionnaire.py already drops
       # those, so reaching here means the two files were generated against
@@ -101,6 +114,59 @@ module LivableCrd
     end
 
     private
+
+    # A grade cell the grading sheet wrote as "not applicable" rather than as a
+    # letter. Mirrors NOT_APPLICABLE in scripts/sync-questionnaire.py, which is
+    # what normalizes the sheet's spellings before they get here.
+    def not_applicable?(grade)
+      %w[N/A NA N.A. N/A.].include?(grade.to_s.strip.upcase)
+    end
+
+    # {"na" =>, "answers" =>}: whether any page draws that chip.
+    #
+    # The rule has to be the one the templates use, or the key will name a chip
+    # nothing draws or miss one something does. A subject with a letter shows
+    # that letter; a subject without one shows the speech bubble where the topic
+    # is ungraded and the candidate's answers are published, the hourglass where
+    # the candidate replied, and the dash otherwise. See the cell blocks in
+    # scorecard/index.md and _layouts/candidate.html.
+    #
+    # The hourglass is not among these. It is still drawn by those cell blocks,
+    # and the key deliberately does not name it, so there is nothing here to
+    # decide about it.
+    def legend_states(site, candidates)
+      subjects = site.data["subjects"]
+      subjects = [] unless subjects.is_a?(Array)
+      graded = site.data.dig("scores", "graded_subjects")
+      graded = [] unless graded.is_a?(Array)
+
+      states = { "na" => false, "answers" => false }
+      candidates.each do |candidate|
+        next unless candidate.is_a?(Hash)
+
+        scores = candidate["scores"].is_a?(Hash) ? candidate["scores"] : {}
+        detail = candidate["published_subjects"].is_a?(Hash) ? candidate["published_subjects"] : {}
+
+        # Per topic, and per question inside a published topic: the same chip
+        # is rendered in both places by the same include.
+        states["na"] ||= scores.any? { |_, letter| not_applicable?(letter) }
+        states["na"] ||= detail.any? do |_, subject|
+          rows = subject["questions"]
+          rows.is_a?(Array) && rows.any? { |row| not_applicable?(row["grade"]) }
+        end
+
+        subjects.each do |subject|
+          id = subject["id"]
+          next unless scores[id].to_s.strip.empty?
+
+          unscored = detail.dig(id, "unscored")
+          if !graded.include?(id) && unscored.is_a?(Array) && !unscored.empty?
+            states["answers"] = true
+          end
+        end
+      end
+      states
+    end
 
     # Copy each question's wording, answer shape and owner from
     # _data/questions.yml onto the grade rows that reference it by label.
