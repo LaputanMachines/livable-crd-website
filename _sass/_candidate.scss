@@ -440,6 +440,41 @@ summary.candidate-grade {
   margin-top: $space-lg;
 }
 
+// The three share buttons. Same .btn-secondary box as any other secondary
+// action on the site: the platforms' own brand colours side by side would make
+// the end of the page a row of logos competing with the grades above it, and
+// Instagram's is a gradient that no button on this site wears.
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+// Sized in em so it tracks the button's own text, and the mark is the only part
+// of the button that carries the platform. Kept at the ink colour rather than
+// each platform's: see above.
+.btn-share__icon {
+  display: inline-flex;
+  width: 1.15em;
+  height: 1.15em;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+// What the button just did, which is otherwise a file appearing in a folder the
+// reader cannot see. Empty until something happens, so it takes no room on a
+// page nobody has pressed a button on.
+.candidate-share-status {
+  margin: $space-sm 0 0;
+  font-size: 0.9rem;
+  color: $color-muted;
+
+  &:empty { display: none; }
+}
+
 // Print-only content: meaningless on screen, where the site header already
 // carries the wordmark and the page the QR code points at is this one. Revealed
 // by the @media print block below.
@@ -877,6 +912,7 @@ summary.candidate-grade {
     .site-footer,
     .page-header__back,
     .candidate-grades-controls,
+    .candidate-share-status,
     .candidate-actions { display: none; }
 
     // The per-question breakdown, and the chevron that opens it. Both belong on
