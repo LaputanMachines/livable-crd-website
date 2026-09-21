@@ -32,7 +32,14 @@
   var script = document.currentScript || document.querySelector('script[data-candidate]');
   var status = document.getElementById('share-status');
   var hero = document.querySelector('.candidate-hero');
-  var rows = Array.prototype.slice.call(document.querySelectorAll('.candidate-grade-row'));
+  // Graded topics only. General and Healthcare access carry answers worth
+  // reading and no letter, and the card has no room to say the difference: nine
+  // rows where two of them can never be a grade reads as two topics somebody
+  // forgot to score. The page keeps them; this picture of it does not, on the
+  // same reasoning as the print leaflet.
+  var rows = Array.prototype.slice.call(
+    document.querySelectorAll('.candidate-grade-row:not(.candidate-grade-row--ungraded)')
+  );
   if (!script || !hero || !rows.length) return;
 
   var candidate = script.getAttribute('data-candidate') || '';

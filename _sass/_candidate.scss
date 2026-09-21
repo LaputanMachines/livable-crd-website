@@ -1072,6 +1072,20 @@ summary.candidate-grade {
       border: 1pt solid #000;
     }
 
+    // The marks the leaflet cannot draw, out of the key that would name them.
+    // The speech bubble belongs to the two ungraded topics, which are hidden
+    // below; N/A belongs to a single question, and the per-question detail is
+    // dropped from print. A key naming either is a key for a different page.
+    .scorecard-legend__item--answers,
+    .scorecard-legend__item--na { display: none; }
+
+    // The two topics nobody grades. They carry a speech bubble on screen, where
+    // it means "there is something to read under here" - and the leaflet is the
+    // one place that is never true, because the per-question detail is dropped
+    // from print. A chip that cannot be acted on, on a topic that cannot carry
+    // a letter, in a list that has to fit one page.
+    .candidate-grade-row--ungraded { display: none; }
+
     .candidate-grade-row {
       // Keep a row from straddling the fold: the leaflet fits one page at
       // default settings, but a reader printing at 110% should still get whole

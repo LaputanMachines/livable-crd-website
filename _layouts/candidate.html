@@ -298,7 +298,22 @@ layout: default
       published has no <details> to carry it. Every row is a target; what the
       script does on arrival depends on what it finds there.
     {%- endcomment -%}
-    <li class="candidate-grade-row" id="topic-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
+    {%- comment -%}
+      A topic nobody grades is marked as one, because two things that are not
+      this page leave it out: the print leaflet and the shareable card. Both are
+      one image of how a candidate scored, handed to somebody who did not ask
+      for it, and a row that can never carry a letter spends a line of a very
+      short page saying so. On the page itself they stay - there is something to
+      read under them, which is the whole reason those questions are asked.
+
+      Derived from graded_subjects rather than naming General and Healthcare
+      access, so a topic that stops being graded, or starts, moves on its own.
+    {%- endcomment -%}
+    {%- assign row_class = "candidate-grade-row" -%}
+    {%- unless gradable contains subject.id -%}
+      {%- assign row_class = "candidate-grade-row candidate-grade-row--ungraded" -%}
+    {%- endunless -%}
+    <li class="{{ row_class }}" id="topic-{{ subject.id }}" style="--card-accent: {{ subject.accent }}">
       {%- if detail %}
       {%- comment -%}
         Credit the topic to an organization only when every question in it names
