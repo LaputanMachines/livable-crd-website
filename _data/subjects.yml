@@ -1,4 +1,15 @@
-# Questionnaire topics (matches coalition form)
+# Questionnaire topics, in the order every list of them is drawn: the scorecard
+# matrix's columns, the rows on a candidate's page and their print leaflet, and
+# the subjects written into _data/scores.yml by scripts/sync-questionnaire.py,
+# which sorts by this file.
+#
+# General and Healthcare access lead, and are the two nobody grades: no letter is
+# coming for either and both carry answers worth reading instead. Keeping them
+# adjacent means the reader meets that pair once, rather than meeting General,
+# working down seven graded topics, and hitting a second unlettered row near the
+# bottom that looks like a topic somebody forgot to score. The seven graded
+# topics follow in the coalition form's own order.
+#
 # `short` is the compact label used in scorecard table column headers.
 # `abbr` is an optional even-shorter label swapped in on narrower screens, for
 # topics whose `short` would otherwise stretch its column. Full name is always
@@ -11,6 +22,15 @@
   description: >-
     Cross-cutting questions that apply across topics or address overall vision for
     livability in the Capital Region.
+
+- id: healthcare-access
+  name: Healthcare access
+  short: Health
+  icon: healthcare-access.svg
+  accent: "#be185d"
+  description: >-
+    Access to clinics, mental health supports, and municipal actions that help
+    residents get timely care close to home.
 
 - id: transit
   name: Transit
@@ -65,15 +85,6 @@
   description: >-
     Walkable neighbourhoods, sidewalks, crossings, and street design that put
     people first on foot.
-
-- id: healthcare-access
-  name: Healthcare access
-  short: Health
-  icon: healthcare-access.svg
-  accent: "#be185d"
-  description: >-
-    Access to clinics, mental health supports, and municipal actions that help
-    residents get timely care close to home.
 
 - id: governance
   name: Governance
