@@ -136,9 +136,13 @@ incumbent whose record nobody has scored yet, is graded on the questionnaire alo
 It runs the other way too. **Every sitting incumbent gets an `HFL-INC` row, whether or not
 they returned the questionnaire**, because a councillor who never replied still has a term
 behind them. For those candidates there is no questionnaire for the other 70% to be a share
-of, so the record is the whole of their housing grade at 100%, and every other topic on
-their row reads `N/A`: there are no answers to grade and there never will be. They are
-still counted among the candidates who have not replied, because that is what they are.
+of, so the record is the whole of their housing grade at 100%. Every other topic on their
+row is published as nothing at all and reads `—`, the same dash as every other candidate
+who did not reply: the sheet writes `N/A` into those nine columns once the record is
+scored, and `sync-questionnaire.py` drops them rather than publishing nine "not
+applicable" chips beside one letter, which reads as a verdict when the only fact is that
+no questionnaire came back. They are still counted among the candidates who have not
+replied, because that is what they are.
 
 The two are blended rather than added, because a record worth 30% is not ten more points
 on a sixty-point total, and they are published as the separate fractions they are:
@@ -168,8 +172,8 @@ Having a row on `Category Grades` usually means the candidate returned the quest
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
 | speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
-| `N/A` | Nothing to grade, and nothing coming. A sitting incumbent whose housing record was scored without a questionnaire behind it reads this on every other topic. |
-| `—` | No completed questionnaire has come back. |
+| `N/A` | Graded, and the answer is that it does not apply — `ROL-05` asks about a previous term in office. Per question only: a whole topic no longer carries it. |
+| `—` | No completed questionnaire has come back. Including every topic but housing on a sitting incumbent published for their record alone. |
 
 The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.
 

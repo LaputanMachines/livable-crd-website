@@ -1325,10 +1325,31 @@ def subject_columns(header):
 
 # How Code.gs writes a multi-select answer: the written parts on their own
 # lines, then every ticked option on one "Selected: " line joined by "; ". Both
-# the webhook and the timer build it this way, so it is the shape every answer
-# cell arrives in and the only thing that has to be agreed on to take it apart.
+# the webhook and the timer build it this way, so it is the shape most answer
+# cells arrive in.
 SELECTED_PREFIX = "Selected: "
 SELECTED_JOIN = "; "
+
+# The shape the rest of them arrive in. Every multi-select on the Housing tab -
+# 288 rows across HFL-01, 02, 04, 09 and 12 - carries the same line written
+# "Selected**** A.**** B.", and nothing else on the sheet does. Whatever wrote
+# them was not Code.gs, which has only ever written the form above.
+#
+# Read rather than corrected, because this file reads the sheet and never writes
+# to it, and because a reader looking at a candidate's housing answers should not
+# be waiting on somebody to fix a separator. Left unread, the whole cell fell
+# through as prose and published as a wall of options with "Selected****" in the
+# middle of it.
+SELECTED_STAR_PREFIX = re.compile(r"^Selected\s*\*{2,}\s*")
+SELECTED_STAR_JOIN = re.compile(r"\s*\*{2,}\s*")
+
+# The label a variant question was fanned out under, which the Apps Script writes
+# into the answer cell of the copy a candidate was actually asked:
+# "[HFL-11-Saanich] ...". Only HFL-11 and HFL-12 have variants, so it is Housing
+# again, and it is bookkeeping: it says which municipality's copy this is, on a
+# page that already says which municipality the candidate is running in. It was
+# being published verbatim, 121 times.
+VARIANT_TAG = re.compile(r"^\[[A-Z]{2,4}-\d{2}[^\]]*\]\s*")
 
 
 def _alnum(text):
@@ -1358,8 +1379,14 @@ def split_selections(answer):
                 part.strip() for part in line[len(SELECTED_PREFIX):].split(SELECTED_JOIN)
                 if part.strip()
             )
+        elif SELECTED_STAR_PREFIX.match(line):
+            selected.extend(
+                part.strip()
+                for part in SELECTED_STAR_JOIN.split(SELECTED_STAR_PREFIX.sub("", line))
+                if part.strip()
+            )
         else:
-            prose.append(line)
+            prose.append(VARIANT_TAG.sub("", line))
 
     text = "\n".join(prose).strip()
 
@@ -1373,12 +1400,34 @@ def split_selections(answer):
     # other, which is worse than the run-on line was on its own.
     #
     # Compared on letters and digits only, so it holds whatever separator either
-    # side happens to use. A prose part that says anything the options do not -
-    # a written follow-up alongside the ticks - will not match and is kept.
-    if selected and _alnum(text) == _alnum("".join(selected)):
+    # side happens to use, and without regard to order, because the two renderings
+    # do not agree on one: the sheet's column lists the options as the form does,
+    # the "Selected" line lists them as the candidate ticked them. A prose part
+    # that says anything the options do not - a written follow-up alongside the
+    # ticks - will not match and is kept.
+    if selected and _echoes_selections(text, selected):
         text = ""
 
     return text, selected
+
+
+def _echoes_selections(text, selected):
+    """True when the prose is the ticked options over again and nothing else.
+
+    Every option has to appear in it, and together they have to account for all
+    of it: the second test is what keeps a written follow-up from being thrown
+    away because the options happen to be quoted inside it.
+    """
+    haystack = _alnum(text)
+    if not haystack:
+        return False
+
+    parts = [_alnum(option) for option in selected]
+    if not all(parts):
+        return False
+
+    return (sum(len(part) for part in parts) == len(haystack)
+            and all(part in haystack for part in parts))
 
 
 def grade_or_none(value, where, warnings):
@@ -1522,6 +1571,12 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             )
             continue
 
+        # A row the Apps Script built from the published roster rather than
+        # from a submission: a sitting incumbent whose housing record is scored
+        # and who answered nothing. Read once here because it decides what the
+        # other nine topics publish, not only the `returned` flag below.
+        roster_only = key.startswith(ROSTER_KEY_PREFIX)
+
         published = []
         for subject_id, subject_name, grade_col in (targets if publish else []):
             where = f"{CATEGORY_TAB} row {i} ({name}, {subject_name})"
@@ -1537,11 +1592,24 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             # grading tab is not half-scored, it is out of scope: a sitting
             # incumbent who never returned the questionnaire cannot be scored on
             # answers they did not give. The refusal below is about a partly
-            # scored candidate and has nothing to say here, and letting it fire
-            # would drop the topic off the page rather than publish the N/A that
-            # explains it - leaving a dash beside the six topics that do say so.
+            # scored candidate and has nothing to say here, so the flag keeps it
+            # from firing on a topic that was never in the running.
             out_of_scope = (grade == NOT_APPLICABLE_LABEL and not questions
                             and record is None)
+
+            # On a candidate who never returned the questionnaire, that topic
+            # publishes nothing at all rather than an N/A. The sheet writes N/A
+            # into the other nine columns once the record is scored, which is
+            # the right thing for a grading tab and the wrong thing on a public
+            # page: nine chips reading "not applicable" beside one letter read
+            # as a verdict passed on this candidate, when the fact is only that
+            # no questionnaire came back - the same fact every other
+            # non-responder's dash states, and it should be stated the same
+            # way. Housing is untouched; its record is scored, so it keeps its
+            # letter. A returned candidate's N/A still publishes, because there
+            # it says something true about answers that do exist.
+            if roster_only and out_of_scope:
+                continue
 
             # A scored subject publishes a cumulative total, and refuses to
             # publish at all until every question a candidate was asked carries
@@ -1592,7 +1660,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             # A roster row is a sitting incumbent the Apps Script gave a record
             # row to because they are an incumbent, not because they replied.
             # Everything else on this tab got here by replying.
-            "returned": not key.startswith(ROSTER_KEY_PREFIX),
+            "returned": not roster_only,
             "subjects": published,
         }
 
