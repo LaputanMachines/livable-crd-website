@@ -963,7 +963,13 @@ summary.candidate-grade {
 
     display: block; // the flex column only exists to pin the footer to the viewport
     background: #fff;
-    color: #000;
+    color: $color-text;
+    // Print in colour. Browsers drop backgrounds on paper unless told not to,
+    // which turned every grade chip into an outlined box and the leaflet into a
+    // greyscale sheet with a purple logo on it. The grade colours are the point
+    // of the page, so they print as they appear on screen.
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
     font-size: 11pt;
     line-height: 1.35; // 1.65 is screen comfort; on paper it is the difference between one page and two
 
@@ -996,7 +1002,7 @@ summary.candidate-grade {
       gap: 4mm;
       margin-bottom: 4mm;
       padding-bottom: 2mm;
-      border-bottom: 1pt solid #000;
+      border-bottom: 1.5pt solid $color-accent;
     }
 
     .candidate-print-mast__brand {
@@ -1018,6 +1024,7 @@ summary.candidate-grade {
       letter-spacing: 0.08em;
       font-size: 12pt;
       line-height: 1;
+      color: $color-accent;
     }
 
     // The hero is white text on inky purple with two texture overlays. With
@@ -1036,13 +1043,13 @@ summary.candidate-grade {
     .candidate-hero__name {
       margin: 0;
       max-width: none;
-      color: #000;
+      color: $color-text;
       font-size: 26pt;
     }
 
     .candidate-hero__meta {
       margin-top: 1mm;
-      color: #000;
+      color: $color-accent;
       font-size: 12pt;
     }
 
@@ -1076,22 +1083,21 @@ summary.candidate-grade {
     .candidate-returned {
       margin: 4mm 0 0;
       padding: 2mm 3mm;
-      background: none;
-      border: 0.5pt solid #000;
-      border-left: 1.5pt solid #000;
+      background: $color-bg-warm;
+      border: 0.5pt solid $color-text;
+      border-left: 1.5mm solid $color-accent;
       font-size: 9.5pt;
     }
 
     // The declined statement prints, and prints first: on paper it is the only
     // thing the leaflet has to say about this candidate, since every row under
-    // it carries the same mark. The blue edge is colour and does not survive
-    // print, so it becomes the same heavier ink rule the note above uses.
+    // it carries the same mark. It keeps its blue edge, the declined colour.
     .candidate-declined {
       margin: 4mm 0 0;
       padding: 2mm 3mm;
-      background: none;
-      border: 0.5pt solid #000;
-      border-left: 1.5pt solid #000;
+      background: $color-bg-warm;
+      border: 0.5pt solid $color-text;
+      border-left: 1.5mm solid $color-declined;
       font-size: 9.5pt;
       line-height: 1.45;
     }
@@ -1131,7 +1137,7 @@ summary.candidate-grade {
     .candidate-grades {
       margin: 4mm 0 0;
       background: none;
-      border: 1pt solid #000;
+      border: 1pt solid $color-text;
     }
 
     // The marks the leaflet cannot draw, out of the key that would name them.
@@ -1153,8 +1159,9 @@ summary.candidate-grade {
       // default settings, but a reader printing at 110% should still get whole
       // rows rather than a topic name sliced in half.
       break-inside: avoid;
-      border-bottom: 0.5pt solid #000;
-      border-left: 0; // the accent edge is colour only, so it prints as nothing useful
+      border-bottom: 0.5pt solid $color-text;
+      // The topic's accent on the leading edge, as on screen.
+      border-left: 1.5mm solid var(--card-accent, #{$color-accent-alt});
     }
 
     .candidate-grade {
@@ -1180,16 +1187,11 @@ summary.candidate-grade {
 
     .candidate-grade__name { font-size: 11pt; }
 
-    // Grade chips are white letters on a solid colour. Backgrounds are stripped
-    // in print, so invert them into outlined ink boxes: the letter has to
-    // survive on its own, and the box keeps the column scannable.
+    // Grade chips print as they look on screen, white letters on the grade's
+    // colour (print-color-adjust above keeps the fill). Only the size changes.
     .grade {
       width: 8mm;
       height: 8mm;
-      background: none;
-      color: #000;
-      border: 1pt solid #000;
-      border-radius: 0;
       font-size: 13pt;
       // The screen tile pins the chip to the bottom of a column; a printed row
       // pins it to the right instead, so every chip lines up down the page.
