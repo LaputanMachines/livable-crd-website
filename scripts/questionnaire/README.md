@@ -954,8 +954,8 @@ on the coalition's chosen date.
 
 | `PUBLISH_GRADES` | What the site shows for every candidate and subject |
 |---|---|
-| `False` (today) | An hourglass, meaning "returned the questionnaire, this topic is not published yet". No grade, no answers, no rationale. |
-| `True` | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
+| `False` | An hourglass, meaning "returned the questionnaire, this topic is not published yet". No grade, no answers, no rationale. |
+| `True` (since 2026-09-22) | The top-level letter on the scorecard, plus every graded question behind it on the candidate's own page: question, the candidate's answer, the grade, the weight, and the rationale. Also that topic's ungraded `<TOPIC>-GEN` comment, if the candidate wrote one. |
 
 **General** and **Healthcare access** have no column on this tab at all. Nobody grades
 either, so there is nothing to roll up, but their answers (`GEN-01`, `GEN-02`, `HLT-01` and

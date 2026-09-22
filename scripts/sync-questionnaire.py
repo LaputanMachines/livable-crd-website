@@ -23,9 +23,10 @@ current. Four tabs matter here:
                         which lists what gets graded, so both their wording and
                         the answers to them are read from the form's own columns.
 
-PUBLISH_GRADES decides what is publishable, and it is off. Nothing graded and no
-free-text answer is written to _data/scores.yml at all, so neither a grade in
-progress nor an unreviewed answer can reach the site. Every candidate with a row
+PUBLISH_GRADES decides what is publishable, and it has been on since the
+release on 2026-09-22. While it is off, nothing graded and no free-text answer
+is written to _data/scores.yml at all, so neither a grade in progress nor an
+unreviewed answer can reach the site. Every candidate with a row
 is still written out with an empty `subjects`, which is the site's "returned it,
 still being graded". Flipping the switch on the coalition's release date
 publishes every subject at once; flipping it back removes them on the next run.
@@ -127,10 +128,10 @@ PREFIX_SUBJECT = {
 
 # The publication switch, in place of the per-subject "<Subject> - Deploy to
 # website" checkboxes the Category Grades tab used to carry. While this is False
-# no candidate result is published; it is flipped to True in one commit on the
-# release date. PUBLISH_GRADES=1 in the environment, or --publish, overrides it
+# no candidate result is published; it was flipped to True in one commit on the
+# release date, 2026-09-22. PUBLISH_GRADES=1 in the environment, or --publish, overrides it
 # for a single run without committing anything.
-PUBLISH_GRADES = False
+PUBLISH_GRADES = True
 
 # The same arrangement for the registry's Methodology column, which says how
 # each question is scored. Held back separately from the grades because it is
