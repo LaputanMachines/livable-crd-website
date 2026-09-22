@@ -907,6 +907,8 @@ items:
     graded: true
     weight: "6.67%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - "Yes"
       - "No"
@@ -924,6 +926,8 @@ items:
     graded: true
     weight: "16.67%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
   - label: ART-03
     subject: arts
     question: >-
@@ -935,6 +939,8 @@ items:
     graded: true
     weight: "13.33%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - A regularly updated inventory of cultural spaces and vulnerable venues.
       - Identifying priority cultural spaces requiring protection or intervention.
@@ -957,6 +963,8 @@ items:
     graded: true
     weight: "10.00%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - "Clear, published service standards for permit decisions."
       - "Published decision-making criteria, so requirements are not interpreted inconsistently."
@@ -979,6 +987,8 @@ items:
     graded: true
     weight: "16.67%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - Increase funding for existing municipal cultural infrastructure programs
       - Create a regional cultural infrastructure funding program through municipalities/CRD.
@@ -1007,6 +1017,8 @@ items:
     graded: true
     weight: "10.00%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - "Yes, arts and culture should maintain or grow alongside other core services."
       - "No, arts and culture funding should remain secondary to other municipal priorities."
@@ -1023,6 +1035,8 @@ items:
     graded: true
     weight: "10.00%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - Preserve the existing cultural space where feasible.
       - Require replacement cultural space or equivalent community benefit as part of redevelopment.
@@ -1039,6 +1053,8 @@ items:
     graded: true
     weight: "16.67%"
     owner: "Victori'us"
+    methodology: >-
+      https://drive.google.com/file/d/1D8Gnq6IxGztEAqw_7tqHKwATTVAB5eEw/view?usp=sharing
     options:
       - Require or incentivize cultural space in major development projects.
       - Reduce or waive municipal fees for eligible cultural spaces.
@@ -1069,6 +1085,10 @@ items:
     graded: true
     weight: "15%"
     owner: Rob Bernhardt
+    methodology: >-
+      Yes + Project surfaced = A; Yes + No specific project in mind, or vague
+      project = B; Combination of No and/or a lack of project ideas = C-F,
+      depending on severity.
     options:
       - "Yes"
       - "No"
