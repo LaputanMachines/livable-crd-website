@@ -47062,7 +47062,7 @@ candidates:
       housing: A
       climate: A
       arts: A
-      rolling-cycling: B
+      rolling-cycling: A
       walking: A
       governance: A
     subjects:
@@ -47590,7 +47590,7 @@ candidates:
               -Expand eligibility of Art in Public Spaces fund to pay for maintenance and upkeep in arts venues, and update its mandate to support such an expansion
               -Contribute a percentage of community amenity contribution from developers to go towards to the Art in Public Spaces fund
       - id: rolling-cycling
-        grade: B
+        grade: A
         questions:
           - label: ROL-01
             grade: A
@@ -47634,13 +47634,16 @@ candidates:
               are given a green light. Reduces crashes and increases safety
               for everyone.
           - label: ROL-05
-            grade: F
+            grade: B
             weight: "35%"
             rationale: >-
-              Leaves the question of a record on walking, rolling, cycling or
-              transit unanswered. With nothing offered from inside or outside
-              council, there is nothing to credit.
-            answer: N/A
+              Actively trying to work towards a safer community through
+              activism and public organizing. Lifelong cyclist with a strong
+              desire for bike-oriented safety.
+            answer: |-
+              I've been a commuter cyclist since I was a child and I've been biking my kiddo around since she was 11 weeks old! As a parent without a care, cycling and walking infrastructure is extremely important to me personally, and I want all neighbourhoods to be as safe and traffic-calmed as mine is in Fernwood.
+
+              I've volunteered with Fare-Free in the CRD in the past, as well as started two local petitions targeting transit authorities: one calling for fare-free transit, and another to ban fossil fuel advertising from buses. I've also attended rallies in support of striking transit workers.
         unscored:
           - label: ROL-GEN
             answer: >-
