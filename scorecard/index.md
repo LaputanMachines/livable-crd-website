@@ -137,7 +137,20 @@ description: >-
     </div>
 
     {%- comment -%}
-      No slate filter group here on purpose. Slate reaches the reader through
+      Colours every slated candidate's row by slate, across all municipalities
+      at once; each municipality's band carries the key. A highlight, not a
+      filter: it hides nothing. Ships `hidden` and is revealed by
+      assets/js/scorecard.js, because without the script it could do nothing.
+    {%- endcomment -%}
+    <div class="scorecard-filtergroup" id="slate-filtergroup" hidden>
+      <span class="scorecard-filtergroup__label" id="slate-filter-label">Slates</span>
+      <div class="scorecard-filters" role="group" aria-labelledby="slate-filter-label">
+        <button type="button" class="filter-pill" id="slate-highlight" aria-pressed="false">Highlight slate candidates</button>
+      </div>
+    </div>
+
+    {%- comment -%}
+      No slate filter here on purpose, only the highlight above. Slate reaches the reader through
       the search box (which matches slate as well as name), the per-municipality
       tint and its labelled legend below, and each candidate's own page, rather
       than through a fourth row of pills.
@@ -306,15 +319,12 @@ description: >-
                   useful whether or not anyone wants the rows coloured, and it
                   needs no scripting, so it renders for a reader without JS too.
 
-                  The checkbox is the part that needs JS (it applies a class the
-                  script toggles), so it alone ships `hidden` and is revealed by
-                  assets/js/scorecard.js, the same contract as the favourite star.
-
-                  Highlighting is on by default, so the box ships `checked` and
-                  the script paints the rows on load rather than waiting for a
-                  change event. A reader who does not want slate colour can turn
-                  it off per municipality; the swatches in the legend stay either
-                  way, so nothing is lost by unchecking it.
+                  The switch that colours the rows is not here. It used to be a
+                  checkbox in every band, which made the band two or three lines
+                  tall on a phone, and a sticky band that tall covered much of
+                  the screen while its group scrolled past. It is now a single
+                  "Highlight slate candidates" pill in the filter bar above,
+                  which colours every municipality at once.
 
                   The legend is what keeps the tint honest. Every swatch is
                   labelled with its slate and count, so the colours are decoded
@@ -338,10 +348,6 @@ description: >-
                     {%- endif -%}
                     {%- endfor -%}
                   </span>
-                  <label class="slate-toggle" for="slate-highlight-{{ muni.slug }}" data-slate-control="{{ muni.slug }}" hidden>
-                    <input type="checkbox" id="slate-highlight-{{ muni.slug }}" data-slate-toggle="{{ muni.slug }}">
-                    <span>Highlight Slate Candidates</span>
-                  </label>
                 </span>
                 {%- endif -%}
                 {%- comment -%}

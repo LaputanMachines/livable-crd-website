@@ -573,6 +573,12 @@ tr:hover td { background: $color-bg-warm; }
   gap: $space-xs;
 }
 
+// The slate highlight group ships `hidden` until scorecard.js reveals it, and
+// the display: flex above would otherwise beat the browser's own [hidden].
+.scorecard-filtergroup[hidden] {
+  display: none;
+}
+
 .scorecard-filtergroup__label {
   font-family: $font-display;
   font-weight: 700;

@@ -290,47 +290,28 @@
   }
 
   // --- Slate highlighting ---------------------------------------------------
-  // Per-municipality tint, one colour per slate, toggled from that
-  // municipality's heading. The palette classes are already on the rows (see
-  // scorecard/index.md); all this does is decide whether they paint anything,
-  // so nothing here knows a colour.
-  //
-  // The controls ship hidden and are revealed here because the tint needs this
-  // script: a box that could never do anything is worse than no box.
+  // One tint per slate, switched on for every municipality at once from the
+  // "Highlight slate candidates" pill in the filter bar. The palette classes are
+  // already on the rows (see scorecard/index.md); all this does is decide
+  // whether they paint anything, so nothing here knows a colour. Each
+  // municipality's band keeps its slate key, which needs no script.
   //
   // Independent of every filter above: highlighting changes how rows look, not
-  // which rows show, so it deliberately does not touch apply().
-  // Only the checkbox is revealed here. Each municipality's slate legend renders
-  // visible from the start: which slates are running there is worth knowing
-  // whether or not the reader wants the rows coloured, and it needs no script.
-  var slateToggles = Array.prototype.slice.call(document.querySelectorAll('[data-slate-toggle]'));
-  slateToggles.forEach(function (toggle) {
-    var muni = toggle.getAttribute('data-slate-toggle');
-    var label = document.querySelector('[data-slate-control="' + muni + '"]');
-    if (label) label.hidden = false;
-
-    function paint(on) {
-      // Marked on the rows themselves rather than on the municipality's tbody,
-      // because favourites.js MOVES rows out of that tbody into the pinned
-      // group. A class on the container would drop the tint the moment a
-      // reader starred a row; a class on the row travels with it.
-      rows.forEach(function (row) {
-        if (row.getAttribute('data-municipality') === muni) {
-          row.classList.toggle('is-slate-lit', on);
-        }
-      });
-    }
-
-    // The box ships unchecked, so the tint starts off. Painted once here
-    // anyway rather than assuming false: a browser restoring the reader's
-    // checked state across a reload fires no change event, and that restored
-    // state has to be honoured instead of overridden.
-    paint(toggle.checked);
-
-    toggle.addEventListener('change', function () {
-      paint(this.checked);
+  // which rows show, so it deliberately does not touch apply(). Off by default.
+  var slateButton = document.getElementById('slate-highlight');
+  var slateGroup = document.getElementById('slate-filtergroup');
+  if (slateButton && slateGroup) {
+    slateGroup.hidden = false;
+    slateButton.addEventListener('click', function () {
+      var on = this.getAttribute('aria-pressed') !== 'true';
+      this.setAttribute('aria-pressed', String(on));
+      this.classList.toggle('is-active', on);
+      // Marked on the rows themselves rather than on a tbody, because
+      // favourites.js MOVES rows into the pinned group, and a class on the
+      // row travels with it.
+      rows.forEach(function (row) { row.classList.toggle('is-slate-lit', on); });
     });
-  });
+  }
 
   readUrlFilters();
   paintScope();
