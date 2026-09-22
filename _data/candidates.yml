@@ -199,6 +199,14 @@
   slate: Save Our Saanich
   website: "https://www.matt4council.ca"
 
+- name: NicRenaoud
+  display_name: NicRenaoud
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
 - name: Teale Phelps Bondaroff
   display_name: "Phelps Bondaroff, Teale"
   municipality: saanich
@@ -222,14 +230,6 @@
   standing: challenger
   slate: null
   website: "https://harjaspopli.ca"
-
-- name: Nic Renaud
-  display_name: "Renaud, Nic"
-  municipality: saanich
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: null
 
 - name: Rishi Sharma
   display_name: "Sharma, Rishi"
