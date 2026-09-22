@@ -855,6 +855,29 @@ summary.candidate-grade {
   }
 }
 
+// Every option a question offered, from _includes/answer-options.html. The
+// chosen ones keep the tick and the full text colour; the rest lose the tick
+// and go muted, so the answer still reads first and the list reads as context.
+// The difference is a shape as well as a shade, and "(chosen)" is spelled out
+// for screen readers.
+.candidate-answer__options--all {
+  li:not(.is-chosen) {
+    color: $color-muted;
+
+    &::before { content: none; }
+  }
+
+  li.is-chosen { font-weight: 600; }
+
+  // What the candidate typed under "Other", indented under the options so it
+  // reads as belonging to that choice rather than as one more option.
+  li.candidate-answer__other {
+    margin-left: 1.25rem;
+    font-weight: 400;
+    font-style: italic;
+  }
+}
+
 .candidate-answer__text {
   margin-top: 0.4rem;
   padding: $space-xs $space-sm;

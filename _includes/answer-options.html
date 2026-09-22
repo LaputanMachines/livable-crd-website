@@ -1,0 +1,114 @@
+{%- comment -%}
+  A candidate's answer to a question that offers options to pick from, drawn as
+  the whole list of options with the ones they picked marked, so a reader sees
+  what was on offer as well as what was chosen. Used by _layouts/candidate.html
+  for graded and ungraded questions alike.
+
+  Params:
+    q      the candidate's answer, from _data/scores.yml (answer, selected)
+    asked  the question, from _data/questions.yml (type, options, option_limit)
+    name   optional; the candidate's name for the label above the list
+
+  What counts as picked, by where the sheet put it:
+    - `selected`, where sync-questionnaire.py split a multi-select out. An
+      "Other: ..." entry in it marks the form's own "Other" option and is
+      listed after the options with what the candidate typed.
+    - Otherwise, for a multi-select, the "Selected; a; b; Other; typed text"
+      line the sheet appends to `answer`. Several housing questions arrive
+      only this way.
+    - For a single choice, the first line of `answer`. A "pair" question puts a
+      typed follow-up on the lines after it, which is still shown as text. A
+      single choice whose answer is none of the options is typed text in place
+      of one, which marks the "Other" option where the question has one.
+
+  The typed text is shown under the list only where it says something the list
+  does not: free text in place of an option, or a follow-up. A multi-select
+  whose picks were read is not repeated as a paragraph of commas.
+{%- endcomment -%}
+{%- assign ao_multi = false -%}
+{%- if include.asked.type contains "multi" -%}{%- assign ao_multi = true -%}{%- endif -%}
+{%- assign ao_answer = include.q.answer | default: "" -%}
+{%- assign ao_lines = ao_answer | split: "
+" -%}
+{%- assign ao_first = ao_lines | first | strip -%}
+{%- assign ao_last = ao_lines | last | default: "" -%}
+
+{%- comment -%} The candidate's picks, and any "Other" text, from either source. {%- endcomment -%}
+{%- assign ao_parsed = false -%}
+{%- assign ao_other = "" -%}
+{%- assign ao_picks = "" | split: "" -%}
+{%- if include.q.selected.size > 0 -%}
+  {%- assign ao_picks = include.q.selected -%}
+  {%- assign ao_parsed = true -%}
+  {%- for picked in ao_picks -%}
+    {%- assign ao_head = picked | slice: 0, 7 -%}
+    {%- if ao_head == "Other: " %}{% assign ao_other = picked | remove_first: "Other: " %}{% endif -%}
+  {%- endfor -%}
+{%- elsif ao_multi and ao_last contains "Selected; " -%}
+  {%- assign ao_line = ao_last | remove_first: "Selected; " -%}
+  {%- if ao_line contains "; Other; " -%}
+    {%- assign ao_other = ao_line | split: "; Other; " | last -%}
+    {%- assign ao_line = ao_line | split: "; Other; " | first | append: "; Other" -%}
+  {%- else -%}
+    {%- assign ao_head = ao_line | slice: 0, 7 -%}
+    {%- if ao_head == "Other; " -%}
+      {%- assign ao_other = ao_line | remove_first: "Other; " -%}
+      {%- assign ao_line = "Other" -%}
+    {%- endif -%}
+  {%- endif -%}
+  {%- assign ao_picks = ao_line | split: "; " -%}
+  {%- assign ao_parsed = true -%}
+{%- endif -%}
+{%- if ao_picks contains "Other" %}{% assign ao_other_on = true %}{% else %}{% assign ao_other_on = false %}{% endif -%}
+{%- if ao_other != "" %}{% assign ao_other_on = true %}{% endif -%}
+
+{%- comment -%} A single choice that is none of the options was typed instead. {%- endcomment -%}
+{%- assign ao_single_hit = false -%}
+{%- unless ao_multi -%}
+  {%- if include.asked.options contains ao_first -%}
+    {%- assign ao_single_hit = true -%}
+  {%- elsif ao_answer != "" -%}
+    {%- assign ao_other_on = true -%}
+  {%- endif -%}
+{%- endunless -%}
+
+{%- assign ao_count = 0 -%}
+{%- capture ao_items -%}
+  {%- for option in include.asked.options -%}
+  {%- assign ao_on = false -%}
+  {%- assign ao_head = option | slice: 0, 5 -%}
+  {%- if ao_picks contains option -%}
+    {%- assign ao_on = true -%}
+  {%- elsif ao_head == "Other" and ao_other_on -%}
+    {%- assign ao_on = true -%}
+  {%- elsif ao_multi == false and ao_first == option -%}
+    {%- assign ao_on = true -%}
+  {%- endif -%}
+  {%- if ao_on %}{% assign ao_count = ao_count | plus: 1 %}{% endif %}
+  <li{% if ao_on %} class="is-chosen"{% endif %}>{{ option | escape }}{% if ao_on %}<span class="sr-only"> (chosen)</span>{% endif %}</li>
+  {%- endfor -%}
+  {%- if ao_multi and ao_other != "" %}
+  <li class="is-chosen candidate-answer__other">{{ ao_other | escape }}<span class="sr-only"> (typed under Other)</span></li>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- assign ao_rest = "" -%}
+{%- if ao_multi -%}
+  {%- unless ao_parsed %}{% assign ao_rest = ao_answer %}{% endunless -%}
+{%- elsif ao_single_hit -%}
+  {%- assign ao_rest = ao_answer | remove_first: ao_first | strip -%}
+{%- else -%}
+  {%- assign ao_rest = ao_answer -%}
+{%- endif -%}
+<div class="candidate-answer__answer">
+  <span class="candidate-answer__answer-label">
+    {%- if include.name %}{{ include.name }} chose {{ ao_count }}{% else %}Chose {{ ao_count }}{% endif %} of {{ include.asked.options.size }} options
+    {%- if include.asked.option_limit %} (up to {{ include.asked.option_limit }} allowed){% endif -%}
+  </span>
+  <ul class="candidate-answer__options candidate-answer__options--all">
+    {{- ao_items -}}
+  </ul>
+  {%- if ao_rest != "" %}
+  <div class="candidate-answer__text">{{ ao_rest | escape | newline_to_br }}</div>
+  {%- endif %}
+</div>

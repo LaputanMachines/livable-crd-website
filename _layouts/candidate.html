@@ -569,6 +569,10 @@ layout: default
               {%- if q.rationale %}
               <p class="candidate-answer__rationale"><strong>Why this {% if q.max_points %}score{% else %}grade{% endif %}:</strong> {{ q.rationale }}</p>
               {%- endif %}
+              {%- assign asked = site.data.questions.items | where: "label", q.label | first %}
+              {%- if asked.options.size > 0 %}
+              {% include answer-options.html q=q asked=asked name=c.name %}
+              {%- else %}
               {%- if q.answer %}
               {%- comment -%}
                 Open by default, unlike the topic above it. A reader who has
@@ -601,6 +605,7 @@ layout: default
                   {%- endfor %}
                 </ul>
               </div>
+              {%- endif %}
               {%- endif %}
             </li>
             {%- endfor %}
@@ -718,6 +723,8 @@ layout: default
                     {%- endfor %}
                   </tbody>
                 </table>
+                {%- elsif asked.options.size > 0 %}
+                {% include answer-options.html q=q asked=asked %}
                 {%- else %}
                 {%- if q.answer %}
                 <div class="candidate-answer__answer">
