@@ -129,9 +129,15 @@ description: >-
     {%- endcomment -%}
     <div class="scorecard-filtergroup">
       <span class="scorecard-filtergroup__label" id="muni-filter-label">Municipality</span>
+      {%- comment -%}
+        Same order as the groups in the table below - see the note on that loop
+        - so a reader who picks a pill lands where they expected to. A pill row
+        in one order over a table in another is the pair of controls most likely
+        to read as a bug.
+      {%- endcomment -%}
       <div class="scorecard-filters" role="group" aria-labelledby="muni-filter-label">
         <button type="button" class="filter-pill is-active" data-muni="all" aria-pressed="true">All</button>
-        {% for muni in site.data.municipalities %}
+        {% for muni in site.data.municipalities_by_returned %}
           {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
           {% if mc.size > 0 %}
           <button type="button" class="filter-pill" data-muni="{{ muni.slug }}" aria-pressed="false">{{ muni.name }} ({{ mc.size }})</button>
@@ -215,8 +221,22 @@ description: >-
         rather than as "nobody has announced here". Empty groups are marked
         data-empty so the filter script can hide them once a search or filter
         narrows the view.
+
+        Ordered by how many candidates there returned the questionnaire, most
+        first, rather than by the order of _data/municipalities.yml - which is
+        roughly by size, and buried a small municipality where everybody replied
+        under a large one where few did. The count each heading already states
+        on its right-hand end is the number sorted on, so the order and the
+        figure beside it cannot disagree. Computed in
+        _plugins/municipality_stats.rb, because Liquid can sort an array of
+        hashes by a key it already has but not by a count it would have to make
+        first; ties and the empty municipalities are handled there.
+
+        Everywhere else on the site a municipality list is something a reader
+        scans for a place they already have in mind, and those keep the file's
+        own order.
       {% endcomment %}
-      {% for muni in site.data.municipalities %}
+      {% for muni in site.data.municipalities_by_returned %}
         {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
         <tbody class="scorecard-matrix__group" data-municipality="{{ muni.slug }}"{% if mc.size == 0 %} data-empty="true"{% endif %}>
           <tr class="scorecard-matrix__group-row">

@@ -57,9 +57,46 @@ module LivableCrd
       site.data["municipality_stats"] = by_slug.each_with_object({}) do |(slug, rows), acc|
         acc[slug] = municipality_stats(site, rows, region)
       end
+
+      site.data["municipalities_by_returned"] = order_by_returned(site.data["municipalities"], by_slug)
     end
 
     private
+
+    # _data/municipalities.yml, reordered by how many of each municipality's
+    # candidates returned the questionnaire, most first. Read by the scorecard's
+    # matrix and its municipality filter pills, and by nothing else: everywhere
+    # a municipality list is something a reader scans for a place they already
+    # have in mind - the footer, the finder, the election-day links - it stays
+    # in the file's own order, which puts the biggest councils first and is
+    # stable between builds.
+    #
+    # Here the order is the point. The scorecard is read top-down by somebody
+    # asking who has engaged with the coalition, and the file order buried a
+    # small municipality where everybody replied under a large one where few
+    # did. The trade is that the list moves when replies arrive, so a reader
+    # looking for one place scrolls for it; the filter pills above the table are
+    # what that reader uses instead, and they carry the same order so the two
+    # cannot disagree about where a municipality sits.
+    #
+    # Sorted on the count and not the rate, which is what was asked for and is
+    # also the more honest of the two here: a rate makes one reply out of one
+    # candidate the best result in the region.
+    #
+    # Ties break on the size of the field, and then on the file's own order -
+    # carried explicitly, because Ruby's sort is not stable and a municipality
+    # that swapped places with another on every build for no reason would look
+    # like a bug. Municipalities with nobody confirmed sort last and keep their
+    # headings: an absent heading reads as an oversight rather than as "nobody
+    # has announced here".
+    def order_by_returned(municipalities, by_slug)
+      rows = array(municipalities).select { |m| m.is_a?(Hash) }
+
+      rows.each_with_index.sort_by do |muni, index|
+        entries = by_slug[muni["slug"].to_s.strip] || []
+        [-entries.count { |c| c["questionnaire_returned"] }, -entries.size, index]
+      end.map(&:first)
+    end
 
     def municipality_stats(site, rows, region)
       returned = rows.count { |c| c["questionnaire_returned"] }
