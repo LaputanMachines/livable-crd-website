@@ -62,6 +62,8 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+import xml.etree.ElementTree as ET
+import zipfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, "_data")
@@ -129,6 +131,15 @@ PREFIX_SUBJECT = {
 # release date. PUBLISH_GRADES=1 in the environment, or --publish, overrides it
 # for a single run without committing anything.
 PUBLISH_GRADES = False
+
+# The same arrangement for the registry's Methodology column, which says how
+# each question is scored. Held back separately from the grades because it is
+# about the questions rather than the answers: while any candidate is still
+# filling in the questionnaire, publishing it would tell them how to score well.
+# While this is False every question is written with no methodology and
+# /questionnaire/ draws nothing under it. PUBLISH_METHODOLOGY=1 in the
+# environment, or --publish-methodology, overrides it for a single run.
+PUBLISH_METHODOLOGY = False
 
 # Those checkbox columns are gone from the sheet, but grading_tabs.py and
 # appsscript/Code.gs still know the suffix and would write them again if a tab
@@ -711,6 +722,52 @@ def fetch_tab(sheet_id, title, expect=None, select=None, header_only=False, time
 
 def tab_values(sheet_id, title, expect=None):
     return fetch_tab(sheet_id, title, expect=expect)
+
+
+XLSX = "https://docs.google.com/spreadsheets/d/{id}/export?format=xlsx"
+XLSX_NS = {
+    "m": "http://schemas.openxmlformats.org/spreadsheetml/2006/main",
+    "r": "http://schemas.openxmlformats.org/officeDocument/2006/relationships",
+    "pr": "http://schemas.openxmlformats.org/package/2006/relationships",
+}
+
+
+def hidden_rows(sheet_id, titles, timeout=120):
+    """{title: number of hidden rows} for each of `titles` that hides any.
+
+    gviz answers with only the rows a tab's filter leaves visible, and says
+    nothing about it: a tab filtered down to HFL-INC reads as a tab holding
+    nothing else, and every questionnaire score on it silently goes unpublished.
+    That happened twice to Grade - Housing, the second time on release day. No
+    gviz query can see past the filter, so this asks the xlsx export instead,
+    which carries every row with a hidden="1" on the ones a filter (or a hand)
+    has hidden. Link-readable like gviz, so still no credentials.
+
+    Raises on a failed download rather than returning nothing: this is the
+    check that the reads are whole, and a check that cannot run has not passed.
+    """
+    url = XLSX.format(id=sheet_id)
+    with urllib.request.urlopen(url, timeout=timeout) as response:
+        book = zipfile.ZipFile(io.BytesIO(response.read()))
+
+    rels = ET.fromstring(book.read("xl/_rels/workbook.xml.rels"))
+    target = {rel.get("Id"): rel.get("Target") for rel in rels.findall("pr:Relationship", XLSX_NS)}
+    workbook = ET.fromstring(book.read("xl/workbook.xml"))
+
+    found = {}
+    wanted = set(titles)
+    for sheet in workbook.iter(f"{{{XLSX_NS['m']}}}sheet"):
+        title = sheet.get("name")
+        if title not in wanted:
+            continue
+        path = target[sheet.get(f"{{{XLSX_NS['r']}}}id")].lstrip("/")
+        if not path.startswith("xl/"):
+            path = "xl/" + path
+        count = sum(1 for row in ET.fromstring(book.read(path)).iter(f"{{{XLSX_NS['m']}}}row")
+                    if row.get("hidden") in {"1", "true"})
+        if count:
+            found[title] = count
+    return found
 
 
 # --- Answer choices ---------------------------------------------------------
@@ -2232,6 +2289,11 @@ def main(argv=None):
                         help="Write candidate results to _data/scores.yml "
                              "(default: PUBLISH_GRADES in this script, overridden "
                              "by $PUBLISH_GRADES)")
+    parser.add_argument("--publish-methodology", action=argparse.BooleanOptionalAction,
+                        default=env_flag("PUBLISH_METHODOLOGY", PUBLISH_METHODOLOGY),
+                        help="Write each question's Methodology cell to _data/questions.yml "
+                             "(default: PUBLISH_METHODOLOGY in this script, overridden "
+                             "by $PUBLISH_METHODOLOGY)")
     parser.add_argument("--dry-run", action="store_true", help="Report what would change, write nothing")
     args = parser.parse_args(argv)
 
@@ -2315,6 +2377,9 @@ def main(argv=None):
     questions = build_questions(registry, ungraded, choices, subject_order,
                                 warnings, errors)
     question_labels = {q["label"] for q in questions}
+    if not args.publish_methodology:
+        for q in questions:
+            q["methodology"] = ""
 
     # Which subjects carry a grade at all, read off the questions rather than off
     # the Category Grades columns. The two are the same list today, and asking
@@ -2334,6 +2399,24 @@ def main(argv=None):
         # this job shares with everything else touching the spreadsheet.
         grade_rows, answers = {}, {}
         if args.publish:
+            # Every tab this run reads for results must be read whole. A hidden
+            # row is a row gviz leaves out, so the run stops rather than publish
+            # a subject with its questions quietly missing.
+            read_tabs = [CATEGORY_TAB] + [GRADE_TAB_PREFIX + name
+                                          for name in graded_tab_subjects(category)]
+            try:
+                hidden = hidden_rows(args.sheet_id, read_tabs)
+            except (urllib.error.URLError, zipfile.BadZipFile, KeyError, ET.ParseError) as e:
+                print(f"error: could not check the grading tabs for hidden rows ({e}); "
+                      f"nothing was written.", file=sys.stderr)
+                return 1
+            if hidden:
+                for title, count in sorted(hidden.items()):
+                    print(f"error: '{title}' has {count} hidden row(s), usually a filter "
+                          f"left on (Data > Remove filter). The sync reads only visible "
+                          f"rows, so it would publish without them.", file=sys.stderr)
+                print("\nnothing was written.", file=sys.stderr)
+                return 1
             grade_rows = load_grade_rows(
                 args.sheet_id, graded_tab_subjects(category), warnings)
             answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
