@@ -876,6 +876,50 @@ tr:hover td { background: $color-bg-warm; }
 
 .scorecard-matrix__empty-row:hover td { background: transparent; }
 
+// The last row of a municipality while "Only show participating candidates" is
+// on: a full-width button naming how many candidates the filter is hiding
+// there, which opens them in place. Built by assets/js/scorecard.js. Quiet like
+// the empty placeholder above, but a real control, so it takes the link colour
+// and an underline.
+.scorecard-matrix .scorecard-matrix__more-cell {
+  padding: 0;
+  background: $color-bg;
+}
+
+.scorecard-matrix__more-row:hover td { background: $color-bg; }
+
+.scorecard-matrix__more {
+  display: block;
+  width: 100%;
+  padding: 0.55rem $space-xs;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: left;
+  color: $color-accent;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  background: none;
+  border: 0;
+  cursor: pointer;
+
+  &::before {
+    content: "+ ";
+    text-decoration: none;
+    display: inline-block;
+    width: 1em;
+  }
+
+  &[aria-expanded="true"]::before { content: "\2212 "; }
+
+  &:hover { color: $color-accent-dark; }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: -3px;
+  }
+}
+
 // The chip in a matrix cell is a link into that topic on the candidate's page.
 // It fills the cell so the target is the cell rather than a 1.25rem chip, which
 // is under the 24px minimum on a phone and sits in a grid nine columns wide.

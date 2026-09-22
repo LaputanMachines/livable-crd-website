@@ -342,8 +342,16 @@ description: >-
                   <span class="slate-legend">
                     {%- for sg in muni_slates -%}
                     {%- if sg.name != "" -%}
-                    <span class="slate-legend__item">
-                      <span class="slate-legend__swatch {{ site.data.slate_classes[sg.name] }}" aria-hidden="true"></span>{{ sg.name }} ({{ sg.size }})
+                    {%- comment -%}
+                      Both counts ride on the item, so scorecard.js can show the
+                      one matching the table: how many of this slate took part
+                      while "Only show participating candidates" is on, and the
+                      whole slate otherwise. The total is what prints without
+                      the script.
+                    {%- endcomment -%}
+                    {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned" -%}
+                    <span class="slate-legend__item" data-slate-total="{{ sg.size }}" data-slate-returned="{{ sg_returned.size }}">
+                      <span class="slate-legend__swatch {{ site.data.slate_classes[sg.name] }}" aria-hidden="true"></span>{{ sg.name }} (<span class="slate-legend__count">{{ sg.size }}</span>)
                     </span>
                     {%- endif -%}
                     {%- endfor -%}

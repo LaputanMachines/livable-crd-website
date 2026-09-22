@@ -95,7 +95,82 @@
     return best;
   }
 
+  // --- Non-participating candidates, folded -------------------------------
+  // With "Only show participating candidates" on, each municipality ends in a
+  // row that says how many of its candidates the filter is hiding and opens
+  // them in place, so the reader can tell they exist without the table
+  // opening on them. Built here rather than in the page: the filter it
+  // belongs to is this script's, so without the script there is nothing to
+  // fold. Each municipality opens and closes on its own.
+  var expandedMunis = {};
+  var moreRows = [];
+  // Each row's place as built (alphabetical within its municipality), so the
+  // rows can be put back after arrange() below has moved them.
+  var homeOrder = new Map();
+  rows.forEach(function (row, i) { homeOrder.set(row, i); });
+
+  // While the filter is on, the non-participating rows sit under the fold row,
+  // so opening it reveals them beneath the button like an accordion rather
+  // than scattered through the list above it. Otherwise every row is in home
+  // order with the fold row last. Only rows out of place are moved:
+  // insertBefore() on a row already in place still blurs anything focused in it.
+  function arrange() {
+    moreRows.forEach(function (m) {
+      var live = Array.prototype.slice.call(m.group.querySelectorAll('.scorecard-row, .scorecard-matrix__more-row'));
+      var own = live.filter(function (el) { return el !== m.row; });
+      own.sort(function (a, b) { return homeOrder.get(a) - homeOrder.get(b); });
+      var wanted;
+      if (participatingOnly) {
+        wanted = own.filter(function (r) { return r.hasAttribute('data-returned'); })
+          .concat([m.row], own.filter(function (r) { return !r.hasAttribute('data-returned'); }));
+      } else {
+        wanted = own.concat([m.row]);
+      }
+      for (var i = 0; i < wanted.length; i++) {
+        if (live[i] !== wanted[i]) {
+          m.group.insertBefore(wanted[i], live[i]);
+          live = Array.prototype.slice.call(m.group.querySelectorAll('.scorecard-row, .scorecard-matrix__more-row'));
+        }
+      }
+    });
+  }
+  candidateGroups.forEach(function (group) {
+    if (group.id === 'favourites-group') return;
+    var muni = group.getAttribute('data-municipality');
+    var head = group.querySelector('.scorecard-matrix__group-head');
+    var tr = document.createElement('tr');
+    tr.className = 'scorecard-matrix__more-row';
+    tr.hidden = true;
+    var td = document.createElement('td');
+    td.colSpan = head ? head.colSpan : 1;
+    td.className = 'scorecard-matrix__more-cell';
+    var button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'scorecard-matrix__more';
+    button.setAttribute('aria-expanded', 'false');
+    button.addEventListener('click', function () {
+      expandedMunis[muni] = !expandedMunis[muni];
+      apply();
+    });
+    td.appendChild(button);
+    tr.appendChild(td);
+    group.appendChild(tr);
+    moreRows.push({ group: group, muni: muni, row: tr, button: button });
+  });
+
+  // Each municipality's slate key counts the slate's candidates the table is
+  // built to show: those who took part while the participating filter is on,
+  // everyone otherwise.
+  var slateCounts = Array.prototype.slice.call(document.querySelectorAll('.slate-legend__item[data-slate-total]'));
+
   function apply() {
+    arrange();
+    slateCounts.forEach(function (item) {
+      var count = item.querySelector('.slate-legend__count');
+      if (count) {
+        count.textContent = item.getAttribute(participatingOnly ? 'data-slate-returned' : 'data-slate-total');
+      }
+    });
     var minRank = activeGrade === 'all' ? null : parseInt(activeGrade, 10);
     var visible = 0;
     rows.forEach(function (row) {
@@ -110,15 +185,33 @@
         (row.getAttribute('data-slate') || '').indexOf(query) !== -1;
       var gradeOk = minRank === null ||
         (activeTopic === 'all' ? worstRank(row) : bestRank(row, activeTopic)) >= minRank;
-      var participatingOk = !participatingOnly || row.hasAttribute('data-returned');
-      var show = muniOk && officeOk && nameOk && gradeOk && participatingOk;
+      // A starred row is the reader's own pick, so the pinned group shows it
+      // whether or not the candidate took part.
+      var folded = participatingOnly && !row.hasAttribute('data-returned') &&
+        !(row.parentNode && row.parentNode.id === 'favourites-group');
+      var otherOk = muniOk && officeOk && nameOk && gradeOk;
+      row.setAttribute('data-folded', otherOk && folded ? 'true' : 'false');
+      var show = otherOk && (!folded || expandedMunis[row.getAttribute('data-municipality')] === true);
       row.hidden = !show;
       if (show) visible++;
     });
 
-    // Hide a municipality block (and its heading) when none of its rows show.
+    // Each municipality's fold row: shown while the filter is hiding anyone
+    // there who would otherwise match, and naming how many.
+    moreRows.forEach(function (m) {
+      var n = m.group.querySelectorAll('.scorecard-row[data-folded="true"]').length;
+      m.row.hidden = n === 0;
+      if (n === 0) return;
+      var open = expandedMunis[m.muni] === true;
+      var noun = n === 1 ? 'candidate' : 'candidates';
+      m.button.textContent = (open ? 'Hide ' : 'Show ') + n + ' non-participating ' + noun;
+      m.button.setAttribute('aria-expanded', String(open));
+    });
+
+    // Hide a municipality block (and its heading) when nothing in it shows: no
+    // row, and no fold row standing in for rows the filter is hiding.
     candidateGroups.forEach(function (group) {
-      group.hidden = !group.querySelector('.scorecard-row:not([hidden])');
+      group.hidden = !group.querySelector('.scorecard-row:not([hidden]), .scorecard-matrix__more-row:not([hidden])');
     });
 
     // Empty municipalities exist to show the region is fully covered, so they

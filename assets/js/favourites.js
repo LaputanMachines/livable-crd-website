@@ -299,7 +299,12 @@
   function restoreHome(entry) {
     var siblings = rowsIn(entry.group);
     var before = restoreBefore(keysOf(siblings), homeIndex, entry.key);
-    entry.group.insertBefore(entry.row, before ? byKey[before].row : null);
+    // With no later row to go before, it goes last among the rows: ahead of
+    // the fold row scorecard.js appends to each group, if there is one. Where
+    // the row belongs relative to that fold is scorecard.js's call; the
+    // refilter that follows every move lets it put the row there.
+    var tail = entry.group.querySelector('.scorecard-matrix__more-row');
+    entry.group.insertBefore(entry.row, before ? byKey[before].row : tail);
   }
 
   // Single place that touches the table: `order` is changed first, then this
