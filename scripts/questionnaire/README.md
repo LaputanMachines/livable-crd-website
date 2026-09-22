@@ -715,11 +715,20 @@ so the two would disagree on the same number.
 
 ```
 SUM(score x weight) / (3 x SUM(weight, where the score is a number))
-   >= 86% A   >= 70% B   >= 60% C   below that F
+   >= 90% A   >= 80% B   >= 60% C   below that F
 ```
 
-**Not the same bands as housing.** Victori'us have no `C-` at all and start `A` a point
-higher, at 86%. Both band tables are each org's own, copied from their own workbook.
+**Not the same bands as housing.** Victori'us have no `C-` at all and start `A` and `B`
+higher, at 90% and 80%. Both band tables are each org's own, copied from their own workbook.
+
+**The arts table moved on 2026-09-22**, at Victori'us' request: `A` from 86% to 90% and `B`
+from 70% to 80%, with `C` and `F` left where they were. Changing it is two edits and a
+rerun - `SCALE_BANDS` in `grading_tabs.py` and in `appsscript/Code.gs`, then
+`grading_tabs.py` to rewrite the arts cells on `Category Grades` that already exist, then
+paste `Code.gs` in so new rows are written with the new table. `refresh_scored_rollup()`
+rewrites a cell only while it still holds a formula, so a letter a grader typed over the
+rollup is left alone and reported. No score changes, and an arts letter already published
+can still fall a band, so resync the site afterwards.
 
 Two details of the formula are deliberate, and both are worth leaving alone:
 

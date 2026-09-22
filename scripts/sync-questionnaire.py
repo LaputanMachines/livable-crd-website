@@ -176,7 +176,7 @@ G_KEY, G_CANDIDATE, G_MUNICIPALITY, G_LABEL, G_QUESTION, G_ANSWER, G_OWNER, \
 # arts - Victori'us score each question 0-3 against their own rubric and weight
 # the questions against each other. G_GRADE holds the score and G_WEIGHT is the
 # ordinary percentage every letter-graded tab carries, and the letter is the
-# weighted average of the scores banded at 86/70/60. No C-: their bands have
+# weighted average of the scores banded at 90/80/60. No C-: their bands have
 # none, so the arts rubric can never produce one.
 #
 # Mirrors POINTS_CATEGORIES and SCALE_CATEGORIES in grading_tabs.py and

@@ -190,10 +190,16 @@ NOT_APPLICABLE = "N/A"
 # because MATCH with a 1 finds the last threshold at or below the value.
 #
 # They are deliberately not the same bands. Homes for Living have a C- running
-# from 50% to 60%; Victori'us have no C- at all and put A a point higher, at
-# 86%. Each is the org's own threshold table, as their own workbook states it.
+# from 50% to 60%; Victori'us have no C- at all and sit five points above them
+# at A and ten at B. Each is the org's own threshold table, as their own
+# workbook states it.
+#
+# Victori'us moved theirs on 2026-09-22, from 86/70/60 to 90/80/60: A and B both
+# rose and C and F stayed where they were. Rerunning this script rewrites every
+# arts cell on Category Grades, so arts letters already published can fall a
+# band without a single score changing.
 POINTS_BANDS = [(0.0, "F"), (0.5, "C-"), (0.6, "C"), (0.7, "B"), (0.85, "A")]
-SCALE_BANDS = [(0.0, "F"), (0.6, "C"), (0.7, "B"), (0.86, "A")]
+SCALE_BANDS = [(0.0, "F"), (0.6, "C"), (0.8, "B"), (0.9, "A")]
 
 # How a scale tab's Weight column is rendered. Two places, not the whole percent
 # a letter tab shows, because it is what a grader and the website both read: the
@@ -757,7 +763,7 @@ def band_expression(ratio, bands):
 
     One shape for both rubrics, which is the point: the thresholds and the
     letters are the org's, and they disagree - Homes for Living's C- has no
-    counterpart in the arts bands, and A starts a point higher there. Mirrors
+    counterpart in the arts bands, and both A and B start higher there. Mirrors
     bandExpression() in appsscript/Code.gs; the two render the same string.
     """
     letters = ";".join(f'"{letter}"' for _, letter in bands)
@@ -867,7 +873,7 @@ def scale_rollup_formula(category, line):
     Mirrors scaleCategoryFormula() in appsscript/Code.gs. Victori'us score every
     arts question 0-3 and weight the questions against each other, so the topic
     grade is the weighted average of the scores read as a share of a straight 3,
-    banded at 86/70/60.
+    banded at 90/80/60.
 
     Two things are worth spelling out about the shape:
 

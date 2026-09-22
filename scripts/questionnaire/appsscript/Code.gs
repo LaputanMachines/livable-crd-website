@@ -168,10 +168,12 @@ var REGISTRY_READ_WIDTH = 9;
 // or below the value.
 //
 // Not the same bands: Homes for Living's C- runs from 50% to 60%, and
-// Victori'us have no C- at all and start A a point higher, at 86%.
+// Victori'us have no C- at all and start A and B higher, at 90% and 80%.
+// Victori'us moved theirs on 2026-09-22, from 86/70/60 to 90/80/60; mirrored in
+// grading_tabs.py, which is what rewrites the arts cells that already exist.
 var POINTS_BANDS = '{0;0.5;0.6;0.7;0.85}';
 var POINTS_LETTERS = '{"F";"C-";"C";"B";"A"}';
-var SCALE_BANDS = '{0;0.6;0.7;0.86}';
+var SCALE_BANDS = '{0;0.6;0.8;0.9}';
 var SCALE_LETTERS = '{"F";"C";"B";"A"}';
 
 // Category Grades columns, 1-based: identity, then a (grade, deploy checkbox)
@@ -1145,7 +1147,7 @@ function bandExpression(ratio, letters, bands) {
  *
  * Victori'us score every arts question 0-3 and weight the questions against
  * each other, so the topic grade is the weighted average of those scores as a
- * share of a straight 3, banded at 86/70/60. A question nobody has scored yet
+ * share of a straight 3, banded at 90/80/60. A question nobody has scored yet
  * drops out of the total and out of the weight it is divided by, the same
  * courtesy the letter rollup pays a partly-graded candidate.
  *
