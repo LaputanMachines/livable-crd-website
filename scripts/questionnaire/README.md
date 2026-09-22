@@ -389,8 +389,22 @@ that tab are blank and filled in by hand.
 
 `Methodology` is optional and hand-maintained: a grader's own description of how a
 question is scored, sitting beside the `Weight` that says what it is worth. Nothing
-generated writes it, nothing published reads it, and `--refresh` leaves it alone with
-`Category`, `Graded`, `Weight` and `Owner`.
+generated writes it, and `--refresh` leaves it alone with `Category`, `Graded`,
+`Weight` and `Owner`.
+
+**It is published.** `sync-questionnaire.py` carries it into `_data/questions.yml` as
+`methodology`, and `/questionnaire/` renders it under the question it belongs to,
+headed "How this is graded" — or "Why we ask this" on the one ungraded question that
+has text there. Write it for a reader who does not work here: it is the coalition's
+grading rule in the partner's own voice, on a public page, beside the question a
+candidate answered. A blank cell publishes nothing at all, which is the case on
+eighteen of them.
+
+A bare web address in the cell becomes a link on that page (`autolink` in
+`_plugins/autolink.rb`), shown as its domain and opening in a new tab. Paste the
+address on its own — no Markdown, no HTML, neither of which is interpreted — and put
+it where the sentence would take a citation. Everything else in the cell is escaped
+and published as typed.
 
 Anything added to this tab goes in column **N or beyond**: `A:J` is the schema both
 scripts read by position, and `K:M` holds the tally block.

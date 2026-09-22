@@ -67,7 +67,32 @@ NON_ANSWER = (
 # Questions whose grading is a documented band structure applied by a person
 # rather than a lookup table. They have no entry in RUBRICS on purpose, so the
 # cross-check below has to exempt them rather than treat them as an error.
-FREE_TEXT = {"WLK-02", "ROL-05"}
+FREE_TEXT = {"WLK-02", "ROL-05", "WLK-05", "WLK-06",
+             "CLI-09", "CLI-10", "CLI-11"}
+
+# Closed questions with a stable answer-to-letter mapping that has never been
+# written into rubrics.py. Not the same thing as the set above: there is a
+# lookup table here, it just lives in the grades on the tab rather than in the
+# code, and the text below is read back off those grades.
+#
+# Kept separate rather than folded into FREE_TEXT so the distinction stays
+# visible: these two are candidates for rubrics.py, and moving one there is a
+# grading change - apply_rubric.py could then re-run the tab - which is why it
+# has not been done here.
+NO_RUBRIC = {"REC-02", "WLK-01"}
+
+# Questions whose cell does not take the shared paragraph below.
+#
+# Two reasons, and all of these have the second. WLK-01 has both: it grades
+# Unsure and Decline to answer C- where the shared policy leaves them blank, so
+# the paragraph would make the cell contradict its own tab. The rest are here
+# because the paragraph is four sentences of boilerplate on a cell that says
+# what it has to say in three, and the column is read by people looking up one
+# question, not by people reading the tab end to end. Nobody declined or
+# answered Unsure on any of the free-text ones, so it had nothing to say there
+# either.
+NO_POLICY_TAIL = {"REC-02", "WLK-01", "WLK-05", "WLK-06",
+                  "CLI-09", "CLI-10", "CLI-11"}
 
 METHODOLOGY = {
     "CLI-01": (
@@ -253,6 +278,69 @@ METHODOLOGY = {
         "takes the conditional-yes B. A No is F because the question is about "
         "building a connection, which is infrastructure."
     ),
+    # The four below have no rubrics.py entry, and their text is read back off
+    # the grades already on their tabs rather than forward from a rule. Written
+    # to the length the cells somebody typed by hand run to - see ROL-04 - and
+    # not to the length of the entries above, which state their reasoning
+    # because the rule came first and the sheet followed it.
+    "REC-02": (
+        "A = significantly more consultation practices. B = somewhat more. "
+        "C = the current amount is enough. Written answers take the same "
+        "ladder: A commits to partnership with local First Nations, B wants "
+        "better consultation without committing to a change, C questions "
+        "whether more is wanted. Nothing here has been graded C- or F."
+    ),
+    "WLK-01": (
+        "A = yes, even if it means removing driving lanes. C = yes, but not "
+        "when it takes road space from drivers. F = no. Two steps between the "
+        "two yeses because the adopted targets cannot be met without "
+        "reallocating street space. Unsure and Decline to answer are both C- "
+        "on this tab."
+    ),
+    "WLK-05": (
+        "Free text. A = names parents, school staff and municipal staff and "
+        "attaches something concrete: an audit, measures, funding, timelines, "
+        "or work delivered. B = one half only, consultation without measures "
+        "or measures without consultation. C = points at an existing programme "
+        "as enough. C- = vague, deflects, or denies the problem. Blank only "
+        "where Walk On cannot judge local conditions. F is not used."
+    ),
+    "CLI-09": (
+        "Free text. A = names a climate risk specific to the municipality and "
+        "specific actions against it, usually tied to data or a programme "
+        "already running. B = one half only, a risk with no action or actions "
+        "with no risk named, or backing an existing plan without either. C = "
+        "general support with nothing local in it, a list of risks and nothing "
+        "else, or the work handed to the region. C- = a risk gestured at and "
+        "nothing more. F = an answer that is not about climate."
+    ),
+    "CLI-10": (
+        "Free text. A = says what connectivity is and why it matters, with "
+        "local examples, usually tied to data, a programme already running or "
+        "the official community plan. B = practical examples with no local "
+        "detail, or no link back to connectivity. C = general support with no "
+        "project named, or an answer broad enough to fit any question. C- = "
+        "agrees with the idea and offers nothing to do about it, or answers "
+        "about something tangential. F is not used."
+    ),
+    "CLI-11": (
+        "Free text. A = yes, with how and why, naming strategies or a local "
+        "policy that ties development to resilience. B = yes with relevant "
+        "examples but no account of how they build resilience or how they get "
+        "built. C = general support and nothing past what the building code "
+        "already requires. C- = a bare yes, or support that doubts it is "
+        "possible. F = does not accept that development can make a community "
+        "more resilient."
+    ),
+    "WLK-06": (
+        "Free text. A = names what to fix and the order it gets fixed in: an "
+        "audit, named priorities, consultation with older and disabled "
+        "residents, a timeline inside the term. B = real improvements with no "
+        "process behind them, or continuing existing work. C = states the need "
+        "and defers it, or one fix with no plan. C- = a problem with no "
+        "action, or an answer about something else. Blank only where Walk On "
+        "cannot judge local conditions. F is not used."
+    ),
 }
 
 
@@ -328,6 +416,8 @@ def worksheet_by_title(sh, title):
 
 
 def text_for(label):
+    if label in NO_POLICY_TAIL:
+        return METHODOLOGY[label]
     return f"{METHODOLOGY[label]} {NON_ANSWER}"
 
 
@@ -370,14 +460,14 @@ def main():
         sys.exit(f"no sheet id: set QUESTIONNAIRE_SUBMISSIONS_SHEET_ID, pass "
                  f"--sheet-id, or write it to {SHEET_ID_FILE}")
 
-    unknown = sorted(set(METHODOLOGY) - set(rubrics.RUBRICS) - FREE_TEXT)
+    unknown = sorted(set(METHODOLOGY) - set(rubrics.RUBRICS) - FREE_TEXT - NO_RUBRIC)
     if unknown:
         sys.exit(f"methodology written for questions with no rubric and not "
                  f"declared free text: {unknown}")
-    stale = sorted(FREE_TEXT & set(rubrics.RUBRICS))
+    stale = sorted((FREE_TEXT | NO_RUBRIC) & set(rubrics.RUBRICS))
     if stale:
-        sys.exit(f"declared free text but now has a rubric, so the text is "
-                 f"out of date: {stale}")
+        sys.exit(f"declared as having no rubric but now has one, so the text "
+                 f"is out of date: {stale}")
     uncovered = sorted(set(rubrics.RUBRICS) - set(METHODOLOGY))
     if uncovered:
         sys.exit(f"rubric with no methodology text: {uncovered}")

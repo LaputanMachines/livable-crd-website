@@ -44,6 +44,28 @@
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
+#   methodology  How the answers to this question are graded, in the owning
+#             organization's own words, straight from the registry's
+#             `Methodology` column. Rendered under the question on
+#             /questionnaire/, and nowhere else.
+#
+#             Omitted where the cell is blank, which it is on eighteen of them,
+#             and the page draws nothing rather than apologizing for it. Present
+#             on one ungraded question (HLT-01), whose cell says why it is asked
+#             instead of how it is scored, which is why the page picks its
+#             heading off `graded` rather than putting "How this is graded" over
+#             everything.
+#
+#             Published as written. A partner may put a link in it - two of them
+#             have - and the page turns a bare URL into a link (see the
+#             `autolink` filter in _plugins/autolink.rb); nothing else about the
+#             text is interpreted, so it is not a place to write HTML or
+#             Markdown and expect either to render.
+#
+#             Deliberately not scripts/questionnaire/rubrics.py, which is what
+#             the grading tools apply. This column is the partner's explanation
+#             of it, and a partner can edit a spreadsheet cell without anybody
+#             deploying the site.
 #
 # Order matches _data/subjects.yml, then the registry's own order within a
 # subject, which is the order candidates met the questions on the form.
@@ -103,6 +125,9 @@ items:
     graded: false
     weight: "100%"
     owner: Family Doctors For Saanich
+    methodology: >-
+      Ungraded. Mainly curious about how you'd approach expanding healthcare
+      access in your region.
     options:
       - "(Colwood Model) Municipality is the clinic operator, GPs , NPs & support staff are all municipal employees."
       - "(Langford/Sidney/Central Saanich Model) Municipality indirectly supports PCC with Permissive Tax Exemptions, zoning, below market rent, etc. Clinic is operated by a non-profit such as South Island Primary Care Society or Shoreline Medical Society."
@@ -126,6 +151,17 @@ items:
     graded: true
     weight: "20%"
     owner: Better Transit YYJ
+    methodology: >-
+      A count of ticks, because no option here is cheaper than the others in
+      the way CLI-06's are. Four or more = A. Three = B. Two = C. One = C-.
+      None = F. The rows graded before this rubric was written are not
+      perfectly consistent with it at three and two ticks; they were left as
+      typed and the majority letter was taken. Decline to answer is F where
+      nothing explains it, and the Grade is left blank where the candidate
+      explained the decline in the topic's comment box or answered the rest of
+      the topic solidly. Unsure is left blank. A blank Grade drops the row out
+      of the category rollup entirely; N/A is reserved for a question that
+      does not apply to a candidate and never means ungraded.
     options:
       - Free transit for everyone under 19 years of age.
       - "Free or half-priced fares for seniors, 65+ years of age."
@@ -146,6 +182,21 @@ items:
     graded: true
     weight: "30%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes, across the whole corridor = A. Yes, only during peak hours = B.
+      Kind of, only when a specific project requires it = C. No = F. Peak
+      hours only is a real, testable limit on a yes, so it takes the
+      conditional-yes B. Only when a specific project requires it names no
+      project and commits to nothing in advance, which is the case-by-case
+      answer CLI-08 puts at C. A No is F because the question is about street
+      space, which is infrastructure. Eight of the earlier rows put the
+      case-by-case option at B and nineteen put it at C; the nineteen were
+      followed. Decline to answer is F where nothing explains it, and the
+      Grade is left blank where the candidate explained the decline in the
+      topic's comment box or answered the rest of the topic solidly. Unsure is
+      left blank. A blank Grade drops the row out of the category rollup
+      entirely; N/A is reserved for a question that does not apply to a
+      candidate and never means ungraded.
     options:
       - "Yes, across the whole corridor."
       - "Yes, only during peak hours."
@@ -164,6 +215,17 @@ items:
     graded: true
     weight: "30%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes = A. Yes, but not at the cost of a general-purpose travel lane = C-.
+      No = F. The question asks specifically about giving up a traffic lane,
+      so a yes that rules the lane out withholds the one thing being asked for
+      and cannot take the conditional-yes B. C- rather than F because the rest
+      of the toolkit is still on the table. Decline to answer is F where
+      nothing explains it, and the Grade is left blank where the candidate
+      explained the decline in the topic's comment box or answered the rest of
+      the topic solidly. Unsure is left blank. A blank Grade drops the row out
+      of the category rollup entirely; N/A is reserved for a question that
+      does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -179,6 +241,17 @@ items:
     graded: true
     weight: "10%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes = A, No = C-. A No is C- rather than F because this asks who should
+      decide, not what should be built or funded, which puts it on the
+      governance side of the CLI-03 split. Three earlier rows typed F and two
+      typed C-; the governance rule was followed over the count. Decline to
+      answer is F where nothing explains it, and the Grade is left blank where
+      the candidate explained the decline in the topic's comment box or
+      answered the rest of the topic solidly. Unsure is left blank. A blank
+      Grade drops the row out of the category rollup entirely; N/A is reserved
+      for a question that does not apply to a candidate and never means
+      ungraded.
     options:
       - "Yes"
       - "No"
@@ -194,6 +267,16 @@ items:
     graded: true
     weight: "10%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes = A. Yes, if no mature trees are lost during construction = B. No =
+      F. Losing no mature trees is a named and checkable condition, so it
+      takes the conditional-yes B. A No is F because the question is about
+      building a connection, which is infrastructure. Decline to answer is F
+      where nothing explains it, and the Grade is left blank where the
+      candidate explained the decline in the topic's comment box or answered
+      the rest of the topic solidly. Unsure is left blank. A blank Grade drops
+      the row out of the category rollup entirely; N/A is reserved for a
+      question that does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -217,6 +300,10 @@ items:
     type: multi
     graded: true
     owner: Homes for Living
+    methodology: >-
+      1 point per selected type to max of 8. Housing exists on a continuum and
+      different types are appropriate for different households. All housing is
+      needed and positively affects other types via vacancy chains
     options:
       - Supportive housing for those who need mental health and substance use support.
       - Publicly funded accessible housing for elderly and/or disabled people.
@@ -238,6 +325,10 @@ items:
     type: multi
     graded: true
     owner: Homes for Living
+    methodology: >-
+      1 point per strategy to max of 8. To tackle tenant displacement local
+      governments must take an all of the above approach to reduce the impacts
+      associated with renovictions and evictions.
     options:
       - Award bonus density to affordable housing developments.
       - Redirect development pressure away from existing older multifamily by allowing new multifamily in more low-density areas.
@@ -259,6 +350,12 @@ items:
     type_label: One answer
     graded: true
     owner: Homes for Living
+    methodology: >-
+      6 points for 30/180 days, prorated for longer timelines. Housing delayed
+      is housing denied. Long delays drive us costs for housing, increase the
+      chance that they will be cancelled, and indicate a lack of clear
+      published guidelines. A time limit on decisions prioritizes housing
+      action and reforms.
     options:
       - "Yes - Under 30 days for small projects under six units, 180 days for large projects over six units."
       - "Yes - Under 60 days for small projects under six units, 365 days for large projects over six units."
@@ -275,6 +372,13 @@ items:
     type: multi
     graded: true
     owner: Homes for Living
+    methodology: >-
+      1 point for each option, but -1 for choosing mandated requirements (d).
+      To increase the building of certain desireable types of housing
+      (affordable, family sized, etc), cities need to pursue a broad approach
+      of both removing barriers and targetted incentives. Mandated
+      requirements (or inclusionary zoning) have a track record of acting like
+      a tax and therefore reducing housing construction or increasing costs.
     options:
       - Pre-zoning.
       - Bonus density.
@@ -294,6 +398,11 @@ items:
     type_label: One answer
     graded: true
     owner: Homes for Living
+    methodology: >-
+      3 points for yes, 0 for no. An OCP sets out the direction and vision for
+      a municipality with broad input from the community and council. Matching
+      zoning to long term consensus-based plans reduces scarcity and allows
+      incentivizes OCP compliant housing to be built quickly.
     options:
       - "Yes"
       - "No"
@@ -308,6 +417,12 @@ items:
     type_label: One answer
     graded: true
     owner: Homes for Living
+    methodology: >-
+      a) 0 points b) 1 points c) 2 points d) 5 points e) 6 points. With little
+      room for new single family developments, housing abundance relies on
+      density. People unable to afford a single family house should not be
+      relegated to living only on busy arterials where high density is legal,
+      but should have a diversity of housing options in every neighbourhood.
     options:
       - Nothing beyond the Provincial minimum.
       - Small Scale Multiunit Housing (up to 6 units).
@@ -326,6 +441,13 @@ items:
     type_label: One answer
     graded: true
     owner: Homes for Living
+    methodology: >-
+      3 points for a), 0 otherwise. Housing approval rules must be predictable
+      and clear for those building housing, or it will lead to scarcity. If
+      municipal planning staff have adequately considered objections to a
+      project and still recommend approval it should be approved. If
+      unanticipated issues are raised, policies should be clarified to ensure
+      staff can work with applicants on future projects.
     options:
       - Support it if opposing comments have been considered by staff.
       - Support it only if it includes additional affordability or community benefits.
@@ -341,6 +463,12 @@ items:
     type_label: One answer
     graded: true
     owner: Homes for Living
+    methodology: >-
+      1 point for yes, 2 points for yes with transportation demand management
+      measures, 0 points for no. A single additional parking space can add
+      tens of thousands to the cost of a home. However, a development without
+      parking and without offsetting remedies can impact livability for the
+      eventual occupants of a home.
     options:
       - Yes.
       - No.
@@ -355,6 +483,14 @@ items:
     type: multi
     graded: true
     owner: Homes for Living
+    methodology: >-
+      1 point for each option, but -1 for choosing mandated requirements (d).
+      Building homes is hard, building non-market homes is substantially
+      harder. This has serious socio-economic consequences for certain members
+      of society. With the exception of mandated requirements (or inclusionary
+      zoning), which have a track record of acting like a tax and therefore a
+      deterrent to new construction, a broad and flexible approach is needed
+      to help non-market housing across the approval finish line.
     options:
       - "Relaxing setbacks, form and character, or other zoning restrictions."
       - Offering bonus height or density.
@@ -375,6 +511,20 @@ items:
     type_label: "Written answer, up to 2,000 characters"
     graded: true
     owner: Homes for Living
+    methodology: >-
+      To receive full marks, candidates receive a point up to 7 for
+      referencing impactful housing ideas in their answer including but not
+      limited to: a rental vacancy rate target, a quantitative target
+      regarding annual homes built, pre-zoning commitments / OCP alignment,
+      non-profit by right commitment, commitment to tenant production aligned
+      with platform, commitment to regulate and enforce Airbnb rules, delegate
+      more rezoning / variance decisions to staff, a continuation of policies
+      that have been working, developing a pre-approved catalog of housing
+      designs, loosening design guidelines or other restrictive regulations,
+      minimizing tenant displacement, increasing the regional housing fund,
+      enhancing partnerships with other levels of government, the private
+      sector, co-ops, and non-profit housing developers, streamlining
+      regulations, and shorten requirements.
   - label: HFL-11
     subject: housing
     question: >-
@@ -386,6 +536,10 @@ items:
     type_label: Asked separately for each municipality
     graded: true
     owner: Homes for Living
+    methodology: >-
+      6 points for too low, 1 for about right, 0 for too high. By definition,
+      the provincial housing targets, being set as only 75% of estimated
+      housing need is too low of a target to meet local housing needs.
     options:
       - Fewer homes than the target (the target is too high).
       - More homes than the target (the target is too low).
@@ -405,6 +559,12 @@ items:
     type_label: Asked separately for each municipality
     graded: true
     owner: Homes for Living
+    methodology: >-
+      5 points for selecting more housing and commercial development, 1 for
+      seeking additional provincial or federal funding, 0 points for
+      increasing taxes or reducing infrastructure projects, and -2 points for
+      increasing development charges, amenity contributions, and other fees
+      imposed on new houses.
     options:
       - Allow substantially more housing and commercial development to grow the tax base and help fund infrastructure renewal.
       - Increase property taxes or introduce a dedicated infrastructure levy.
@@ -426,6 +586,21 @@ items:
     graded: true
     weight: "8.33%"
     owner: Climate Justice Victoria
+    methodology: >-
+      Two commitments in one question, so the menu answer alone cannot reach
+      the top. The menu sets a base and a Yes on the follow-up about
+      advocating at the Victoria Regional Transit Commission raises it one
+      step. Yes, both advertising and sponsorship = B, and A with the
+      follow-up. Yes, advertising only or Yes, sponsorship only = C, and B
+      with the follow-up. No = F, because ending the advertising is something
+      the municipality controls outright. A follow-up written as free text
+      rather than ticked is a judgement about the candidate and is graded by
+      hand. Decline to answer is F where nothing explains it, and the Grade is
+      left blank where the candidate explained the decline in the topic's
+      comment box or answered the rest of the topic solidly. Unsure is left
+      blank. A blank Grade drops the row out of the category rollup entirely;
+      N/A is reserved for a question that does not apply to a candidate and
+      never means ungraded.
     options:
       - "Yes, both advertising and sponsorship."
       - "Yes, advertising only."
@@ -449,6 +624,19 @@ items:
     graded: true
     weight: "8.33%"
     owner: Climate Justice Victoria
+    methodology: >-
+      The overriding priority, other decisions should be tested against it =
+      A. One of the top three priorities, with a dedicated budget = B. One
+      priority among many, addressed where affordable = C-. Not a municipal
+      priority = F. The ladder skips C on purpose: a dedicated budget is the
+      line between a priority and a sentiment, so addressing climate only
+      where affordable drops two steps rather than one. Handing the file to
+      another order of government is F. Decline to answer is F where nothing
+      explains it, and the Grade is left blank where the candidate explained
+      the decline in the topic's comment box or answered the rest of the topic
+      solidly. Unsure is left blank. A blank Grade drops the row out of the
+      category rollup entirely; N/A is reserved for a question that does not
+      apply to a candidate and never means ungraded.
     options:
       - "The overriding priority, other decisions should be tested against it."
       - "One of the top three priorities, with a dedicated budget."
@@ -465,6 +653,17 @@ items:
     graded: true
     weight: "8.33%"
     owner: Common Horizon Victoria
+    methodology: >-
+      Yes = A, No = C-. The No is C- rather than F because of the split the
+      grading settled on: a plain No is C- where the question is about
+      governance or conduct and F where it is about infrastructure, land use
+      or funding. This one asks a candidate to give up a channel of access to
+      themselves, which is conduct. Decline to answer is F where nothing
+      explains it, and the Grade is left blank where the candidate explained
+      the decline in the topic's comment box or answered the rest of the topic
+      solidly. Unsure is left blank. A blank Grade drops the row out of the
+      category rollup entirely; N/A is reserved for a question that does not
+      apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -481,6 +680,17 @@ items:
     graded: true
     weight: "8.33%"
     owner: Common Horizon Victoria
+    methodology: >-
+      Yes = A. Yes, if municipal costs are capped = B, because a conditional
+      yes is B wherever one appears and a cap on municipal exposure lands
+      there. No = F, because the question is about spending to recover costs,
+      which is the funding side of the split CLI-03 sits on the other side of.
+      Decline to answer is F where nothing explains it, and the Grade is left
+      blank where the candidate explained the decline in the topic's comment
+      box or answered the rest of the topic solidly. Unsure is left blank. A
+      blank Grade drops the row out of the category rollup entirely; N/A is
+      reserved for a question that does not apply to a candidate and never
+      means ungraded.
     options:
       - "Yes"
       - "No"
@@ -497,6 +707,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: Common Horizon Victoria
+    methodology: >-
+      Yes = A, No = F. A land use question, so a No is F rather than C-.
+      Decline to answer is F where nothing explains it, and the Grade is left
+      blank where the candidate explained the decline in the topic's comment
+      box or answered the rest of the topic solidly. Unsure is left blank. A
+      blank Grade drops the row out of the category rollup entirely; N/A is
+      reserved for a question that does not apply to a candidate and never
+      means ungraded.
     options:
       - "Yes"
       - "No"
@@ -511,6 +729,21 @@ items:
     graded: true
     weight: "8.33%"
     owner: Climate Justice Victoria
+    methodology: >-
+      Up to five measures may be ticked. Four or more ticks including at least
+      two of the three the municipality has to pay for (subsidized home
+      assessments, grants or financing for retrofits, designated centres with
+      guaranteed opening hours) = A. Three or more ticks = B. Two = C. One =
+      C-. None of the above = F. The funding floor is there because a straight
+      count of ticks would let a candidate reach the top on the two cheapest
+      options, a vegetation bylaw and an information campaign, while
+      committing no money to anyone actually living in an overheating home.
+      Decline to answer is F where nothing explains it, and the Grade is left
+      blank where the candidate explained the decline in the topic's comment
+      box or answered the rest of the topic solidly. Unsure is left blank. A
+      blank Grade drops the row out of the category rollup entirely; N/A is
+      reserved for a question that does not apply to a candidate and never
+      means ungraded.
     options:
       - "Subsidized home assessments for heat, air quality and wildfire risk."
       - "Grants or financing for cooling, filtration and building retrofits."
@@ -531,6 +764,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: Common Horizon Victoria
+    methodology: >-
+      Yes = A, No = F. A regulatory phase-out, graded on the same footing as
+      CLI-05. Decline to answer is F where nothing explains it, and the Grade
+      is left blank where the candidate explained the decline in the topic's
+      comment box or answered the rest of the topic solidly. Unsure is left
+      blank. A blank Grade drops the row out of the category rollup entirely;
+      N/A is reserved for a question that does not apply to a candidate and
+      never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -546,6 +787,20 @@ items:
     graded: true
     weight: "8.33%"
     owner: Common Horizon Victoria
+    methodology: >-
+      Oppose all new data centres = A. Support only with waste-heat recovery
+      and no net increase in potable water use = B. Support only under
+      conditions set case by case = C. Support without special conditions = F.
+      The two conditional options are separated by whether the condition
+      binds. Waste-heat recovery and no net potable water increase is a
+      testable commitment, so it takes the conditional-yes B. Conditions set
+      case by case name nothing and commit to nothing, so it takes the C that
+      a depends-case-by-case answer gets everywhere else. Decline to answer is
+      F where nothing explains it, and the Grade is left blank where the
+      candidate explained the decline in the topic's comment box or answered
+      the rest of the topic solidly. Unsure is left blank. A blank Grade drops
+      the row out of the category rollup entirely; N/A is reserved for a
+      question that does not apply to a candidate and never means ungraded.
     options:
       - Support without special conditions.
       - Support only with waste-heat recovery and no net increase in potable water use.
@@ -563,6 +818,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: RUSH
+    methodology: >-
+      Free text. A = names a climate risk specific to the municipality and
+      specific actions against it, usually tied to data or a programme already
+      running. B = one half only, a risk with no action or actions with no
+      risk named, or backing an existing plan without either. C = general
+      support with nothing local in it, a list of risks and nothing else, or
+      the work handed to the region. C- = a risk gestured at and nothing more.
+      F = an answer that is not about climate.
   - label: CLI-10
     subject: climate
     question: >-
@@ -574,6 +837,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: RUSH
+    methodology: >-
+      Free text. A = says what connectivity is and why it matters, with local
+      examples, usually tied to data, a programme already running or the
+      official community plan. B = practical examples with no local detail, or
+      no link back to connectivity. C = general support with no project named,
+      or an answer broad enough to fit any question. C- = agrees with the idea
+      and offers nothing to do about it, or answers about something
+      tangential. F is not used.
   - label: CLI-11
     subject: climate
     question: >-
@@ -584,6 +855,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: RUSH
+    methodology: >-
+      Free text. A = yes, with how and why, naming strategies or a local
+      policy that ties development to resilience. B = yes with relevant
+      examples but no account of how they build resilience or how they get
+      built. C = general support and nothing past what the building code
+      already requires. C- = a bare yes, or support that doubts it is
+      possible. F = does not accept that development can make a community more
+      resilient.
   - label: CLI-12
     subject: climate
     question: >-
@@ -596,6 +875,14 @@ items:
     graded: true
     weight: "8.33%"
     owner: RUSH
+    methodology: >-
+      Yes = A, No = F. Graded by RUSH from 2026-09-01; the mapping is recorded
+      so the remaining rows match the ones already typed. Decline to answer is
+      F where nothing explains it, and the Grade is left blank where the
+      candidate explained the decline in the topic's comment box or answered
+      the rest of the topic solidly. Unsure is left blank. A blank Grade drops
+      the row out of the category rollup entirely; N/A is reserved for a
+      question that does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -798,6 +1085,17 @@ items:
     graded: true
     weight: "15%"
     owner: Rob Bernhardt
+    methodology: >-
+      Yes = A. Yes, except where physically impossible = B. No = F. Except
+      where physically impossible is a condition that can be checked against a
+      street, so it takes the conditional-yes B, and that is where the 19 rows
+      graded before this rubric existed put it. A No is F because the question
+      sets a construction standard, which is infrastructure. Decline to answer
+      is F where nothing explains it, and the Grade is left blank where the
+      candidate explained the decline in the topic's comment box or answered
+      the rest of the topic solidly. Unsure is left blank. A blank Grade drops
+      the row out of the category rollup entirely; N/A is reserved for a
+      question that does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -815,6 +1113,19 @@ items:
     graded: true
     weight: "15%"
     owner: Rob Bernhardt
+    methodology: >-
+      Yes = A. Depends, case-by-case = C. No = F. Depends case by case names
+      no test and commits to nothing, which is the C it gets on CLI-08 and
+      TRN-02; 13 of the 14 rows graded before this rubric existed agree. A No
+      is F because the question is about keeping built infrastructure in
+      place. An answer of N/A is a claim that the question does not apply to
+      that municipality, which is a judgement about a candidate and is passed
+      in by hand, like an excused decline. Decline to answer is F where
+      nothing explains it, and the Grade is left blank where the candidate
+      explained the decline in the topic's comment box or answered the rest of
+      the topic solidly. Unsure is left blank. A blank Grade drops the row out
+      of the category rollup entirely; N/A is reserved for a question that
+      does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -832,6 +1143,11 @@ items:
     graded: true
     weight: "20%"
     owner: Rob Bernhardt
+    methodology: >-
+      A = Candidate is able to identify a project in their community and speak
+      to its importance. B & C = Candidate has a general idea of something
+      that can be improved but it isn't high on their priority list. F =
+      Candidate does not think any improvements can/should be made.
   - label: ROL-05
     subject: rolling-cycling
     question: >-
@@ -843,6 +1159,23 @@ items:
     graded: true
     weight: "35%"
     owner: Better Transit YYJ
+    methodology: >-
+      Free text, graded by a person on what the record shows about advancing
+      walking, rolling, cycling or transit. A = delivered work, meaning
+      budgets moved, plans adopted, infrastructure built, or a sustained
+      organisational role with results behind it. B = substantial relevant
+      advocacy or a directly relevant role, with less account of what it
+      produced. C = a record from a different office, or advocacy confined to
+      one location or issue, or no previous term with nothing offered in its
+      place. C- = personal experience or unrelated work with no advocacy
+      behind it. F = nothing relevant offered, or a record that closed the
+      question rather than advancing it. The bands come from the 79 rows
+      graded before 2026-09-20. Decline to answer is F where nothing explains
+      it, and the Grade is left blank where the candidate explained the
+      decline in the topic's comment box or answered the rest of the topic
+      solidly. Unsure is left blank. A blank Grade drops the row out of the
+      category rollup entirely; N/A is reserved for a question that does not
+      apply to a candidate and never means ungraded.
   - label: ROL-GEN
     subject: rolling-cycling
     question: >-
@@ -865,6 +1198,11 @@ items:
     graded: true
     weight: "10%"
     owner: Todd Litman
+    methodology: >-
+      A = yes, even if it means removing driving lanes. C = yes, but not when
+      it takes road space from drivers. F = no. Two steps between the two
+      yeses because the adopted targets cannot be met without reallocating
+      street space. Unsure and Decline to answer are both C- on this tab.
     options:
       - "Yes, absolutely, even if it means removing driving lanes to meet our targets."
       - "Yes, but not when it takes away road space from drivers."
@@ -882,6 +1220,22 @@ items:
     graded: true
     weight: "20%"
     owner: Better Transit YYJ
+    methodology: >-
+      Free text, graded by a person against the two things the question asks
+      for: a named local problem, and one change committed to in a first term.
+      A = both, with the change specific enough to be delivered and usually
+      tied to funding, a named corridor or an existing plan. B = the problem
+      is named and the response is concrete but soft, narrow, or a review
+      rather than a change. C = a problem is named and nothing is committed
+      to, or the framing of the question is declined. C- = no local problem is
+      settled on, or the answer is a general gesture. F = nothing responsive
+      is offered. The bands come from the 31 rows graded before 2026-09-20 and
+      were applied to the remaining 51 on that date. Decline to answer is F
+      where nothing explains it, and the Grade is left blank where the
+      candidate explained the decline in the topic's comment box or answered
+      the rest of the topic solidly. Unsure is left blank. A blank Grade drops
+      the row out of the category rollup entirely; N/A is reserved for a
+      question that does not apply to a candidate and never means ungraded.
   - label: WLK-03
     subject: walking
     question: >-
@@ -893,6 +1247,18 @@ items:
     graded: true
     weight: "10%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes, a substantial increase, meaning more than double what is currently
+      spent = A. Yes, a modest increase, meaning more but less than double =
+      B, because that is a real commitment with a ceiling on it. No, the
+      current amount is sufficient = F, because the question is about money
+      for infrastructure, which is the funding side of the split. Decline to
+      answer is F where nothing explains it, and the Grade is left blank where
+      the candidate explained the decline in the topic's comment box or
+      answered the rest of the topic solidly. Unsure is left blank. A blank
+      Grade drops the row out of the category rollup entirely; N/A is reserved
+      for a question that does not apply to a candidate and never means
+      ungraded.
     options:
       - "Yes, a substantial increase (i.e. more than double what's currently spent)."
       - "Yes, a modest increase (i.e. more, but less than double of what's currently spent)"
@@ -909,6 +1275,23 @@ items:
     graded: true
     weight: "20%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes, and I would pursue a permanent expansion or implementation = A.
+      Yes, but only temporary, seasonal or pilot closures = B, because it is a
+      yes with a stated limit on it. No = F, because the question is about
+      street space, which is infrastructure. An answer of N/A is not on this
+      list: it is a claim that the municipality has no downtown, main street
+      or village centre, which is a judgement about a candidate and is passed
+      in by hand. It has been left blank where that is true of the
+      municipality and graded F everywhere the question plainly does apply.
+      Unsure was typed C on two rows before 2026-09-13 and those rows were
+      reset to blank on 2026-09-20, so the question now follows the shared
+      policy. Decline to answer is F where nothing explains it, and the Grade
+      is left blank where the candidate explained the decline in the topic's
+      comment box or answered the rest of the topic solidly. Unsure is left
+      blank. A blank Grade drops the row out of the category rollup entirely;
+      N/A is reserved for a question that does not apply to a candidate and
+      never means ungraded.
     options:
       - "Yes, and I would pursue a permanent expansion/implementation."
       - "Yes, but only temporary, seasonal or pilot closures."
@@ -927,6 +1310,13 @@ items:
     graded: true
     weight: "20%"
     owner: "Walk On, Victoria"
+    methodology: >-
+      Free text. A = names parents, school staff and municipal staff and
+      attaches something concrete: an audit, measures, funding, timelines, or
+      work delivered. B = one half only, consultation without measures or
+      measures without consultation. C = points at an existing programme as
+      enough. C- = vague, deflects, or denies the problem. Blank only where
+      Walk On cannot judge local conditions. F is not used.
   - label: WLK-06
     subject: walking
     question: >-
@@ -938,6 +1328,14 @@ items:
     graded: true
     weight: "20%"
     owner: "Walk On, Victoria"
+    methodology: >-
+      Free text. A = names what to fix and the order it gets fixed in: an
+      audit, named priorities, consultation with older and disabled residents,
+      a timeline inside the term. B = real improvements with no process behind
+      them, or continuing existing work. C = states the need and defers it, or
+      one fix with no plan. C- = a problem with no action, or an answer about
+      something else. Blank only where Walk On cannot judge local conditions.
+      F is not used.
   - label: WLK-GEN
     subject: walking
     question: >-
@@ -958,6 +1356,7 @@ items:
     graded: true
     weight: "17%"
     owner: Strong Towns Victoria
+    methodology: "Yes/Partly = A, Unsure = C, No = F."
     options:
       - "Yes"
       - "No"
@@ -975,6 +1374,20 @@ items:
     graded: true
     weight: "17%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes = A. Yes, only if full cost recovery is guaranteed for my
+      municipality = B. No = C-. Full cost recovery is a named, checkable
+      condition on a yes, so it takes the conditional-yes B. A No is C- rather
+      than F because the question is about how services are organised and who
+      runs them, which is the governance side of the split CLI-03 sits on the
+      other side of. Unsure was typed C on three rows before 2026-09-13 and
+      those rows were reset to blank on 2026-09-20, so the question now
+      follows the shared policy. Decline to answer is F where nothing explains
+      it, and the Grade is left blank where the candidate explained the
+      decline in the topic's comment box or answered the rest of the topic
+      solidly. Unsure is left blank. A blank Grade drops the row out of the
+      category rollup entirely; N/A is reserved for a question that does not
+      apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -991,6 +1404,33 @@ items:
     graded: true
     weight: "17%"
     owner: Strong Towns Victoria
+    methodology: >-
+      “Real financial resilience comes from increasing the productivity of
+      land that's already served by infrastructure: letting neighborhoods
+      incrementally thicken, encouraging redevelopment where roads and pipes
+      already exist, building more value per acre instead of more acres that
+      need public maintenance.” The Strong Towns approach thinks about revenue
+      vs liabilities and the cost of replacing infrastructure as a key driver
+      of municipal financial success. Next-increment intensification or better
+      allows improved use of pipes, roads, and wires, increasing the economic
+      base for the city while lowering vacancies (examples,
+      https://www.strongtowns.org/journal/2026-8-5-the-biggest-misconception-in-municipal-finance,
+      https://archive.strongtowns.org/journal/2015/5/10/lafayette). No credit
+      was given for/against for either a) sharing costs with neighbouring
+      governments or b) asking for money from higher levels of government,
+      both of which may have additional merit beyond the boundaries of the
+      muncipality. A-level (excellent) answer: 1. a comment about density
+      being linked to financial wellbeing (revenue side), 2. a comment about
+      efficient use of that revenue (expenses side), 3. thinking about
+      infrastructure liabilities and how to pay for them given the
+      intergenerational problems. B-level (good) answer considers some of
+      these principles, but likely doesn't consider both revenue and expenses.
+      C-level (mixed) - may have other ideas about arbitrary efficiencies and
+      doesn't provide a mechanism for doing the work they propose (e.g. "fill
+      up the reserve fund" -- with what money?). F - working in the opposite
+      direction of resilience (e.g. arbitrary property tax increase caps), or
+      doesn't answer the question (e.g. "my municipality is on firm financial
+      footing").
   - label: GOV-04
     subject: governance
     question: >-
@@ -1001,6 +1441,12 @@ items:
     graded: true
     weight: "17%"
     owner: Strong Towns Victoria
+    methodology: >-
+      Yes = A, No/Decline = F. Parking minimums are pseudoscience that should
+      be eliminated from city codes everywhere, and have been eliminated in
+      Vancouver, Edmonton, Regina, Ottawa, and others across North America
+      without any negative consequences
+      (https://archive.strongtowns.org/journal/2021/11/22/announcing-a-new-and-improved-map-of-cities-that-have-removed-parking-minimums)
     options:
       - "Yes"
       - "No"
@@ -1016,6 +1462,16 @@ items:
     graded: true
     weight: "17%"
     owner: Better Transit YYJ
+    methodology: >-
+      Yes = A. No = C-, on the same reasoning as GOV-02 and TRN-04: the
+      question is about who sits at the table, not about what gets built or
+      funded. No candidate has answered No, so that letter is a rule rather
+      than a record of how anyone was graded. Decline to answer is F where
+      nothing explains it, and the Grade is left blank where the candidate
+      explained the decline in the topic's comment box or answered the rest of
+      the topic solidly. Unsure is left blank. A blank Grade drops the row out
+      of the category rollup entirely; N/A is reserved for a question that
+      does not apply to a candidate and never means ungraded.
     options:
       - "Yes"
       - "No"
@@ -1030,6 +1486,12 @@ items:
     graded: true
     weight: "17%"
     owner: Todd Litman
+    methodology: >-
+      A = significantly more consultation practices. B = somewhat more. C =
+      the current amount is enough. Written answers take the same ladder: A
+      commits to partnership with local First Nations, B wants better
+      consultation without committing to a change, C questions whether more is
+      wanted. Nothing here has been graded C- or F.
     options:
       - Significantly more consultation practices.
       - Somewhat more consultation practices.

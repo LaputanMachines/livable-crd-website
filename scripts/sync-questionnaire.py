@@ -406,6 +406,28 @@ QUESTIONS_HEADER = """\
 #   owner     The coalition organization that submitted the question and grades
 #             the answers to it. Omitted where the registry names an individual
 #             rather than an organization.
+#   methodology  How the answers to this question are graded, in the owning
+#             organization's own words, straight from the registry's
+#             `Methodology` column. Rendered under the question on
+#             /questionnaire/, and nowhere else.
+#
+#             Omitted where the cell is blank, which it is on eighteen of them,
+#             and the page draws nothing rather than apologizing for it. Present
+#             on one ungraded question (HLT-01), whose cell says why it is asked
+#             instead of how it is scored, which is why the page picks its
+#             heading off `graded` rather than putting "How this is graded" over
+#             everything.
+#
+#             Published as written. A partner may put a link in it - two of them
+#             have - and the page turns a bare URL into a link (see the
+#             `autolink` filter in _plugins/autolink.rb); nothing else about the
+#             text is interpreted, so it is not a place to write HTML or
+#             Markdown and expect either to render.
+#
+#             Deliberately not scripts/questionnaire/rubrics.py, which is what
+#             the grading tools apply. This column is the partner's explanation
+#             of it, and a partner can edit a spreadsheet cell without anybody
+#             deploying the site.
 #
 # Order matches _data/subjects.yml, then the registry's own order within a
 # subject, which is the order candidates met the questions on the form."""
@@ -1221,6 +1243,14 @@ def build_questions(registry, extra, choices, subject_order, warnings, errors):
             "graded": norm(cell(R_GRADED)) in {"yes", "true", "y"},
             "weight": cell(R_WEIGHT),
             "owner": owner,
+            # How the owning organization says this question is graded, in their
+            # own words, published under the question on /questionnaire/. Read
+            # from the registry rather than from scripts/questionnaire/rubrics.py
+            # on purpose: the rubric is what the grading tools apply, and this
+            # column is what the partner wrote to explain it, which a partner can
+            # edit without a deploy. Blank on 18 of them and that is fine - the
+            # page draws nothing where there is nothing to say.
+            "methodology": clean_text(row[R_METHODOLOGY] if R_METHODOLOGY < len(row) else ""),
             "options": choice.get("options") or [],
             "option_limit": unstated_limit(choice.get("limit"), question),
         })
@@ -1245,6 +1275,9 @@ def build_questions(registry, extra, choices, subject_order, warnings, errors):
             "graded": False,
             "weight": "",
             "owner": "",
+            # These come from the raw tab rather than from the registry, so
+            # there is no Methodology cell behind them to publish.
+            "methodology": "",
             "options": choices.get(q["label"], {}).get("options") or [],
             "option_limit": choices.get(q["label"], {}).get("limit"),
             "areas": q["areas"],
@@ -1286,6 +1319,8 @@ def render_questions(items, subject_order):
             parts.append(f"    weight: {scalar(q['weight'])}")
         if q["owner"]:
             parts.append(f"    owner: {scalar(q['owner'])}")
+        if q.get("methodology"):
+            parts.append(f"    methodology: {text_value(q['methodology'], 6)}")
         # What the question offers to pick from, so a candidate can work through
         # the questionnaire with their team before opening the form.
         if q.get("options"):

@@ -235,6 +235,55 @@
   margin-top: 0.5rem;
 }
 
+// How the answers to a question are graded, in the words of the organization
+// that grades them. Last in the item and drawn as the quietest thing in it: a
+// paragraph of grading rules under every question is a lot of page, and a
+// reader scanning the questionnaire has to be able to skip it at a glance.
+//
+// Set apart by a rule down the left rather than by a box. The item already sits
+// in a bordered card, and a second border inside it read as a nested card; a
+// rule says "this belongs to the question above" while staying out of the way.
+// The rule takes the topic's own accent, which is already on the card, so the
+// page does not gain a colour.
+//
+// Same 68ch measure as the question and the options, so the item's text keeps
+// one left edge and one right edge all the way down.
+.questionnaire-item__method {
+  margin-top: 0.75rem;
+  padding-left: $space-sm;
+  border-left: 2px solid rgba($color-accent, 0.35);
+  max-width: 68ch;
+}
+
+// A label, not a heading: see the note in questionnaire/index.md. Set in the
+// same small caps as the pills above it so a reader recognizes it as the same
+// kind of mark, and not as a pill, because the thing it labels is a paragraph
+// rather than a fact.
+.questionnaire-item__method-label {
+  display: block;
+  font-family: $font-display;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: $color-muted;
+}
+
+.questionnaire-item__method-body {
+  margin: 0.25rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: $color-muted;
+
+  // The one thing in this paragraph a reader can act on, so it is the one thing
+  // in it drawn in the page's link colour rather than in the muted ink around
+  // it. Wraps mid-address: some of these are long and the column is narrow.
+  a {
+    color: $color-accent;
+    overflow-wrap: anywhere;
+  }
+}
+
 // Capped at a readable measure. The page is a full-width container because the
 // jump bar and the section heads want the room, but a 55-question read at that
 // width puts well over a hundred characters on a line and the eye loses its

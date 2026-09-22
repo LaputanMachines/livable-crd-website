@@ -38,6 +38,8 @@ body_class: page-questionnaire
     same questionnaire. This is it, in full. Each policy area's questions were
     written by the coalition organization working on that area, and, where a
     question carries a grade, that same organization grades the answers to it.
+    Where they have set down how a question is scored, it is published under
+    that question.
   </p>
 
   {%- comment -%}
@@ -358,6 +360,37 @@ body_class: page-questionnaire
           {%- if show_owner %}
           <span class="questionnaire-item__tag questionnaire-item__tag--owner">{% if q.graded %}Written and graded by{% else %}Written by{% endif %} {{ q.owner }}</span>
           {%- endif %}
+        </div>
+        {%- endif %}
+        {%- comment -%}
+          How this question is graded, in the words of the organization that
+          grades it: the `Methodology` column of the Question Registry, straight
+          through. Last in the item because it is the longest thing in it and
+          the only part a reader can skip - somebody scanning the questionnaire
+          wants the question and the options, and somebody arguing with a grade
+          wants this.
+
+          Eighteen of the questions have nothing in that column and draw no
+          block at all, rather than a heading over an apology. The heading turns
+          on `graded` because one ungraded question carries text there (HLT-01,
+          which says why it is asked), and "How this is graded" over a question
+          nobody grades would contradict the "Not graded" pill at the top of the
+          same item.
+
+          Not a heading element. The only headings on this page are the page
+          title and the topic names, and the questions themselves are not
+          headings either - a fourth level here would announce a section that,
+          to a screen reader, is the last third of one list item.
+
+          `autolink` before `newline_to_br`: the filter escapes everything it
+          does not turn into a link, so it has to be the one that sees the raw
+          cell. See _plugins/autolink.rb for why a partner's bare URL is the one
+          thing about this text that is interpreted.
+        {%- endcomment -%}
+        {%- if q.methodology %}
+        <div class="questionnaire-item__method">
+          <span class="questionnaire-item__method-label">{% if q.graded %}How this is graded{% else %}Why we ask this{% endif %}</span>
+          <p class="questionnaire-item__method-body">{{ q.methodology | autolink | newline_to_br }}</p>
         </div>
         {%- endif %}
       </li>
