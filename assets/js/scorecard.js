@@ -44,11 +44,13 @@
   // Scoped to the office filter container: rows also carry data-office.
   var officePills = Array.prototype.slice.call(document.querySelectorAll('#office-filters [data-office]'));
   var total = rows.length;
+  var participatingButton = document.getElementById('participating-only');
 
   var activeMuni = 'all';
   var activeGrade = 'all'; // 'all' or a minimum rank as a string ('2' = C or better)
   var activeTopic = 'all'; // 'all' (any topic) or a subject id
   var activeOffice = 'all'; // 'all', 'mayor', or 'councillor'
+  var participatingOnly = false; // hide candidates who returned nothing
   var query = '';
 
   // Letter grade → numeric rank for the "minimum grade" filter. Pending ("—",
@@ -88,7 +90,8 @@
         (row.getAttribute('data-name') || '').indexOf(query) !== -1 ||
         (row.getAttribute('data-slate') || '').indexOf(query) !== -1;
       var gradeOk = minRank === null || bestRank(row, activeTopic) >= minRank;
-      var show = muniOk && officeOk && nameOk && gradeOk;
+      var participatingOk = !participatingOnly || row.hasAttribute('data-returned');
+      var show = muniOk && officeOk && nameOk && gradeOk && participatingOk;
       row.hidden = !show;
       if (show) visible++;
     });
@@ -99,11 +102,11 @@
     });
 
     // Empty municipalities exist to show the region is fully covered, so they
-    // stay put in the default view. Once the reader narrows by name, grade, or
-    // office they are only noise (nothing in them could ever match) so drop
+    // stay put in the default view. Once the reader narrows by name, grade,
+    // office or response they are only noise (nothing in them could ever match) so drop
     // them. The municipality filter still applies: picking one keeps only it.
     // Topic is excluded because it does nothing on its own, only alongside grade.
-    var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all';
+    var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all' || participatingOnly;
     var emptyShown = 0;
     emptyGroups.forEach(function (group) {
       var muniOk = activeMuni === 'all' || group.getAttribute('data-municipality') === activeMuni;
@@ -182,6 +185,12 @@
       topicSelect.value = activeTopic;
     }
 
+    participatingOnly = params.get('responded') === 'yes';
+    if (participatingButton) {
+      participatingButton.setAttribute('aria-pressed', String(participatingOnly));
+      participatingButton.classList.toggle('is-active', participatingOnly);
+    }
+
     var q = (params.get('q') || '').trim();
     if (search) search.value = q;
     query = q.toLowerCase();
@@ -200,6 +209,7 @@
     put('grade', activeGrade, 'all');
     put('topic', activeTopic, 'all');
     put('office', activeOffice, 'all');
+    put('responded', participatingOnly ? 'yes' : '', '');
     // The reader's own casing, not the lowercased copy the filter matches on.
     put('q', search ? search.value.trim() : '', '');
     var qs = params.toString();
@@ -226,6 +236,15 @@
   wirePills(muniPills, 'data-muni', function (v) { activeMuni = v; });
   wirePills(gradePills, 'data-grade', function (v) { activeGrade = v; });
   wirePills(officePills, 'data-office', function (v) { activeOffice = v; });
+
+  if (participatingButton) {
+    participatingButton.addEventListener('click', function () {
+      participatingOnly = !participatingOnly;
+      this.setAttribute('aria-pressed', String(participatingOnly));
+      this.classList.toggle('is-active', participatingOnly);
+      apply();
+    });
+  }
 
   if (topicSelect) {
     topicSelect.addEventListener('change', function () {

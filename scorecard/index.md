@@ -114,6 +114,19 @@ description: >-
     </div>
 
     {%- comment -%}
+      Narrows the table to the candidates who returned the questionnaire,
+      hiding everyone who sent nothing back. Drawn from the same
+      questionnaire_returned flag as the reply count in each heading, so the
+      two cannot disagree. Needs assets/js/scorecard.js, like every pill here.
+    {%- endcomment -%}
+    <div class="scorecard-filtergroup">
+      <span class="scorecard-filtergroup__label" id="participating-filter-label">Responses</span>
+      <div class="scorecard-filters" role="group" aria-labelledby="participating-filter-label">
+        <button type="button" class="filter-pill" id="participating-only" aria-pressed="false">Only show participating candidates</button>
+      </div>
+    </div>
+
+    {%- comment -%}
       No slate filter group here on purpose. Slate reaches the reader through
       the search box (which matches slate as well as name), the per-municipality
       tint and its labelled legend below, and each candidate's own page, rather
@@ -130,14 +143,14 @@ description: >-
     <div class="scorecard-filtergroup">
       <span class="scorecard-filtergroup__label" id="muni-filter-label">Municipality</span>
       {%- comment -%}
-        Same order as the groups in the table below - see the note on that loop
-        - so a reader who picks a pill lands where they expected to. A pill row
-        in one order over a table in another is the pair of controls most likely
-        to read as a bug.
+        Alphabetical, not the table's reply-count order: a reader reaching for
+        a pill is looking for a place they already have in mind, and scans for
+        it by name. The table below keeps its own order.
       {%- endcomment -%}
+      {%- assign pill_munis = site.data.municipalities | sort: "name" -%}
       <div class="scorecard-filters" role="group" aria-labelledby="muni-filter-label">
         <button type="button" class="filter-pill is-active" data-muni="all" aria-pressed="true">All</button>
-        {% for muni in site.data.municipalities_by_returned %}
+        {% for muni in pill_munis %}
           {% assign mc = site.data.candidates | where: "municipality", muni.slug %}
           {% if mc.size > 0 %}
           <button type="button" class="filter-pill" data-muni="{{ muni.slug }}" aria-pressed="false">{{ muni.name }} ({{ mc.size }})</button>
@@ -380,7 +393,7 @@ description: >-
             marks the row .is-slate-lit.
           {%- endcomment -%}
           {%- assign slate_class = site.data.slate_classes[c.slate] -%}
-          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}">
+          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}>
             <th scope="row" class="scorecard-matrix__name">
               {%- comment -%}
                 The name cell holds a link, a meta line and (with JS) up to two
