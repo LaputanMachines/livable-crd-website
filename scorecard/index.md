@@ -115,7 +115,9 @@ description: >-
 
     {%- comment -%}
       Narrows the table to the candidates who returned the questionnaire,
-      hiding everyone who sent nothing back. Drawn from the same
+      hiding everyone who sent nothing back. On by default; the script presses
+      it on load, so without scripting the button is unpressed over a table
+      that is showing everyone, which is what it says. Drawn from the same
       questionnaire_returned flag as the reply count in each heading, so the
       two cannot disagree. Needs assets/js/scorecard.js, like every pill here.
     {%- endcomment -%}

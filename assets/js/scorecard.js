@@ -50,7 +50,9 @@
   var activeGrade = 'all'; // 'all' or a minimum rank as a string ('2' = C or better)
   var activeTopic = 'all'; // 'all' (any topic) or a subject id
   var activeOffice = 'all'; // 'all', 'mayor', or 'councillor'
-  var participatingOnly = false; // hide candidates who returned nothing
+  // Hide candidates who returned nothing. On by default: the table opens on the
+  // candidates who took part, and ?responded=all is the link to everyone.
+  var participatingOnly = true;
   var query = '';
 
   // Letter grade → numeric rank for the "minimum grade" filter. Pending ("—",
@@ -185,11 +187,7 @@
       topicSelect.value = activeTopic;
     }
 
-    participatingOnly = params.get('responded') === 'yes';
-    if (participatingButton) {
-      participatingButton.setAttribute('aria-pressed', String(participatingOnly));
-      participatingButton.classList.toggle('is-active', participatingOnly);
-    }
+    participatingOnly = params.get('responded') !== 'all';
 
     var q = (params.get('q') || '').trim();
     if (search) search.value = q;
@@ -209,7 +207,7 @@
     put('grade', activeGrade, 'all');
     put('topic', activeTopic, 'all');
     put('office', activeOffice, 'all');
-    put('responded', participatingOnly ? 'yes' : '', '');
+    put('responded', participatingOnly ? '' : 'all', '');
     // The reader's own casing, not the lowercased copy the filter matches on.
     put('q', search ? search.value.trim() : '', '');
     var qs = params.toString();
@@ -297,6 +295,12 @@
   });
 
   readUrlFilters();
+  // Painted here, not in readUrlFilters(): the toggle starts pressed, so its
+  // state must reach the button even where that function returns early.
+  if (participatingButton) {
+    participatingButton.setAttribute('aria-pressed', String(participatingOnly));
+    participatingButton.classList.toggle('is-active', participatingOnly);
+  }
   apply();
 
   // --- Seam: assets/js/favourites.js ---------------------------------------
