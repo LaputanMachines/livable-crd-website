@@ -72,7 +72,7 @@ description: >-
   {%- endcomment -%}
   <p>
     <strong>How to use this page.</strong> Search by name or slate, or narrow
-    the table with the filters: a minimum grade in any topic, office, and
+    the table with the filters: a minimum grade overall or in one topic, office, and
     municipality. Every row is one candidate and every column one topic, and the
     key under the filters says what each mark means. Open a candidate's name for
     their full answers, how each one was graded, and a scorecard you can print.
@@ -94,9 +94,17 @@ description: >-
           <button type="button" class="filter-pill" data-grade="3" aria-pressed="false">B or better</button>
           <button type="button" class="filter-pill" data-grade="4" aria-pressed="false">A only</button>
         </div>
-        <label class="scorecard-topic-label" for="topic-filter">in</label>
-        <select id="topic-filter" class="scorecard-topic-select">
-          <option value="all">any topic</option>
+        {%- comment -%}
+          Where the minimum applies. "Overall" (the default) asks it of every
+          topic the candidate has a letter in, so "B or better overall" means
+          no topic below a B. "In" asks it of one topic, picked in the second
+          select, which only shows while "in" is chosen.
+        {%- endcomment -%}
+        <select id="grade-scope" class="scorecard-topic-select" aria-label="Where the minimum grade applies">
+          <option value="overall">overall</option>
+          <option value="topic">in</option>
+        </select>
+        <select id="topic-filter" class="scorecard-topic-select" aria-label="Topic" hidden>
           {% for subject in site.data.subjects %}
           <option value="{{ subject.id }}">{{ subject.name }}</option>
           {% endfor %}

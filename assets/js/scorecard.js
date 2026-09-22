@@ -33,6 +33,7 @@
   var count = document.getElementById('candidate-count');
   var empty = document.getElementById('candidate-empty');
   var topicSelect = document.getElementById('topic-filter');
+  var scopeSelect = document.getElementById('grade-scope');
   var rows = Array.prototype.slice.call(table.querySelectorAll('.scorecard-row'));
   var groups = Array.prototype.slice.call(table.querySelectorAll('.scorecard-matrix__group'));
   // Municipalities with no confirmed candidates: heading-only groups that have no
@@ -48,7 +49,7 @@
 
   var activeMuni = 'all';
   var activeGrade = 'all'; // 'all' or a minimum rank as a string ('2' = C or better)
-  var activeTopic = 'all'; // 'all' (any topic) or a subject id
+  var activeTopic = 'all'; // 'all' (overall: every graded topic) or a subject id
   var activeOffice = 'all'; // 'all', 'mayor', or 'councillor'
   // Hide candidates who returned nothing. On by default: the table opens on the
   // candidates who took part, and ?responded=all is the link to everyone.
@@ -62,6 +63,22 @@
     if (!text) return -1;
     var base = text.trim().toUpperCase().charAt(0);
     return RANK.hasOwnProperty(base) ? RANK[base] : -1;
+  }
+
+  // Lowest grade rank across every topic the row has a letter in: "overall"
+  // means no topic below the bar. Chips without a letter (pending, answered,
+  // declined) are not grades and are skipped; a row with no letter at all
+  // returns -1, so it never meets a threshold.
+  function worstRank(row) {
+    var cells = row.querySelectorAll('.scorecard-matrix__cell');
+    var worst = null;
+    for (var i = 0; i < cells.length; i++) {
+      var badge = cells[i].querySelector('.grade');
+      var rank = rankOf(badge && badge.textContent);
+      if (rank < 0) continue;
+      worst = worst === null ? rank : Math.min(worst, rank);
+    }
+    return worst === null ? -1 : worst;
   }
 
   // Highest grade rank a row reaches, scoped to one topic or across all of them.
@@ -91,7 +108,8 @@
       var nameOk = query === '' ||
         (row.getAttribute('data-name') || '').indexOf(query) !== -1 ||
         (row.getAttribute('data-slate') || '').indexOf(query) !== -1;
-      var gradeOk = minRank === null || bestRank(row, activeTopic) >= minRank;
+      var gradeOk = minRank === null ||
+        (activeTopic === 'all' ? worstRank(row) : bestRank(row, activeTopic)) >= minRank;
       var participatingOk = !participatingOnly || row.hasAttribute('data-returned');
       var show = muniOk && officeOk && nameOk && gradeOk && participatingOk;
       row.hidden = !show;
@@ -183,8 +201,9 @@
       for (var i = 0; i < topicSelect.options.length; i++) {
         if (topicSelect.options[i].value === topic) known = true;
       }
+      // A link naming a topic means "in" that topic; anything else, including
+      // an old ?topic=all link, is overall.
       activeTopic = known ? topic : 'all';
-      topicSelect.value = activeTopic;
     }
 
     participatingOnly = params.get('responded') !== 'all';
@@ -244,6 +263,25 @@
     });
   }
 
+  // The two selects say one thing between them: "overall", or "in" plus the
+  // topic. The topic select only shows while "in" is chosen.
+  function paintScope() {
+    var overall = activeTopic === 'all';
+    if (scopeSelect) scopeSelect.value = overall ? 'overall' : 'topic';
+    if (topicSelect) {
+      topicSelect.hidden = overall;
+      if (!overall) topicSelect.value = activeTopic;
+    }
+  }
+
+  if (scopeSelect && topicSelect) {
+    scopeSelect.addEventListener('change', function () {
+      activeTopic = this.value === 'topic' ? topicSelect.value : 'all';
+      paintScope();
+      apply();
+    });
+  }
+
   if (topicSelect) {
     topicSelect.addEventListener('change', function () {
       activeTopic = this.value;
@@ -295,6 +333,7 @@
   });
 
   readUrlFilters();
+  paintScope();
   // Painted here, not in readUrlFilters(): the toggle starts pressed, so its
   // state must reach the button even where that function returns early.
   if (participatingButton) {
