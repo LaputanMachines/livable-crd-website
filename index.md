@@ -12,6 +12,37 @@ description: >-
 
 <section class="hero hero--home">
   <div class="hero-inner animate-in">
+    {%- comment -%}
+      The release announcement. Shown on the strength of what the build actually
+      has rather than on the date: published_candidate_count comes from
+      _plugins/questionnaire_scores.rb and is zero until PUBLISH_GRADES is
+      flipped, so the day's copy cannot go up ahead of the grades it announces.
+      Plain text at the size of the badge under it, not a link: the button
+      below is the way to the scorecard. The confetti is decoration and hidden
+      from assistive tech; it bursts once on load and falls away, and a reader
+      who asked for reduced motion never sees it at all.
+    {%- endcomment -%}
+    {%- if site.data.published_candidate_count > 0 %}
+    <p class="hero-release">
+      <span class="hero-release__confetti" aria-hidden="true">
+      <i class="hero-release__bit hero-release__bit--a" style="--x: -105px; --y: -21px; --r: -40deg; --d: 0.00s"></i>
+      <i class="hero-release__bit hero-release__bit--w" style="--x: -83px; --y: 16px; --r: 25deg; --d: 0.03s"></i>
+      <i class="hero-release__bit hero-release__bit--b" style="--x: -64px; --y: -29px; --r: 70deg; --d: 0.06s"></i>
+      <i class="hero-release__bit hero-release__bit--c" style="--x: -49px; --y: 22px; --r: -15deg; --d: 0.09s"></i>
+      <i class="hero-release__bit hero-release__bit--f" style="--x: -28px; --y: -32px; --r: 35deg; --d: 0.12s"></i>
+      <i class="hero-release__bit hero-release__bit--w" style="--x: -8px; --y: 25px; --r: -60deg; --d: 0.15s"></i>
+      <i class="hero-release__bit hero-release__bit--a" style="--x: 13px; --y: -33px; --r: 15deg; --d: 0.18s"></i>
+      <i class="hero-release__bit hero-release__bit--b" style="--x: 31px; --y: 24px; --r: 80deg; --d: 0.21s"></i>
+      <i class="hero-release__bit hero-release__bit--c" style="--x: 50px; --y: -28px; --r: -30deg; --d: 0.24s"></i>
+      <i class="hero-release__bit hero-release__bit--w" style="--x: 69px; --y: 21px; --r: 45deg; --d: 0.27s"></i>
+      <i class="hero-release__bit hero-release__bit--f" style="--x: 87px; --y: -22px; --r: -70deg; --d: 0.30s"></i>
+      <i class="hero-release__bit hero-release__bit--a" style="--x: 105px; --y: 15px; --r: 20deg; --d: 0.33s"></i>
+      <i class="hero-release__bit hero-release__bit--b" style="--x: 120px; --y: -14px; --r: 55deg; --d: 0.36s"></i>
+      <i class="hero-release__bit hero-release__bit--c" style="--x: -120px; --y: 14px; --r: -25deg; --d: 0.39s"></i>
+      </span>
+      Grades are released!
+    </p>
+    {%- endif %}
     <p class="badge">Easy, Informed Election Decisions</p>
     <h1>Get Ready For The Election</h1>
     <p class="lead">

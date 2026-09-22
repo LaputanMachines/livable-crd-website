@@ -33,6 +33,15 @@
 {%- endcomment -%}
 {%- assign deadline_now = site.time | date: "%s" | plus: 0 -%}
 {%- assign next_found = false -%}
+{%- comment -%}
+  Whether the grades are actually on the site, rather than whether the date has
+  passed. The release is a switch (PUBLISH_GRADES in
+  scripts/sync-questionnaire.py) and not a date, so the milestone that marks it
+  follows the switch: done the build after it is flipped, even on the day
+  itself, and never done while nothing has been published, whatever the date.
+{%- endcomment -%}
+{%- assign grades_live = false -%}
+{%- if site.data.published_candidate_count > 0 -%}{%- assign grades_live = true -%}{%- endif -%}
 <ol class="deadline-timeline{% if include.class %} {{ include.class }}{% endif %}">
   {%- for d in timeline_items -%}
   {%- comment -%}
@@ -47,7 +56,14 @@
   {%- assign d_end = d_close | date: "%s" | plus: 115200 -%}
   {%- assign d_start = d.date | date: "%s" | plus: 0 -%}
   {%- assign d_state = "upcoming" -%}
-  {%- if d_end < deadline_now -%}
+  {%- if d.id == "grades-released" -%}
+    {%- if grades_live -%}
+      {%- assign d_state = "done" -%}
+    {%- elsif next_found == false -%}
+      {%- assign d_state = "next" -%}
+      {%- assign next_found = true -%}
+    {%- endif -%}
+  {%- elsif d_end < deadline_now -%}
     {%- assign d_state = "done" -%}
   {%- elsif d.until and d_start <= deadline_now -%}
     {%- assign d_state = "active" -%}
@@ -93,6 +109,7 @@
           timeline flattens a hard cut-off and an internal planning date into
           the same thing.
         {%- endcomment -%}
+        {%- if d.id == "grades-released" and grades_live %}<a class="deadline-timeline__tag deadline-timeline__tag--live" href="{{ '/scorecard/' | relative_url }}">Live now</a>{% endif -%}
         {%- if d.audience == "candidate" %}<span class="deadline-timeline__tag deadline-timeline__tag--cutoff">Candidate deadline</span>{% endif -%}
       </span>
     </div>

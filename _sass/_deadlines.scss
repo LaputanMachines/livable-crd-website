@@ -272,6 +272,18 @@
   color: #fff;
 }
 
+// The released milestone, once grades are published: a link to them, in the
+// grade-A green so it reads as the good news it is rather than as another
+// schedule state.
+.deadline-timeline__tag--live {
+  background: $grade-a;
+  color: #fff;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible { background: #145e2f; color: #fff; }
+}
+
 .deadline-timeline__tag--cutoff {
   background: $color-text;
   color: #fff;

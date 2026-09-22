@@ -591,6 +591,57 @@ main {
   strong { color: #fff; font-weight: 700; }
 }
 
+// "Grades are released!" above the homepage headline, from index.md. Plain
+// text set like the .badge under it - same size, weight and tracking - in the
+// light Kwetlal so it reads as the news and the badge as the standing line.
+.hero-release {
+  position: relative;
+  width: fit-content;
+  margin: 0 0 $space-sm;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: $color-warm;
+}
+
+// Anchored at the middle of the text; each bit flies out to its own --x/--y,
+// drifts down and fades, and is gone about two seconds after load. Kept inside
+// the hero's overflow: hidden, so on a narrow screen no bit widens the page.
+.hero-release__confetti {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  pointer-events: none;
+}
+
+.hero-release__bit {
+  position: absolute;
+  width: 6px;
+  height: 10px;
+  margin: -5px 0 0 -3px;
+  opacity: 0;
+  animation: confettiBurst 2.2s cubic-bezier(0.15, 0.7, 0.3, 1) var(--d) both;
+
+  &--a { background: $grade-a; }
+  &--b { background: $grade-b; }
+  &--c { background: $grade-c; }
+  &--f { background: $grade-f; }
+  &--w { background: #fff; }
+}
+
+@keyframes confettiBurst {
+  0%   { transform: translate(0, 0) rotate(0deg) scale(0.3); opacity: 0; }
+  10%  { opacity: 1; }
+  35%  { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 1; }
+  100% { transform: translate(var(--x), calc(var(--y) + 36px)) rotate(calc(var(--r) * 3)); opacity: 0; }
+}
+
+// The global reduced-motion rule in _animations.scss would run this in a
+// hundredth of a millisecond, which is a flash; skip it outright instead.
+@media (prefers-reduced-motion: reduce) {
+  .hero-release__confetti { display: none; }
+}
+
 .hero .badge {
   background: rgba(255, 255, 255, 0.08);
   color: #fff;
