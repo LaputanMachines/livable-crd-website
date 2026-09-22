@@ -327,6 +327,33 @@
   height: 66%;
 }
 
+// "Declined to take part." The same bubble as above, drawn the same way and for
+// the same reason - there is something to read here now, so it carries a
+// letter's weight rather than a placeholder's - in $color-declined, which is
+// its own blue precisely so the two are not one mark. See _variables.scss.
+//
+// Unlike the chip above, this one is not a property of a topic: it is a
+// property of the candidate, so it is every chip in their row and the only mark
+// their page carries. That is why it is filled rather than outlined. An
+// outlined chip on all ten topics draws the row as ten gaps, which is the one
+// thing this state is not - the candidate answered the coalition, in writing,
+// and their page carries what they said.
+.grade--declined {
+  background: $color-declined;
+  color: #fff;
+}
+
+.grade--declined svg {
+  display: block;
+  width: 54%;
+  height: 54%;
+}
+
+.scorecard-matrix__cell .grade--declined svg {
+  width: 66%;
+  height: 66%;
+}
+
 // "Graded, and the question does not apply to this candidate" — distinct from
 // pending, which is "not graded yet". Both are quiet, because neither is a
 // judgement, but this one is a filled chip like a real grade: a decision was

@@ -1,0 +1,55 @@
+# Candidates who declined to take part, and what their page says instead of grades.
+#
+# HAND-MAINTAINED. Unlike _data/candidates.yml and _data/scores.yml, which are
+# both regenerated from spreadsheets and carry a "do not edit" header, this file
+# is written by a person and is the only place a decline is recorded. It is a
+# separate file for exactly that reason: anything written into either of those
+# two is overwritten on the next sync.
+#
+# An entry here overrides what the grading sheet says about that candidate.
+# _plugins/questionnaire_scores.rb drops their letters and their per-question
+# detail, so their topics carry the speech bubble rather than a letter, an
+# hourglass or a dash, on the matrix, on the municipality index and on their own
+# page. The bubble is the one mark on the site that means "there is something
+# here to read": the same thing it means on an ungraded topic, in a colour of
+# its own so the two are told apart, and the thing to read is the statement
+# below.
+#
+# Two limits on that, both in the plugin and both deliberate:
+#
+#   Nothing happens before the grades are released. Until something publishes,
+#   a name in this file changes nothing at all: the page stays as it was and the
+#   statement is not up. A decline can therefore be written down the day it is
+#   received rather than held in a branch until release day.
+#
+#   A housing record survives it. Homes for Living score a sitting incumbent's
+#   record from council votes, on the `HFL-INC` row of the grading sheet, and
+#   that grade needs nothing from the candidate - it is a reading of what they
+#   have already done in office, and declining the questionnaire does not
+#   withdraw it. So that one topic keeps its letter and opens onto the record
+#   behind it, and every other topic carries the bubble.
+#
+# Fields:
+#   name          As written in _data/candidates.yml. Matched against it case-
+#                 and whitespace-insensitively, the same join scores.yml uses.
+#                 An entry matching nobody is a warning at build time, not a
+#                 silent no-op: a decline that does not reach the page it is
+#                 about is the failure this file exists to prevent.
+#   municipality  Slug from _data/municipalities.yml. Part of the join, because
+#                 two candidates in two municipalities can share a name.
+#   statement     What the page shows in place of the grades, published verbatim
+#                 and in full. Write it as the coalition would publish it: it is
+#                 the whole of what the reader is given about this candidate, so
+#                 it has to stand on its own with no heading over it explaining
+#                 what it is. Several paragraphs are fine — blank lines are kept
+#                 and rendered as paragraphs.
+
+- name: Kevin Murdoch
+  municipality: oak-bay
+  statement: >-
+    Mayor Murdoch declined to participate because his opponent serves on the
+    boards of Livable CRD member organizations. Livable CRD notes that while
+    candidate Sam Holland serves on the boards of various participating
+    organizations involved with Livable CRD, he was not involved in the
+    creation, refinement, or grading of questions and had no involvement with
+    this project.

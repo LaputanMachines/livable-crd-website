@@ -31,6 +31,35 @@
 #                    subject id, which _layouts/candidate.html renders under each
 #                    subject. Empty for a candidate with nothing published.
 #
+# A fourth thing is attached from a second, hand-written source. _data/declined.yml
+# names the candidates who told the coalition they were not taking part and
+# carries the statement their page shows instead; an entry there attaches
+# `declined_statement` and strips their published grades back to the ones that
+# were never theirs to give. That overlay is applied here rather than in a
+# generator of its own because this is the file that decides what a candidate
+# publishes, and a second generator undoing this one's work would depend on the
+# order Jekyll happens to run two plugins of equal priority in.
+#
+# Two things about the overlay are deliberate and neither is obvious:
+#
+#   It waits for the release. Nothing is applied until something is published,
+#   the same test the municipality indexes use to decide whether to draw a grade
+#   distribution: the release date says when grades are meant to appear, the
+#   published count says whether any have. Before that a declined candidate's
+#   page is what it always was - a row of dashes, and no statement - so a
+#   decline recorded weeks early does not go up weeks early.
+#
+#   An incumbent record survives it. Homes for Living score a sitting
+#   incumbent's housing record from council votes, on the `HFL-INC` row of the
+#   grading sheet, and that score needs nothing from the candidate: it is a
+#   reading of what they have already done in office, and declining does not
+#   withdraw it. So a published subject carried by the record alone - `share:
+#   100`, no questionnaire in it anywhere - keeps its letter and its panel, and
+#   every other topic they have carries the bubble. A blended record, worth 30%
+#   beside a returned questionnaire, is dropped with the rest: a candidate who
+#   declined cannot have one, and publishing the 70% that is their answers
+#   would be publishing the thing the decline was about.
+#
 # Note the difference between that last one and `site.data.scores.graded_subjects`,
 # which is a flat list of the topics the grading sheet grades at all. A topic in
 # the second and not the first is being graded and has not been released; a topic
@@ -54,24 +83,39 @@ module LivableCrd
       return unless candidates.is_a?(Array)
 
       results = index_results(site.data["scores"])
+      declined = index_declined(site.data["declined"])
       # Published so the scorecard can say how many candidates have replied, and
       # how many of those have anything published, without walking every row in
       # Liquid twice to find out.
       site.data["returned_candidate_count"] = 0
       site.data["published_candidate_count"] = 0
-      return if results.empty?
+      # Declined entries are checked too: a decline still has a page to change
+      # even on a build where the grading sheet published nothing at all.
+      return if results.empty? && declined.empty?
 
       attach_questions(site, results)
 
       returned = 0
       published = 0
+      # Collected rather than handled in place: the overlay is gated on whether
+      # anything published at all, and that is not known until this loop has
+      # finished counting.
+      declines = []
       candidates.each do |candidate|
         next unless candidate.is_a?(Hash)
 
-        result = results.delete(join_key(candidate["name"], candidate["municipality"]))
+        key = join_key(candidate["name"], candidate["municipality"])
+        statement = declined.delete(key)
+        declines << [candidate, statement] if statement
+        result = results.delete(key)
         next unless result
 
-        replied = result["returned"] != false
+        # A declined candidate is never counted as having replied, whatever the
+        # grading sheet says: they are on it because somebody's record is being
+        # scored, not because a questionnaire came back. Without this the reply
+        # rate on the municipality indexes would count somebody who told us they
+        # were not taking part.
+        replied = result["returned"] != false && statement.nil?
         if replied
           returned += 1
           candidate["questionnaire_returned"] = true
@@ -87,6 +131,12 @@ module LivableCrd
 
       site.data["returned_candidate_count"] = returned
       site.data["published_candidate_count"] = published
+
+      # The declines, once there is a release for them to be part of. See the
+      # header: before anything is published this is a no-op, and a candidate
+      # written into _data/declined.yml today looks exactly as they did
+      # yesterday until the grades go up.
+      apply_declines(declines) if published.positive?
 
       # Which of the three empty chips the key has to name, derived from what
       # the pages actually draw rather than from a hand-kept list.
@@ -111,9 +161,63 @@ module LivableCrd
                            "no candidate in _data/candidates.yml matches #{key.inspect}; " \
                            "their questionnaire reply is not being shown"
       end
+
+      # Louder, because the failure is worse. An unmatched grading row hides a
+      # result; an unmatched decline leaves a candidate's page showing dashes and
+      # no statement, which is the page reading as "never replied" about somebody
+      # who told us why they were not taking part.
+      declined.each_key do |key|
+        Jekyll.logger.warn "Questionnaire scores:",
+                           "_data/declined.yml names #{key.inspect}, who is not in " \
+                           "_data/candidates.yml; their statement is not being shown"
+      end
     end
 
     private
+
+    # Strip a declined candidate back to what they did not choose to give us,
+    # and attach the statement their page shows in place of the rest.
+    #
+    # What survives is a subject whose whole grade is an incumbent record -
+    # `share: 100`, which sync-questionnaire.py writes only where no
+    # questionnaire came back. Those are scored from council votes on the
+    # `HFL-INC` row and are a reading of the candidate's own record in office,
+    # so the decline has nothing to do with them; everything else goes, letter
+    # and per-question detail together, because the templates decide what a
+    # topic draws from these two and anything left here would draw a grade.
+    #
+    # A record blended with a questionnaire (share 30) is dropped and said out
+    # loud. It cannot happen - a candidate who declined returned nothing - so
+    # reaching it means either the decline or the sheet is wrong about the same
+    # person, and the safe reading of that disagreement is the one that
+    # publishes less.
+    def apply_declines(entries)
+      entries.each do |candidate, statement|
+        candidate["declined_statement"] = statement
+
+        detail = candidate["published_subjects"]
+        detail = {} unless detail.is_a?(Hash)
+
+        kept = detail.select do |id, subject|
+          next false unless subject.is_a?(Hash)
+
+          share = subject.dig("score", "record", "share")
+          next false if share.nil?
+          next true if share == 100
+
+          Jekyll.logger.warn "Questionnaire scores:",
+                             "#{candidate['name']} declined, but #{id} is scored " \
+                             "#{share}% on their record and the rest on a questionnaire; " \
+                             "the topic is not being published"
+          false
+        end
+
+        candidate["published_subjects"] = kept
+        scores = candidate["scores"]
+        scores = {} unless scores.is_a?(Hash)
+        candidate["scores"] = scores.select { |id, _| kept.key?(id) }
+      end
+    end
 
     # A grade cell the grading sheet wrote as "not applicable" rather than as a
     # letter. Mirrors NOT_APPLICABLE in scripts/sync-questionnaire.py, which is
@@ -122,7 +226,7 @@ module LivableCrd
       %w[N/A NA N.A. N/A.].include?(grade.to_s.strip.upcase)
     end
 
-    # {"na" =>, "answers" =>}: whether any page draws that chip.
+    # {"na" =>, "answers" =>, "declined" =>}: whether any page draws that chip.
     #
     # The rule has to be the one the templates use, or the key will name a chip
     # nothing draws or miss one something does. A subject with a letter shows
@@ -134,15 +238,22 @@ module LivableCrd
     # The hourglass is not among these. It is still drawn by those cell blocks,
     # and the key deliberately does not name it, so there is nothing here to
     # decide about it.
+    #
+    # The declined bubble is drawn on a candidate in _data/declined.yml and
+    # nowhere else, so an empty file takes it out of the key - as does a build
+    # before the release, where apply_declines has not run and nobody carries
+    # `declined_statement` yet.
     def legend_states(site, candidates)
       subjects = site.data["subjects"]
       subjects = [] unless subjects.is_a?(Array)
       graded = site.data.dig("scores", "graded_subjects")
       graded = [] unless graded.is_a?(Array)
 
-      states = { "na" => false, "answers" => false }
+      states = { "na" => false, "answers" => false, "declined" => false }
       candidates.each do |candidate|
         next unless candidate.is_a?(Hash)
+
+        states["declined"] ||= !candidate["declined_statement"].to_s.strip.empty?
 
         scores = candidate["scores"].is_a?(Hash) ? candidate["scores"] : {}
         detail = candidate["published_subjects"].is_a?(Hash) ? candidate["published_subjects"] : {}
@@ -202,6 +313,32 @@ module LivableCrd
             )
           end
         end
+      end
+    end
+
+    # {join key => statement}, from the hand-written _data/declined.yml. Same
+    # join as index_results below, so a name typed there matches a candidate on
+    # the same terms a name on the grading sheet does. An entry with no statement
+    # is dropped, and says so: the whole of what the page shows in place of the
+    # grades is that text, so an entry with none would render an empty box, and
+    # dropping it silently leaves the candidate looking like somebody who never
+    # replied on a build where a person had just written them down as declining.
+    def index_declined(rows)
+      return {} unless rows.is_a?(Array)
+
+      rows.each_with_object({}) do |row, acc|
+        next unless row.is_a?(Hash)
+
+        statement = row["statement"].to_s.strip
+        if statement.empty?
+          Jekyll.logger.warn "Questionnaire scores:",
+                             "_data/declined.yml has no statement for " \
+                             "#{row['name'].inspect}; the entry is ignored and their " \
+                             "page still shows the grading sheet"
+          next
+        end
+
+        acc[join_key(row["name"], row["municipality"])] = statement
       end
     end
 

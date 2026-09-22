@@ -74,7 +74,8 @@
       return {
         name: text(row.querySelector('.candidate-grade__name')),
         label: chip ? text(chip) : '',
-        state: chip && chip.className.indexOf('grade--answers') > -1 ? 'answers'
+        state: chip && chip.className.indexOf('grade--declined') > -1 ? 'declined'
+          : chip && chip.className.indexOf('grade--answers') > -1 ? 'answers'
           : chip && chip.className.indexOf('grade--review') > -1 ? 'review'
           : chip && chip.className.indexOf('grade--pending') > -1 ? 'pending' : 'grade',
         svg: svg,
@@ -294,6 +295,14 @@
       // and only in the footer, where they are a caption rather than a second
       // legend competing with the grades.
       var notes = [];
+      // First, because on a declined candidate it is the only one: every row on
+      // the card is this mark, and without the note the card is ten blue chips
+      // and no way to tell what they say. The card carries the note rather than
+      // the statement itself - that runs to a paragraph, and the footer already
+      // points at the page it is on.
+      if (topics.some(function (t) { return t.state === 'declined'; })) {
+        notes.push('\u25CF  declined to take part');
+      }
       if (topics.some(function (t) { return t.state === 'pending'; })) {
         notes.push('\u2014  no questionnaire returned');
       }

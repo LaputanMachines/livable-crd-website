@@ -354,6 +354,15 @@ module LivableCrd
           # thing about a returned questionnaire this page can say today, and it
           # stays true after the grades go up.
           "questionnaire_returned" => candidate["questionnaire_returned"] == true,
+          # And whether they told us they were not taking part, attached by the
+          # same generator from _data/declined.yml. Carried because the row's
+          # other two states cannot say it: the tick is for a reply that came
+          # back, and the dash's own wording is "no reply yet", which on
+          # somebody who has declined is the one thing this page would get
+          # wrong. The statement itself stays on their page - this list is
+          # names and marks, and a paragraph in one of these rows would be the
+          # only prose on it.
+          "declined_statement" => candidate["declined_statement"],
           "slate" => slate.empty? ? nil : slate
         }
       end

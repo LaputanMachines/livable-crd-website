@@ -141,9 +141,16 @@ description: >-
       </p>
 
       {%- comment -%}
-        The two empty states, spelled out. The legend at the top of the scorecard has
+        The empty states, spelled out. The legend at the top of the scorecard has
         room for two words each; this is where a reader who wants to know what a
         dash costs a candidate can find out that sometimes it costs them nothing.
+
+        The declined bubble is drawn here only while somebody has declined - the
+        same `legend_states` test the scorecard's own key uses - because unlike
+        the three around it, it describes something a candidate chose rather
+        than a stage the grading passes through, and in an election where
+        nobody declines this entry would be the site raising the possibility on
+        its own.
       {%- endcomment -%}
       <h2>When there is no letter</h2>
       <dl class="grade-defs">
@@ -180,15 +187,34 @@ description: >-
             wrote.
           </dd>
         </div>
+        {%- if site.data.legend_states.declined %}
+        <div class="grade-def">
+          <dt class="grade-def__term">
+            {% include grade-badge.html grade="" state="declined" %}
+            <span class="grade-def__label">Declined to take part</span>
+          </dt>
+          <dd class="grade-def__desc">
+            This candidate told the coalition they were not taking part, so the
+            topics they were asked about carry this mark rather than a letter,
+            and their page carries what they said instead of grades. One kind of
+            grade outlives it: where a sitting councillor's housing record has
+            been scored from their council votes, that letter still stands,
+            because it is a reading of what they have already done in office
+            rather than an answer they chose to give us. Like a dash, the mark
+            itself is not a bad grade: it is not a grade at all.
+          </dd>
+        </div>
+        {%- endif %}
         <div class="grade-def">
           <dt class="grade-def__term">
             {% include grade-badge.html grade="" %}
             <span class="grade-def__label">No Response</span>
           </dt>
           <dd class="grade-def__desc">
-            No completed questionnaire came back from this candidate, so there is
-            nothing to publish in any topic. A candidate who has replied
-            carries an hourglass or a speech bubble instead. A dash is never a bad
+            No completed questionnaire came back from this candidate, and they
+            did not tell us why, so there is nothing to publish in any topic. A
+            candidate who has replied carries an hourglass or a speech bubble
+            instead. A dash is never a bad
             grade: the grades are <strong>A</strong> through <strong>F</strong>,
             and a candidate who scores poorly gets a letter saying so.
           </dd>

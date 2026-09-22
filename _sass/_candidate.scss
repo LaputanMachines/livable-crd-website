@@ -243,6 +243,31 @@
   border-left-color: $color-accent;
 }
 
+// What a candidate who declined to take part said, in place of their grades.
+//
+// Not a .callout, which is this page's treatment for an aside about a state the
+// page is passing through - "grading is under way" above is one. This block is
+// the page: there are no letters under it and the topic rows below it are ten
+// copies of one mark pointing back up here, so it is drawn as the substance it
+// is. Same framed white panel the grade list itself uses, so the two read as
+// the page's two blocks rather than as a notice stuck on top of one.
+//
+// The left edge is $color-declined, the colour of the chips in every row below,
+// which is the only thing tying the statement to the marks it explains.
+//
+// Slightly larger than body copy and no heading over it: what the coalition has
+// to say about this candidate is these sentences, and a label above them would
+// be the site introducing somebody else's words on their own page.
+.candidate-declined {
+  margin: 0 0 $space-md;
+  padding: $space-md $space-gutter;
+  background: $color-surface;
+  border: $border-weight solid $color-text;
+  border-left: 6px solid $color-declined;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
 // One full-width row per topic, in a single framed block: one outer border,
 // rows divided by their own bottom borders, no gaps, no radii, no shadows: 
 // the same treatment as .card-grid.
@@ -1032,6 +1057,20 @@ summary.candidate-grade {
       border: 0.5pt solid #000;
       border-left: 1.5pt solid #000;
       font-size: 9.5pt;
+    }
+
+    // The declined statement prints, and prints first: on paper it is the only
+    // thing the leaflet has to say about this candidate, since every row under
+    // it carries the same mark. The blue edge is colour and does not survive
+    // print, so it becomes the same heavier ink rule the note above uses.
+    .candidate-declined {
+      margin: 4mm 0 0;
+      padding: 2mm 3mm;
+      background: none;
+      border: 0.5pt solid #000;
+      border-left: 1.5pt solid #000;
+      font-size: 9.5pt;
+      line-height: 1.45;
     }
 
     // The grading key, and the gap above it. On screen the key sits a comfortable

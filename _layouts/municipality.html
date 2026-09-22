@@ -126,13 +126,20 @@ layout: default
   {%- comment -%}
     What the column of ticks and dashes down the left of every list below
     means, said once above all of them rather than repeated per office. Drawn
-    from the same two marks the rows carry, so the key cannot describe
-    something the list does not show.
+    from the same marks the rows carry, so the key cannot describe something the
+    list does not show - which is why the third one is counted for first: a
+    municipality where nobody declined gets a two-mark key, the same as before.
 
     "Returned the questionnaire" and not "completed", which a reader could take
     as "and we have graded it". Both are true of a returned reply; only the
     first is true of one still being graded, which today is all of them.
   {%- endcomment -%}
+  {%- assign declined_here = false -%}
+  {%- for group in page.office_groups -%}
+    {%- for candidate in group.candidates -%}
+      {%- if candidate.declined_statement %}{% assign declined_here = true %}{% endif -%}
+    {%- endfor -%}
+  {%- endfor -%}
   <p class="muni-list-key">
     <span class="muni-list-key__item">
       <span class="muni-list__status muni-list__status--returned" aria-hidden="true">
@@ -141,6 +148,15 @@ layout: default
         </svg>
       </span>Returned the questionnaire
     </span>
+    {%- if declined_here %}
+    <span class="muni-list-key__item">
+      <span class="muni-list__status muni-list__status--declined" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" focusable="false" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+      </span>Declined to take part
+    </span>
+    {%- endif %}
     <span class="muni-list-key__item">
       <span class="muni-list__status muni-list__status--pending" aria-hidden="true">&#8212;</span>No reply yet
     </span>
@@ -157,11 +173,18 @@ layout: default
           all of them, so the ticks line up into a column a reader can scan
           down rather than a mark they have to find at the end of each name.
 
-          Two states, never blank: a tick for a returned questionnaire, a dash
-          for one that has not come back. The dash is doing real work - a row
-          with nothing in this column would read as a row we forgot to fill in,
-          and a page where only the repliers are marked makes the reader guess
-          whether the gaps mean "no reply" or "not checked".
+          Three states, never blank: a tick for a returned questionnaire, a
+          speech bubble for a candidate who told us they were not taking part,
+          and a dash for one that has not come back. The dash is doing real
+          work - a row with nothing in this column would read as a row we forgot
+          to fill in, and a page where only the repliers are marked makes the
+          reader guess whether the gaps mean "no reply" or "not checked".
+
+          The bubble is here because the dash's own title says "yet", and on
+          somebody who has declined that is not true: there is no reply coming
+          and there is something to read in its place. Same mark and same blue
+          as the chip their grades carry on the scorecard, so a reader meets one
+          state in one colour wherever they come across it.
 
           Blue, not the accent purple everything else on this page is drawn in:
           this is the one mark on the row that is a fact about the candidate's
@@ -183,6 +206,13 @@ layout: default
               <path d="M20 6 9 17l-5-5"/>
             </svg>
             <span class="sr-only">Questionnaire returned.</span>
+          </span>
+          {%- elsif candidate.declined_statement %}
+          <span class="muni-list__status muni-list__status--declined" title="{{ candidate.name }} declined to take part; their statement is on their page">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span class="sr-only">Declined to take part.</span>
           </span>
           {%- else %}
           <span class="muni-list__status muni-list__status--pending" title="No questionnaire returned by {{ candidate.name }} yet">

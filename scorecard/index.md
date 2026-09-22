@@ -463,12 +463,14 @@ description: >-
               </span>
             </th>
             {%- comment -%}
-              An ungraded cell is one of three different things, and the table
+              An ungraded cell is one of four different things, and the table
               has to tell them apart:
 
                 hourglass       returned, and this topic is being graded
                 speech bubble   answered, and this topic is never graded, so
                                 there is something to read and no letter coming
+                blue bubble     the candidate declined to take part, and their
+                                page carries what they said instead of grades
                 dash            no reply, or nothing published
 
               A returned questionnaire means every topic is waiting on us, so
@@ -494,6 +496,22 @@ description: >-
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
             {% endunless %}
             {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
+            {%- comment -%}
+              A decline replaces every one of those on every topic that has no
+              letter. questionnaire_scores.rb has already dropped that
+              candidate's grades, so their row is the same bubble across the
+              table, linking through to the page that says why.
+
+              Not quite every topic: a sitting incumbent's housing record is
+              scored from their council votes and outlives the decline, so that
+              one cell keeps its letter. Keyed on the cell being empty rather
+              than on the topic, so nothing here has to know which topics can be
+              scored that way.
+            {%- endcomment -%}
+            {%- if c.declined_statement %}
+              {%- assign cell_text = cell | default: '' | strip -%}
+              {%- if cell_text == '' %}{% assign cell_state = "declined" %}{% endif -%}
+            {%- endif %}
             {%- comment -%}
               The chip is a link into that candidate's page, at that topic, which
               opens on arrival (assets/js/candidate.js reads the fragment). A

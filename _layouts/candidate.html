@@ -36,6 +36,15 @@ layout: default
 {%- assign returned = c.questionnaire_returned -%}
 {%- assign gradable = site.data.scores.graded_subjects -%}
 {%- comment -%}
+  What this candidate said when they told the coalition they were not taking
+  part, from the hand-written _data/declined.yml. Its presence is the whole of
+  what makes this a declined page: questionnaire_scores.rb has already emptied
+  their scores and their per-question detail, so every topic below falls to a
+  plain unopenable row, and the block below puts the statement where the grades
+  would have been.
+{%- endcomment -%}
+{%- assign declined = c.declined_statement -%}
+{%- comment -%}
   The one publication date, quoted by both empty-state callouts below rather
   than written out twice. It lives in _data/deadlines.yml with the rest of the
   schedule, so the callouts, the homepage timeline and the FAQ cannot disagree.
@@ -166,6 +175,18 @@ layout: default
     page opening with what somebody did not do - which is why the note that used
     to do exactly that was taken out.
   {%- endcomment -%}
+  {%- comment -%}
+    The how-to note is about reading a page of marks, and on a declined page
+    with nothing published there are none: every row carries the same bubble,
+    and what the reader is here for is the statement below. A note telling them
+    to look right for a mark would be pointing at nine copies of one.
+
+    It comes back the moment something on the page can be opened, which on a
+    declined candidate means a housing record: there is then a row that behaves
+    like every other candidate's, and the sentence about opening one is the only
+    thing on the page that says so.
+  {%- endcomment -%}
+  {%- unless declined and openable_count == 0 %}
   <p class="candidate-howto">
     <strong>How to read this page.</strong> Each row below is one policy area,
     with {{ c.name }}'s mark for it on the right; the key underneath says what
@@ -179,6 +200,30 @@ layout: default
     once.{% endif %}
     At the foot of the page you can print this scorecard or share it as an image.
   </p>
+  {%- endunless %}
+
+  {%- comment -%}
+    A candidate who told the coalition they were not taking part, and what they
+    said. First thing on the page after the hero and before the topics, because
+    it is the whole of what this page has to say: there are no grades under it
+    and the rows below are nine copies of one mark pointing back up here.
+
+    Published verbatim from _data/declined.yml, with no heading over it and
+    nothing added around it. The statement is written to stand on its own, and a
+    lead-in of ours summarizing a candidate's reason for not participating would
+    be the coalition speaking over them on their own page. `newline_to_br`
+    rather than a Markdown filter for the same reason it is used on the answers
+    below: what goes in is prose typed into a data file, and the only structure
+    it needs is the paragraph breaks it was typed with.
+
+    Not a .callout like the "grading is under way" note below it. That one is a
+    process aside on a page whose subject is elsewhere; this is the subject.
+  {%- endcomment -%}
+  {%- if declined %}
+  <div class="candidate-declined">
+    {{ declined | escape | newline_to_br }}
+  </div>
+  {%- endif %}
 
   {%- comment -%}
     One note, for a candidate who replied and whose grades are not out yet.
@@ -292,6 +337,25 @@ layout: default
       {%- if detail.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
     {%- endunless %}
     {%- if cell_state == "" and returned %}{% assign cell_state = "review" %}{% endif %}
+    {%- comment -%}
+      A decline replaces all of it on every topic that has nothing published,
+      the two nobody grades included: there is no letter coming, no answers to
+      publish and nothing being worked on, and the one thing there is to read is
+      the statement above.
+
+      Every topic but one, in practice. A sitting incumbent's housing record is
+      scored from council votes and survives a decline - see apply_declines in
+      _plugins/questionnaire_scores.rb - so that row keeps its letter and opens
+      onto the record behind it, and the bubble stays off it. Tested on what is
+      actually published rather than on the topic id, so a second record-scored
+      topic would behave the same without this template learning its name.
+    {%- endcomment -%}
+    {%- if declined %}
+      {%- assign cell_text = cell | default: '' | strip -%}
+      {%- unless detail -%}
+        {%- if cell_text == '' %}{% assign cell_state = "declined" %}{% endif -%}
+      {%- endunless -%}
+    {%- endif %}
     {%- comment -%}
       The id is on the row rather than on the <details> inside it, because the
       scorecard matrix links to one topic per cell and a topic with nothing
@@ -731,9 +795,16 @@ layout: default
   <aside class="candidate-print-qr" aria-hidden="true">
     {{ candidate_url | qr_svg }}
     <div class="candidate-print-qr__text">
-      <p class="candidate-print-qr__lead">Read their full responses</p>
+      {%- comment -%}
+        A declined page has no responses and no grades, so the caption that
+        promises both is the one thing on the leaflet that would not be true.
+        The code still earns its place: it goes to the page carrying the
+        statement above in full, and to the questions this candidate was asked
+        and did not answer.
+      {%- endcomment -%}
+      <p class="candidate-print-qr__lead">{% if declined %}Read this in full online{% else %}Read their full responses{% endif %}</p>
       <p class="candidate-print-qr__url">{{ candidate_url | remove: 'https://' | remove: 'http://' }}</p>
-      <p class="candidate-print-qr__note">Every question {{ c.name }} was asked, their answers, and why each grade was given.</p>
+      <p class="candidate-print-qr__note">{% if declined %}{{ c.name }}'s statement, and the questionnaire every candidate in the region was asked.{% else %}Every question {{ c.name }} was asked, their answers, and why each grade was given.{% endif %}</p>
     </div>
   </aside>
 

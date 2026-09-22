@@ -171,6 +171,21 @@
   }
 }
 
+// "Declined to take part", in the same blue as the grade chips this candidate's
+// topics carry on the scorecard, so the mark means one thing in one colour
+// wherever a reader meets it. Sized like the tick above it: the two share this
+// column, and a bubble at a different size would read as a different kind of
+// mark rather than as a different answer to the same question.
+.muni-list__status--declined {
+  color: $color-declined;
+
+  svg {
+    display: block;
+    width: 1.05em;
+    height: 1.05em;
+  }
+}
+
 // The same em dash the grade chips use for "nothing to report", in the same
 // muted ink: a reader who has met a dash on the scorecard meets the same mark
 // here meaning the same thing. Deliberately quiet - it is the majority state

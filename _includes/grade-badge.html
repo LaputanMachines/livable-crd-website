@@ -3,9 +3,11 @@
   the per-question rows inside a published subject, so every grade on the site is
   rendered by this file and they cannot drift.
 
-  Five states. The last four all look "empty" to a reader and mean different
+  Six states. The last five all look "empty" to a reader and mean different
   things, so each carries its own glyph and its own border treatment — never
-  colour alone, because the leaflet prints without backgrounds.
+  colour alone, because the leaflet prints without backgrounds. The one pair
+  that shares a glyph is the two speech bubbles, and they are separated by the
+  key rather than by their colours; see the declined branch below.
 
     a letter   the grade the coalition assigned
     N/A        graded, and the answer is that it does not apply to this
@@ -27,6 +29,13 @@
                and only once their answers are published; every other topic
                carries a grade, and a written comment on a graded topic shows
                inside that topic rather than in its cell.
+    declined   the candidate told the coalition they were not taking part, and
+               their page carries what they said instead of grades. Passed in as
+               state="declined" off `declined_statement` from _data/declined.yml,
+               by both cell blocks, on every topic of theirs that has nothing
+               published - which is all of them but a housing record scored from
+               an incumbent's council votes, since that one was never theirs to
+               withhold and keeps its letter.
     —          nothing to report. In practice, no questionnaire came back, which
                is what the key calls it: "No Response", not "awaiting" one.
 {%- endcomment -%}
@@ -39,7 +48,33 @@
 {%- endcomment -%}
 {% assign no_grade = false %}
 {% if g == '' or g_upper == 'NULL' or g_upper == 'PENDING' or g == '—' %}{% assign no_grade = true %}{% endif %}
-{% if no_grade and include.state == 'answers' %}
+{% if no_grade and include.state == 'declined' %}
+{%- comment -%}
+  The declined bubble. The same silhouette as the "answered" bubble below it and
+  for the same reason — there is something written here to read — in a blue of
+  its own, because what there is to read is a statement about not taking part
+  rather than an answer to a question.
+
+  Guarded on `no_grade` like the three below it, and the guard is not
+  decorative: a declined candidate can carry exactly one letter, on a housing
+  record scored from their council votes, and between drawing that letter and
+  drawing a bubble over it the letter is the truthful one. The callers do not
+  ask for this state on a graded topic, so the guard only decides what happens
+  if one ever gets it wrong.
+
+  Two bubbles on one site is the one place the "never colour alone" rule above
+  bends, and the key is what takes the weight: both are named in
+  grade-legend.html, and unlike the answered bubble this one survives onto the
+  print leaflet, where its topics are not hidden. So on paper a bubble is always
+  this one, and on screen they carry different labels, different titles and
+  different colours.
+{%- endcomment -%}
+<span class="grade grade--declined" title="Declined to take part; their statement is on their page" aria-label="Declined to take part">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</span>
+{% elsif no_grade and include.state == 'answers' %}
 {%- comment -%}
   A speech bubble: there is something written here to read. Deliberately not a
   tick or a dot, which would read as a verdict on a topic nobody scores. Inline

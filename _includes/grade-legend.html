@@ -3,7 +3,7 @@
   Rendered directly above the grades it explains, on the scorecard matrix and on
   every candidate page.
 
-  Two of those states are drawn only when something below is in them.
+  Three of those states are drawn only when something below is in them.
   `legend_states` in _plugins/questionnaire_scores.rb walks the published data
   with the templates' own rule and says which chips the pages draw; the key
   names those and no others, so it cannot explain a mark a reader will not find.
@@ -19,7 +19,7 @@
   Every chip comes from grade-badge.html, the same call the table and the topic
   rows make, so the key cannot end up showing a mark the grades below it do not.
   An empty `grade` is what puts that include into an empty state; `state` picks
-  which of the three.
+  which of the four.
 {%- endcomment -%}
 {%- comment -%}
   C- is filtered out here the same way the homepage hero strip filters it
@@ -37,8 +37,12 @@
 {%- comment -%}
   Each non-letter item carries its own modifier class, so a page that cannot
   draw that mark can drop it from the key: the candidate leaflet hides the
-  speech bubble, because print leaves out both the topics that carry one and the
-  answers behind them. See the @media print block in _sass/_candidate.scss.
+  answered speech bubble, because print leaves out both the topics that carry
+  one and the answers behind them. See the @media print block in
+  _sass/_candidate.scss. The declined bubble is not among those: its topics are
+  ordinary graded rows that the leaflet prints, so the key has to name it there
+  too — and since the answered one is gone by then, a bubble on paper is
+  unambiguous.
 {%- endcomment -%}
 {%- assign legend_grades = site.data.grades | where_exp: "grade", "grade.letter != 'C-'" -%}
 <div class="scorecard-legend" aria-label="Grading key">
@@ -73,6 +77,21 @@
   {%- if site.data.legend_states.answers %}
   <span class="scorecard-legend__item scorecard-legend__item--answers">
     {% include grade-badge.html grade="" state="answers" %}Answered
+  </span>
+  {%- endif %}
+  {%- comment -%}
+    "Declined to take part", named in full rather than as a bare "Declined",
+    which on a key sitting over a grid of topics reads as a candidate declining
+    one question. It is a whole-candidate state: every topic they have carries
+    this mark, and their page carries what they said about it instead of grades.
+
+    Drawn only while _data/declined.yml has somebody in it — see legend_states
+    in _plugins/questionnaire_scores.rb — so an election where nobody declines
+    never shows a key entry for a mark that is nowhere on the page.
+  {%- endcomment -%}
+  {%- if site.data.legend_states.declined %}
+  <span class="scorecard-legend__item scorecard-legend__item--declined">
+    {% include grade-badge.html grade="" state="declined" %}Declined to take part
   </span>
   {%- endif %}
   {%- comment -%}

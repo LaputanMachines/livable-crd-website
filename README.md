@@ -163,15 +163,18 @@ not match the roster gets no record row and is named in the sheet's `Sync Log` a
 `Grading > Check setup`. Full detail, and the order to switch it on in, is in
 [`scripts/questionnaire/README.md`](scripts/questionnaire/README.md).
 
-### The four states a topic can be in
+### The five states a topic can be in
 
-Having a row on `Category Grades` usually means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. The exception is a sitting incumbent on the sheet only for their housing record, written with `returned: false` so the scorecard leaves them where they belong. That gives the scorecard four states rather than two, on the matrix and on each candidate's page alike:
+Having a row on `Category Grades` usually means the candidate returned the questionnaire, and the site says so even when nothing has been published for them. Every candidate with a row is written to `scores.yml`, with an empty `subjects` list while publication is off. The exception is a sitting incumbent on the sheet only for their housing record, written with `returned: false` so the scorecard leaves them where they belong. A second, hand-written file sits alongside that one: `_data/declined.yml` names the candidates who told the coalition they were not taking part and carries the statement their page shows instead of grades. An entry there wins over the grading sheet — `questionnaire_scores.rb` drops both their letters and their per-question detail — so their topics carry one mark and their page carries their words. It is hand-maintained because it is the only thing here that is: both spreadsheet-backed data files are overwritten wholesale on every sync. Two limits, both in the plugin: nothing is applied until grades are actually published, so a decline can be recorded the day it arrives; and a housing grade carried by an `HFL-INC` record alone survives, because a record scored from council votes is not something declining withdraws.
+
+That gives the scorecard five states rather than two, on the matrix and on each candidate's page alike:
 
 | Shown | Means |
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
 | speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
+| blue speech bubble | The candidate declined to take part, and their page carries their statement in place of the grades. Nearly whole-candidate: every topic carries it except a housing grade scored from an `HFL-INC` record alone, which survives the decline. From `_data/declined.yml`. |
 | `N/A` | Graded, and the answer is that it does not apply — `ROL-05` asks about a previous term in office. Per question only: a whole topic no longer carries it. |
 | `—` | No completed questionnaire has come back. Including every topic but housing on a sitting incumbent published for their record alone. |
 
