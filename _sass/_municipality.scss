@@ -171,11 +171,11 @@
   }
 }
 
-// "Declined to take part", in the same blue as the grade chips this candidate's
-// topics carry on the scorecard, so the mark means one thing in one colour
-// wherever a reader meets it. Sized like the tick above it: the two share this
-// column, and a bubble at a different size would read as a different kind of
-// mark rather than as a different answer to the same question.
+// "Declined to take part": a red X, the same mark and colour as the grade chips
+// this candidate's topics carry on the scorecard, so it means one thing in one
+// colour wherever a reader meets it. Sized like the tick above it: the two
+// share this column, and an X at a different size would read as a different
+// kind of mark rather than as a different answer to the same question.
 .muni-list__status--declined {
   color: $color-declined;
 
@@ -193,6 +193,7 @@
 // as a page of marks against people.
 .muni-list__status--pending {
   color: $color-muted;
+  font-weight: 800;
 }
 
 // The key above the lists. Same two marks the rows carry, each followed by

@@ -8,12 +8,9 @@
 #
 # An entry here overrides what the grading sheet says about that candidate.
 # _plugins/questionnaire_scores.rb drops their letters and their per-question
-# detail, so their topics carry the speech bubble rather than a letter, an
-# hourglass or a dash, on the matrix, on the municipality index and on their own
-# page. The bubble is the one mark on the site that means "there is something
-# here to read": the same thing it means on an ungraded topic, in a colour of
-# its own so the two are told apart, and the thing to read is the statement
-# below.
+# detail, so their topics carry a red X rather than a letter, an hourglass or a
+# dash, on the matrix, on the municipality index and on their own page. Their
+# page carries the statement below in place of grades.
 #
 # Two limits on that, both in the plugin and both deliberate:
 #
@@ -27,7 +24,7 @@
 #   that grade needs nothing from the candidate - it is a reading of what they
 #   have already done in office, and declining the questionnaire does not
 #   withdraw it. So that one topic keeps its letter and opens onto the record
-#   behind it, and every other topic carries the bubble.
+#   behind it, and every other topic carries the X.
 #
 # Fields:
 #   name          As written in _data/candidates.yml. Matched against it case-

@@ -33,19 +33,15 @@ $border-weight-heavy: 4px;
 // reader who has just come from the scorecard.
 $color-check: #1355a6;
 
-// The "declined to take part" speech bubble: the grade chip every topic of a
-// declined candidate carries, and the matching mark on the municipality
-// indexes. Same reasoning as $color-check above and the same family of blue -
-// it is a fact about whether somebody took part, not about how they scored, so
-// it must not borrow a letter's colour - but its own token and its own value,
-// because the two appear in the same status column on a municipality page and
-// a tick and a bubble in one blue would read as one state drawn twice.
+// The "declined to take part" X: the grade chip every topic of a declined
+// candidate carries, and the matching mark on the municipality indexes. Red,
+// because an X reads as "no" and red is what says it at a glance.
 //
-// Darker than both $color-check and $grade-b, the blue letter it shares the
-// scorecard matrix with. A declined candidate's row is ten filled chips wide,
-// and at $grade-b's value a reader scanning the table at a glance sees a row of
-// Bs; at this one they see a row of something else and go and read the key.
-$color-declined: #0e3f7a;
+// Deliberately not $grade-f, and darker than it. The F chip is solid red with a
+// white letter; the declined chip is a pale tile with this red on the glyph and
+// its border, so the two differ by weight as well as by value and a declined
+// row does not read as a row of Fs.
+$color-declined: #9b1c1c;
 
 // Letter-grade colours stay semantic (green→good … red→poor) so the scorecard
 // remains legible at a glance; they convey data, not brand identity.

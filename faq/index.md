@@ -145,7 +145,7 @@ description: >-
         room for two words each; this is where a reader who wants to know what a
         dash costs a candidate can find out that sometimes it costs them nothing.
 
-        The declined bubble is drawn here only while somebody has declined - the
+        The declined X is drawn here only while somebody has declined - the
         same `legend_states` test the scorecard's own key uses - because unlike
         the three around it, it describes something a candidate chose rather
         than a stage the grading passes through, and in an election where

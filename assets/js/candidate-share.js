@@ -296,12 +296,12 @@
       // legend competing with the grades.
       var notes = [];
       // First, because on a declined candidate it is the only one: every row on
-      // the card is this mark, and without the note the card is ten blue chips
+      // the card is this mark, and without the note the card is ten red Xs
       // and no way to tell what they say. The card carries the note rather than
       // the statement itself - that runs to a paragraph, and the footer already
       // points at the page it is on.
       if (topics.some(function (t) { return t.state === 'declined'; })) {
-        notes.push('\u25CF  declined to take part');
+        notes.push('\u2715  declined to take part');
       }
       if (topics.some(function (t) { return t.state === 'pending'; })) {
         notes.push('\u2014  no questionnaire returned');

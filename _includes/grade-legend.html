@@ -39,10 +39,9 @@
   draw that mark can drop it from the key: the candidate leaflet hides the
   answered speech bubble, because print leaves out both the topics that carry
   one and the answers behind them. See the @media print block in
-  _sass/_candidate.scss. The declined bubble is not among those: its topics are
+  _sass/_candidate.scss. The declined X is not among those: its topics are
   ordinary graded rows that the leaflet prints, so the key has to name it there
-  too — and since the answered one is gone by then, a bubble on paper is
-  unambiguous.
+  too.
 {%- endcomment -%}
 {%- assign legend_grades = site.data.grades | where_exp: "grade", "grade.letter != 'C-'" -%}
 <div class="scorecard-legend" aria-label="Grading key">

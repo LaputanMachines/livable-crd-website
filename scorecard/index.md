@@ -526,7 +526,7 @@ description: >-
                 hourglass       returned, and this topic is being graded
                 speech bubble   answered, and this topic is never graded, so
                                 there is something to read and no letter coming
-                blue bubble     the candidate declined to take part, and their
+                red X           the candidate declined to take part, and their
                                 page carries what they said instead of grades
                 dash            no reply, or nothing published
 
@@ -556,7 +556,7 @@ description: >-
             {%- comment -%}
               A decline replaces every one of those on every topic that has no
               letter. questionnaire_scores.rb has already dropped that
-              candidate's grades, so their row is the same bubble across the
+              candidate's grades, so their row is the same X across the
               table, linking through to the page that says why.
 
               Not quite every topic: a sitting incumbent's housing record is

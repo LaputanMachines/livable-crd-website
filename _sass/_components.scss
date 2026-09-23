@@ -247,7 +247,7 @@
   background: $color-bg-warm;
   color: $color-muted;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 800;
   border: 2px solid $color-border;
 }
 
@@ -327,20 +327,17 @@
   height: 66%;
 }
 
-// "Declined to take part." The same bubble as above, drawn the same way and for
-// the same reason - there is something to read here now, so it carries a
-// letter's weight rather than a placeholder's - in $color-declined, which is
-// its own blue precisely so the two are not one mark. See _variables.scss.
+// "Declined to take part." A red X on a pale tile, in $color-declined. See
+// _variables.scss for why it is not the F chip's red, and why it is a tile
+// rather than a solid chip: solid red with a white mark is what an F looks like.
 //
-// Unlike the chip above, this one is not a property of a topic: it is a
+// Unlike the chips above, this one is not a property of a topic: it is a
 // property of the candidate, so it is every chip in their row and the only mark
-// their page carries. That is why it is filled rather than outlined. An
-// outlined chip on all ten topics draws the row as ten gaps, which is the one
-// thing this state is not - the candidate answered the coalition, in writing,
-// and their page carries what they said.
+// their page carries.
 .grade--declined {
-  background: $color-declined;
-  color: #fff;
+  background: $color-surface;
+  color: $color-declined;
+  border: 2px solid rgba($color-declined, 0.55);
 }
 
 .grade--declined svg {
@@ -948,6 +945,19 @@ tr:hover td { background: $color-bg-warm; }
   height: 1.25rem;
   font-size: 0.7rem;
   margin: 0 auto;
+  transition: transform $transition-fast, box-shadow $transition-fast;
+}
+
+// A small lift on the chip under the pointer, so a reader scanning the matrix
+// can see which cell they are about to open. Every chip here is a link, not only
+// the letters, so every one gets it. Hover-capable pointers only: on touch the
+// state sticks after a tap and leaves one chip enlarged. Under reduced motion
+// the global rule in _animations.scss makes the change instant.
+@media (hover: hover) {
+  .scorecard-matrix__cell-link:hover .grade {
+    transform: scale(1.2);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
 }
 
 // The one place on the site where this chip and the pending dash sit in the same

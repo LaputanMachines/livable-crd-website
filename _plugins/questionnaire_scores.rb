@@ -239,7 +239,7 @@ module LivableCrd
     # and the key deliberately does not name it, so there is nothing here to
     # decide about it.
     #
-    # The declined bubble is drawn on a candidate in _data/declined.yml and
+    # The declined X is drawn on a candidate in _data/declined.yml and
     # nowhere else, so an empty file takes it out of the key - as does a build
     # before the release, where apply_declines has not run and nobody carries
     # `declined_statement` yet.

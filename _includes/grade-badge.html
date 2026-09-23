@@ -50,28 +50,24 @@
 {% if g == '' or g_upper == 'NULL' or g_upper == 'PENDING' or g == '—' %}{% assign no_grade = true %}{% endif %}
 {% if no_grade and include.state == 'declined' %}
 {%- comment -%}
-  The declined bubble. The same silhouette as the "answered" bubble below it and
-  for the same reason — there is something written here to read — in a blue of
-  its own, because what there is to read is a statement about not taking part
-  rather than an answer to a question.
+  The declined X, Lucide's stock `x`, in red on a pale tile. An X rather than
+  the "answered" bubble below it because what the candidate sent is a statement
+  about not taking part rather than an answer to a question, and the two should
+  not share a glyph.
 
   Guarded on `no_grade` like the three below it, and the guard is not
   decorative: a declined candidate can carry exactly one letter, on a housing
   record scored from their council votes, and between drawing that letter and
-  drawing a bubble over it the letter is the truthful one. The callers do not
+  drawing an X over it the letter is the truthful one. The callers do not
   ask for this state on a graded topic, so the guard only decides what happens
   if one ever gets it wrong.
 
-  Two bubbles on one site is the one place the "never colour alone" rule above
-  bends, and the key is what takes the weight: both are named in
-  grade-legend.html, and unlike the answered bubble this one survives onto the
-  print leaflet, where its topics are not hidden. So on paper a bubble is always
-  this one, and on screen they carry different labels, different titles and
-  different colours.
+  Named in grade-legend.html, and unlike the answered bubble it survives onto
+  the print leaflet, where its topics are not hidden.
 {%- endcomment -%}
 <span class="grade grade--declined" title="Declined to take part; their statement is on their page" aria-label="Declined to take part">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
-    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
   </svg>
 </span>
 {% elsif no_grade and include.state == 'answers' %}
