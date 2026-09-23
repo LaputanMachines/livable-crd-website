@@ -34732,7 +34732,7 @@ candidates:
       climate: A
       arts: B
       rolling-cycling: C
-      walking: B
+      walking: A
       governance: B
     subjects:
       - id: general
@@ -35301,7 +35301,7 @@ candidates:
               that drive at unsafe speeds and should not be sharing the path
               with regular bikes and pedal e-bikes.
       - id: walking
-        grade: B
+        grade: A
         questions:
           - label: WLK-01
             grade: A
@@ -35336,12 +35336,13 @@ candidates:
               Yes, a substantial increase (i.e. more than double what's
               currently spent).
           - label: WLK-04
-            grade: F
+            grade: null
             weight: "20%"
             rationale: >-
-              Selected not applicable while Sooke has a town centre that its
-              own planning work treats as a walking priority. The question
-              applies and no position was given.
+              Selected not applicable on pedestrian priority and car free
+              streets. The main street through the Sooke town centre is a
+              provincial highway the municipality cannot close on its own, so
+              the question does not fairly apply here and no grade is given.
             answer: N/A
           - label: WLK-05
             grade: A
@@ -36859,7 +36860,7 @@ candidates:
       climate: B
       arts: C
       rolling-cycling: A
-      walking: C
+      walking: B
       governance: A
     subjects:
       - id: general
@@ -37411,7 +37412,7 @@ candidates:
               physical ability, etc, should have safe access to active
               transportation options.
       - id: walking
-        grade: C
+        grade: B
         questions:
           - label: WLK-01
             grade: A
@@ -37421,14 +37422,15 @@ candidates:
               Yes, absolutely, even if it means removing driving lanes to meet
               our targets.
           - label: WLK-02
-            grade: B
+            grade: A
             weight: "20%"
             rationale: >-
-              Names the highway stretch where the walking safety complaints
-              are concentrated and is straight about it sitting with the
-              province, which has resisted action there. Redirects the
-              commitment to a multi use trail the municipality can actually
-              deliver.
+              Places the worst walking danger on the highway stretch between
+              Whiffin Spit and Ed McGregor Park, is candid that the province
+              controls it and has resisted fixes there, and commits instead to
+              the Grant Road West multi use trail. The question asks for one
+              change and this names one the municipality can deliver on its
+              own, which is the commitment the question is after.
             answer: >-
               The biggest walking safety concerns I hear about are West Coast
               Rd (Highway 14) between Whiffin Spit and Ed McGregor Park. That
@@ -37446,12 +37448,17 @@ candidates:
               Yes, a substantial increase (i.e. more than double what's
               currently spent).
           - label: WLK-04
-            grade: F
+            grade: null
             weight: "20%"
             rationale: >-
-              Answered not applicable on expanding pedestrian priority
-              streets. Sooke has a town centre, so the question is live there
-              and the answer sidesteps it.
+              Chose not applicable, and explained in the closing comments that
+              the downtown is a single stretch of provincial highway with
+              commercial space barely a block off it, so closing road
+              connections is not workable yet, while naming Shields Road and a
+              few others as future candidates for pedestrian priority or
+              partial closure. That is a reasoned account of local conditions
+              rather than a dodge, so the row is left ungraded instead of
+              failed.
             answer: N/A
           - label: WLK-05
             grade: B
