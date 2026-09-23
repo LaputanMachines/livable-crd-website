@@ -291,7 +291,9 @@ RUBRICS = {
             "main street or village centre, which is a judgement about a "
             "candidate and is passed in by hand, like an excused decline. The "
             "earlier rows blanked it for Highlands and graded it F everywhere "
-            "else. Unsure was typed C on two rows before 2026-09-13; those "
+            "else; on 2026-09-23 Sooke was blanked too, because its only main "
+            "street is Highway 14, which the municipality cannot close. Sooke "
+            "candidates who answered Yes keep their letters. Unsure was typed C on two rows before 2026-09-13; those "
             "rows were reset to blank on 2026-09-20."
         ),
     },
