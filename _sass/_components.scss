@@ -917,6 +917,32 @@ tr:hover td { background: $color-bg-warm; }
   }
 }
 
+// A candidate who declined to take part: one cell across every topic column,
+// linking to the statement on their page. Centred under the topics it stands in
+// for, and a plain link rather than a chip, because it is words to read and not
+// a mark to decode. The link fills the cell so the whole span is the target.
+.scorecard-matrix .scorecard-matrix__declined-cell {
+  padding: 0;
+  text-align: center;
+}
+
+.scorecard-matrix__declined-link {
+  display: block;
+  padding: 0.55rem $space-xs;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: $color-accent;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+
+  &:hover { color: $color-accent-dark; }
+
+  &:focus-visible {
+    outline: 3px solid $color-accent;
+    outline-offset: -3px;
+  }
+}
+
 // The chip in a matrix cell is a link into that topic on the candidate's page.
 // It fills the cell so the target is the cell rather than a 1.25rem chip, which
 // is under the 24px minimum on a phone and sits in a grid nine columns wide.

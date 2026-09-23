@@ -56,6 +56,13 @@
   var participatingOnly = true;
   var query = '';
 
+  // Kept by that filter: a candidate who returned the questionnaire, or one who
+  // declined and gave a statement. The second has no grades, but their row is a
+  // link to what they said, which is their part in this, so it stays in view.
+  function participated(row) {
+    return row.hasAttribute('data-returned') || row.hasAttribute('data-declined');
+  }
+
   // Letter grade → numeric rank for the "minimum grade" filter. Pending ("—",
   // empty) ranks below F so it never satisfies a threshold.
   var RANK = { A: 4, B: 3, C: 2, D: 1, F: 0 };
@@ -121,8 +128,8 @@
       own.sort(function (a, b) { return homeOrder.get(a) - homeOrder.get(b); });
       var wanted;
       if (participatingOnly) {
-        wanted = own.filter(function (r) { return r.hasAttribute('data-returned'); })
-          .concat([m.row], own.filter(function (r) { return !r.hasAttribute('data-returned'); }));
+        wanted = own.filter(participated)
+          .concat([m.row], own.filter(function (r) { return !participated(r); }));
       } else {
         wanted = own.concat([m.row]);
       }
@@ -187,7 +194,7 @@
         (activeTopic === 'all' ? worstRank(row) : bestRank(row, activeTopic)) >= minRank;
       // A starred row is the reader's own pick, so the pinned group shows it
       // whether or not the candidate took part.
-      var folded = participatingOnly && !row.hasAttribute('data-returned') &&
+      var folded = participatingOnly && !participated(row) &&
         !(row.parentNode && row.parentNode.id === 'favourites-group');
       var otherOk = muniOk && officeOk && nameOk && gradeOk;
       row.setAttribute('data-folded', otherOk && folded ? 'true' : 'false');

@@ -269,6 +269,19 @@ layout: default
     leaves a blank square on the leaflet.
   {%- endcomment -%}
   {%- comment -%}
+    A declined candidate with nothing to open gets the statement above and
+    nothing else: no key, no topic list, no print, download or share buttons.
+    Nine identical marks said nothing the statement had not, a key named them,
+    and the buttons printed and shared a scorecard with no grades on it.
+
+    The same test as the how-to note: a sitting incumbent's housing record
+    outlives the decline, and when one is scored there is a real row to read,
+    so the page comes back as it is for everyone else.
+  {%- endcomment -%}
+  {%- assign statement_only = false -%}
+  {%- if declined and openable_count == 0 %}{% assign statement_only = true %}{% endif -%}
+  {%- unless statement_only %}
+  {%- comment -%}
     The same key the scorecard matrix carries, above the same chips. A reader
     arriving here from a search result rather than from the table has not seen
     it, and the states this page can draw that are not letters need naming. The
@@ -881,6 +894,7 @@ layout: default
     a canvas that will not draw, or a platform window a blocker swallowed.
   {%- endcomment -%}
   <p class="candidate-share-status" id="share-status" role="status" aria-live="polite"></p>
+  {%- endunless %}
 
   {%- comment -%}
     No methodology note here, on screen or on paper. The nav and the "See the

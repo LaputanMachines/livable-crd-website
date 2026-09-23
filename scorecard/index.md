@@ -190,8 +190,12 @@ description: >-
     table are one of the three states that are not letters, and a key read
     several screens earlier is a key nobody still has in mind by the time they
     reach the thing it describes.
+
+    Without the declined X: a candidate who declined gets one full-width link to
+    their statement on this grid rather than a mark per topic, so the key would
+    be naming something the table below never draws.
   {%- endcomment -%}
-  {% include grade-legend.html %}
+  {% include grade-legend.html omit="declined" %}
 
   {%- comment -%}
     Every full-width row in the matrix spans this. Derived rather than typed:
@@ -344,12 +348,13 @@ description: >-
                     {%- if sg.name != "" -%}
                     {%- comment -%}
                       Both counts ride on the item, so scorecard.js can show the
-                      one matching the table: how many of this slate took part
-                      while "Only show participating candidates" is on, and the
-                      whole slate otherwise. The total is what prints without
+                      one matching the table: how many of this slate the
+                      "Only show participating candidates" filter keeps (those
+                      who took part, and those who declined with a statement),
+                      and the whole slate otherwise. The total is what prints without
                       the script.
                     {%- endcomment -%}
-                    {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned" -%}
+                    {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned or c.declined_statement" -%}
                     <span class="slate-legend__item" data-slate-total="{{ sg.size }}" data-slate-returned="{{ sg_returned.size }}">
                       <span class="slate-legend__swatch {{ site.data.slate_classes[sg.name] }}" aria-hidden="true"></span>{{ sg.name }} (<span class="slate-legend__count">{{ sg.size }}</span>)
                     </span>
@@ -417,7 +422,7 @@ description: >-
             marks the row .is-slate-lit.
           {%- endcomment -%}
           {%- assign slate_class = site.data.slate_classes[c.slate] -%}
-          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}>
+          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}{% if c.declined_statement %} data-declined{% endif %}>
             <th scope="row" class="scorecard-matrix__name">
               {%- comment -%}
                 The name cell holds a link, a meta line and (with JS) up to two
@@ -520,14 +525,34 @@ description: >-
               </span>
             </th>
             {%- comment -%}
-              An ungraded cell is one of four different things, and the table
+              A candidate who declined to take part gets one cell across every
+              topic, pointing at the statement their page carries. It replaced
+              a red X in each topic, which read as nine failures and said
+              nothing about why; the statement is the whole of what the
+              coalition has from them, so the row sends the reader to it.
+
+              The whole row, housing included: a sitting incumbent's housing
+              record outlives the decline and keeps its letter on their own
+              page, but on this grid one cell of a letter beside eight of
+              statement link would read as a candidate who answered one topic.
+            {%- endcomment -%}
+            {%- if c.declined_statement %}
+            {%- assign cand_first = c.name | split: " " | first -%}
+            <td class="scorecard-matrix__declined-cell" colspan="{{ site.data.subjects.size }}">
+              {%- if cand_slug != '' -%}
+              <a class="scorecard-matrix__declined-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | append: cand_slug | append: '/' | relative_url }}">Click here to read {{ cand_first }}'s provided statement</a>
+              {%- else -%}
+              {{ cand_first }} declined to take part and provided a statement.
+              {%- endif -%}
+            </td>
+            {%- else %}
+            {%- comment -%}
+              An ungraded cell is one of three different things, and the table
               has to tell them apart:
 
                 hourglass       returned, and this topic is being graded
                 speech bubble   answered, and this topic is never graded, so
                                 there is something to read and no letter coming
-                red X           the candidate declined to take part, and their
-                                page carries what they said instead of grades
                 dash            no reply, or nothing published
 
               A returned questionnaire means every topic is waiting on us, so
@@ -553,22 +578,6 @@ description: >-
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
             {% endunless %}
             {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
-            {%- comment -%}
-              A decline replaces every one of those on every topic that has no
-              letter. questionnaire_scores.rb has already dropped that
-              candidate's grades, so their row is the same X across the
-              table, linking through to the page that says why.
-
-              Not quite every topic: a sitting incumbent's housing record is
-              scored from their council votes and outlives the decline, so that
-              one cell keeps its letter. Keyed on the cell being empty rather
-              than on the topic, so nothing here has to know which topics can be
-              scored that way.
-            {%- endcomment -%}
-            {%- if c.declined_statement %}
-              {%- assign cell_text = cell | default: '' | strip -%}
-              {%- if cell_text == '' %}{% assign cell_state = "declined" %}{% endif -%}
-            {%- endif %}
             {%- comment -%}
               The chip is a link into that candidate's page, at that topic, which
               opens on arrival (assets/js/candidate.js reads the fragment). A
@@ -600,6 +609,7 @@ description: >-
               {%- endif -%}
             </td>
             {% endfor %}
+            {%- endif %}
           </tr>
           {% endfor %}
         </tbody>

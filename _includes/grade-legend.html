@@ -86,9 +86,11 @@
 
     Drawn only while _data/declined.yml has somebody in it — see legend_states
     in _plugins/questionnaire_scores.rb — so an election where nobody declines
-    never shows a key entry for a mark that is nowhere on the page.
+    never shows a key entry for a mark that is nowhere on the page. The
+    scorecard matrix passes omit="declined" for the same reason: it gives a
+    declined candidate a link to their statement across the row, not the X.
   {%- endcomment -%}
-  {%- if site.data.legend_states.declined %}
+  {%- if site.data.legend_states.declined and include.omit != "declined" %}
   <span class="scorecard-legend__item scorecard-legend__item--declined">
     {% include grade-badge.html grade="" state="declined" %}Declined to take part
   </span>

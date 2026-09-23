@@ -178,7 +178,7 @@ That gives the scorecard five states rather than two, on the matrix and on each 
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
 | speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
-| red X | The candidate declined to take part, and their page carries their statement in place of the grades. Nearly whole-candidate: every topic carries it except a housing grade scored from an `HFL-INC` record alone, which survives the decline. From `_data/declined.yml`. |
+| red X | The candidate declined to take part, and their page carries their statement in place of the grades. Nearly whole-candidate: every topic carries it except a housing grade scored from an `HFL-INC` record alone, which survives the decline. From `_data/declined.yml`. On the scorecard matrix the row carries no marks at all: one cell spans every topic and links to the statement, and the "Only show participating candidates" filter keeps the row in view. |
 | `N/A` | Graded, and the answer is that it does not apply — `ROL-05` asks about a previous term in office. Per question only: a whole topic no longer carries it. |
 | `—` | No completed questionnaire has come back. Including every topic but housing on a sitting incumbent published for their record alone. |
 
