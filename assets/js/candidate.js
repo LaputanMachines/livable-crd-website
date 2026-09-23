@@ -44,11 +44,15 @@
     });
   }
 
-  // The label is the state: it names what pressing the button will do next, so
-  // it reads "Collapse all topics" exactly when there is something to collapse
-  // and everything is already open.
+  // The mark is the state: it shows what pressing the button will do next, so
+  // it is a minus exactly when everything is already open. The words it stands
+  // for go to screen readers and the hover tooltip.
   function sync() {
-    toggle.textContent = allOpen() ? collapseLabel : expandLabel;
+    var open = allOpen();
+    var label = open ? collapseLabel : expandLabel;
+    toggle.textContent = open ? '\u2212' : '+';
+    toggle.setAttribute('aria-label', label);
+    toggle.title = label;
   }
 
   // Opening one row by hand is the common way for the page to stop matching the

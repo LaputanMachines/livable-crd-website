@@ -279,50 +279,51 @@
   border: $border-weight solid $color-text;
 }
 
-// The row above the block that opens and closes all of it at once. Ranged right,
-// against the block's own right edge, where the chevrons it operates are: a
-// control for a column of toggles belongs over that column, not over the topic
-// names on the other side of the row.
+// The control that opens and closes every topic at once, drawn as a tab on the
+// block's top edge. Ranged right, over the column of chevrons it operates.
 //
-// The grades block takes its top margin from the key when this is absent and
-// from this when it is present, so the gap under the key is the same either way
-// and the button does not push the grades down the page.
+// The wrapper has no height and takes the block's usual gap under the key, so
+// the tab hangs off the top of the grades into space that is already there:
+// the key and the grades sit exactly where they would without it.
 .candidate-grades-controls {
-  display: flex;
-  justify-content: flex-end;
+  position: relative;
+  height: 0;
   margin-top: $space-md;
 }
 
 .candidate-grades-controls + .candidate-grades {
-  margin-top: $space-xs;
+  margin-top: 0;
 }
 
-// A text control, not a .btn. The buttons under the block are the page's
-// actions — print this, go to the scorecard — and drawing this like one of them
-// would put a third of that weight above a list it only reorganizes.
+// The gap under the key is $space-md, and the tab is exactly that tall, so it
+// meets the block's border without reaching up into the key.
 .candidate-grades-controls__toggle {
-  padding: $space-xs 0;
-  background: none;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 2.5rem;
+  height: $space-md;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $color-text;
   border: 0;
-  color: $color-accent;
+  color: $color-surface;
   font-family: $font-display;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.8rem;
+  font-size: 1.25rem;
+  line-height: 1;
   cursor: pointer;
 
-  // The underline is the affordance: with no box and no background, a line of
-  // small caps in the accent colour is otherwise a heading.
-  text-decoration: underline;
-  text-underline-offset: 0.25em;
-
-  &:hover { color: $color-text; }
+  &:hover { background: $color-accent; }
 
   &:focus-visible {
     outline: 3px solid $color-accent;
     outline-offset: 2px;
   }
+
+  &[hidden] { display: none; }
 }
 
 // The <li>. It carries the divider and the topic accent, because what sits
@@ -508,15 +509,19 @@ summary.candidate-grade {
   margin-top: $space-lg;
 }
 
-// The three share buttons. Same .btn-secondary box as any other secondary
-// action on the site: the platforms' own brand colours side by side would make
-// the end of the page a row of logos competing with the grades above it, and
-// Instagram's is a gradient that no button on this site wears.
+// A button with an icon before its label: print, download and the two share
+// buttons. The share buttons wear the same .btn-secondary box as any other
+// secondary action on the site: the platforms' own brand colours side by side
+// would make the end of the page a row of logos competing with the grades above.
 .btn-share {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
 }
+
+// Every one of these is hidden until a script unhides it, and the display above
+// outranks the browser's own `[hidden] { display: none }`.
+.btn-share[hidden] { display: none; }
 
 // Sized in em so it tracks the button's own text, and the mark is the only part
 // of the button that carries the platform. Kept at the ink colour rather than

@@ -1,6 +1,6 @@
-// "Share to Facebook / Instagram / X" on a candidate's page: draws a square
-// card of that candidate's grades and hands it to the platform the reader
-// chose.
+// "Share to Facebook / X" and "Download this scorecard" on a
+// candidate's page: draws a square card of that candidate's grades and either
+// hands it to the platform the reader chose or saves it to their device.
 //
 // The card is drawn in a canvas from the page's own rows — the name, the
 // standing line, the slate, every topic with its chip and that chip's colour
@@ -10,10 +10,10 @@
 //
 // What each platform actually accepts is the whole shape of this file:
 //
-//   - None of the three takes an image from a web link. Facebook's sharer and
-//     X's intent take a URL and show whatever that page's og:image is; Instagram
-//     takes nothing at all, and has no addressable compose step either, so the
-//     most a link can do there is open Instagram.
+//   - Neither takes an image from a web link. Facebook's sharer and X's intent
+//     take a URL and show whatever that page's og:image is. Instagram has no
+//     button of its own: it takes nothing from a link and has no addressable
+//     compose step, so the most a button could do was open its front page.
 //   - Where the operating system has a share sheet that takes files
 //     (navigator.share with `files`, which is most phones), the card goes
 //     straight into it and the reader picks the app. That is the good path, and
@@ -27,7 +27,8 @@
 // post it.
 (function () {
   var buttons = Array.prototype.slice.call(document.querySelectorAll('[data-share]'));
-  if (!buttons.length) return;
+  var downloadButton = document.querySelector('[data-download-card]');
+  if (!buttons.length && !downloadButton) return;
 
   var script = document.currentScript || document.querySelector('script[data-candidate]');
   var status = document.getElementById('share-status');
@@ -58,6 +59,10 @@
   var MUTED = '#564a66';
   var KWETLAL = '#d5adff';
   var RULE = '#e7e0f2';
+  // The QR code's target size, quiet zone included, and the footer that holds
+  // it. Rounded down to a whole number of pixels per module by qrImage.
+  var QR_TARGET = 180;
+  var FOOTER_QR = 228;
 
   function text(el) {
     return el ? el.textContent.replace(/\s+/g, ' ').trim() : '';
@@ -111,6 +116,30 @@
     return loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markup));
   }
 
+  // The QR code back to this page, taken from the print leaflet's copy of it
+  // rather than encoded again here: the page already carries one built from the
+  // same absolute URL (_plugins/qr_code.rb), and a second encoder in the
+  // browser would be a second thing to keep pointing at the same place.
+  //
+  // Rendered at a whole number of pixels per module. A code scaled by 3.4 is
+  // resampled into grey edges between modules, and a card that is screenshotted
+  // and recompressed by every platform it passes through needs every edge it
+  // can keep.
+  var qrSource = document.querySelector('.candidate-print-qr .qr-code');
+
+  function qrImage(target) {
+    if (!qrSource) return Promise.resolve(null);
+    var span = qrSource.viewBox && qrSource.viewBox.baseVal ? qrSource.viewBox.baseVal.width : 0;
+    if (!span) return Promise.resolve(null);
+    var size = span * Math.max(1, Math.floor(target / span));
+    var copy = qrSource.cloneNode(true);
+    copy.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    copy.setAttribute('width', String(size));
+    copy.setAttribute('height', String(size));
+    var markup = new XMLSerializer().serializeToString(copy);
+    return loadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markup));
+  }
+
   function fitFont(ctx, string, weight, start, min, max) {
     var size = start;
     while (size > min) {
@@ -147,7 +176,8 @@
     // drawn in Arial. The glyphs are loaded in the same pass.
     var work = [
       document.fonts ? document.fonts.ready : Promise.resolve(),
-      loadImage('/assets/images/brand/logo-mark.svg')
+      loadImage('/assets/images/brand/logo-mark.svg'),
+      qrImage(QR_TARGET)
     ];
     topics.forEach(function (topic) {
       work.push(topic.svg ? glyphImage(topic.svg, topic.colour) : Promise.resolve(null));
@@ -155,7 +185,8 @@
 
     return Promise.all(work).then(function (loaded) {
       var mark = loaded[1];
-      var glyphs = loaded.slice(2);
+      var qr = loaded[2];
+      var glyphs = loaded.slice(3);
 
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, SIZE, SIZE);
@@ -209,7 +240,9 @@
       // card with no slate line do not stretch into a ladder, and the block is
       // then centred in the space it did not use. A candidate with a slate line
       // gets slightly tighter rows rather than a card that overflows.
-      var footerTop = SIZE - 112;
+      // Taller when it carries the QR code, which needs to be big enough to scan
+      // off a phone screen held at arm's length, or off a screenshot of one.
+      var footerTop = SIZE - (qr ? FOOTER_QR : 112);
       var rowsTop = y + 44;
       var available = footerTop - rowsTop - 16;
       var rowH = Math.min(78, available / topics.length);
@@ -282,13 +315,32 @@
       var answered = document.querySelector('.candidate-answer__text, .candidate-answer__options') !== null;
       ctx.fillStyle = '#f3edfb';
       ctx.fillRect(0, footerTop, SIZE, SIZE - footerTop);
+
+      // The code sits at the right of the footer, and everything written sits
+      // to its left, so the text column is whatever the code leaves.
+      var textMax = SIZE - PAD * 2;
+      if (qr) {
+        var qrSize = qr.width;
+        var qrX = SIZE - PAD - qrSize;
+        var qrY = footerTop + (SIZE - footerTop - qrSize) / 2;
+        ctx.imageSmoothingEnabled = false;
+        ctx.drawImage(qr, qrX, qrY, qrSize, qrSize);
+        ctx.imageSmoothingEnabled = true;
+        textMax = qrX - PAD - 32;
+      }
+
+      var lead = qr
+        ? (answered ? 'Scan to read their full responses' : 'Scan for the full scorecard, and how we grade')
+        : (answered ? 'Read their full responses' : 'The full scorecard, and how we grade');
+      var address = pageUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+      var textTop = footerTop + (qr ? 52 : 42);
+
       ctx.fillStyle = INK;
-      ctx.font = '700 26px Lexend, sans-serif';
-      ctx.fillText(answered ? 'Read their full responses' : 'The full scorecard, and how we grade',
-        PAD, footerTop + 42);
+      ctx.font = '700 ' + fitFont(ctx, lead, '700', 26, 18, textMax) + 'px Lexend, sans-serif';
+      ctx.fillText(lead, PAD, textTop);
       ctx.fillStyle = MUTED;
-      ctx.font = '400 24px Lexend, sans-serif';
-      ctx.fillText(pageUrl.replace(/^https?:\/\//, ''), PAD, footerTop + 78);
+      ctx.font = '400 ' + fitFont(ctx, address, '400', 24, 16, textMax) + 'px Lexend, sans-serif';
+      ctx.fillText(address, PAD, textTop + 36);
 
       // What the marks that are not letters mean, for a reader meeting this card
       // in a feed with no key above it. Only the ones this card actually uses,
@@ -312,13 +364,21 @@
       if (topics.some(function (t) { return t.state === 'review'; })) {
         notes.push('\u25CB  returned; not published yet');
       }
-      ctx.textAlign = 'right';
+      // Under the address when the code has the right-hand side, and right-
+      // aligned on the same lines as the address when it does not.
       ctx.font = '400 20px Lexend, sans-serif';
       ctx.fillStyle = MUTED;
-      notes.slice(0, 2).forEach(function (note, i) {
-        ctx.fillText(note, SIZE - PAD, footerTop + 40 + i * 30);
-      });
-      ctx.textAlign = 'left';
+      if (qr) {
+        notes.slice(0, 2).forEach(function (note, i) {
+          ctx.fillText(note, PAD, textTop + 78 + i * 28);
+        });
+      } else {
+        ctx.textAlign = 'right';
+        notes.slice(0, 2).forEach(function (note, i) {
+          ctx.fillText(note, SIZE - PAD, footerTop + 40 + i * 30);
+        });
+        ctx.textAlign = 'left';
+      }
 
       return new Promise(function (resolve, reject) {
         canvas.toBlob(function (blob) {
@@ -336,20 +396,6 @@
         return 'https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(url);
       },
       instruction: 'attach the image to your post.'
-    },
-    instagram: {
-      label: 'Instagram',
-      // The front door, and there is nothing deeper to aim at. Instagram takes
-      // nothing from a link - no image, no caption, no pre-filled anything -
-      // and its "new post" step is not addressable either: the first segment of
-      // a path is a username, so /create/select/ serves the profile of a real
-      // account called @create rather than the create flow. On a handheld this
-      // address is a universal link and the app opens, with the saved image in
-      // the camera roll.
-      composer: function () {
-        return 'https://www.instagram.com/';
-      },
-      instruction: 'start a post there and choose the saved image.'
     },
     x: {
       label: 'X',
@@ -460,6 +506,26 @@
   // print button follows.
   var canvasWorks = !!document.createElement('canvas').getContext;
   if (!canvasWorks || !window.URL || !URL.createObjectURL) return;
+
+  // The same card, saved rather than shared. For a reader who wants to post it
+  // somewhere these buttons do not name, print it, or send it in a message.
+  if (downloadButton) {
+    downloadButton.hidden = false;
+    downloadButton.addEventListener('click', function () {
+      downloadButton.disabled = true;
+      say('Drawing the card…');
+      drawCard().then(function (blob) {
+        download(blob);
+        say('Scorecard saved to your downloads.');
+      }).catch(function (error) {
+        say('Sorry — the image could not be drawn in this browser. ' +
+          'The print button below makes the same scorecard as a PDF.');
+        if (window.console) window.console.error(error);
+      }).then(function () {
+        downloadButton.disabled = false;
+      });
+    });
+  }
 
   buttons.forEach(function (button) {
     button.hidden = false;

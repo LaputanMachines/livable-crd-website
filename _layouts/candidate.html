@@ -288,10 +288,10 @@ layout: default
     what is inside a closed <details> in every browser either, so "expand all"
     is also what makes the page searchable.
 
-    One button rather than two. It names the action it will take next and swaps
-    when the rows are all open, so there is never a control on the page that
-    would do nothing if pressed. assets/js/candidate.js keeps it in step when
-    rows are opened one at a time.
+    One button rather than two, a + tab on the block's top edge. It shows the
+    action it will take next and swaps to a minus when the rows are all open,
+    so there is never a control on the page that would do nothing if pressed.
+    assets/js/candidate.js keeps it in step when rows are opened one at a time.
 
     Rendered only where there is more than one row to open: with one, the row's
     own chevron is the shorter path and this is chrome above a list of nine
@@ -301,7 +301,7 @@ layout: default
   {%- endcomment -%}
   {%- if openable_count > 1 %}
   <div class="candidate-grades-controls">
-    <button type="button" class="candidate-grades-controls__toggle" id="toggle-all-topics" data-label-expand="Expand all topics" data-label-collapse="Collapse all topics" hidden>Expand all topics</button>
+    <button type="button" class="candidate-grades-controls__toggle" id="toggle-all-topics" data-label-expand="Expand all topics" data-label-collapse="Collapse all topics" aria-label="Expand all topics" title="Expand all topics" hidden>+</button>
   </div>
   {%- endif %}
 
@@ -830,7 +830,21 @@ layout: default
       JS still get the leaflet from their browser's own print command, and this
       row is then empty and draws nothing.
     {%- endcomment -%}
-    <button type="button" class="btn btn-primary" id="print-scorecard" hidden>Print scorecard</button>
+    <button type="button" class="btn btn-primary btn-share" id="print-scorecard" hidden>
+      <span class="btn-share__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z"/></svg>
+      </span>Print scorecard
+    </button>
+    {%- comment -%}
+      The share card below, saved as a PNG rather than handed to a platform.
+      Drawn by candidate-share.js and hidden on the same terms as the share
+      buttons.
+    {%- endcomment -%}
+    <button type="button" class="btn btn-secondary btn-share" data-download-card hidden>
+      <span class="btn-share__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m-5-5 5 5 5-5M4 20h16"/></svg>
+      </span>Download this scorecard
+    </button>
     {%- comment -%}
       Share buttons, hidden on the same terms as the print button: what they
       share is an image drawn in a canvas from the rows above, so without
@@ -843,7 +857,7 @@ layout: default
       the page's own address, which the card prints so a reader can get back to
       it, and the text a post is opened with.
 
-      No Instagram, Facebook or X SDK is loaded, and none of these buttons sends
+      No Facebook or X SDK is loaded, and none of these buttons sends
       anything anywhere on its own: the image is made in the browser and handed
       to the platform the reader chose, either through the operating system's
       share sheet or as a file they attach themselves. Nothing about which
@@ -853,11 +867,6 @@ layout: default
       <span class="btn-share__icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg>
       </span>Share to Facebook
-    </button>
-    <button type="button" class="btn btn-secondary btn-share" data-share="instagram" hidden>
-      <span class="btn-share__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24" role="img" focusable="false" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
-      </span>Share to Instagram
     </button>
     <button type="button" class="btn btn-secondary btn-share" data-share="x" hidden>
       <span class="btn-share__icon" aria-hidden="true">
