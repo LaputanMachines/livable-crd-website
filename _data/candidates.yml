@@ -231,6 +231,14 @@
   slate: null
   website: "https://harjaspopli.ca"
 
+- name: Brendan Ralfs
+  display_name: "Ralfs, Brendan"
+  municipality: saanich
+  office: Councillor
+  standing: null
+  slate: null
+  website: null
+
 - name: Rishi Sharma
   display_name: "Sharma, Rishi"
   municipality: saanich
