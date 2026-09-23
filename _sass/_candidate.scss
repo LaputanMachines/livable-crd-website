@@ -852,6 +852,9 @@ summary.candidate-grade {
   color: $color-muted;
 }
 
+// The second list of a question that asks two things, set off from the first.
+.candidate-answer__answer-label--follow-up { margin-top: 1rem; }
+
 // A multi-select's ticked options. Boxed like a written answer, because it is
 // one: same ground, same border, so a question answered by ticking and a
 // question answered by typing read as the same kind of thing.

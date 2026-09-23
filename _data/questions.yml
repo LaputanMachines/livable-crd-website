@@ -25,6 +25,11 @@
 #             absence of `options` on a single-choice question means the option
 #             set is not recoverable from the spreadsheet, not that the question
 #             has none.
+#   follow_up_options
+#             The second menu of a question that asks two things (CLI-01), in
+#             form order. The form offers it only after some answers to the
+#             first, and a candidate's pick from it is the "Follow-up: " line of
+#             their answer.
 #   graded    Whether the question carries a grade. An ungraded question is
 #             published unscored: it was asked, and the answer informs the
 #             coalition, but no letter is assigned to it.
@@ -455,6 +460,7 @@ items:
       - "No"
       - Unsure
       - Decline to answer
+    follow_up_options:
       - "Yes"
       - "No"
       - Unsure

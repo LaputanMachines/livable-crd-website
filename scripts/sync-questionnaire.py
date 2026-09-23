@@ -399,6 +399,11 @@ QUESTIONS_HEADER = """\
 #             absence of `options` on a single-choice question means the option
 #             set is not recoverable from the spreadsheet, not that the question
 #             has none.
+#   follow_up_options
+#             The second menu of a question that asks two things (CLI-01), in
+#             form order. The form offers it only after some answers to the
+#             first, and a candidate's pick from it is the "Follow-up: " line of
+#             their answer.
 #   graded    Whether the question carries a grade. An ungraded question is
 #             published unscored: it was asked, and the answer informs the
 #             coalition, but no letter is assigned to it.
@@ -933,7 +938,7 @@ def form_options(blocks):
                 by_label.setdefault(current, [])
             continue
         if current and block.get("type") in TALLY_ANSWER_BLOCKS:
-            by_label[current].append((block["type"], payload))
+            by_label[current].append((block["type"], block.get("groupUuid"), payload))
 
     collapsed = {}
     for full_label, blocks_for_label in by_label.items():
@@ -941,13 +946,25 @@ def form_options(blocks):
             continue
         variant = VARIANT_RE.match(full_label)
         label = variant.group(1) if variant else full_label
-        picked = [p for kind, p in blocks_for_label if kind in TALLY_OPTION_BLOCKS]
-        written = [p for kind, p in blocks_for_label if kind in TALLY_WRITTEN_BLOCKS]
+        picked = [p for kind, _, p in blocks_for_label if kind in TALLY_OPTION_BLOCKS]
+        written = [p for kind, _, p in blocks_for_label if kind in TALLY_WRITTEN_BLOCKS]
+        # One question can hold two menus. CLI-01 asks about the municipality
+        # and then, only after a yes, about the Transit Commission; both menus
+        # sit under the one labelled title, and read as a single list they
+        # offered "No" and "Unsure" twice. Each menu is its own Tally group, so
+        # the first group is the question and anything after is its follow-up.
+        # A block with no group id falls into one group, as before.
+        groups = {}
+        for kind, group, p in blocks_for_label:
+            if kind in TALLY_OPTION_BLOCKS:
+                groups.setdefault(group, []).append(" ".join((p.get("text") or "").split()))
+        menus = list(groups.values()) or [[]]
         limits = [p["maxCharacters"] for p in written if p.get("hasMaxCharacters")]
         collapsed.setdefault(label, {})[full_label] = {
             # "Other, I have another idea!" is a choice a candidate can pick and
             # a column on the raw tab, so it is listed like any other.
-            "options": [" ".join((p.get("text") or "").split()) for p in picked],
+            "options": menus[0],
+            "follow_up_options": [o for menu in menus[1:] for o in menu],
             "limit": picked[0].get("maxChoices") if picked and picked[0].get("hasMaxChoices") else None,
             # A question that takes writing and offers nothing to pick. The
             # registry cannot see this: it infers a question's shape by counting
@@ -960,7 +977,8 @@ def form_options(blocks):
 
     out, conflicts = {}, []
     for label, per_variant in collapsed.items():
-        distinct = {frozenset(v["options"]) for v in per_variant.values()}
+        distinct = {(frozenset(v["options"]), frozenset(v["follow_up_options"]))
+                    for v in per_variant.values()}
         if len(distinct) > 1:
             conflicts.append(label)
             continue
@@ -1310,6 +1328,7 @@ def build_questions(registry, extra, choices, subject_order, warnings, errors):
             # page draws nothing where there is nothing to say.
             "methodology": clean_text(row[R_METHODOLOGY] if R_METHODOLOGY < len(row) else ""),
             "options": choice.get("options") or [],
+            "follow_up_options": choice.get("follow_up_options") or [],
             "option_limit": unstated_limit(choice.get("limit"), question),
         })
 
@@ -1388,6 +1407,11 @@ def render_questions(items, subject_order):
             # allows five of sixteen, which changes what the list means.
             if q.get("option_limit"):
                 parts.append(f"    option_limit: {q['option_limit']}")
+        # The second menu of a question that asks two things, offered only after
+        # some answers to the first. See form_options().
+        if q.get("follow_up_options"):
+            parts.append("    follow_up_options:")
+            parts.extend(f"      - {scalar(option)}" for option in q["follow_up_options"])
         # GEN-02's line items, so /questionnaire/ can show what the allocation is
         # split across without a candidate having answered it.
         if q.get("areas"):

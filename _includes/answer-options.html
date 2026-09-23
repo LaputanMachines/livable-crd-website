@@ -21,6 +21,12 @@
       single choice whose answer is none of the options is typed text in place
       of one, which marks the "Other" option where the question has one.
 
+  A question with `follow_up_options` (CLI-01) asks a second thing, offered
+  only after some answers to the first. The pick from it is the answer's
+  "Follow-up: " line, and it gets a list of its own under the first, drawn the
+  same way. Where the line is absent the follow-up was never put to them, so no
+  second list is drawn.
+
   The typed text is shown under the list only where it says something the list
   does not: free text in place of an option, or a follow-up. A multi-select
   whose picks were read is not repeated as a paragraph of commas.
@@ -72,7 +78,23 @@
   {%- endif -%}
 {%- endunless -%}
 
+{%- comment -%}
+  The follow-up's pick, taken off the answer so it is not also shown as text.
+{%- endcomment -%}
+{%- assign ao_follow = "" -%}
+{%- if include.asked.follow_up_options.size > 0 and ao_answer contains "Follow-up: " -%}
+  {%- comment -%} Everything after the marker: a typed follow-up can run to several lines. {%- endcomment -%}
+  {%- assign ao_parts = ao_answer | split: "Follow-up: " -%}
+  {%- assign ao_follow = ao_answer | remove_first: ao_parts[0] | remove_first: "Follow-up: " | strip -%}
+  {%- assign ao_answer = ao_parts[0] | strip -%}
+{%- endif -%}
+
+{%- comment -%}
+  One tick per pick. A single choice matches its first line against the list,
+  and a list that ever repeats an option would otherwise tick every copy.
+{%- endcomment -%}
 {%- assign ao_count = 0 -%}
+{%- assign ao_single_marked = false -%}
 {%- capture ao_items -%}
   {%- for option in include.asked.options -%}
   {%- assign ao_on = false -%}
@@ -81,8 +103,9 @@
     {%- assign ao_on = true -%}
   {%- elsif ao_head == "Other" and ao_other_on -%}
     {%- assign ao_on = true -%}
-  {%- elsif ao_multi == false and ao_first == option -%}
+  {%- elsif ao_multi == false and ao_first == option and ao_single_marked == false -%}
     {%- assign ao_on = true -%}
+    {%- assign ao_single_marked = true -%}
   {%- endif -%}
   {%- if ao_on %}{% assign ao_count = ao_count | plus: 1 %}{% endif %}
   <li{% if ao_on %} class="is-chosen"{% endif %}>{{ option | escape }}{% if ao_on %}<span class="sr-only"> (chosen)</span>{% endif %}</li>
@@ -110,5 +133,32 @@
   </ul>
   {%- if ao_rest != "" %}
   <div class="candidate-answer__text">{{ ao_rest | escape | newline_to_br }}</div>
+  {%- endif %}
+  {%- if ao_follow != "" %}
+  {%- assign ao_follow_hit = false -%}
+  {%- if include.asked.follow_up_options contains ao_follow %}{% assign ao_follow_hit = true %}{% endif -%}
+  {%- assign ao_follow_count = 0 -%}
+  {%- capture ao_follow_items -%}
+    {%- for option in include.asked.follow_up_options -%}
+    {%- assign ao_on = false -%}
+    {%- assign ao_head = option | slice: 0, 5 -%}
+    {%- if ao_follow_hit and option == ao_follow and ao_follow_count == 0 -%}
+      {%- assign ao_on = true -%}
+    {%- elsif ao_follow_hit == false and ao_head == "Other" -%}
+      {%- assign ao_on = true -%}
+    {%- endif -%}
+    {%- if ao_on %}{% assign ao_follow_count = ao_follow_count | plus: 1 %}{% endif %}
+    <li{% if ao_on %} class="is-chosen"{% endif %}>{{ option | escape }}{% if ao_on %}<span class="sr-only"> (chosen)</span>{% endif %}</li>
+    {%- endfor -%}
+  {%- endcapture -%}
+  <span class="candidate-answer__answer-label candidate-answer__answer-label--follow-up">
+    Follow-up: {% if include.name %}{{ include.name }} chose {{ ao_follow_count }}{% else %}Chose {{ ao_follow_count }}{% endif %} of {{ include.asked.follow_up_options.size }} options
+  </span>
+  <ul class="candidate-answer__options candidate-answer__options--all">
+    {{- ao_follow_items -}}
+  </ul>
+  {%- unless ao_follow_hit %}
+  <div class="candidate-answer__text">{{ ao_follow | escape | newline_to_br }}</div>
+  {%- endunless %}
   {%- endif %}
 </div>

@@ -316,6 +316,19 @@ body_class: page-questionnaire
           {%- endfor %}
         </ul>
         {%- comment -%}
+          The second menu of a question that asks two things (CLI-01's Transit
+          Commission follow-up), kept apart so the two menus do not read as one
+          list offering "No" twice.
+        {%- endcomment -%}
+        {%- if q.follow_up_options %}
+        <p class="questionnaire-item__meta">Follow-up</p>
+        <ul class="questionnaire-item__options questionnaire-item__options--{{ option_control }}">
+          {%- for option in q.follow_up_options %}
+          <li>{{ option }}</li>
+          {%- endfor %}
+        </ul>
+        {%- endif %}
+        {%- comment -%}
           The cap, where the form sets one the question does not mention. TRN-01
           reads "select all that apply" and stops a candidate at four of its six
           — worth knowing while a team is still deciding which four. Suppressed
