@@ -382,7 +382,7 @@
   office: Councillor
   standing: challenger
   slate: Victoria For All
-  website: "https://www.instagram.com/peterrose_gibbs/reels/"
+  website: "https://www.victoriaforall.ca/"
 
 - name: Martin Girard
   display_name: "Girard, Martin"
@@ -446,7 +446,7 @@
   office: Councillor
   standing: incumbent-councillor
   slate: Victoria For All
-  website: null
+  website: "https://www.victoriaforall.ca/"
 
 - name: Bella Lee
   display_name: "Lee, Bella"
