@@ -370,6 +370,37 @@ summary.candidate-grade {
   }
 }
 
+// An open topic's row sticks under the site header and the candidate bar while
+// its panel scrolls past, so a reader deep in a long topic still sees which
+// topic and which grade they are reading. Sticky inside its own <details>, so
+// it lets go when that topic's panel ends and the next row takes its place.
+//
+// Offset by --candidate-bar-live-h, not --candidate-bar-h: the bar only exists
+// where assets/js/candidate.js runs, and this one is only ever set by that
+// script, so a page without it sticks flush under the header instead of below a
+// gap where the bar would have been.
+//
+// Minus 2px, on the same terms as the municipality bands under the scorecard
+// matrix's topic row: the bar already sits a pixel up into the header, and this
+// row takes another pixel of overlap against the bar, so a fractional measured
+// height leaves no seam of page showing through. The bar is z-index 50 against
+// this row's 2, so the overlap is painted over.
+//
+// Needs its own ground, or the panel scrolls through it; below the bar (50)
+// and the header (100). And its own bottom edge: without one, text scrolling
+// up under the stuck row is cut off along an invisible line. The edge takes
+// over from the dashed rule the panel used to open with, which would otherwise
+// sit directly under it.
+.candidate-grade__disclosure[open] > summary.candidate-grade {
+  position: sticky;
+  top: calc(var(--site-header-h, 74px) + var(--candidate-bar-live-h, 0px) - 2px);
+  z-index: 2;
+  background: $color-surface;
+  border-bottom: 2px solid $color-border;
+
+  &:hover { background: $color-bg-warm; }
+}
+
 // Rotates to point down when the topic is open. The only thing in the row
 // saying it can be opened at all.
 //
@@ -541,7 +572,6 @@ summary.candidate-grade {
 .candidate-grade__detail {
   padding: $space-sm $space-gutter $space-md;
   background: $color-bg-warm;
-  border-top: 1px dashed rgba($color-border, 0.4);
 }
 
 .candidate-grade__meta {

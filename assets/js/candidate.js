@@ -151,7 +151,17 @@
   // and which clamp step depends on the viewport.
   function publishHeight() {
     var h = Math.ceil(bar.getBoundingClientRect().height);
-    if (h > 0) document.documentElement.style.setProperty('--candidate-bar-h', h + 'px');
+    if (h > 0) {
+      document.documentElement.style.setProperty('--candidate-bar-h', h + 'px');
+      // Only ever set here, so an open topic's sticky row (see
+      // .candidate-grade__disclosure in _sass/_candidate.scss) leaves no gap
+      // for a bar on a page where this never ran. Floored rather than ceiled,
+      // like the heights site-header.js and scorecard.js publish for the rows
+      // stuck under them: an overlap the bar paints over costs nothing, a gap
+      // shows the page through the seam.
+      var stuck = Math.floor(bar.getBoundingClientRect().height);
+      document.documentElement.style.setProperty('--candidate-bar-live-h', stuck + 'px');
+    }
   }
 
   var queued = false;
