@@ -949,12 +949,13 @@ tr:hover td { background: $color-bg-warm; }
 }
 
 // A small lift on the chip under the pointer, so a reader scanning the matrix
-// can see which cell they are about to open. Every chip here is a link, not only
-// the letters, so every one gets it. Hover-capable pointers only: on touch the
-// state sticks after a tap and leaves one chip enlarged. Under reduced motion
-// the global rule in _animations.scss makes the change instant.
+// can see which cell they are about to open. Not on the no-response dash or the
+// declined X: neither has anything in that topic to open onto, and a chip that
+// lifts promises otherwise. Hover-capable pointers only: on touch the state
+// sticks after a tap and leaves one chip enlarged. Under reduced motion the
+// global rule in _animations.scss makes the change instant.
 @media (hover: hover) {
-  .scorecard-matrix__cell-link:hover .grade {
+  .scorecard-matrix__cell-link:hover .grade:not(.grade--pending):not(.grade--declined) {
     transform: scale(1.2);
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   }
