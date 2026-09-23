@@ -355,7 +355,12 @@ description: >-
                       the script.
                     {%- endcomment -%}
                     {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned or c.declined_statement" -%}
-                    <span class="slate-legend__item" data-slate-total="{{ sg.size }}" data-slate-returned="{{ sg_returned.size }}">
+                    {%- comment -%}
+                      data-slate matches the rows' own data-slate, which is how
+                      scorecard.js turns this entry into a switch for that
+                      slate's tint. Without the script it stays a plain key.
+                    {%- endcomment -%}
+                    <span class="slate-legend__item" data-slate="{{ sg.name | downcase }}" data-slate-total="{{ sg.size }}" data-slate-returned="{{ sg_returned.size }}">
                       <span class="slate-legend__swatch {{ site.data.slate_classes[sg.name] }}" aria-hidden="true"></span>{{ sg.name }} (<span class="slate-legend__count">{{ sg.size }}</span>)
                     </span>
                     {%- endif -%}

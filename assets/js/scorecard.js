@@ -390,27 +390,97 @@
   }
 
   // --- Slate highlighting ---------------------------------------------------
-  // One tint per slate, switched on for every municipality at once from the
-  // "Highlight slate candidates" pill in the filter bar. The palette classes are
-  // already on the rows (see scorecard/index.md); all this does is decide
-  // whether they paint anything, so nothing here knows a colour. Each
-  // municipality's band keeps its slate key, which needs no script.
+  // One tint per slate. The palette classes are already on the rows (see
+  // scorecard/index.md); all this does is decide which of them paint, so
+  // nothing here knows a colour.
+  //
+  // Two controls share one state, the set of lit slates. The "Highlight slate
+  // candidates" pill in the filter bar lights every slate, or clears them all
+  // if any are lit. Each entry in a municipality's slate key becomes a switch
+  // for that one slate, so a reader can light everything and then drop the one
+  // colour they do not care about, or light a single slate from nothing. The
+  // pill reads pressed while any slate is lit.
+  //
+  // Keyed by slate name, lowercased the same way the rows' data-slate is, so a
+  // slate running in two municipalities switches in both.
   //
   // Independent of every filter above: highlighting changes how rows look, not
   // which rows show, so it deliberately does not touch apply(). Off by default.
   var slateButton = document.getElementById('slate-highlight');
   var slateGroup = document.getElementById('slate-filtergroup');
+  var litSlates = {};
+  var slateToggles = [];
+
+  function anySlateLit() {
+    for (var k in litSlates) {
+      if (litSlates[k]) return true;
+    }
+    return false;
+  }
+
+  function paintSlates() {
+    // Marked on the rows themselves rather than on a tbody, because
+    // favourites.js MOVES rows into the pinned group, and a class on the row
+    // travels with it.
+    rows.forEach(function (row) {
+      var slate = row.getAttribute('data-slate');
+      row.classList.toggle('is-slate-lit', !!(slate && litSlates[slate]));
+    });
+    slateToggles.forEach(function (t) {
+      var on = !!litSlates[t.slate];
+      t.button.setAttribute('aria-pressed', String(on));
+      t.button.title = (on ? 'Stop highlighting ' : 'Highlight ') + t.name;
+    });
+    if (slateButton) {
+      var any = anySlateLit();
+      slateButton.setAttribute('aria-pressed', String(any));
+      slateButton.classList.toggle('is-active', any);
+    }
+  }
+
   if (slateButton && slateGroup) {
     slateGroup.hidden = false;
-    slateButton.addEventListener('click', function () {
-      var on = this.getAttribute('aria-pressed') !== 'true';
-      this.setAttribute('aria-pressed', String(on));
-      this.classList.toggle('is-active', on);
-      // Marked on the rows themselves rather than on a tbody, because
-      // favourites.js MOVES rows into the pinned group, and a class on the
-      // row travels with it.
-      rows.forEach(function (row) { row.classList.toggle('is-slate-lit', on); });
+
+    // The key's entries, upgraded in place: the span keeps its data-slate-*
+    // counts (read by apply() above) and gains a button holding what it showed.
+    Array.prototype.slice.call(table.querySelectorAll('.slate-legend__item[data-slate]')).forEach(function (item) {
+      var slate = item.getAttribute('data-slate');
+      if (!slate) return;
+      var button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'slate-legend__toggle';
+      // The swatch, then the name and count in one span: loose in the flex
+      // button, the text either side of the count would each become a flex
+      // item and the gap would open up "( 6 )".
+      var label = document.createElement('span');
+      while (item.firstChild) {
+        var node = item.firstChild;
+        if (node.nodeType === 1 && node.classList.contains('slate-legend__swatch')) button.appendChild(node);
+        else label.appendChild(node);
+      }
+      button.appendChild(label);
+      item.appendChild(button);
+      var name = (button.textContent || '').replace(/\s*\(\d+\)\s*$/, '').trim();
+      button.addEventListener('click', function () {
+        litSlates[slate] = !litSlates[slate];
+        paintSlates();
+      });
+      slateToggles.push({ slate: slate, name: name, button: button });
     });
+
+    slateButton.addEventListener('click', function () {
+      var on = !anySlateLit();
+      litSlates = {};
+      if (on) {
+        rows.forEach(function (row) {
+          var slate = row.getAttribute('data-slate');
+          if (slate) litSlates[slate] = true;
+        });
+      }
+      paintSlates();
+    });
+
+    paintSlates();
   }
 
   readUrlFilters();

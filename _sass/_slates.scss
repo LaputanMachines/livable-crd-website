@@ -95,10 +95,42 @@
   border: 1px solid rgba($inky-purple, 0.35);
 }
 
+// Each key entry is also a switch for its slate's tint, once scorecard.js has
+// wrapped its contents in this button. Styled as the key it was, not as a pill:
+// the band has no room for a row of bordered controls, and the swatch carries
+// the state. Filled while that slate's rows are tinted, hollow while they are
+// not, so the key still shows every slate's colour with the table uncoloured.
+.slate-legend__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin: -0.15rem -0.25rem;
+  padding: 0.15rem 0.25rem;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover { text-decoration: underline; text-underline-offset: 0.2em; }
+
+  &:focus-visible {
+    outline: 2px solid $color-accent;
+    outline-offset: 1px;
+  }
+
+  &[aria-pressed="false"] .slate-legend__swatch {
+    background: transparent;
+    border: 2px solid var(--slate-colour, #{$color-muted});
+  }
+}
+
 // --- The row tint ------------------------------------------------------------
 // Applied only to rows assets/js/scorecard.js has marked .is-slate-lit, which
-// it does per municipality: lit on load, and a reader can drop the colour on
-// any one group without touching the others.
+// it does per slate: the filter-bar pill lights them all, and each entry in a
+// municipality's key switches its own slate on or off.
 //
 // The class is on the row rather than the municipality's tbody because
 // favourites.js moves rows between tbodies; see the note in scorecard.js.
