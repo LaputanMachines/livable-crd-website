@@ -7602,10 +7602,14 @@ candidates:
             max_points: 3
             weight: "16.67%"
             rationale: >-
+              Clearly recognizes municipal responsibility for arts and culture
+              and identifies municipal support for festivals as meaningful.
               Provides directive 'general' support, citing engagement through
               participation, return of buccaneer days, and more 'art' but
               lacks concrete commitments, tools, mechanisms and/or policies to
-              actively strengthen the arts and culture sector. Sneaks in at 2.
+              actively strengthen the arts and culture sector. The response is
+              more about community events than a developed
+              economic-development strategy. Does not warrant a 3
             answer: >-
               I would commit to serving as a Council liaison to one of
               Esquimalt's festivals to learn more about how Council can
@@ -7619,8 +7623,11 @@ candidates:
             max_points: 3
             weight: "13.33%"
             rationale: >-
-              Provides meaningful cultural-space implementation support but
-              not the strongest structural combination.
+              Supports a municipal cultural-space strategy, public reporting
+              and an updated inventory of cultural spaces/vulnerable venues.
+              This is a coherent implementation framework, but the selected
+              tools are primarily strategic/administrative rather than direct
+              long-term space protection.
             selected:
               - >-
                 A regularly updated inventory of cultural spaces and
@@ -7631,7 +7638,12 @@ candidates:
             points: 3
             max_points: 3
             weight: "10.00%"
-            rationale: Supports consequential regulatory/permitting reforms.
+            rationale: >-
+              Supports the full range of meaningful regulatory reforms,
+              including simplified small-scale events, zoning review and
+              review of disproportionate nonprofit costs, alongside
+              coordination and published criteria. This includes multiple
+              consequential policy levers.
             selected:
               - >-
                 Published decision-making criteria, so requirements are not
@@ -7646,7 +7658,11 @@ candidates:
             points: 0
             max_points: 3
             weight: "16.67%"
-            rationale: "Explicitly declines to answer. Results in automatic '0'"
+            rationale: >-
+              Declines to answer a question specifically asking which
+              municipal mechanisms she would support to preserve and secure
+              long-term cultural space. Under the rubric, refusal to engage
+              with the question is a 0.
             selected:
               - Decline to answer.
           - label: ART-06
@@ -7664,8 +7680,9 @@ candidates:
             max_points: 3
             weight: "10.00%"
             rationale: >-
-              Prioritizes overall community benefit rather than cultural-space
-              preservation/replacement.
+              “Overall community benefit” recognizes a community consideration
+              but does not specifically identify cultural-space preservation,
+              replacement, mitigation or protection.
             answer: Evaluate proposals based on overall community benefit.
           - label: ART-08
             points: 2
@@ -7674,7 +7691,8 @@ candidates:
             rationale: >-
               Provides municipal tax-relief incentives for current eligible
               NFP-owned properties, and introduction of new tax-incentive to
-              commercial property owners.
+              commercial property owners which is somewhat protective and
+              expansive in infrastructure supply
             selected:
               - >-
                 Offer property tax incentives for property owners providing
@@ -23904,7 +23922,7 @@ candidates:
       housing: F
       climate: B
       arts: B
-      rolling-cycling: A
+      rolling-cycling: B
       walking: B
       governance: B
     subjects:
@@ -24434,7 +24452,7 @@ candidates:
               Explore a regional approach, as there may be more funding and
               supports available for cultural opportunities.
       - id: rolling-cycling
-        grade: A
+        grade: B
         questions:
           - label: ROL-01
             grade: A
@@ -24450,7 +24468,7 @@ candidates:
               Yes
               Follow-up: Connect Marigold Road from Carey Road to Burnside Road West. This is a major Safter School Travel Route for Glanford Area families and students, moving east to St Joseph's, Colquitz Middle School, Spectrum and Marigold elementary as well as Marigold families and students moving west to Glanford Middle School, Mackenzie, and Pacific Christian school. In 2008 it was identified as a 10-15 year priority. Pedestrians, Rolling and Cycling for trail and road, Vehicles, and Transit all converge at Marigold and Interurban and Marigold and Burnside Road West. at least three crashes occurred during the summer months within the project area.
           - label: ROL-02
-            grade: null
+            grade: C-
             weight: "15%"
             rationale: >-
               Is unsure about making physical protection rather than paint the
@@ -45389,8 +45407,9 @@ candidates:
             grade: B
             weight: "15%"
             rationale: >-
-              Grade reduced because candidate dentified support for transit as
-              priority. This category grades support for rolling and cycling.
+              Grade reduced because candidate identified support for transit
+              as priority. This category grades support for rolling and
+              cycling.
             answer: |-
               Yes
               Follow-up: I would invest in improving access to public transit.
@@ -51402,9 +51421,9 @@ candidates:
             max_points: 3
             weight: "6.67%"
             rationale: >-
-              Expresses strong support for arts primarily through the CRD Arts
-              program, but identifies no significant direct View Royal
-              municipal arts strategy or program.
+              Says arts/culture are core, but the supporting answer speaks
+              primarily to continued CRD Arts support rather than View Royal's
+              economic-development strategy.
             answer: |-
               Yes
               Follow-up: I always have been a strong supporter of the CRD Arts programs and I will continue to be. View Royal is a small jurisdiction and we do not have a local arts program but I will always support the arts in our communities via the CRD arts Committee.
@@ -51413,9 +51432,10 @@ candidates:
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Identifies public art and summer performing-arts programming as
-              desired actions, but provides no sufficiently concrete
-              first-year commitment or measurable four-year outcome.
+              Public art and summer performing arts/music are relevant ideas,
+              but “would love to” / “would also like to see” is aspirational
+              rather than a concrete first-year commitment, and there is no
+              measurable four-year outcome.
             answer: >-
               I would love to implement a public art program similar to Oak
               Bay's in View Royal. I would also like to see us have some
@@ -51426,10 +51446,9 @@ candidates:
             max_points: 3
             weight: "13.33%"
             rationale: >-
-              Selects a regional cultural-space strategy, nonprofit
-              partnerships for permanent assets and long-term
-              affordability/stability tools, providing meaningful
-              implementation mechanisms.
+              Selects all three substantive implementation mechanisms:
+              regional strategy, nonprofit partnerships for permanent assets,
+              and municipal tools for long-term affordability/stability.
             selected:
               - >-
                 Establishing municipal tools to support long-term
@@ -51443,10 +51462,10 @@ candidates:
             max_points: 3
             weight: "10.00%"
             rationale: >-
-              Supports service standards, simplified small-scale events and
-              departmental coordination, representing meaningful
-              administrative reforms but not the more consequential regulatory
-              changes.
+              Supports service standards, simplified small-scale events, and
+              departmental coordination. These are useful administrative
+              reforms, but he does not select the higher-impact
+              permitting/zoning review lever.
             selected:
               - "Clear, published service standards for permit decisions."
               - Simplified requirements for small-scale events.
@@ -51456,10 +51475,9 @@ candidates:
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Supports regional cultural infrastructure funding and nonprofit
-              acquisition partnerships, but the response relies substantially
-              on the CRD rather than identifying comparable direct municipal
-              mechanisms.
+              Supports a regional cultural infrastructure funding program and
+              nonprofit acquisition partnerships — both are high-impact
+              structural mechanisms under the rubric.
             answer: >-
               Create a regional cultural infrastructure funding program
               through municipalities/CRD., Partnerships with nonprofits to
@@ -51489,9 +51507,9 @@ candidates:
             max_points: 3
             weight: "10.00%"
             rationale: >-
-              States that proposals should be evaluated based on overall
-              community benefit, but does not specifically address cultural
-              displacement, replacement or mitigation.
+              “Overall community benefit” recognizes a community consideration
+              but does not specifically identify cultural-space preservation,
+              replacement, mitigation or protection.
             answer: Evaluate proposals based on overall community benefit.
           - label: ART-08
             points: 0
