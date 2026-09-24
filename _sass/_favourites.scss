@@ -35,10 +35,17 @@
 }
 
 // The star and the reorder handle stack instead of sitting side by side. The
-// name column is 7rem wide on a phone and two 1.5rem controls in a row would
-// claim 3.25rem of it with the gap; stacked they claim 1.5rem, and the vertical
-// room is free: a pinned row's name has already wrapped to two or three lines,
-// which is taller than the two buttons together.
+// name column is 8rem wide on a phone and two 1.5rem controls in a row would
+// claim 3.25rem of it with the gap; stacked they claim 1.5rem. Side by side is
+// no better on a desktop: the pair costs the name 30px there, enough to wrap a
+// dozen names in a pinned row that sit on one line everywhere else.
+//
+// Stacked, the pair must not make a pinned row taller than the row it was moved
+// out of, or the favourites block reads looser than the table under it. So the
+// two sit flush (each is already the 24px minimum target, which needs no
+// spacing around it) and a negative block margin lets the cluster reach into
+// the cell's padding: its 3rem counts as 2.5rem, just under a name plus its
+// meta line, so the text still sets the row height.
 //
 // Only the star is in the markup. favourites.js inserts the handle after it and
 // inside this element, so the column builds itself as rows are pinned.
@@ -47,10 +54,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  // Tighter than the row gap: these two are one control cluster, and the space
-  // between them should read as smaller than the space separating them from the
-  // name.
-  gap: 0.1rem;
+  gap: 0;
+  margin-block: -0.25rem;
 }
 
 // Shared shape for both row controls. 1.5rem is 24px: the WCAG 2.5.8 minimum
@@ -233,13 +238,12 @@
 }
 
 @media (min-width: 720px) {
-  // Room to breathe once the matrix is not fighting for every pixel: a 28px
-  // target is comfortably above the 24px floor, and matches the grade chips
-  // sitting alongside it.
+  // Room to breathe once the matrix is not fighting for every pixel, but in
+  // width only. The height stays at the 24px floor so the stacked pair still
+  // fits inside a two-line row (see .fav-controls).
   .fav-toggle,
   .fav-handle {
     width: 1.75rem;
-    height: 1.75rem;
   }
 
   .fav-toggle__icon { font-size: 1.15rem; }
