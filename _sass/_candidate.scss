@@ -705,6 +705,39 @@ summary.candidate-grade {
   a { color: inherit; }
 }
 
+// The question's grading rule, from the registry's Methodology column. A quiet
+// disclosure under the rationale: same muted ink, a thinner rule than the
+// rationale's accent one, so it reads as reference rather than as more of the
+// argument for this candidate's grade.
+.candidate-answer__method {
+  margin: 0.5rem 0 0;
+  padding-left: $space-sm;
+  border-left: 2px solid rgba($color-border, 0.4);
+  font-size: 0.9rem;
+  color: $color-muted;
+
+  > summary {
+    cursor: pointer;
+    font-family: $font-display;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  > p {
+    margin: 0.25rem 0 0;
+    line-height: 1.55;
+    max-width: 68ch;
+  }
+
+  // Partners put links in some of these; wrap mid-address in a narrow column.
+  a {
+    color: $color-accent;
+    overflow-wrap: anywhere;
+  }
+}
+
 // The answer, laid out rather than hidden behind a second toggle: opening the
 // topic is the reader asking for its detail, and a click per answer after that
 // is a gate on what they just asked to see.

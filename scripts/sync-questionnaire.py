@@ -137,10 +137,11 @@ PUBLISH_GRADES = True
 # each question is scored. Held back separately from the grades because it is
 # about the questions rather than the answers: while any candidate is still
 # filling in the questionnaire, publishing it would tell them how to score well.
-# While this is False every question is written with no methodology and
-# /questionnaire/ draws nothing under it. PUBLISH_METHODOLOGY=1 in the
-# environment, or --publish-methodology, overrides it for a single run.
-PUBLISH_METHODOLOGY = False
+# While this is False every question is written with no methodology and neither
+# /questionnaire/ nor a candidate's page draws anything for it. Flipped to True
+# on 2026-09-24, after the grades were released. PUBLISH_METHODOLOGY=0 in the
+# environment, or --no-publish-methodology, overrides it for a single run.
+PUBLISH_METHODOLOGY = True
 
 # Those checkbox columns are gone from the sheet, but grading_tabs.py and
 # appsscript/Code.gs still know the suffix and would write them again if a tab
@@ -151,9 +152,8 @@ DEPLOY_SUFFIX = " - Deploy to website"
 # Registry columns, 0-based. Mirrors REGISTRY_HEADERS in grading_tabs.py.
 #
 # Methodology was inserted between Weight and Raw columns on 2026-09-18, which
-# moved Raw columns, Notes and Owner one right. Nothing here reads Methodology -
-# it is graders' own prose about how a question is scored, and the site does not
-# publish it - but Owner moving is exactly the kind of shift that publishes the
+# moved Raw columns, Notes and Owner one right. Methodology is published as each
+# question's `methodology` (see PUBLISH_METHODOLOGY), and Owner moving is exactly the kind of shift that publishes the
 # wrong column without erroring, so REGISTRY_HEADERS below is checked against
 # the sheet before any of these indexes is trusted.
 R_LABEL, R_CATEGORY, R_QUESTION, R_TYPE, R_GRADED, R_WEIGHT, R_METHODOLOGY, \
@@ -426,10 +426,10 @@ QUESTIONS_HEADER = """\
 #   methodology  How the answers to this question are graded, in the owning
 #             organization's own words, straight from the registry's
 #             `Methodology` column. Rendered under the question on
-#             /questionnaire/, and nowhere else.
+#             /questionnaire/ and, closed by default, under the grade rationale
+#             on each candidate's page.
 #
-#             Omitted where the cell is blank, which it is on eighteen of them,
-#             and the page draws nothing rather than apologizing for it. Present
+#             Omitted where the cell is blank, and the page draws nothing rather than apologizing for it. Present
 #             on one ungraded question (HLT-01), whose cell says why it is asked
 #             instead of how it is scored, which is why the page picks its
 #             heading off `graded` rather than putting "How this is graded" over

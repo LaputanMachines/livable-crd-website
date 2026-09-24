@@ -383,7 +383,7 @@ body_class: page-questionnaire
           wants the question and the options, and somebody arguing with a grade
           wants this.
 
-          Eighteen of the questions have nothing in that column and draw no
+          Questions with nothing in that column draw no
           block at all, rather than a heading over an apology. The heading turns
           on `graded` because one ungraded question carries text there (HLT-01,
           which says why it is asked), and "How this is graded" over a question

@@ -583,6 +583,26 @@ layout: default
               <p class="candidate-answer__rationale"><strong>Why this {% if q.max_points %}score{% else %}grade{% endif %}:</strong> {{ q.rationale }}</p>
               {%- endif %}
               {%- assign asked = site.data.questions.items | where: "label", q.label | first %}
+              {%- comment -%}
+                How the question is graded for everyone, in the grading
+                organization's words: the registry's Methodology column, the same
+                text /questionnaire/ prints under the question. Under the
+                rationale because it is the rule and the rationale is this
+                candidate's case under it; a reader checks one against the other.
+
+                Closed, unlike the answers below. The rationale already says why
+                this grade, and the rule is the same paragraph on every
+                candidate's page, so it is there for the reader who wants to
+                argue with a letter rather than laid across every question.
+                Filters in the same order as /questionnaire/ for the same reason:
+                `autolink` escapes the raw cell before anything else touches it.
+              {%- endcomment -%}
+              {%- if asked.methodology %}
+              <details class="candidate-answer__method">
+                <summary>How this question is graded</summary>
+                <p>{{ asked.methodology | autolink | newline_to_br }}</p>
+              </details>
+              {%- endif %}
               {%- if asked.options.size > 0 %}
               {% include answer-options.html q=q asked=asked name=c.name %}
               {%- else %}
@@ -707,6 +727,17 @@ layout: default
                   <span class="candidate-answer__label">{{ q.label }}</span>
                 </div>
                 <p class="candidate-answer__question">{{ asked.question }}</p>
+                {%- comment -%}
+                  An ungraded question's Methodology cell says why it is asked
+                  (HLT-01), so the label follows /questionnaire/'s rather than
+                  promising a grading rule.
+                {%- endcomment -%}
+                {%- if asked.methodology %}
+                <details class="candidate-answer__method">
+                  <summary>Why we ask this</summary>
+                  <p>{{ asked.methodology | autolink | newline_to_br }}</p>
+                </details>
+                {%- endif %}
                 {%- if q.allocation.size > 0 %}
                 {%- comment -%}
                   GEN-02 is twelve amounts, not a sentence, so it is laid out as
