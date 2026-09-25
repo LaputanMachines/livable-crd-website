@@ -11,7 +11,7 @@ description: >-
 **Victoria, BC, September 25, 2026**. Livable CRD has corrected a processing error
 that caused the scorecard to show eight candidates' answers to the questionnaire's
 $10 million budget question as adding up to much less than $10 million. Each of
-those candidates allocated the full amount. The mistake was ours, not theirs.
+those candidates allocated the full amount.
 
 ## What went wrong
 
@@ -56,10 +56,8 @@ both the amounts and the bars were wrong.
 
 The budget question is not graded. It helps voters understand a candidate's
 priorities but does not count toward any letter grade, so no grade on the
-[scorecard]({{ '/scorecard/' | relative_url }}) has changed. No other question was
-affected.
+[scorecard]({{ '/scorecard/' | relative_url }}) has changed. 
 
 We apologize to the candidates involved and to the voters who read their answers
 before the correction. Anyone who spots something on the scorecard that doesn't
 match what a candidate submitted can [contact us]({{ '/contact/' | relative_url }}).
-The coalition informs; it does not endorse.
