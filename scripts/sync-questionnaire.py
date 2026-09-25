@@ -54,6 +54,7 @@ Usage:
 
 import argparse
 import csv
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 import importlib.util
 import io
 import json
@@ -370,6 +371,14 @@ GEN02_AREAS = [
     "Unhoused Resident Services",
     "Community-Based Clinics",
 ]
+
+# What every GEN-02 answer is meant to add up to. The form states it but does
+# not enforce it, and some candidates typed their figures in millions ("1.5" for
+# $1,500,000). An answer totalling exactly GEN02_TOTAL_IN_MILLIONS is read that
+# way; any other total that misses GEN02_TOTAL is published as entered, with a
+# warning, because guessing a unit for it would be a guess.
+GEN02_TOTAL = 10_000_000
+GEN02_TOTAL_IN_MILLIONS = 10
 
 QUESTIONS_HEADER = """\
 # Every question on the coalition candidate questionnaire.
@@ -1600,21 +1609,36 @@ def allocation_lines(pairs, where, warnings):
     in the template because Liquid has neither integer division that rounds the
     way a percentage should nor a delimiter filter, and a bar chart whose widths
     are worked out in a template is a bar chart nobody can test.
+
+    Amounts are parsed as Decimal and rounded to the dollar, never truncated:
+    int(float("0.75")) is 0, which is how an answer typed in millions once
+    published as $5 of its $10 million.
     """
-    amounts = []
+    parsed = []
     for area, raw in pairs:
         cleaned = raw.replace("$", "").replace(",", "").strip()
         if not cleaned:
             continue
         try:
-            amounts.append((area, int(float(cleaned))))
-        except ValueError:
+            parsed.append((area, Decimal(cleaned)))
+        except InvalidOperation:
             warnings.append(
                 f"{where}: {area!r} is {raw!r}, which is not a number, so the "
                 f"allocation is not published"
             )
             return []
 
+    entered = sum(amount for _, amount in parsed)
+    if entered == GEN02_TOTAL_IN_MILLIONS:
+        parsed = [(area, amount * 1_000_000) for area, amount in parsed]
+    elif abs(entered - GEN02_TOTAL) >= 1:
+        warnings.append(
+            f"{where}: the allocation totals ${entered:,}, not ${GEN02_TOTAL:,}; "
+            f"published as entered"
+        )
+
+    amounts = [(area, int(amount.quantize(Decimal(1), rounding=ROUND_HALF_UP)))
+               for area, amount in parsed]
     total = sum(amount for _, amount in amounts)
     return [
         (area, amount, f"${amount:,}", round(amount * 100 / total) if total else 0)

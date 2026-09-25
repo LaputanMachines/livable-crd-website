@@ -869,53 +869,53 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Transit
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Walking Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Rolling & Cycling Infrastructure"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Roadway Infrastructure
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Policing
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Fire & Emergency Services"
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Parks & Recreation"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Arts & Culture"
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Climate Action & Environment"
-                amount: 1
-                display: $1
-                share: 14
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
               - area: Unhoused Resident Services
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Community-Based Clinics
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
           - label: GEN-GEN
             answer: |-
               Wow! Some task.
@@ -2204,53 +2204,53 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 2
-                display: $2
-                share: 33
+                amount: 2250000
+                display: "$2,250,000"
+                share: 22
               - area: Transit
-                amount: 2
-                display: $2
-                share: 33
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
               - area: Walking Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 600000
+                display: "$600,000"
+                share: 6
               - area: "Rolling & Cycling Infrastructure"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 750000
+                display: "$750,000"
+                share: 8
               - area: Roadway Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 150000
+                display: "$150,000"
+                share: 2
               - area: Policing
                 amount: 0
                 display: $0
                 share: 0
               - area: "Fire & Emergency Services"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: "Parks & Recreation"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: "Arts & Culture"
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
               - area: "Climate Action & Environment"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Unhoused Resident Services
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Community-Based Clinics
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1250000
+                display: "$1,250,000"
+                share: 12
           - label: GEN-GEN
             answer: >-
               Colwood is a community valued by generations of residents. I
@@ -7920,53 +7920,53 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
               - area: Transit
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Walking Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Rolling & Cycling Infrastructure"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Roadway Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Policing
-                amount: 2
-                display: $2
-                share: 33
+                amount: 2500000
+                display: "$2,500,000"
+                share: 25
               - area: "Fire & Emergency Services"
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Parks & Recreation"
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
               - area: "Arts & Culture"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Climate Action & Environment"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: Unhoused Resident Services
                 amount: 0
                 display: $0
                 share: 0
               - area: Community-Based Clinics
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
       - id: healthcare-access
         grade: null
         questions: []
@@ -28776,53 +28776,53 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 1
-                display: $1
-                share: 20
+                amount: 1500000
+                display: "$1,500,000"
+                share: 15
               - area: Transit
-                amount: 2
-                display: $2
-                share: 40
+                amount: 2500000
+                display: "$2,500,000"
+                share: 25
               - area: Walking Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 750000
+                display: "$750,000"
+                share: 8
               - area: "Rolling & Cycling Infrastructure"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: Roadway Infrastructure
-                amount: 1
-                display: $1
-                share: 20
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Policing
-                amount: 0
-                display: $0
-                share: 0
+                amount: 750000
+                display: "$750,000"
+                share: 8
               - area: "Fire & Emergency Services"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 750000
+                display: "$750,000"
+                share: 8
               - area: "Parks & Recreation"
-                amount: 1
-                display: $1
-                share: 20
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Arts & Culture"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: "Climate Action & Environment"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 750000
+                display: "$750,000"
+                share: 8
               - area: Unhoused Resident Services
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
               - area: Community-Based Clinics
-                amount: 0
-                display: $0
-                share: 0
+                amount: 250000
+                display: "$250,000"
+                share: 2
           - label: GEN-GEN
             answer: |-
               I believe Saanich also needs a stronger conversation about responsible, low-impact economic growth.
@@ -34177,44 +34177,44 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: Transit
                 amount: 0
                 display: $0
                 share: 0
               - area: Walking Infrastructure
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: "Rolling & Cycling Infrastructure"
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: Roadway Infrastructure
-                amount: 2
-                display: $2
+                amount: 2000000
+                display: "$2,000,000"
                 share: 20
               - area: Policing
                 amount: 0
                 display: $0
                 share: 0
               - area: "Fire & Emergency Services"
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: "Parks & Recreation"
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: "Arts & Culture"
-                amount: 1
-                display: $1
+                amount: 1000000
+                display: "$1,000,000"
                 share: 10
               - area: "Climate Action & Environment"
-                amount: 2
-                display: $2
+                amount: 2000000
+                display: "$2,000,000"
                 share: 20
               - area: Unhoused Resident Services
                 amount: 0
@@ -35498,53 +35498,53 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Transit
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Walking Infrastructure
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Rolling & Cycling Infrastructure"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Roadway Infrastructure
-                amount: 4
-                display: $4
-                share: 67
+                amount: 4000000
+                display: "$4,000,000"
+                share: 40
               - area: Policing
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Fire & Emergency Services"
-                amount: 1
-                display: $1
-                share: 17
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Parks & Recreation"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Arts & Culture"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Climate Action & Environment"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Unhoused Resident Services
                 amount: 0
                 display: $0
                 share: 0
               - area: Community-Based Clinics
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
           - label: GEN-GEN
             answer: >-
               We are fortunate to have the Sooke Shelter Society that supports
@@ -48494,8 +48494,8 @@ candidates:
           - label: GEN-02
             allocation:
               - area: Housing
-                amount: 3
-                display: $3
+                amount: 3000000
+                display: "$3,000,000"
                 share: 30
               - area: Transit
                 amount: 0
@@ -48530,16 +48530,16 @@ candidates:
                 display: $0
                 share: 0
               - area: "Climate Action & Environment"
-                amount: 2
-                display: $2
+                amount: 2000000
+                display: "$2,000,000"
                 share: 20
               - area: Unhoused Resident Services
-                amount: 3
-                display: $3
+                amount: 3000000
+                display: "$3,000,000"
                 share: 30
               - area: Community-Based Clinics
-                amount: 2
-                display: $2
+                amount: 2000000
+                display: "$2,000,000"
                 share: 20
           - label: GEN-GEN
             answer: >-
@@ -53857,45 +53857,45 @@ candidates:
                 display: $0
                 share: 0
               - area: Walking Infrastructure
-                amount: 1
-                display: $1
-                share: 12
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Rolling & Cycling Infrastructure"
-                amount: 1
-                display: $1
-                share: 12
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: Roadway Infrastructure
-                amount: 2
-                display: $2
+                amount: 2500000
+                display: "$2,500,000"
                 share: 25
               - area: Policing
-                amount: 1
-                display: $1
-                share: 12
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Fire & Emergency Services"
-                amount: 2
-                display: $2
-                share: 25
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
               - area: "Parks & Recreation"
-                amount: 1
-                display: $1
-                share: 12
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
               - area: "Arts & Culture"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: "Climate Action & Environment"
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
               - area: Unhoused Resident Services
                 amount: 0
                 display: $0
                 share: 0
               - area: Community-Based Clinics
-                amount: 0
-                display: $0
-                share: 0
+                amount: 500000
+                display: "$500,000"
+                share: 5
           - label: GEN-GEN
             answer: >-
               Current Council has, in it new OCP, established our Western
