@@ -162,18 +162,6 @@
   overflow-wrap: break-word;
 }
 
-// Beside the name, in the candidate's own lowercase: the h1 upper-cases
-// everything in it, and "HE/HIM" is not how anyone wrote them.
-.candidate-hero__pronouns {
-  font-family: $font-sans;
-  font-weight: 400;
-  text-transform: none;
-  letter-spacing: 0;
-  font-size: clamp(1rem, 2.5vw, 1.25rem);
-  color: $color-warm;
-  white-space: nowrap;
-}
-
 .candidate-hero__meta {
   margin: $space-xs 0 0;
   font-family: $font-display;
@@ -1128,10 +1116,6 @@ summary.candidate-grade {
       max-width: none;
       color: $color-text;
       font-size: 26pt;
-    }
-
-    .candidate-hero__pronouns {
-      font-size: 12pt;
     }
 
     .candidate-hero__meta {
