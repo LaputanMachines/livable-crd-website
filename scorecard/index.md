@@ -245,13 +245,20 @@ description: >-
       <tbody class="scorecard-matrix__group scorecard-matrix__group--fav" id="favourites-group" hidden>
         <tr class="scorecard-matrix__group-row">
           <th scope="colgroup" colspan="{{ matrix_columns }}" class="scorecard-matrix__group-head scorecard-matrix__group-head--fav">
-            Your favourites
             {%- comment -%}
-              Also the accessible description of every reorder handle
-              (aria-describedby), so it is stated once here instead of being
-              repeated inside 66 button labels.
+              The same inner flex row as the municipality headings below, so the
+              hint sits beside the label with the gap those put between a name
+              and its slates.
             {%- endcomment -%}
-            <span class="scorecard-matrix__group-hint" id="favourites-hint">Saved to browser. Drag and re-order favourites by grabbing the handle below the star icon.</span>
+            <span class="scorecard-matrix__group-inner">
+              <span class="scorecard-matrix__group-name">Your favourites</span>
+              {%- comment -%}
+                Also the accessible description of every reorder handle
+                (aria-describedby), so it is stated once here instead of being
+                repeated inside 66 button labels.
+              {%- endcomment -%}
+              <span class="scorecard-matrix__group-hint" id="favourites-hint">Saved to browser. Drag to reorder.</span>
+            </span>
           </th>
         </tr>
       </tbody>
