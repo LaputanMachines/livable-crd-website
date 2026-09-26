@@ -90,7 +90,7 @@ layout: default
       <a href="{{ '/scorecard/' | append: page.municipality_slug | append: '/' | relative_url }}">{{ page.municipality_name }} candidates</a>
       {%- endif %}
     </p>
-    <h1 class="candidate-hero__name">{{ c.name }}</h1>
+    <h1 class="candidate-hero__name">{{ c.name }}{% if c.pronouns %} <span class="candidate-hero__pronouns">{{ c.pronouns }}</span>{% endif %}</h1>
     {%- if page.subtitle != "" %}
     <p class="candidate-hero__meta">{{ page.subtitle }}</p>
     {%- endif %}

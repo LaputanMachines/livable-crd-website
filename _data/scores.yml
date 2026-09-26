@@ -49,6 +49,8 @@
 #                 candidate with no match there is dropped, because there is no
 #                 scorecard page to show the result on.
 #   municipality  Slug from _data/municipalities.yml.
+#   pronouns      As the candidate gave them on the form, lowercased. Absent
+#                 where they left it blank or answered without naming any.
 #   returned      Absent for the candidates who returned the questionnaire, and
 #                 `false` for a sitting incumbent who did not and is on the
 #                 sheet only because their housing record is scored.
@@ -135,6 +137,7 @@ graded_subjects:
 candidates:
   - name: Ben Michell
     municipality: central-saanich
+    pronouns: he/him
     scores:
       transit: C
       housing: C
@@ -847,6 +850,7 @@ candidates:
     subjects: []
   - name: David Grove
     municipality: colwood
+    pronouns: he/him
     scores:
       transit: B
       housing: F
@@ -1481,6 +1485,7 @@ candidates:
     subjects: []
   - name: Eugene Tseng
     municipality: colwood
+    pronouns: he/him/his
     scores:
       transit: B
       housing: C
@@ -2933,6 +2938,7 @@ candidates:
     subjects: []
   - name: Dan Igaz
     municipality: esquimalt
+    pronouns: he/him
     scores:
       transit: A
       housing: B
@@ -4455,6 +4461,7 @@ candidates:
             answer: "I'd like to study such further."
   - name: Duncan Cavens
     municipality: esquimalt
+    pronouns: he/him
     scores:
       transit: C-
       housing: F
@@ -5112,6 +5119,7 @@ candidates:
             answer: Somewhat more consultation practices.
   - name: Holly Courtright
     municipality: esquimalt
+    pronouns: she/her
     scores:
       transit: B
       housing: C
@@ -5806,6 +5814,7 @@ candidates:
               as a whole which I think is a stretch.
   - name: Kody Thomson
     municipality: esquimalt
+    pronouns: he/him
     scores:
       transit: A
       housing: B
@@ -6523,6 +6532,7 @@ candidates:
               build on those relationships if elected.
   - name: Meagan Brame
     municipality: esquimalt
+    pronouns: she/her
     scores:
       transit: B
       housing: C-
@@ -7225,6 +7235,7 @@ candidates:
               conversation.
   - name: Meredith James
     municipality: esquimalt
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -9241,6 +9252,7 @@ candidates:
               As a result, our task force unanimously recommended a ward electoral system whereby the Songhees and Kosapsum (Esquimalt) Nations would each be guaranteed a seat at the SD 61 School Board table along with each SD 61 municipality also having a seat representing all our respective communities. For SD 61 communities, we are now the first urban school district in B.C. and perhaps Canada to have guaranteed school board seats for Indigenous representation.
   - name: Tyler Russell
     municipality: esquimalt
+    pronouns: he/him comfortable with they/them
     scores:
       transit: B
       housing: F
@@ -11954,6 +11966,7 @@ candidates:
             answer: Somewhat more consultation practices.
   - name: Colby Harder
     municipality: langford
+    pronouns: she/her
     scores:
       transit: B
       housing: C
@@ -12694,6 +12707,7 @@ candidates:
               partnership.
   - name: Keith Yacucha
     municipality: langford
+    pronouns: he/him
     scores:
       transit: A
       housing: C
@@ -13406,6 +13420,7 @@ candidates:
               Nuance to GOV-04: It’s not that simple. Broad stroke zeros aren't useful everywhere. While minimums are likely too high and should be phased down, buyers lack the market leverage to demand necessary car and bike parking without targeted regulations in specific situations.
   - name: Kimberley Guiry
     municipality: langford
+    pronouns: she/her
     scores:
       transit: A
       housing: C
@@ -14278,6 +14293,7 @@ candidates:
               funded, and rooted in consultation.
   - name: Mary Wagner
     municipality: langford
+    pronouns: she/her
     scores:
       transit: A
       housing: C-
@@ -15048,6 +15064,7 @@ candidates:
     subjects: []
   - name: Tanya Sunshine
     municipality: langford
+    pronouns: she/her
     scores:
       transit: F
       housing: F
@@ -16473,6 +16490,7 @@ candidates:
               accordingly.
   - name: Ellen Frisch
     municipality: metchosin
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -17236,6 +17254,7 @@ candidates:
     subjects: []
   - name: Karin Sweeney
     municipality: oak-bay
+    pronouns: she/her
     scores:
       transit: B
       housing: B
@@ -17972,6 +17991,7 @@ candidates:
               in regional transit planning.
   - name: Katerina Weller
     municipality: oak-bay
+    pronouns: she/her
     scores:
       transit: C
       housing: C
@@ -18631,6 +18651,7 @@ candidates:
     subjects: []
   - name: Sam Holland
     municipality: oak-bay
+    pronouns: he/they
     scores:
       transit: A
       housing: A
@@ -19329,6 +19350,7 @@ candidates:
               the burden. The math simply doesn't work out otherwise.
   - name: Sarah Starkweather
     municipality: oak-bay
+    pronouns: she/her
     scores:
       transit: A
       housing: A
@@ -20049,6 +20071,7 @@ candidates:
               happening behind the scenes.
   - name: Colette Baty
     municipality: saanich
+    pronouns: she/her
     scores:
       transit: C-
       housing: C-
@@ -22377,6 +22400,7 @@ candidates:
               I would also seek to consult with Nations around Saanich on ways the municipality can support them and their people. The best practice for supporting indigenous people is to go directly to them to understand what they want and need to stay in their traditional territories and live good, fulfilling lives. We should make sure that we support indigenous residents of Saanich with affordable housing and access to community services to help keep them remain on their traditional territories.
   - name: Garnett Humenick
     municipality: saanich
+    pronouns: she/her
     scores:
       transit: A
       housing: C
@@ -23917,6 +23941,7 @@ candidates:
               affect their communities and territories.
   - name: Hollis Hodson
     municipality: saanich
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -26559,6 +26584,7 @@ candidates:
             answer: Somewhat more consultation practices.
   - name: Kathleen Burton
     municipality: saanich
+    pronouns: she her
     scores:
       transit: C
       housing: C
@@ -28051,6 +28077,7 @@ candidates:
     subjects: []
   - name: Noah Fruttarol
     municipality: saanich
+    pronouns: he/him/them
     scores:
       transit: A
       housing: B
@@ -28747,6 +28774,7 @@ candidates:
               everyone.
   - name: Rishi Sharma
     municipality: saanich
+    pronouns: he/him
     scores:
       transit: A
       housing: C
@@ -30155,6 +30183,7 @@ candidates:
             answer: The current amount of consultation is enough.
   - name: Teale Phelps Bondaroff
     municipality: saanich
+    pronouns: he/him
     scores:
       transit: A
       housing: A
@@ -32240,6 +32269,7 @@ candidates:
               region a more livable area for all.
   - name: Jamie Wellbourn
     municipality: sidney
+    pronouns: he/him
     scores:
       transit: A
       housing: B
@@ -33486,6 +33516,7 @@ candidates:
               vehicles will be abandoned.
   - name: Rory Lambert
     municipality: sidney
+    pronouns: he/him
     scores:
       transit: C-
       housing: C-
@@ -34744,6 +34775,7 @@ candidates:
               steps to provide voting rights to individuals living on Reserve.
   - name: Helen Ritts
     municipality: sooke
+    pronouns: she / her
     scores:
       transit: A
       housing: F
@@ -35469,6 +35501,7 @@ candidates:
     subjects: []
   - name: Katherine Strongwind
     municipality: sooke
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -36204,6 +36237,7 @@ candidates:
     subjects: []
   - name: Landon Grams
     municipality: sooke
+    pronouns: he/him
     scores:
       transit: C
       housing: F
@@ -36872,6 +36906,7 @@ candidates:
             answer: Somewhat more consultation practices.
   - name: Nick Dickinson-Wilde
     municipality: sooke
+    pronouns: he/him
     scores:
       transit: A
       housing: B
@@ -37585,6 +37620,7 @@ candidates:
               responsibility and community health and happiness.
   - name: Susan Belford
     municipality: sooke
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -38265,6 +38301,7 @@ candidates:
     subjects: []
   - name: Bella Lee
     municipality: victoria
+    pronouns: she/her
     scores:
       transit: A
       housing: B
@@ -40453,6 +40490,7 @@ candidates:
               not insisted upon; take guidance from First Nations.
   - name: Jack Sandor
     municipality: victoria
+    pronouns: he/him
     scores:
       transit: A
       housing: A
@@ -41212,6 +41250,7 @@ candidates:
               nations.
   - name: James Harasymow
     municipality: victoria
+    pronouns: he/him
     scores:
       transit: F
       housing: F
@@ -42563,6 +42602,7 @@ candidates:
               whole.
   - name: Jeremy Caradonna
     municipality: victoria
+    pronouns: he/him
     scores:
       transit: A
       housing: A
@@ -43331,6 +43371,7 @@ candidates:
               At the moment, the Songhees and Kosapsum are leading the efforts to revive the E&N line as a Reconciliation Corridor. The governance of the entity that would operate the rail line is TBD, but the process holds out the possibility of a shared governance entity that would see First Nations and non-First Nations representatives working collaboratively on an initiative of great regional significance. For me, that is a higher objective and better outcome than an exclusive focus on consultation.
   - name: Krista Loughton
     municipality: victoria
+    pronouns: she/her
     scores:
       transit: A
       housing: A
@@ -44099,6 +44140,7 @@ candidates:
     subjects: []
   - name: Marianne Alto
     municipality: victoria
+    pronouns: she/her
     scores:
       transit: A
       housing: B
@@ -44940,6 +44982,7 @@ candidates:
               nourish this critical partnership will continue.
   - name: Martin Girard
     municipality: victoria
+    pronouns: he/him
     scores:
       transit: A
       housing: C
@@ -45585,6 +45628,7 @@ candidates:
               perfunctory show of consulting with them for appearances' sake.
   - name: Matt Dell
     municipality: victoria
+    pronouns: he/him
     scores:
       transit: A
       housing: A
@@ -47083,6 +47127,7 @@ candidates:
             answer: The current amount of consultation is enough.
   - name: Peter Rose Gibbs
     municipality: victoria
+    pronouns: they/them
     scores:
       transit: A
       housing: A
@@ -47812,6 +47857,7 @@ candidates:
               Finally, revitalize the Victoria reconciliation dialogue series. Continue to develop and improve CRD-FN MOUs across the region.
   - name: Shona Dion
     municipality: victoria
+    pronouns: she/her
     scores:
       transit: B
       housing: C-
@@ -48470,6 +48516,7 @@ candidates:
     subjects: []
   - name: Susan Kim
     municipality: victoria
+    pronouns: she/they
     scores:
       transit: A
       housing: A
@@ -49259,6 +49306,7 @@ candidates:
               I'd also like to review the development of CRD MOUs with First Nations partners in order to include automatic escalating CPI-based compensation.
   - name: Amy McCooey
     municipality: view-royal
+    pronouns: she/her
     scores:
       transit: C
       housing: F
@@ -50406,6 +50454,7 @@ candidates:
             answer: The current amount of consultation is enough.
   - name: Carolynne Clark
     municipality: view-royal
+    pronouns: she/her
     scores:
       transit: B
       housing: F
@@ -51720,6 +51769,7 @@ candidates:
               government must come to the table.
   - name: Diane Fownes
     municipality: view-royal
+    pronouns: she her
     scores:
       transit: C
       housing: F
@@ -53092,6 +53142,7 @@ candidates:
     subjects: []
   - name: Owen Marshall
     municipality: view-royal
+    pronouns: he/him
     scores:
       transit: B
       housing: C
@@ -55198,6 +55249,7 @@ candidates:
               Rightsholders.
   - name: Sacha Christensen
     municipality: view-royal
+    pronouns: he/him
     scores:
       transit: A
       housing: B
@@ -55880,6 +55932,7 @@ candidates:
               striving to deepen our working relationship with.
   - name: Sean Mackenzie
     municipality: view-royal
+    pronouns: he/him
     scores:
       transit: A
       housing: C-
@@ -56557,6 +56610,7 @@ candidates:
             answer: Significantly more consultation practices.
   - name: Spencer Dixon
     municipality: view-royal
+    pronouns: he/him
     scores:
       transit: C-
       housing: F
@@ -57168,6 +57222,7 @@ candidates:
             answer: OCP did a great job in this already.
   - name: Volker Dammann
     municipality: view-royal
+    pronouns: he/him
     scores:
       transit: A
       housing: A

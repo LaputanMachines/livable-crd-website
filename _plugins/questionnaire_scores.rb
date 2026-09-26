@@ -9,7 +9,7 @@
 # them in the path of a file that is overwritten wholesale, so they stay apart
 # on disk and are joined here instead.
 #
-# Three things are attached to each candidate the grading sheet knows about:
+# Four things are attached to each candidate the grading sheet knows about:
 #
 #   questionnaire_returned  true, unless the entry carries `returned: false`.
 #                    Almost every candidate listed in scores.yml has a row on
@@ -30,8 +30,11 @@
 #   published_subjects  the per-question detail behind those letters, keyed by
 #                    subject id, which _layouts/candidate.html renders under each
 #                    subject. Empty for a candidate with nothing published.
+#   pronouns         as the candidate gave them on the form, lowercased by the
+#                    sync. Absent where they gave none; the candidate page shows
+#                    them beside the name.
 #
-# A fourth thing is attached from a second, hand-written source. _data/declined.yml
+# A fifth thing is attached from a second, hand-written source. _data/declined.yml
 # names the candidates who told the coalition they were not taking part and
 # carries the statement their page shows instead; an entry there attaches
 # `declined_statement` and strips their published grades back to the ones that
@@ -126,6 +129,7 @@ module LivableCrd
         scores = candidate["scores"]
         candidate["scores"] = (scores.is_a?(Hash) ? scores : {}).merge(result["scores"] || {})
         candidate["published_subjects"] = index_by(result["subjects"], "id")
+        candidate["pronouns"] = result["pronouns"] if result["pronouns"]
         published += 1 unless candidate["published_subjects"].empty?
       end
 

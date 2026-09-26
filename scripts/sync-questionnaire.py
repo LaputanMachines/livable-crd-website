@@ -90,6 +90,15 @@ RAW_FIRST_NAME = 3
 RAW_LAST_NAME = 4
 RAW_MUNICIPALITY = 7
 
+# The form's optional pronouns question, found by header rather than by index
+# because it is not one of the fixed columns above. Published on the candidate's
+# page beside their name, lowercased. Answers that name no pronoun at all - "No",
+# "Sure" - are the candidate declining the question, not stating pronouns, so a
+# value is only published when one of these words appears in it.
+RAW_PRONOUNS_HEADER = "Want to share your pronouns?"
+PRONOUN_WORDS = {"he", "him", "his", "she", "her", "hers", "they", "them",
+                 "theirs", "xe", "xem", "ze", "zir", "hir"}
+
 # Header prefix of a question column: "GEN-01: ...", "TRN-GEN: ...". Same
 # pattern as grading_tabs.py's LABEL_RE; change both together.
 LABEL_RE = re.compile(r"^([A-Z]{2,4}-(?:\d{2}|GEN)(?:-[A-Za-z]+)?):\s*(.*)$", re.S)
@@ -510,6 +519,8 @@ SCORES_HEADER = """\
 #                 candidate with no match there is dropped, because there is no
 #                 scorecard page to show the result on.
 #   municipality  Slug from _data/municipalities.yml.
+#   pronouns      As the candidate gave them on the form, lowercased. Absent
+#                 where they left it blank or answered without naming any.
 #   returned      Absent for the candidates who returned the questionnaire, and
 #                 `false` for a sitting incumbent who did not and is on the
 #                 sheet only because their housing record is scored.
@@ -1186,6 +1197,35 @@ def raw_answers(sheet_id, questions, warnings):
     return answers
 
 
+def raw_pronouns(sheet_id, header, warnings):
+    """{submission id: pronouns}, lowercased, for the candidates who gave any.
+
+    Reads the submission id and the pronouns column and nothing else, for the
+    same reason raw_answers() is narrow. Not gated on publication: pronouns are
+    how a candidate asked to be named, not a result.
+    """
+    found = [i for i, cell in enumerate(header) if tidy(cell) == RAW_PRONOUNS_HEADER]
+    if len(found) != 1:
+        warnings.append(f"{RAW_TAB}: expected exactly one column headed "
+                        f"{RAW_PRONOUNS_HEADER!r}, found {len(found)}; no pronouns published")
+        return {}
+    col = found[0]
+    wanted = sorted({RAW_SUBMISSION_ID, col})
+    rows = fetch_tab(sheet_id, RAW_TAB, expect=TAB_FIRST_HEADER[RAW_TAB],
+                     select=", ".join(a1(c) for c in wanted))
+    if rows is None:
+        return {}
+
+    at = {c: i for i, c in enumerate(wanted)}
+    pronouns = {}
+    for row in rows[1:]:
+        cell = lambda c: tidy(row[at[c]]) if at[c] < len(row) else ""
+        key, value = cell(RAW_SUBMISSION_ID), cell(col).lower()
+        if key and PRONOUN_WORDS & set(re.findall(r"[a-z]+", value)):
+            pronouns[key] = value
+    return pronouns
+
+
 def load_subject_order(path):
     """Subject ids in the order _data/subjects.yml lists them."""
     ids = []
@@ -1666,7 +1706,7 @@ def unscored_answers(answers, subject_id, ungraded, candidate, warnings):
 
 def build_scores(category, grade_rows, answers, ungraded, subject_order,
                  muni_lookup, candidates, question_labels, publish,
-                 warnings, errors):
+                 pronouns, warnings, errors):
     header = category[0]
     columns = subject_columns(header)
     if not columns:
@@ -1692,6 +1732,10 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
 
     records = []
     seen = {}
+    # Keyed by person rather than by row, so a candidate who submitted twice
+    # keeps the pronouns from whichever submission gave them, whichever of the
+    # two rows ends up published.
+    pronouns_for = {}
     for i, row in enumerate(category[1:], start=2):
         cell = lambda idx: tidy(row[idx]) if idx < len(row) else ""
         key, name, muni_name = cell(C_KEY), cell(C_CANDIDATE), cell(C_MUNICIPALITY)
@@ -1818,6 +1862,8 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
         # guessed at: whichever row lost would be silently unpublished while the
         # sheet went on showing it as published.
         identity = (norm(name), muni_slug)
+        if pronouns.get(key):
+            pronouns_for[identity] = pronouns[key]
         if identity not in seen:
             seen[identity] = (len(records), i)
             records.append(record)
@@ -1861,6 +1907,8 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             records[where] = record
             seen[identity] = (where, i)
 
+    for record in records:
+        record["pronouns"] = pronouns_for.get((norm(record["name"]), record["municipality"]))
     records.sort(key=lambda r: (r["municipality"], norm(r["name"])))
     return records
 
@@ -2187,6 +2235,8 @@ def render_scores(graded_subjects, records):
     for record in records:
         parts.append(f"  - name: {scalar(record['name'])}")
         parts.append(f"    municipality: {record['municipality']}")
+        if record.get("pronouns"):
+            parts.append(f"    pronouns: {scalar(record['pronouns'])}")
         # Written only where it is false, so the file is unchanged for everybody
         # who did reply and the flag reads as the exception it is.
         if not record["returned"]:
@@ -2378,8 +2428,9 @@ def main(argv=None):
                            header_only=True)
     if raw_header is None:
         warnings.append(f"{RAW_TAB}: tab missing, no ungraded questions published")
-        ungraded, options = [], {}
+        ungraded, options, pronouns = [], {}, {}
     else:
+        pronouns = raw_pronouns(args.sheet_id, raw_header[0], warnings)
         ungraded = ungraded_questions(
             raw_header[0], graded_labels, subject_order, warnings, errors)
         options, conflicts = header_options(raw_header[0])
@@ -2471,7 +2522,7 @@ def main(argv=None):
             answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
         records = build_scores(
             category, grade_rows, answers, ungraded, subject_order, muni_lookup,
-            candidates, question_labels, args.publish, warnings, errors)
+            candidates, question_labels, args.publish, pronouns, warnings, errors)
 
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)
