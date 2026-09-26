@@ -52,9 +52,33 @@
   var activeTopic = 'all'; // 'all' (overall: every graded topic) or a subject id
   var activeOffice = 'all'; // 'all', 'mayor', or 'councillor'
   // Hide candidates who returned nothing. On by default: the table opens on the
-  // candidates who took part, and ?responded=all is the link to everyone.
+  // candidates who took part, and ?responded=all is the link to everyone. A
+  // reader's own answer, saved by the first-visit prompt or the pill, replaces
+  // that default; a link that says ?responded=all still wins over both.
   var participatingOnly = true;
   var query = '';
+
+  // --- Saved response preference ---------------------------------------------
+  // localStorage like favourites.js, and guarded the same way: Safari in private
+  // mode throws on any access, and the page has to work regardless.
+  var PREF_KEY = 'livable-crd:responded:v1';
+  function readPref() {
+    try {
+      var v = window.localStorage.getItem(PREF_KEY);
+      return v === 'all' || v === 'participating' ? v : null;
+    } catch (e) {
+      return null;
+    }
+  }
+  function writePref(on) {
+    try {
+      window.localStorage.setItem(PREF_KEY, on ? 'participating' : 'all');
+    } catch (e) {
+      // Not saved; the choice still applies to this visit.
+    }
+  }
+  var savedPref = readPref();
+  if (savedPref) participatingOnly = savedPref === 'participating';
 
   // Kept by that filter: a candidate who returned the questionnaire, or one who
   // declined and gave a statement. The second has no grades, but their row is a
@@ -306,7 +330,7 @@
       activeTopic = known ? topic : 'all';
     }
 
-    participatingOnly = params.get('responded') !== 'all';
+    if (params.get('responded') === 'all') participatingOnly = false;
 
     var q = (params.get('q') || '').trim();
     if (search) search.value = q;
@@ -354,11 +378,17 @@
   wirePills(gradePills, 'data-grade', function (v) { activeGrade = v; });
   wirePills(officePills, 'data-office', function (v) { activeOffice = v; });
 
+  function paintParticipating() {
+    if (!participatingButton) return;
+    participatingButton.setAttribute('aria-pressed', String(participatingOnly));
+    participatingButton.classList.toggle('is-active', participatingOnly);
+  }
+
   if (participatingButton) {
     participatingButton.addEventListener('click', function () {
       participatingOnly = !participatingOnly;
-      this.setAttribute('aria-pressed', String(participatingOnly));
-      this.classList.toggle('is-active', participatingOnly);
+      writePref(participatingOnly);
+      paintParticipating();
       apply();
     });
   }
@@ -487,11 +517,54 @@
   paintScope();
   // Painted here, not in readUrlFilters(): the toggle starts pressed, so its
   // state must reach the button even where that function returns early.
-  if (participatingButton) {
-    participatingButton.setAttribute('aria-pressed', String(participatingOnly));
-    participatingButton.classList.toggle('is-active', participatingOnly);
-  }
+  paintParticipating();
   apply();
+
+  // --- First-visit prompt -----------------------------------------------------
+  // Asks once, in the <dialog> at the foot of scorecard/index.md, whether the
+  // table opens on participating candidates or on everyone. Only while nothing
+  // is saved, and only where the browser has showModal(); anywhere else the
+  // default above stands and the pill is still there. The radios repaint the
+  // example inside the dialog, never the table behind it: nothing is decided
+  // until the reader closes it.
+  //
+  // Closing it any way saves what is selected, Escape included. The radios open
+  // on the table's current state, so dismissing it keeps what the reader was
+  // already looking at, and a prompt that returns on every visit until it gets
+  // a click is nagging.
+  var prompt = document.getElementById('responses-prompt');
+  if (prompt && !savedPref && typeof prompt.showModal === 'function') {
+    var radios = Array.prototype.slice.call(prompt.querySelectorAll('input[name="responded"]'));
+    var silentRows = Array.prototype.slice.call(prompt.querySelectorAll('[data-example-silent]'));
+    var exampleFold = prompt.querySelector('[data-example-fold]');
+
+    var chosen = function () {
+      for (var i = 0; i < radios.length; i++) {
+        if (radios[i].checked) return radios[i].value !== 'all';
+      }
+      return participatingOnly;
+    };
+    var paintExample = function () {
+      var on = chosen();
+      silentRows.forEach(function (row) { row.hidden = on; });
+      if (exampleFold) exampleFold.hidden = !on;
+    };
+
+    radios.forEach(function (r) {
+      r.checked = (r.value !== 'all') === participatingOnly;
+      r.addEventListener('change', paintExample);
+    });
+    paintExample();
+
+    prompt.addEventListener('close', function () {
+      participatingOnly = chosen();
+      writePref(participatingOnly);
+      paintParticipating();
+      apply();
+    });
+
+    prompt.showModal();
+  }
 
   // --- Seam: assets/js/favourites.js ---------------------------------------
   // That script moves rows between tbodies at runtime (into and out of the

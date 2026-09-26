@@ -1,0 +1,138 @@
+@use "variables" as *;
+
+// --- First-visit response prompt ---------------------------------------------
+// Markup: the <dialog> at the foot of scorecard/index.md.
+// Behaviour: the "First-visit prompt" section of assets/js/scorecard.js.
+//
+// Loaded after "components" so the example table can switch off the matrix's
+// sticky cells on source order alone.
+
+.responses-prompt {
+  width: min(34rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  border: $border-weight solid $color-text;
+  border-radius: $radius;
+  background: $color-surface;
+  color: $color-text;
+
+  &::backdrop {
+    background: rgba(34, 9, 64, 0.65);
+  }
+}
+
+.responses-prompt__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  padding: $space-md;
+
+  @media (max-width: 480px) {
+    padding: $space-sm;
+  }
+}
+
+.responses-prompt__title {
+  margin: 0;
+  font-size: clamp(1.25rem, 4.5vw, 1.6rem);
+}
+
+.responses-prompt__lede,
+.responses-prompt__note {
+  margin: 0;
+}
+
+.responses-prompt__note {
+  font-size: 0.8rem;
+  color: $color-muted;
+}
+
+// The example: a four-topic slice of the real matrix, framed like the one on
+// the page. Its cells must not stick - inside the dialog they would pin to the
+// dialog's own scroll box at the page header's offset.
+.responses-prompt__example {
+  border: 2px solid $color-text;
+  background: $color-surface;
+  overflow: hidden;
+}
+
+.responses-prompt__table {
+  // The matrix takes a 50rem floor on wide screens, sized for nine topics.
+  // Three fit the dialog, and the frame above would clip the rest. Topic names
+  // follow the matrix's own breakpoint: icons alone on a phone, as on the page.
+  &.scorecard-matrix { min-width: 0; }
+
+  .scorecard-matrix__name-h { width: 9rem; }
+
+  thead th,
+  .scorecard-matrix__group-head {
+    position: static;
+  }
+
+  .scorecard-matrix__more {
+    cursor: default;
+
+    &:hover { color: $color-accent; }
+  }
+
+  tr:hover td,
+  tr:hover th { background: inherit; }
+}
+
+.responses-prompt__choices {
+  display: grid;
+  gap: $space-xs;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.responses-prompt__choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  padding: 0.7rem 0.85rem;
+  border: 2px solid $color-text;
+  border-radius: $radius;
+  cursor: pointer;
+  transition: background $transition-fast;
+
+  &:hover { background: $color-bg-warm; }
+
+  &:has(input:checked) {
+    background: $color-bg-warm;
+    border-color: $color-accent;
+    box-shadow: inset 0 0 0 1px $color-accent;
+  }
+
+  input {
+    flex: 0 0 auto;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0.15rem 0 0;
+    accent-color: $color-accent;
+  }
+}
+
+.responses-prompt__choice-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  color: $color-muted;
+
+  strong {
+    font-size: 0.95rem;
+    color: $color-text;
+  }
+}
+
+.responses-prompt__submit {
+  align-self: flex-start;
+
+  @media (max-width: 480px) {
+    align-self: stretch;
+    text-align: center;
+  }
+}

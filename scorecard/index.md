@@ -668,6 +668,97 @@ description: >-
   </p>
 </div>
 
+{%- comment -%}
+  First-visit prompt: whether the table opens on the candidates who took part or
+  on everyone. Opened by assets/js/scorecard.js with showModal() only when this
+  browser has no saved answer, so without the script it never appears and the
+  page is exactly what it was. The answer is saved in localStorage beside the
+  favourites, and the "Only show participating candidates" pill changes it
+  afterwards.
+
+  The example is a three-topic slice of the matrix - the same classes and the same grade
+  chips - so what the reader sees change here is what the table below will do:
+  non-participating rows folded under a "Show N" row, or listed in place. Names
+  are placeholders, never real candidates, and it is aria-hidden: the two
+  choices say in words what it shows.
+{%- endcomment -%}
+<dialog class="responses-prompt" id="responses-prompt" aria-labelledby="responses-prompt-title" aria-describedby="responses-prompt-lede">
+  <form method="dialog" class="responses-prompt__form">
+    <h2 class="responses-prompt__title" id="responses-prompt-title">Which candidates should we show?</h2>
+    <p class="responses-prompt__lede" id="responses-prompt-lede">Not every candidate returned the questionnaire. Choose how the scorecard lists the ones who didn't.</p>
+
+    <div class="responses-prompt__example" aria-hidden="true">
+      <table class="scorecard-matrix responses-prompt__table">
+        <thead>
+          <tr>
+            <th scope="col" class="scorecard-matrix__name-h">Candidate</th>
+            {%- assign example_topics = "general,governance,healthcare-access" | split: "," -%}
+            {%- for id in example_topics -%}
+            {%- assign subject = site.data.subjects | where: "id", id | first -%}
+            <th scope="col" class="scorecard-matrix__col">
+              <img class="scorecard-matrix__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="22" height="22" loading="lazy">
+              <span class="scorecard-matrix__th-label">{{ subject.abbr | default: subject.short | default: subject.name }}</span>
+            </th>
+            {%- endfor %}
+          </tr>
+        </thead>
+        <tbody class="scorecard-matrix__group">
+          <tr class="scorecard-matrix__group-row">
+            <th colspan="4" class="scorecard-matrix__group-head">Example town</th>
+          </tr>
+          {%- comment -%}
+            Per cell: a letter, "said" for the speech bubble an ungraded topic
+            shows when the candidate answered it, or nothing for a dash.
+          {%- endcomment -%}
+          {%- assign example_rows = "Candidate A|Councillor · Incumbent|said,B,said;Candidate B|Councillor · Newcomer|,,;Candidate C|Mayor · Newcomer|said,A,said;Candidate D|Councillor · Newcomer|,," | split: ";" -%}
+          {%- for er in example_rows -%}
+          {%- assign parts = er | split: "|" -%}
+          {%- assign grades = parts[2] | split: "," -%}
+          <tr class="scorecard-row"{% if grades.size == 0 %} data-example-silent{% endif %}>
+            <th scope="row" class="scorecard-matrix__name">
+              <span class="scorecard-matrix__cand">{{ parts[0] }}</span>
+              <span class="scorecard-matrix__meta">{{ parts[1] }}</span>
+            </th>
+            {%- for i in (0..2) %}
+            {%- assign example_grade = grades[i] %}
+            {%- if example_grade == "said" %}
+            <td class="scorecard-matrix__cell">{% include grade-badge.html grade="" state="answers" %}</td>
+            {%- else %}
+            <td class="scorecard-matrix__cell">{% include grade-badge.html grade=example_grade %}</td>
+            {%- endif %}
+            {%- endfor %}
+          </tr>
+          {%- endfor %}
+          <tr class="scorecard-matrix__more-row" data-example-fold>
+            <td colspan="4" class="scorecard-matrix__more-cell"><span class="scorecard-matrix__more">Show 2 non-participating candidates</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <fieldset class="responses-prompt__choices">
+      <legend class="sr-only">Candidates to show</legend>
+      <label class="responses-prompt__choice">
+        <input type="radio" name="responded" value="participating" checked>
+        <span class="responses-prompt__choice-text">
+          <strong>Only participating candidates</strong>
+          <span>Everyone else is folded away under each municipality.</span>
+        </span>
+      </label>
+      <label class="responses-prompt__choice">
+        <input type="radio" name="responded" value="all">
+        <span class="responses-prompt__choice-text">
+          <strong>All candidates</strong>
+          <span>Everyone running, whether or not they responded.</span>
+        </span>
+      </label>
+    </fieldset>
+
+    <p class="responses-prompt__note">Choice is saved to your browser. You can change this at any time using the filters at the top of the scorecard.</p>
+    <button type="submit" class="btn btn-primary responses-prompt__submit">Show the scorecard</button>
+  </form>
+</dialog>
+
 <script src="{{ '/assets/js/scorecard.js' | asset_url }}" defer></script>
 {%- comment -%}
   Loaded after scorecard.js and, like it, deferred: favourites moves rows
