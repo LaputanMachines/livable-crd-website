@@ -26056,7 +26056,7 @@ candidates:
       transit: C
       housing: B
       climate: B
-      arts: F
+      arts: B
       rolling-cycling: A
       walking: C-
       governance: B
@@ -26337,47 +26337,86 @@ candidates:
             weight: "8%"
             answer: "Yes"
       - id: arts
-        grade: F
+        grade: B
         score:
-          percent: 41
+          percent: 81
         questions:
           - label: ART-01
-            points: 0
+            points: 2
             max_points: 3
             weight: "6.67%"
             rationale: >-
-              Does not establish arts and culture as a core
-              economic-development strategy at a regional level, cites CRD as
-              proponent.
+              Amended Sept 25th: Clarifies that “Unsure” reflects the ongoing
+              development of Saanich’s economic strategy and a reluctance to
+              predetermine its outcome, rather than a lack of support for arts
+              and culture. She states she is “totally supportive” of using a
+              variety of tools to support and incentivize the arts and
+              identifies a potential library exploratorium as a significant
+              arts/culture space. This establishes a meaningful municipal
+              role, but does not yet specify how arts and culture would be
+              strategically integrated into economic development sufficiently
+              for a 3. // Original: Does not establish arts and culture as a
+              core economic-development strategy at a regional level, cites
+              CRD as proponent.
             answer: |-
-              Unsure
+              *Amended/Clarification Sept.24: Unsure is an indication of the major work that is currently underway  on the economic strategy - and once it is completed what direction it will take -  I am totally supportive of using a variety of tools available to support and incentivize the arts,  but am not comfortable pre-determining what the outcome of this extensive process will be, hence the unsure.  One major initiative that is likely to come out of the process is an 'exploratorium' space at the new library that would be a significant area available to arts, culture and other groups. // Original Response: Unsure
               Follow-up: This should be focussed on at the regional level - through the CRD.
           - label: ART-02
-            points: 1
+            points: 3
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Provides limited/general support via CRD coordination without
-              both a concrete first-year or four-year outcomes, commitments,
-              tools, and/or policies
+              *Amended Sept 25th: Commits to continuing existing programs,
+              increasing funding by cost of living in each budget year, and
+              recommending an arts-community representative to the municipal
+              Arts, Culture and Community Wellbeing Committee. These are
+              concrete municipal actions, both in funding and engagement //
+              Original: Provides limited/general support via CRD coordination
+              without both a concrete first-year or four-year outcomes,
+              commitments, tools, and/or policies
             answer: >-
-              I will work through the CRD to strengthen its programs and
-              funding for the arts.
+              *Amended/Clarification Sept. 24: "I would ensure that we
+              continue to support the programs currently in place, and
+              increase funding by cost of living in each budget year, and
+              would recommend appointing a representative from to arts
+              community onto our Arts, Culture and Community Wellbing
+              committee." // Original: I will work through the CRD to
+              strengthen its programs and funding for the arts.
           - label: ART-03
-            points: 1
+            points: 2
             max_points: 3
             weight: "13.33%"
             rationale: >-
-              Supports a moderate-high impact solution of a 'cross-coordinated
-              regional cultural-space strategy', but does not denote any
-              further regional support lacking a substantive framework.
+              Amended Sept 25: Maintains that cultural-space strategy should
+              be coordinated through the CRD, with Saanich using its five CRD
+              representatives to influence regional decisions. She also
+              identifies a specific municipal mechanism: incentivizing local
+              cultural facilities through community amenity contributions.
+              This establishes a meaningful municipal role, but does not
+              constitute a complete municipal implementation framework with
+              defined tools, timelines and reporting. // Original: Supports a
+              moderate-high impact solution of a 'cross-coordinated regional
+              cultural-space strategy', but does not denote any further
+              regional support lacking a substantive framework.
+            answer: >-
+              *Amended/Clarification Sept. 24: "This needs to be done through
+              the CRD - Saanich has five representatives at CRD, so can be
+              instrumental in any decisions that are reached. Such a strategy
+              can ensure significance funding across the region in programs
+              and areas that need support. This regional approach I believe
+              has greater potential to support the arts than a splintered
+              municipal approach. " // Original: Develop a cross-coordinated
+              regional cultural-space strategy.
             selected:
               - Develop a cross-coordinated regional cultural-space strategy.
           - label: ART-04
-            points: 2
+            points: 3
             max_points: 3
             weight: "10.00%"
-            rationale: Supports consequential regulatory/permitting reforms.
+            rationale: >-
+              Supports multiple consequential permitting and regulatory
+              reforms, including simplified small-scale events, coordination,
+              a single point of contact, and review of disproportionate costs.
             selected:
               - "Clear, published service standards for permit decisions."
               - >-
@@ -26390,24 +26429,46 @@ candidates:
                 Reviewing requirements that impose disproportionate costs on
                 non-profits.
           - label: ART-05
-            points: 2
+            points: 3
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Supports a regional cultural infrastructure funding program, but
-              this does not establish direct municipal intervention sufficient
-              for 3.
+              Amended Sept 25: Clarifies support for increasing local arts
+              funding by cost of living, maintaining existing initiatives with
+              appropriate increases, and including arts as a component of
+              community amenity contributions. She also clarifies that a
+              regional infrastructure program would involve Saanich funding.
+              The combination establishes direct municipal funding support and
+              a development/amenity-based mechanism relevant to securing
+              cultural infrastructure. /// Original: Supports a regional
+              cultural infrastructure funding program, but this does not
+              establish direct municipal intervention sufficient for 3.
+            answer: >-
+              *Amended/Clarification Sept. 24: "Local facilities can be
+              incentivized through community amenity contributions for new
+              housing projects." ... "I would also support increasing local
+              funding by the cost of living each budget year, ensuring that
+              our current initiatives (such as music in the park, public mural
+              development) remain fully funded with appropriate increases each
+              year,and include the arts as a component of community amenity
+              contributions. For greater clarity a regional program would
+              involve Saanich funding." // Original: Create a regional
+              cultural infrastructure funding program through
+              municipalities/CRD.
             selected:
               - >-
                 Create a regional cultural infrastructure funding program
-                through municipalities/CRD.
+                through municipalities/CRD. //
           - label: ART-06
             points: 3
             max_points: 3
             weight: "10.00%"
             rationale: >-
               Supports arts and culture maintaining or growing alongside core
-              services.
+              services. // Sept 25: Explicitly supports maintaining existing
+              arts programs and increasing funding by cost of living each
+              budget year, consistent with maintaining/growing arts investment
+              alongside core services.
             answer: >-
               Yes, arts and culture should maintain or grow alongside other
               core services.
@@ -26420,13 +26481,30 @@ candidates:
               cultural-space preservation/replacement commitment.
             answer: Evaluate proposals based on overall community benefit.
           - label: ART-08
-            points: 0
+            points: 2
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Does not select the proposed municipal incentive mechanisms.
-              Selects I have another idea, details unknown.
-            answer: "Other, I have another idea!"
+              Amended Sept 25: Clarifies that she supports waiving fees,
+              incentives and property-tax relief as municipal approaches, and
+              considers these local tools useful alongside regional
+              collaboration. This establishes meaningful municipal support,
+              but she does not specify the particular private-owner/developer
+              mechanism or long-term affordability condition needed for the
+              structural 3. // Orginal: Does not select the proposed municipal
+              incentive mechanisms. Selects I have another idea, details
+              unknown.
+            answer: >-
+              *Amended/Clarification Sept. 24: " I support waiving fees,
+              incentives or property tax relief, but also indicated that I
+              think the CRD is a very important part of cultural strategy
+              [...] I think we can achieve more by working in a larger
+              collective, although the options I can support are certainly
+              helpful at the local level. That could also include partnerships
+              with schools which have theatres and other facilities that could
+              be utilized. [...] Local facilities can be incentivized through
+              community amenity contributions for new housing projects. ///
+              Original: Other, I have another idea!
             selected:
               - "Other: Other, I have another idea!"
         unscored:
