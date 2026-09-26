@@ -400,8 +400,7 @@ description: >-
           {% if mc.size == 0 %}
           <tr class="scorecard-matrix__empty-row">
             <td colspan="{{ matrix_columns }}" class="scorecard-matrix__empty-cell">
-              No candidates have publicly announced here yet. Check back, or
-              <a href="mailto:{{ site.email }}?subject=Candidate%20in%20{{ muni.name | url_encode }}">tell us about one</a>.
+              No candidates were publicly announced.
             </td>
           </tr>
           {% endif %}
