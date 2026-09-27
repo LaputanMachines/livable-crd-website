@@ -81,8 +81,9 @@
   if (savedPref) participatingOnly = savedPref === 'participating';
 
   // Kept by that filter: a candidate who returned the questionnaire, or one who
-  // declined and gave a statement. The second has no grades, but their row is a
-  // link to what they said, which is their part in this, so it stays in view.
+  // declined. The second has no grades, but their row says they declined - a
+  // link to their statement, or an X in every topic - which is their part in
+  // this, so it stays in view.
   function participated(row) {
     return row.hasAttribute('data-returned') || row.hasAttribute('data-declined');
   }

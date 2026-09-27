@@ -191,11 +191,16 @@ description: >-
     several screens earlier is a key nobody still has in mind by the time they
     reach the thing it describes.
 
-    Without the declined X: a candidate who declined gets one full-width link to
-    their statement on this grid rather than a mark per topic, so the key would
-    be naming something the table below never draws.
+    Without the declined X while every decline carries a statement: those get
+    one full-width link to it on this grid rather than a mark per topic, so the
+    key would be naming something the table below never draws. A decline with
+    no statement gets the X in every topic, and then the key names it.
   {%- endcomment -%}
+  {%- if site.data.legend_states.declined_matrix %}
+  {% include grade-legend.html %}
+  {%- else %}
   {% include grade-legend.html omit="declined" %}
+  {%- endif %}
 
   {%- comment -%}
     Every full-width row in the matrix spans this. Derived rather than typed:
@@ -357,11 +362,11 @@ description: >-
                       Both counts ride on the item, so scorecard.js can show the
                       one matching the table: how many of this slate the
                       "Only show participating candidates" filter keeps (those
-                      who took part, and those who declined with a statement),
+                      who took part, and those who declined),
                       and the whole slate otherwise. The total is what prints without
                       the script.
                     {%- endcomment -%}
-                    {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned or c.declined_statement" -%}
+                    {%- assign sg_returned = sg.items | where_exp: "c", "c.questionnaire_returned or c.declined" -%}
                     {%- comment -%}
                       data-slate matches the rows' own data-slate, which is how
                       scorecard.js turns this entry into a switch for that
@@ -433,7 +438,7 @@ description: >-
             marks the row .is-slate-lit.
           {%- endcomment -%}
           {%- assign slate_class = site.data.slate_classes[c.slate] -%}
-          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}{% if c.declined_statement %} data-declined{% endif %}>
+          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}{% if c.declined %} data-declined{% endif %}>
             <th scope="row" class="scorecard-matrix__name">
               {%- comment -%}
                 The name cell holds a link, a meta line and (with JS) up to two
@@ -546,14 +551,30 @@ description: >-
               record outlives the decline and keeps its letter on their own
               page, but on this grid one cell of a letter beside eight of
               statement link would read as a candidate who answered one topic.
+
+              A decline with no statement has nothing to link to, so it keeps
+              the X in each topic instead - see the cell block below.
             {%- endcomment -%}
             {%- if c.declined_statement %}
             {%- assign cand_first = c.name | split: " " | first -%}
             <td class="scorecard-matrix__declined-cell" colspan="{{ site.data.subjects.size }}">
+              {%- comment -%}
+                A faded X under every topic, behind the link. On its own the
+                link read as a candidate with something to say, and a reader
+                skimming the grid could take the row for one who took part; the
+                marks keep it in the same language as every other decline on the
+                page. Decoration only - the link says what the row is, and the
+                chips' own labels would read out nine times over it.
+              {%- endcomment -%}
+              <span class="scorecard-matrix__declined-marks" aria-hidden="true">
+                {%- for subject in site.data.subjects -%}
+                <span class="scorecard-matrix__declined-mark">{% include grade-badge.html grade="" state="declined" %}</span>
+                {%- endfor -%}
+              </span>
               {%- if cand_slug != '' -%}
-              <a class="scorecard-matrix__declined-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | append: cand_slug | append: '/' | relative_url }}">Click here to read {{ cand_first }}'s provided statement</a>
+              <a class="scorecard-matrix__declined-link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | append: cand_slug | append: '/' | relative_url }}"><span class="scorecard-matrix__declined-label">Click here to read {{ cand_first }}'s provided statement</span></a>
               {%- else -%}
-              {{ cand_first }} declined to take part and provided a statement.
+              <span class="scorecard-matrix__declined-text"><span class="scorecard-matrix__declined-label">{{ cand_first }} declined to take part and provided a statement.</span></span>
               {%- endif -%}
             </td>
             {%- else %}
@@ -589,6 +610,12 @@ description: >-
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
             {% endunless %}
             {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
+            {%- comment -%}
+              A decline with no statement: the X on every topic with nothing
+              published, which is all of them but an incumbent's housing
+              record. Same test as the candidate page's own rows.
+            {%- endcomment -%}
+            {% if c.declined and c.published_subjects[subject.id] == nil %}{% assign cell_state = "declined" %}{% endif %}
             {%- comment -%}
               The chip is a link into that candidate's page, at that topic, which
               opens on arrival (assets/js/candidate.js reads the fragment). A

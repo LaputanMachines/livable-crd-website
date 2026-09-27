@@ -922,11 +922,58 @@ tr:hover td { background: $color-bg-warm; }
 // for, and a plain link rather than a chip, because it is words to read and not
 // a mark to decode. The link fills the cell so the whole span is the target.
 .scorecard-matrix .scorecard-matrix__declined-cell {
+  position: relative;
   padding: 0;
   text-align: center;
 }
 
+// The faded X behind the link, one per topic column. Laid over the whole cell
+// (inset from its padding box, which is the full span of the columns it
+// covers) and split evenly, which lines each mark up under its topic header
+// because `table-layout: fixed` splits the topic columns evenly too.
+.scorecard-matrix__declined-marks {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  align-items: center;
+  justify-items: center;
+  opacity: 0.22;
+  pointer-events: none;
+}
+
+.scorecard-matrix__declined-cell .grade {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.scorecard-matrix__declined-cell .grade--declined svg {
+  width: 66%;
+  height: 66%;
+}
+
+// The words sit on a tile of the row's own background, so the marks behind
+// them stop at the text rather than running through it. Follows the row's
+// hover colour, or the tile would show up as a pale box on a warm row.
+.scorecard-matrix__declined-label {
+  padding: 0.15rem 0.45rem;
+  background: $color-surface;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+.scorecard-row:hover .scorecard-matrix__declined-label { background: $color-bg-warm; }
+
+.scorecard-matrix__declined-text {
+  position: relative;
+  display: block;
+  padding: 0.55rem $space-xs;
+  font-size: 0.85rem;
+}
+
 .scorecard-matrix__declined-link {
+  position: relative;
   display: block;
   padding: 0.55rem $space-xs;
   font-size: 0.85rem;
@@ -1098,6 +1145,7 @@ tr:hover td { background: $color-bg-warm; }
   .scorecard-matrix__th-label { display: block; }
   .scorecard-matrix__icon { width: 1.6rem; height: 1.6rem; }
   .scorecard-matrix__cell .grade { width: 1.9rem; height: 1.9rem; font-size: 0.95rem; }
+  .scorecard-matrix__declined-cell .grade { width: 1.9rem; height: 1.9rem; }
   // No min-width on the body cell: under `table-layout: fixed` only the header
   // row sizes the columns, so the name width lives on .scorecard-matrix__name-h.
   .scorecard-matrix__cand { font-size: 0.95rem; }

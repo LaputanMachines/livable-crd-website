@@ -30,9 +30,11 @@
                carries a grade, and a written comment on a graded topic shows
                inside that topic rather than in its cell.
     declined   the candidate told the coalition they were not taking part, and
-               their page carries what they said instead of grades. Passed in as
-               state="declined" off `declined_statement` from _data/declined.yml,
-               by both cell blocks, on every topic of theirs that has nothing
+               their page carries what they said instead of grades, where they
+               said anything. Passed in as state="declined" off `declined` (the
+               tracking sheet's checkbox or an entry in _data/declined.yml), with
+               statement=true when there is a statement to point at, by both
+               cell blocks, on every topic of theirs that has nothing
                published - which is all of them but a housing record scored from
                an incumbent's council votes, since that one was never theirs to
                withhold and keeps its letter.
@@ -65,7 +67,7 @@
   Named in grade-legend.html, and unlike the answered bubble it survives onto
   the print leaflet, where its topics are not hidden.
 {%- endcomment -%}
-<span class="grade grade--declined" title="Declined to take part; their statement is on their page" aria-label="Declined to take part">
+<span class="grade grade--declined" title="Declined to take part{% if include.statement %}; their statement is on their page{% endif %}" aria-label="Declined to take part">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
     <path d="M18 6 6 18"/><path d="m6 6 12 12"/>
   </svg>

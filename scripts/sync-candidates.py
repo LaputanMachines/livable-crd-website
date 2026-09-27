@@ -69,6 +69,17 @@ SLATE_COLUMN = "Slate"
 # is: a tab that predates it must still sync rather than fail the whole job.
 WEBSITE_COLUMN = "Website"
 
+# The sheet's "told us they are not taking part" checkbox. Optional for the same
+# reason SLATE_COLUMN is. A ticked box publishes `declined: true`, which
+# _plugins/questionnaire_scores.rb turns into a red X on every topic once the
+# grades are released; an unticked one publishes nothing, so the file does not
+# change for the candidates it is not about.
+DECLINED_COLUMN = "Declined To Participate"
+
+# How Google's CSV export writes a ticked checkbox, plus what a person would
+# type into the column if it were ever turned back into plain text.
+TICKED_VALUES = {"true", "yes", "y", "x", "1", "\u2713", "\u2714"}
+
 # Sheet wording that means "nobody filled this cell in", as distinct from a real
 # answer. Shared by the slate and website columns. Blank publishes no slate at
 # all; "Independent" is a genuine, factual answer and is published as written.
@@ -87,7 +98,7 @@ HEADER = """\
 # Edit the source spreadsheet, not this file; manual changes are overwritten.
 #
 # Includes ONLY candidates whose status is confirmed ("Yes Confirmed") as running.
-# Suspected, declined, and unconfirmed entries are intentionally omitted.
+# Suspected, withdrawn, and unconfirmed entries are intentionally omitted.
 #
 # Subjective tracking notes (political "vibe", commentary, character assessments)
 # are intentionally NOT published here: the scorecard evaluates positions, not
@@ -114,6 +125,11 @@ HEADER = """\
 #                published, campaign site or social profile alike; click-tracking
 #                query parameters are stripped. Linking to it is signposting, not
 #                an endorsement.
+#   declined     Present, and true, only when the sheet's "Declined To
+#                Participate" box is ticked: the candidate told the coalition
+#                they are not taking part in the questionnaire. Their topics
+#                carry a red X once grades are released. A statement to show on
+#                their page goes in the hand-written _data/declined.yml.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -391,8 +407,12 @@ def normalize_grade(value):
 
 # --- Build records -----------------------------------------------------------
 
+def is_ticked(value):
+    return norm(value) in TICKED_VALUES
+
+
 def build_records(rows, muni_lookup, slate_labels, has_slate, has_website,
-                  errors, warnings):
+                  has_declined, errors, warnings):
     records = []
     skipped = 0
     seen = set()
@@ -446,6 +466,7 @@ def build_records(rows, muni_lookup, slate_labels, has_slate, has_website,
             "standing": normalize_standing(row.get("Incumbent?"), name, warnings),
             "slate": slate,
             "website": website,
+            "declined": has_declined and is_ticked(row.get(DECLINED_COLUMN)),
             "scores": scores,
         })
     return records, skipped
@@ -533,6 +554,8 @@ def render_record(rec, subject_order):
         f"  slate: {scalar(rec['slate']) if rec['slate'] else 'null'}",
         f"  website: {scalar(rec['website']) if rec['website'] else 'null'}",
     ]
+    if rec["declined"]:
+        lines.append("  declined: true")
     if rec["scores"]:
         lines.append("  scores:")
         for sid in subject_order:
@@ -624,8 +647,14 @@ def main(argv=None):
         warnings.append(f"CSV has no {WEBSITE_COLUMN!r} column: no campaign link "
                         f"published for any candidate")
 
+    has_declined = DECLINED_COLUMN in fields
+    if not has_declined:
+        warnings.append(f"CSV has no {DECLINED_COLUMN!r} column: no candidate "
+                        f"published as declined")
+
     records, skipped = build_records(list(reader), muni_lookup, slate_labels,
-                                     has_slate, has_website, errors, warnings)
+                                     has_slate, has_website, has_declined,
+                                     errors, warnings)
 
     # A standing id with no entry in standings.yml would render as a blank label,
     # so treat it as fatal rather than shipping an unexplained gap.

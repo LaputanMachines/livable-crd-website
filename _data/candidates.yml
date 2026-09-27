@@ -6,7 +6,7 @@
 # Edit the source spreadsheet, not this file; manual changes are overwritten.
 #
 # Includes ONLY candidates whose status is confirmed ("Yes Confirmed") as running.
-# Suspected, declined, and unconfirmed entries are intentionally omitted.
+# Suspected, withdrawn, and unconfirmed entries are intentionally omitted.
 #
 # Subjective tracking notes (political "vibe", commentary, character assessments)
 # are intentionally NOT published here: the scorecard evaluates positions, not
@@ -33,6 +33,11 @@
 #                published, campaign site or social profile alike; click-tracking
 #                query parameters are stripped. Linking to it is signposting, not
 #                an endorsement.
+#   declined     Present, and true, only when the sheet's "Declined To
+#                Participate" box is ticked: the candidate told the coalition
+#                they are not taking part in the questionnaire. Their topics
+#                carry a red X once grades are released. A statement to show on
+#                their page goes in the hand-written _data/declined.yml.
 #   scores       Map of per-topic letter grades, keyed by the topic ids in
 #                _data/subjects.yml. Any topic left blank renders as pending ("—").
 #
@@ -182,6 +187,7 @@
   standing: challenger
   slate: null
   website: "https://sashaizard.com/"
+  declined: true
 
 - name: Laurie Lidstone
   display_name: "Lidstone, Laurie"
@@ -689,6 +695,7 @@
   standing: incumbent-mayor
   slate: null
   website: "https://www.kevinmurdoch.ca/"
+  declined: true
 
 - name: Esther Paterson
   display_name: "Paterson, Esther"
@@ -899,6 +906,7 @@
   standing: incumbent-councillor
   slate: null
   website: "https://kimjordison.com/"
+  declined: true
 
 - name: Doug Kobayashi
   display_name: "Kobayashi, Doug"
@@ -1585,6 +1593,7 @@
   standing: ex-incumbent-councillor
   slate: null
   website: null
+  declined: true
 
 - name: Jamie Wellbourn
   display_name: "Wellbourn, Jamie"

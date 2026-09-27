@@ -34,11 +34,14 @@
 #                    sync. Absent where they gave none; the candidate page shows
 #                    them beside the name.
 #
-# A fifth thing is attached from a second, hand-written source. _data/declined.yml
-# names the candidates who told the coalition they were not taking part and
-# carries the statement their page shows instead; an entry there attaches
-# `declined_statement` and strips their published grades back to the ones that
-# were never theirs to give. That overlay is applied here rather than in a
+# A fifth thing is attached from two other sources. A candidate who told the
+# coalition they were not taking part is ticked "Declined To Participate" on the
+# tracking sheet, which scripts/sync-candidates.py writes as `declined: true` in
+# _data/candidates.yml; some of them also gave a statement, which is hand-written
+# into _data/declined.yml. Either one makes a decline: it sets `declined` and
+# strips their published grades back to the ones that were never theirs to
+# give, and a statement, where there is one, is attached as `declined_statement`
+# for their page to show in place of the grades. That overlay is applied here rather than in a
 # generator of its own because this is the file that decides what a candidate
 # publishes, and a second generator undoing this one's work would depend on the
 # order Jekyll happens to run two plugins of equal priority in.
@@ -50,7 +53,10 @@
 #   distribution: the release date says when grades are meant to appear, the
 #   published count says whether any have. Before that a declined candidate's
 #   page is what it always was - a row of dashes, and no statement - so a
-#   decline recorded weeks early does not go up weeks early.
+#   decline recorded weeks early does not go up weeks early. The tracking
+#   sheet's `declined: true` is taken off every candidate before anything else
+#   runs, for the same reason: the templates read `declined`, and one left on
+#   the raw data would draw the X before the release.
 #
 #   An incumbent record survives it. Homes for Living score a sitting
 #   incumbent's housing record from council votes, on the `HFL-INC` row of the
@@ -92,9 +98,17 @@ module LivableCrd
       # Liquid twice to find out.
       site.data["returned_candidate_count"] = 0
       site.data["published_candidate_count"] = 0
+      # Taken off every candidate up front, whatever happens below: set again
+      # by apply_declines, and only once there is a release. See the header.
+      sheet_declined = {}
+      candidates.each do |candidate|
+        next unless candidate.is_a?(Hash)
+
+        sheet_declined[candidate.object_id] = candidate.delete("declined") == true
+      end
       # Declined entries are checked too: a decline still has a page to change
       # even on a build where the grading sheet published nothing at all.
-      return if results.empty? && declined.empty?
+      return if results.empty? && declined.empty? && !sheet_declined.value?(true)
 
       attach_questions(site, results)
 
@@ -109,7 +123,8 @@ module LivableCrd
 
         key = join_key(candidate["name"], candidate["municipality"])
         statement = declined.delete(key)
-        declines << [candidate, statement] if statement
+        is_declined = statement || sheet_declined[candidate.object_id]
+        declines << [candidate, statement] if is_declined
         result = results.delete(key)
         next unless result
 
@@ -118,7 +133,7 @@ module LivableCrd
         # scored, not because a questionnaire came back. Without this the reply
         # rate on the municipality indexes would count somebody who told us they
         # were not taking part.
-        replied = result["returned"] != false && statement.nil?
+        replied = result["returned"] != false && !is_declined
         if replied
           returned += 1
           candidate["questionnaire_returned"] = true
@@ -180,7 +195,10 @@ module LivableCrd
     private
 
     # Strip a declined candidate back to what they did not choose to give us,
-    # and attach the statement their page shows in place of the rest.
+    # and attach the statement their page shows in place of the rest, where
+    # they gave one. `statement` is nil for a decline ticked on the tracking
+    # sheet with nothing in _data/declined.yml: their topics carry the X and
+    # their page has no statement box.
     #
     # What survives is a subject whose whole grade is an incumbent record -
     # `share: 100`, which sync-questionnaire.py writes only where no
@@ -197,7 +215,8 @@ module LivableCrd
     # publishes less.
     def apply_declines(entries)
       entries.each do |candidate, statement|
-        candidate["declined_statement"] = statement
+        candidate["declined"] = true
+        candidate["declined_statement"] = statement if statement
 
         detail = candidate["published_subjects"]
         detail = {} unless detail.is_a?(Hash)
@@ -230,7 +249,10 @@ module LivableCrd
       %w[N/A NA N.A. N/A.].include?(grade.to_s.strip.upcase)
     end
 
-    # {"na" =>, "answers" =>, "declined" =>}: whether any page draws that chip.
+    # {"na" =>, "answers" =>, "declined" =>, "declined_matrix" =>}: whether any
+    # page draws that chip. `declined_matrix` is the scorecard grid's own
+    # answer: it draws the X only for a decline with no statement, and gives one
+    # with a statement a link across the row instead.
     #
     # The rule has to be the one the templates use, or the key will name a chip
     # nothing draws or miss one something does. A subject with a letter shows
@@ -243,21 +265,24 @@ module LivableCrd
     # and the key deliberately does not name it, so there is nothing here to
     # decide about it.
     #
-    # The declined X is drawn on a candidate in _data/declined.yml and
-    # nowhere else, so an empty file takes it out of the key - as does a build
-    # before the release, where apply_declines has not run and nobody carries
-    # `declined_statement` yet.
+    # The declined X is drawn on a declined candidate and nowhere else, so
+    # nobody declining takes it out of the key - as does a build before the
+    # release, where apply_declines has not run and nobody carries `declined`
+    # yet.
     def legend_states(site, candidates)
       subjects = site.data["subjects"]
       subjects = [] unless subjects.is_a?(Array)
       graded = site.data.dig("scores", "graded_subjects")
       graded = [] unless graded.is_a?(Array)
 
-      states = { "na" => false, "answers" => false, "declined" => false }
+      states = { "na" => false, "answers" => false, "declined" => false, "declined_matrix" => false }
       candidates.each do |candidate|
         next unless candidate.is_a?(Hash)
 
-        states["declined"] ||= !candidate["declined_statement"].to_s.strip.empty?
+        if candidate["declined"] == true
+          states["declined"] = true
+          states["declined_matrix"] ||= candidate["declined_statement"].to_s.strip.empty?
+        end
 
         scores = candidate["scores"].is_a?(Hash) ? candidate["scores"] : {}
         detail = candidate["published_subjects"].is_a?(Hash) ? candidate["published_subjects"] : {}

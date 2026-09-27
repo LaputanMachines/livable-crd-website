@@ -355,13 +355,15 @@ module LivableCrd
           # stays true after the grades go up.
           "questionnaire_returned" => candidate["questionnaire_returned"] == true,
           # And whether they told us they were not taking part, attached by the
-          # same generator from _data/declined.yml. Carried because the row's
+          # same generator from the tracking sheet and _data/declined.yml. Carried because the row's
           # other two states cannot say it: the tick is for a reply that came
           # back, and the dash's own wording is "no reply yet", which on
           # somebody who has declined is the one thing this page would get
           # wrong. The statement itself stays on their page - this list is
           # names and marks, and a paragraph in one of these rows would be the
-          # only prose on it.
+          # only prose on it. `declined` is the decline itself, with or without
+          # a statement; the statement only decides what the mark's title says.
+          "declined" => candidate["declined"] == true,
           "declined_statement" => candidate["declined_statement"],
           "slate" => slate.empty? ? nil : slate
         }

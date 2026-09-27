@@ -196,7 +196,8 @@ description: >-
           <dd class="grade-def__desc">
             This candidate told the coalition they were not taking part, so the
             topics they were asked about carry this mark rather than a letter,
-            and their page carries what they said instead of grades. One kind of
+            and their page carries what they said, if they gave a statement,
+            instead of grades. One kind of
             grade outlives it: where a sitting councillor's housing record has
             been scored from their council votes, that letter still stands,
             because it is a reading of what they have already done in office

@@ -36,14 +36,16 @@ layout: default
 {%- assign returned = c.questionnaire_returned -%}
 {%- assign gradable = site.data.scores.graded_subjects -%}
 {%- comment -%}
-  What this candidate said when they told the coalition they were not taking
-  part, from the hand-written _data/declined.yml. Its presence is the whole of
-  what makes this a declined page: questionnaire_scores.rb has already emptied
-  their scores and their per-question detail, so every topic below falls to a
-  plain unopenable row, and the block below puts the statement where the grades
-  would have been.
+  Whether this candidate told the coalition they were not taking part - ticked
+  on the tracking sheet, or written into _data/declined.yml - and what they
+  said about it, where they said anything. `declined` is what makes this a
+  declined page: questionnaire_scores.rb has already emptied their scores and
+  their per-question detail, so every topic below falls to a plain unopenable
+  row carrying the X. `statement`, from _data/declined.yml, is optional; where
+  there is one, the block below puts it where the grades would have been.
 {%- endcomment -%}
-{%- assign declined = c.declined_statement -%}
+{%- assign declined = c.declined -%}
+{%- assign statement = c.declined_statement -%}
 {%- comment -%}
   The one publication date, quoted by both empty-state callouts below rather
   than written out twice. It lives in _data/deadlines.yml with the rest of the
@@ -198,7 +200,9 @@ layout: default
     {%- endif %}
     {%- if openable_count > 1 %} The control above the list opens all of them at
     once.{% endif %}
+    {%- unless declined %}
     At the foot of the page you can print this scorecard or share it as an image.
+    {%- endunless %}
   </p>
   {%- endunless %}
 
@@ -219,9 +223,9 @@ layout: default
     Not a .callout like the "grading is under way" note below it. That one is a
     process aside on a page whose subject is elsewhere; this is the subject.
   {%- endcomment -%}
-  {%- if declined %}
+  {%- if statement %}
   <div class="candidate-declined">
-    {{ declined | escape | newline_to_br }}
+    {{ statement | escape | newline_to_br }}
   </div>
   {%- endif %}
 
@@ -269,17 +273,18 @@ layout: default
     leaves a blank square on the leaflet.
   {%- endcomment -%}
   {%- comment -%}
-    A declined candidate with nothing to open gets the statement above and
-    nothing else: no key, no topic list, no print, download or share buttons.
-    Nine identical marks said nothing the statement had not, a key named them,
-    and the buttons printed and shared a scorecard with no grades on it.
+    A declined candidate with a statement and nothing to open gets the
+    statement above and nothing else: no key, no topic list, no print, download
+    or share buttons. Nine identical marks said nothing the statement had not,
+    and a key named them. One with no statement keeps the key and the rows of
+    X, which are then the only thing saying they declined.
 
     The same test as the how-to note: a sitting incumbent's housing record
     outlives the decline, and when one is scored there is a real row to read,
     so the page comes back as it is for everyone else.
   {%- endcomment -%}
   {%- assign statement_only = false -%}
-  {%- if declined and openable_count == 0 %}{% assign statement_only = true %}{% endif -%}
+  {%- if statement and openable_count == 0 %}{% assign statement_only = true %}{% endif -%}
   {%- unless statement_only %}
   {%- comment -%}
     The same key the scorecard matrix carries, above the same chips. A reader
@@ -418,7 +423,7 @@ layout: default
           <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
           <h2 class="candidate-grade__name">{{ subject.name }}</h2>
           <span class="candidate-grade__leader" aria-hidden="true"></span>
-          {% include grade-badge.html grade=cell state=cell_state %}
+          {% include grade-badge.html grade=cell state=cell_state statement=statement %}
           {%- comment -%}
             The only thing in the row that says it can be opened. Rotates a
             quarter turn when it is. Decorative: <summary> already announces its
@@ -814,7 +819,7 @@ layout: default
         <img class="candidate-grade__icon" src="{{ '/assets/images/icons/' | append: subject.icon | relative_url }}" alt="" width="28" height="28">
         <h2 class="candidate-grade__name">{{ subject.name }}</h2>
         <span class="candidate-grade__leader" aria-hidden="true"></span>
-        {% include grade-badge.html grade=cell state=cell_state %}
+        {% include grade-badge.html grade=cell state=cell_state statement=statement %}
         <svg class="candidate-grade__chevron candidate-grade__chevron--disabled" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg">
           <path d="m9 18 6-6-6-6"/>
         </svg>
@@ -853,12 +858,20 @@ layout: default
         statement above in full, and to the questions this candidate was asked
         and did not answer.
       {%- endcomment -%}
-      <p class="candidate-print-qr__lead">{% if declined %}Read this in full online{% else %}Read their full responses{% endif %}</p>
+      <p class="candidate-print-qr__lead">{% if statement %}Read this in full online{% elsif declined %}Read this online{% else %}Read their full responses{% endif %}</p>
       <p class="candidate-print-qr__url">{{ candidate_url | remove: 'https://' | remove: 'http://' }}</p>
-      <p class="candidate-print-qr__note">{% if declined %}{{ c.name }}'s statement, and the questionnaire every candidate in the region was asked.{% else %}Every question {{ c.name }} was asked, their answers, and why each grade was given.{% endif %}</p>
+      <p class="candidate-print-qr__note">{% if statement %}{{ c.name }}'s statement, and the questionnaire every candidate in the region was asked.{% elsif declined %}The questionnaire every candidate in the region was asked.{% else %}Every question {{ c.name }} was asked, their answers, and why each grade was given.{% endif %}</p>
     </div>
   </aside>
 
+  {%- comment -%}
+    No print, download or share buttons for a candidate who declined, whether
+    or not they gave a statement: what they would print and share is a row of
+    X marks, a scorecard with no grades on it. The browser's own print command
+    still gives the leaflet. candidate.js and candidate-share.js both stand down
+    when their buttons are not on the page.
+  {%- endcomment -%}
+  {%- unless declined %}
   <div class="btn-group candidate-actions">
     {%- comment -%}
       Printing is the only action left here. "See the full scorecard" and "Read
@@ -925,6 +938,7 @@ layout: default
     a canvas that will not draw, or a platform window a blocker swallowed.
   {%- endcomment -%}
   <p class="candidate-share-status" id="share-status" role="status" aria-live="polite"></p>
+  {%- endunless %}
   {%- endunless %}
 
   {%- comment -%}
