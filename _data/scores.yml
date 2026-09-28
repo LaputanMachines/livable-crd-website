@@ -51178,7 +51178,7 @@ candidates:
       transit: C-
       housing: F
       climate: C
-      arts: F
+      arts: C
       rolling-cycling: C
       walking: C-
       governance: B
@@ -51539,12 +51539,12 @@ candidates:
             weight: "8%"
             answer: "Yes"
       - id: arts
-        grade: F
+        grade: C
         score:
-          percent: 58
+          percent: 71
         questions:
           - label: ART-01
-            points: 1
+            points: 2
             max_points: 3
             weight: "6.67%"
             rationale: >-
@@ -51555,14 +51555,19 @@ candidates:
               Yes
               Follow-up: I always have been a strong supporter of the CRD Arts programs and I will continue to be. View Royal is a small jurisdiction and we do not have a local arts program but I will always support the arts in our communities via the CRD arts Committee.
           - label: ART-02
-            points: 1
+            points: 3
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Public art and summer performing arts/music are relevant ideas,
-              but “would love to” / “would also like to see” is aspirational
-              rather than a concrete first-year commitment, and there is no
-              measurable four-year outcome.
+              The response identifies two concrete areas of municipal arts
+              action: establishing a public-art program modeled on Oak Bay's
+              and introducing performing arts/music programming in parks. The
+              Oak Bay reference is more substantive than a generic arts
+              aspiration, because that model includes recurring municipal
+              programming, artist opportunities, public-art acquisition,
+              community engagement, sponsorship and formal policy
+              infrastructure.This ties back to economic development and
+              municipal cultural richness.
             answer: >-
               I would love to implement a public art program similar to Oak
               Bay's in View Royal. I would also like to see us have some
