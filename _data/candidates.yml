@@ -1271,6 +1271,14 @@
   slate: null
   website: null
 
+- name: Mark Muldoon
+  display_name: "Muldoon, Mark"
+  municipality: metchosin
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://beautifulmetchosin.ca/"
+
 - name: Jesse Pewarchuk
   display_name: "Pewarchuk, Jesse"
   municipality: metchosin
