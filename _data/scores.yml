@@ -51178,7 +51178,7 @@ candidates:
       transit: C-
       housing: F
       climate: C
-      arts: C
+      arts: A
       rolling-cycling: C
       walking: C-
       governance: B
@@ -51539,16 +51539,24 @@ candidates:
             weight: "8%"
             answer: "Yes"
       - id: arts
-        grade: C
+        grade: A
         score:
-          percent: 71
+          percent: 91
         questions:
           - label: ART-01
-            points: 2
+            points: 3
             max_points: 3
             weight: "6.67%"
             rationale: >-
-              Says arts/culture are core, but the supporting answer speaks
+              *Amended/Clarification Sept. 28th: Screech’s history with the
+              CRD Arts Service, including serving as Chair of the CRD Arts
+              Committee, and his advocacy for View Royal to remain a Tier 1
+              contributor demonstrate the importance he places on regional
+              arts investment, even as a small municipality with limited
+              capacity for its own programming. His proposed Oak Bay-style
+              public-art program further connects municipal arts investment to
+              cultural richness and economic development. // ORIG: Says
+              arts/culture are core, but the supporting answer speaks
               primarily to continued CRD Arts support rather than View Royal's
               economic-development strategy.
             answer: |-
@@ -51559,15 +51567,19 @@ candidates:
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              The response identifies two concrete areas of municipal arts
-              action: establishing a public-art program modeled on Oak Bay's
-              and introducing performing arts/music programming in parks. The
-              Oak Bay reference is more substantive than a generic arts
-              aspiration, because that model includes recurring municipal
-              programming, artist opportunities, public-art acquisition,
-              community engagement, sponsorship and formal policy
-              infrastructure.This ties back to economic development and
-              municipal cultural richness.
+              Amended/Clarification Sept. 28th: The response identifies two
+              concrete areas of municipal arts action: establishing a
+              public-art program modeled on Oak Bay's and introducing
+              performing arts/music programming in parks. The Oak Bay
+              reference is more substantive than a generic arts aspiration,
+              because that model includes recurring municipal programming,
+              artist opportunities, public-art acquisition, community
+              engagement, sponsorship and formal policy infrastructure.This
+              ties back to economic development and municipal cultural
+              richness. /// Original: Public art and summer performing
+              arts/music are relevant ideas, but “would love to” / “would also
+              like to see” is aspirational rather than a concrete first-year
+              commitment, and there is no measurable four-year outcome.
             answer: >-
               I would love to implement a public art program similar to Oak
               Bay's in View Royal. I would also like to see us have some
@@ -51590,11 +51602,19 @@ candidates:
                 assets.
               - Develop a cross-coordinated regional cultural-space strategy.
           - label: ART-04
-            points: 2
+            points: 3
             max_points: 3
             weight: "10.00%"
             rationale: >-
-              Supports service standards, simplified small-scale events, and
+              *Amended/Clarification Sept 28: The response identifies three
+              practical mechanisms to improve municipal permitting: clear
+              service standards, simplified requirements for small-scale
+              events, and better interdepartmental coordination. Given View
+              Royal’s limited municipal capacity and permitting being handled
+              through the Parks division rather than a dedicated arts/events
+              function, these measures could meaningfully reduce
+              administrative barriers to cultural activation. // Orig Supports
+              service standards, simplified small-scale events, and
               departmental coordination. These are useful administrative
               reforms, but he does not select the higher-impact
               permitting/zoning review lever.
@@ -51635,21 +51655,48 @@ candidates:
               Yes, arts and culture should maintain or grow alongside other
               core services.
           - label: ART-07
-            points: 1
+            points: 2
             max_points: 3
             weight: "10.00%"
             rationale: >-
-              “Overall community benefit” recognizes a community consideration
-              but does not specifically identify cultural-space preservation,
-              replacement, mitigation or protection.
+              *Amended/Clarification Sept. 28th: The response prioritizes
+              overall community benefit when redevelopment affects an existing
+              cultural space, but does not specifically commit to preservation
+              or equivalent replacement where displacement occurs. However, in
+              further discussion with Screech, this question has limited
+              applicability in View Royal, which has very limited existing
+              cultural-space inventory, including the recently developed
+              Scottish community hall at Craigflower. // “Overall community
+              benefit” recognizes a community consideration but does not
+              specifically identify cultural-space preservation, replacement,
+              mitigation or protection.
             answer: Evaluate proposals based on overall community benefit.
           - label: ART-08
-            points: 0
+            points: 2
             max_points: 3
             weight: "16.67%"
             rationale: >-
-              Declines to answer the question and therefore provides no
-              supported municipal incentive commitment.
+              *Amended/Clarification Sept. 28th: Screech identified a concrete
+              municipal mechanism to support cultural space: reducing or
+              waiving municipal fees for eligible cultural-space projects. He
+              cited View Royal’s waiver of municipal fees for the approval and
+              development of a new Scottish community hall, demonstrating a
+              willingness to use municipal financial and regulatory tools to
+              facilitate cultural infrastructure. // Orig: Declines to answer
+              the question and therefore provides no supported municipal
+              incentive commitment.
+            answer: >-
+              *Amended/Clarification Sept. 28th: Screech identified a concrete
+              municipal mechanism to support cultural space: reducing or
+              waiving municipal fees for eligible cultural-space projects. He
+              cited View Royal’s waiver of municipal fees associated with the
+              approval and development of a new Scottish community hall as an
+              example, demonstrating a willingness to use municipal financial
+              and regulatory tools to facilitate cultural infrastructure. He
+              also noted that tax incentives may have limited expansionary
+              impact in View Royal given the municipality’s limited available
+              cultural-space inventory. (Scottish Centre and View Royal
+              community hall) // ORIG: Decline to answer.
             selected:
               - Decline to answer.
         unscored:
