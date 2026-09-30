@@ -15060,8 +15060,390 @@ candidates:
               and their new Reconciliation Action Plan.
   - name: Scott Goodmanson
     municipality: langford
-    returned: false
-    subjects: []
+    pronouns: he/him
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: |-
+              If I could change one feature in our municipality, it would be the lack of a pedestrian overpass across the TCH.
+
+              The highway is a serious barrier for those wanting to cross to-and-from north Langford.  For children, the lack of an overpass means that walking to school is a foreign concept, even when they can see the school across the highway.  No longer would parents be forced to drive their children before and after school and bicycle commuters on the north side of the highway would have a safer route to connect to the regional trail network.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 0
+                display: $0
+                share: 0
+              - area: Transit
+                amount: 0
+                display: $0
+                share: 0
+              - area: Walking Infrastructure
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 0
+                display: $0
+                share: 0
+              - area: Roadway Infrastructure
+                amount: 0
+                display: $0
+                share: 0
+              - area: Policing
+                amount: 0
+                display: $0
+                share: 0
+              - area: "Fire & Emergency Services"
+                amount: 4000000
+                display: "$4,000,000"
+                share: 40
+              - area: "Parks & Recreation"
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: "Arts & Culture"
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: "Climate Action & Environment"
+                amount: 750000
+                display: "$750,000"
+                share: 8
+              - area: Unhoused Resident Services
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Community-Based Clinics
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+          - label: GEN-GEN
+            answer: |-
+              One-time funding can not be used for operations. Therefore the question above lends itself for small to medium sized capital projects.
+
+              For example, in Langford,  we are already in the middle of our RCMP detachment expansion project,  but we need to begin saving for an eventual new fireball.
+
+              The climate action funding can go toward some of the actionable items from our new Climate Action Plan.
+
+              We have a working model with a non profit, medical, society and the $1 000 000 could go towards the tenant improvements for a new clinic.
+
+              We are a rapidly growing municipality that needs to fund for a variety of infrastructure and amenity needs.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Langford/Sidney/Central Saanich Model) Municipality indirectly
+              supports PCC with Permissive Tax Exemptions, zoning, below
+              market rent, etc. Clinic is operated by a non-profit such as
+              South Island Primary Care Society or Shoreline Medical Society.
+          - label: HLT-GEN
+            answer: |-
+              Municipalities region wide are grasping with how to engage in the healthcare field, that has previously been considered the mandate of the Provincial Government.
+
+              Four out of the five Westshore municipalities have committed municipal resources to create the opportunity for residents to have the possibility of a primary care professional.
+
+              In Langford we have secured a small drs office from closing and keeping 2500 -3000 patients from losing their primary care representative.
+
+              We have opened up a new clinic with ten doctors which will serve 12 500 - 15 000 patients and recently closed a RFP for a housing, drs office, and commercial/ retail building on City owned land.
+      - id: transit
+        grade: null
+        questions:
+          - label: TRN-01
+            grade: null
+            weight: "20%"
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+              - Lower-cost regional monthly pass.
+          - label: TRN-02
+            grade: null
+            weight: "30%"
+            answer: "Kind of, only when a specific project requires it."
+          - label: TRN-03
+            grade: null
+            weight: "30%"
+            answer: "Yes, but not at the cost of a general-purpose travel lane."
+          - label: TRN-04
+            grade: null
+            weight: "10%"
+            answer: "Yes"
+          - label: TRN-05
+            grade: null
+            weight: "10%"
+            answer: "Yes, if no mature trees are lost during construction."
+        unscored:
+          - label: TRN-GEN
+            answer: |-
+              Transit and transportation in the CRD have often been stewarded under multiple different groups that do not always talk together.
+
+              Transit under BC Transit and the Victoria Transit Commission, and general transportation falling under the municipal governments, each on their own.
+
+              Today, in the CRD we find ourselves working into a new setting with the creation of the CRD’s Regional Transportation Service that will allow transit and transportation to work  hand in hand all across the CRD.
+      - id: climate
+        grade: null
+        questions:
+          - label: CLI-01
+            grade: null
+            weight: "8%"
+            answer: |-
+              Yes, advertising only.
+              Follow-up: Yes
+          - label: CLI-02
+            grade: null
+            weight: "8%"
+            answer: "One of the top three priorities, with a dedicated budget."
+          - label: CLI-03
+            grade: null
+            weight: "8%"
+            answer: "No"
+          - label: CLI-04
+            grade: null
+            weight: "8%"
+            answer: "Yes, if municipal costs are capped."
+          - label: CLI-05
+            grade: null
+            weight: "8%"
+            answer: "No"
+          - label: CLI-06
+            grade: null
+            weight: "8%"
+            selected:
+              - A public information campaign.
+              - >-
+                Designated cooling and clean-air centres with guaranteed
+                opening hours.
+              - >-
+                Bylaw requirements on vegetation management and exterior
+                cladding in wildfire-exposed areas.
+              - >-
+                Subsidized home assessments for heat, air quality and wildfire
+                risk.
+              - >-
+                Grants or financing for cooling, filtration and building
+                retrofits.
+          - label: CLI-07
+            grade: null
+            weight: "8%"
+            answer: "No"
+          - label: CLI-08
+            grade: null
+            weight: "8%"
+            answer: Oppose all new data centres.
+          - label: CLI-09
+            grade: null
+            weight: "8%"
+            answer: |-
+              The primary climate risks facing the City of Langford are mainly related to heat.
+
+              The heat dome in 2021 showed the inequities of cooling and shade across the city and the negative effects of planning decisions from years past.
+
+              The fire interface hazard has been an issue for Langford for decades. As both temperatures and development into greenfield areas increase, so does the fire interface hazard.
+
+              The City already has a strong program for fire-smart awareness and a dedicated member of Langford Fire Rescue administers the program.  We also provide the ability to visit individual properties at no cost to the property owner to advise on fire smart responses that  can be carried out.
+
+              The city has also just adopted our first ever Climate Action Plan which is a roadmap for ways the city can improve our responses to climate change and how we can mitigate our own affects on the climate.
+          - label: CLI-10
+            grade: null
+            weight: "8%"
+            answer: |-
+              The City passed its first ever Parks and Trails master plan in December of 2025 that outlines  the vision for the City’s parks and trail system.  It also identifies gaps in parks, trails, unstructured outdoor recreation opportunities in the city.
+
+              To complete this vision we have outlined  9 objectives, 30 strategies, and 118 actions we can take directly.
+
+              I encourage everyone to go to Langford.ca and read up on this formidable plan.
+          - label: CLI-11
+            grade: null
+            weight: "8%"
+            answer: |-
+              Yes.
+              Responsible  development is an essential way we can increase our resilience to climate change effects.
+
+              For example, by maintaining our tree canopy we can lower the heat island effects, lesson the effects of windstorms, and avoid slope failures and landslides that can occur with stripped hillsides.
+
+              By densifying smartly we can maintain much of the remaining wilderness around us, while provide solid, safe, housing for future generations.
+
+              This is where our new OCP, Parks and Trails master plan, new Master Transportation plan, Active transportation plan, and Climate Change plan can work in harmony to produce better results than working alone.
+
+              We have done the hard work to see these plans passed and now it is our job to ensure they are implemented into the operations  of the City over the next term.
+          - label: CLI-12
+            grade: null
+            weight: "8%"
+            answer: "Yes"
+        unscored:
+          - label: CLI-GEN
+            answer: |-
+              By focussing on a series of nine master, and sub-master plans over the previous four years, the City has created an environment where were can now plan for our future in a wholesome fashion that incorporates information from a variety of City resources all at once.
+              No longer will needed information be absent when we are looking at the complete-city scale of Langford.
+
+              Now we can plan our housing, roads and trails, parks, arts and cultural spaces, together, instead of a piecemeal - add hoc fashion of past years.
+      - id: rolling-cycling
+        grade: null
+        questions:
+          - label: ROL-01
+            grade: null
+            weight: "15%"
+            answer: |-
+              Yes
+              Follow-up: While there are a number of worthy and needed projects in our list for the City of Langford, and some I personally am more biased towards due to my own interests,  no single Mayor or Councillor can state that this is the project that the city will work on
+
+              All projects go through a variety of filters including budget, hierarchical needs, possible grant funding or partnership opportunities, etc within the City.  If funding is needed through requisition then the decision is one of Council as a whole that makes a decision and no individual council member has anything more than a single vote.
+
+              It is the sum total of council that makes decisions, not an individual
+
+              While it is not the top priority of the city, I believe finishing the E&N rail trail to Humpback Rd is attainable and much needed to allow easy access to Langford Lake, the Langford Aquatic Centre and beyond
+          - label: ROL-02
+            grade: null
+            weight: "15%"
+            answer: "Yes, except where physically impossible."
+          - label: ROL-03
+            grade: null
+            weight: "15%"
+            answer: "Yes"
+          - label: ROL-04
+            grade: null
+            weight: "20%"
+            answer: |-
+              Technically a pedestrian overpass across the TCH would be the City’s number one priority as it would serve both commuters and students alike, needing to cross the TCH.
+
+              This would be a multi-year project for planning alone.
+
+              Unfortunately any such project, (or the similar one over Sooke Rd), needs both permission from, and planning with MOTT and the Province.
+
+              Without those, no project will commence.
+
+              The City has already begun the process with our first Master Transportation Plan that identifies this project. This shows the Province the project is one of importance to the City and the hierarchy of the project.
+
+              Now is the opportunity to advocate with the Province for planning purposes.
+          - label: ROL-05
+            grade: null
+            weight: "35%"
+            answer: |-
+              Over the last four years I have continually advocated for all forms of walking, rolling, cycling and transit.
+
+              As a member of the CRD Transportation committee and now sitting as the Vice Chair,  we have continued to seek out partnerships and projects to advance these actions.
+
+              Whether it was supporting the CRD widening and lighting of the Galloping Goose/Lochside Trail and trestle surfacing replacing or advancing the final creation of the CRD’s first  Regional Transportation Service
+
+              Municipally I have advocated for  and voted with the creation of multiple sidewalk infill projects and an off the road multi-use path.  None of these would have been brought forward in any nears future if we had continued to rely on direct-location development to advance these projects and/or applied for and received funding grants to complete the project.
+      - id: walking
+        grade: null
+        questions:
+          - label: WLK-01
+            grade: null
+            weight: "10%"
+            answer: "Yes, but not when it takes away road space from drivers."
+          - label: WLK-02
+            grade: null
+            weight: "20%"
+            answer: >-
+              Our patchwork network of sidewalks is a chief concern for me.
+              While there are larger projects needing addressing, this is one
+              that has the ability to help a larger amount of people within a
+              quicker timeframe. By continuing to infill the needed portions
+              of sidewalk, we are permanently addressing the barrier to
+              walking that effects the safety of so many.
+          - label: WLK-03
+            grade: null
+            weight: "10%"
+            answer: >-
+              Yes, a substantial increase (i.e. more than double what's
+              currently spent).
+          - label: WLK-04
+            grade: null
+            weight: "20%"
+            answer: "Yes, but only temporary, seasonal or pilot closures."
+          - label: WLK-05
+            grade: null
+            weight: "20%"
+            answer: |-
+              The City of Langford already has a strong track record for working with Sooke School District 62, and individual schools alike.
+
+              City and  District staff meet regularly, while senior staff and I meet twice a year with the Board Chair and District Senior staff.  Further, both the Board and Council meet twice a year.
+
+              I have met numerous times with school PAC members in my office, attended their public events and continued the conversations to foster an even stronger partnership between the Municipality and school district.
+          - label: WLK-06
+            grade: null
+            weight: "20%"
+            answer: |-
+              Once again the question is asking us to identify, and prioritize items in a timeframe that a Mayor or single Councillor legislatively cannot achieve on their own.
+
+              This term the City has completed multiple sidewalk infill projects allowing students and seniors alike to be able to walk safely on newly created pathways.
+
+              This has been achieved not by individual councillors working in silos, but by Council as a whole, working with staff on projects that meet the up to date criteria the City is working with.
+
+              This has worked well over the previous four years and I see no reason to alter from a proven course.
+        unscored:
+          - label: WLK-GEN
+            answer: |-
+              For most of its’ history, the City of Langford has relied on development to create sidewalks as part of required frontage improvements.
+
+              While this may have been advantageous at the time, it left areas of the city with a patchwork of sidewalks with no timeframe for completion.
+
+              Today with the growth the City is realizing, and our increasing visitor counts, we can’t wait for future developments to fulfill needed sidewalks and multi-use paths and trails.
+
+              The City will have to regularly continue with the sidewalk infill and addressing areas still lacking sidewalks completely.
+      - id: governance
+        grade: null
+        questions:
+          - label: GOV-01
+            grade: null
+            weight: "17%"
+            answer: "Yes"
+          - label: GOV-02
+            grade: null
+            weight: "17%"
+            answer: "Yes"
+          - label: GOV-03
+            grade: null
+            weight: "17%"
+            answer: |-
+              I would continue with the work that we have already started in this last term.
+
+              #1, Removed the use of amenity funds, (collected from development for city-wide amenities), which were used to lower the tax rate and portray a false narrative to the true costs of running the city.
+
+              #2 Ensure that the five-year financial plan continues to lead to a stabilized tax rate, including the funding for the city’s first ever asset management plan.
+
+              #3 Further the work of the city’s first official economic development plan to increase our economic diversity and build upon last years record setting business licence applications.
+          - label: GOV-04
+            grade: null
+            weight: "17%"
+            answer: "No"
+          - label: REC-01
+            grade: null
+            weight: "17%"
+            answer: "Yes"
+          - label: REC-02
+            grade: null
+            weight: "17%"
+            answer: Significantly more consultation practices.
+        unscored:
+          - label: GOV-GEN
+            answer: |-
+              We are used to the CRD supplying us with regional and subregional services that are traditionally provided across the CRD, such as sewer, water, solid waste, etc.
+
+              This last four years has seen the regional municipalities join together on new initiatives such as regional transit planning and the arts which cross municipal boundaries as well.
+
+              Shared resource use and planning, be it between neighbours or across the region is the future of creating smarter, more efficient responses to needed, infrastructure and governance demands.
+          - label: REC-GEN
+            answer: |-
+              Participation in the VTC is under provincial regulation and any new members must be authorized by the Province.
+
+              While we can advocate, the final decision comes down to them.
+
+              The Reconciliation Corridor Initiative for the E&N corridor is a regional rail concept involving five levels of government, (Federal, Provincial, Regional, First Nations, and Municipal) that is being lead by the Kosapsum and Songhees First Nations.
+
+              In this case the two nations are leading the way to help restore rail to the corridor and create future economic prosperity, between Langford and Victoria.
+
+              Finally on September 22  2026, the City of Langford signed an official MOU with the Tsartlip First Nation and the Tseycum First Nation.  The first mou the City has signed with any First Nation.  This is not an end goal, but an official  starting point for further discussions with each Nation towards a deeper understanding and partnership for years to come.
   - name: Tanya Sunshine
     municipality: langford
     pronouns: she/her
