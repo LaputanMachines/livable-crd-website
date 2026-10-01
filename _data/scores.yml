@@ -41044,6 +41044,385 @@ candidates:
               First Nations decide, and be respectful. “More” consultation
               should be offered (which is what my above response meant) but
               not insisted upon; take guidance from First Nations.
+  - name: Herbert Collins
+    municipality: victoria
+    pronouns: he/him/his
+    late: true
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: Ban street camping as no one should be on the streets.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Transit
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: Walking Infrastructure
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: Roadway Infrastructure
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: Policing
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: "Fire & Emergency Services"
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: "Parks & Recreation"
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: "Arts & Culture"
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: "Climate Action & Environment"
+                amount: 600000
+                display: "$600,000"
+                share: 6
+              - area: Unhoused Resident Services
+                amount: 2000000
+                display: "$2,000,000"
+                share: 20
+              - area: Community-Based Clinics
+                amount: 600000
+                display: "$600,000"
+                share: 6
+          - label: GEN-GEN
+            answer: >-
+              We need to clean up Victoria and boost this number 1 World Class
+              tourist destination.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              (Colwood Model) Municipality is the clinic operator, GPs , NPs &
+              support staff are all municipal employees.
+          - label: HLT-GEN
+            answer: >-
+              I would like to see all human and pet first responders and
+              Veterans receive great care from a “Complex Trauma Centre.” A
+              place where patients are to be supported of their cases; serve
+              as advocates for them in a WorkSafe claim, provide financial
+              assistance while waiting from Work Safe claims, give more
+              information for help available, fund EMDR and Transcranial
+              Magnetic Stimulation therapy so that they can treat better and
+              faster without relying on medication alone to help expedite safe
+              return to work.
+      - id: transit
+        grade: null
+        questions: []
+        unscored:
+          - label: TRN-01
+            selected:
+              - Free transit for everyone under 19 years of age.
+              - "Free or half-priced fares for seniors, 65+ years of age."
+              - >-
+                Free or half-priced transit for people receiving income or
+                disability assistance.
+          - label: TRN-02
+            answer: "Yes, only during peak hours."
+          - label: TRN-03
+            answer: "No"
+          - label: TRN-04
+            answer: "Yes"
+          - label: TRN-05
+            answer: "No"
+          - label: TRN-GEN
+            answer: >-
+              Invest in more electric buses and bus lanes should also be HOV
+              lanes.
+      - id: housing
+        grade: null
+        questions: []
+        unscored:
+          - label: HFL-01
+            selected:
+              - >-
+                Supportive housing for those who need mental health and
+                substance use support.
+              - >-
+                Publicly funded accessible housing for elderly and/or disabled
+                people.
+              - Non-market affordable housing.
+              - Small homes (< 500 sq. ft.).
+              - Market rate rental housing.
+              - >-
+                Family-suitable housing (i.e., 3 or more bedrooms and more
+                than 1200 sq. ft.).
+          - label: HFL-02
+            selected:
+              - Award bonus density to affordable housing developments.
+              - >-
+                Redirect development pressure away from existing older
+                multifamily by allowing new multifamily in more low-density
+                areas.
+              - >-
+                Municipality-wide tenant assistance policies to allow existing
+                tenants to maintain their current rent after their building is
+                redeveloped.
+              - >-
+                Working with the province to create province-wide tenant
+                assistance policies.
+              - >-
+                Exempt all below-market housing from any fees or levies
+                charged by the municipality to developers.
+          - label: HFL-03
+            answer: >-
+              Yes - Under 30 days for small projects under six units, 180 days
+              for large projects over six units.
+          - label: HFL-04
+            selected:
+              - Pre-zoning.
+              - Bonus density.
+              - Expedited reviews.
+              - Remove zoning/procedural barriers.
+          - label: HFL-05
+            answer: "No"
+          - label: HFL-06
+            answer: Multi-lot townhouse developments (strata or freehold).
+          - label: HFL-07
+            answer: >-
+              Decide case by case, with neighbourhood opposition being an
+              important consideration.
+          - label: HFL-08
+            answer: No.
+          - label: HFL-09
+            selected:
+              - >-
+                Relaxing setbacks, form and character, or other zoning
+                restrictions.
+              - Offering bonus height or density.
+              - Removing fees or levies charged by the municipality.
+              - >-
+                Mandating that affordable housing be built by developers
+                (inclusionary zoning).
+              - >-
+                Directly building or partnering with below-market developers
+                to build affordable housing.
+              - Upzoning for affordable housing (no rezoning required).
+          - label: HFL-10
+            answer: >-
+              I hope to remove barriers for building hundreds of new
+              affordable housing by year end. I hope to see hundreds of
+              affordable homes built in region by 4th year.
+          - label: HFL-11
+            answer: About that many homes (the target is approximately right).
+          - label: HFL-12
+            selected:
+              - >-
+                Allow substantially more housing and commercial development to
+                grow the tax base and help fund infrastructure renewal.
+              - Seek additional provincial or federal funding.
+      - id: climate
+        grade: null
+        questions: []
+        unscored:
+          - label: CLI-01
+            answer: |-
+              Yes, advertising only.
+              Follow-up: Yes
+          - label: CLI-02
+            answer: >-
+              The overriding priority, other decisions should be tested
+              against it.
+          - label: CLI-03
+            answer: "Yes"
+          - label: CLI-04
+            answer: "Yes, if municipal costs are capped."
+          - label: CLI-05
+            answer: "Yes"
+          - label: CLI-06
+            selected:
+              - >-
+                Subsidized home assessments for heat, air quality and wildfire
+                risk.
+              - >-
+                Grants or financing for cooling, filtration and building
+                retrofits.
+              - >-
+                Bylaw requirements on vegetation management and exterior
+                cladding in wildfire-exposed areas.
+              - >-
+                Designated cooling and clean-air centres with guaranteed
+                opening hours.
+              - A public information campaign.
+          - label: CLI-07
+            answer: "Yes"
+          - label: CLI-08
+            answer: Oppose all new data centres.
+          - label: CLI-09
+            answer: >-
+              Plant more native trees and plants. Have water restrictions
+              during drought seasons.
+          - label: CLI-10
+            answer: |-
+              Have more sustainable non-GMO apiaries, plant more plants that support the growth of pollinators such as milkweed for Monarch butterflies, have stricter fines for leaving garbage out-
+              have garbage bin locks and recycling locked up where all tenants have a key.
+          - label: CLI-11
+            answer: >-
+              We should have warming or cooling centres for pets and their
+              owners. Stiffer fines for littering and illegal dumping
+              ($10,000+).
+          - label: CLI-12
+            answer: "Yes"
+          - label: CLI-GEN
+            answer: |-
+              We should focus on being greener with our transit options. (eg all electric buses)
+              We should plant more native trees and plants everywhere, berry producing plants and trees to support birds. Build more wildlife crossing bridges for animals in high risk popular animal crossing areas. Build warming or cooling centres for pet owners and animals. Small and large animals.
+      - id: arts
+        grade: null
+        questions: []
+        unscored:
+          - label: ART-01
+            answer: |-
+              Yes
+              Follow-up: Once a year there should be a “Battle of the Buskers” in August.
+          - label: ART-02
+            answer: >-
+              Have more art shows and festivals. Make Victoria the Arts
+              Capital of BC.
+          - label: ART-03
+            selected:
+              - >-
+                A regularly updated inventory of cultural spaces and
+                vulnerable venues.
+              - >-
+                Establishing municipal tools to support long-term
+                affordability and stability
+              - >-
+                Reviewing zoning, permitting and regulatory barriers affecting
+                cultural uses.
+          - label: ART-04
+            selected:
+              - "Clear, published service standards for permit decisions."
+              - >-
+                Published decision-making criteria, so requirements are not
+                interpreted inconsistently.
+              - >-
+                A dedicated review of cultural and event permitting processes
+                and policies.
+              - Simplified requirements for small-scale events.
+              - Better coordination between municipal departments.
+              - A single point of coordination for cultural and event permits.
+              - Reviewing zoning barriers for cultural uses.
+              - >-
+                Reviewing requirements that impose disproportionate costs on
+                non-profits.
+          - label: ART-05
+            selected:
+              - >-
+                Increase funding for existing municipal cultural
+                infrastructure programs
+              - >-
+                Create a regional cultural infrastructure funding program
+                through municipalities/CRD.
+              - >-
+                Dedicate a defined portion of development or amenity
+                contributions to cultural infrastructure.
+              - Partnerships with nonprofits to acquire cultural properties.
+              - Long-term municipal leases.
+          - label: ART-06
+            answer: >-
+              Yes, arts and culture should maintain or grow alongside other
+              core services.
+          - label: ART-07
+            answer: Preserve the existing cultural space where feasible.
+          - label: ART-08
+            selected:
+              - >-
+                Require or incentivize cultural space in major development
+                projects.
+              - Reduce or waive municipal fees for eligible cultural spaces.
+              - >-
+                Provide property tax relief for eligible nonprofit-owned
+                cultural properties.
+          - label: ART-GEN
+            answer: Arts are a very important part of culture and must be promoted.
+      - id: rolling-cycling
+        grade: null
+        questions: []
+        unscored:
+          - label: ROL-01
+            answer: |-
+              Yes
+              Follow-up: Make missing links with nature as a priority.
+          - label: ROL-02
+            answer: "No"
+          - label: ROL-03
+            answer: "Depends, case-by-case."
+          - label: ROL-04
+            answer: Galloping Goose Trail improvements and expansion.
+          - label: ROL-05
+            answer: I personally ride my bike and walk more as I promote it as well.
+          - label: ROL-GEN
+            answer: Open up more multi-use corridors.
+      - id: walking
+        grade: null
+        questions: []
+        unscored:
+          - label: WLK-01
+            answer: "Yes, but not when it takes away road space from drivers."
+          - label: WLK-02
+            answer: More lighting on dark walking paths.
+          - label: WLK-03
+            answer: >-
+              Yes, a modest increase (i.e. more, but less than double of
+              what's currently spent)
+          - label: WLK-04
+            answer: "Yes, but only temporary, seasonal or pilot closures."
+          - label: WLK-05
+            answer: More lighting and guard rails at crossings.
+          - label: WLK-06
+            answer: More lighting and graded paths.
+          - label: WLK-GEN
+            answer: More safe sidewalks for all.
+      - id: governance
+        grade: null
+        questions: []
+        unscored:
+          - label: GOV-01
+            answer: "Yes"
+          - label: GOV-02
+            answer: "Yes"
+          - label: GOV-03
+            answer: |-
+              Hold annual city hall budget discussions alongside an annual “Vic-a-polooza” celebrating Victoria’s accomplishments past and future. Have local bands and local food trucks.
+              I would also make parking free on Sundays and free parking after 6 pm.
+              Instead of renting fence, the city would have to invest in their own fencing. This way movable fence is now an asset as it can be deployed anywhere to recoupe the costs of the fence.
+          - label: GOV-04
+            answer: "Yes"
+          - label: REC-01
+            answer: "Yes"
+          - label: REC-02
+            answer: Significantly more consultation practices.
+          - label: GOV-GEN
+            answer: >-
+              Exchange Lime bikes for a Canadian company when contract allows
+              and do not resign with Uber. Support local products.
+          - label: REC-GEN
+            answer: >-
+              Mandatory to always consult with the Native Friendship Centre
+              for transit governance and consultation practices.
   - name: Jack Sandor
     municipality: victoria
     pronouns: he/him
