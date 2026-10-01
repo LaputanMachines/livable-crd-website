@@ -732,7 +732,25 @@ tr:hover td { background: $color-bg-warm; }
   // wider than that: at 360px this leaves 9 columns of 25.8px against the 10 of
   // 24.8px they replaced, with 16px going to the names. The chips keep the room
   // they gained, the names get most of it, and neither is squeezed.
-  width: 8rem;
+  //
+  // Past a phone, though, 8rem left the topics the whole of the slack: between
+  // roughly 540px and the 52.5rem breakpoint below, nine 1.25rem chips sat in
+  // columns of 45 to 78px, islands in white space beside names still wrapping
+  // to three lines. So the name column grows with the viewport once the topics
+  // have 2.75rem each (44px, about twice a chip), and stops at the 14rem the
+  // wide layout gives it, which it reaches near 620px. Below ~525px the calc
+  // is under 8rem and the phone layout above is unchanged; at the breakpoint
+  // the 14rem carries straight over, so the column does not jump.
+  width: clamp(8rem, calc(100vw - 9 * 2.75rem), 14rem);
+
+  // Except from 450px, where 8rem gave the names more than the topics could
+  // spare: the chips there are still in columns under 40px wide. The floor
+  // drops to 7rem, which the calc above overtakes near 510px, so the column
+  // grows from there without a step. Below 450px a narrow phone keeps the 8rem
+  // its names need.
+  @media (min-width: 28.125rem) {
+    width: clamp(7rem, calc(100vw - 9 * 2.75rem), 14rem);
+  }
 }
 
 // The matrix is edge-to-edge on mobile (negative margins above), so the outer

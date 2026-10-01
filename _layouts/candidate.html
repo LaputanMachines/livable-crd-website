@@ -304,11 +304,11 @@ layout: default
     The same key the scorecard matrix carries, above the same chips. A reader
     arriving here from a search result rather than from the table has not seen
     it, and the states this page can draw that are not letters need naming. The
-    key lists only the ones something is actually in - see legend_states in
-    _plugins/questionnaire_scores.rb - so it is the same list on both pages and
-    neither names a mark the reader will not find.
+    key is cut to this candidate - see legend_marks in
+    _plugins/questionnaire_scores.rb - so it never says "No Response" over
+    somebody who replied or declined.
   {%- endcomment -%}
-  {% include grade-legend.html %}
+  {% include grade-legend.html marks=c.legend_marks %}
 
   {%- comment -%}
     Open or close every topic at once.

@@ -115,7 +115,13 @@ module LivableCrd
       end
       # Declined entries are checked too: a decline still has a page to change
       # even on a build where the grading sheet published nothing at all.
-      return if results.empty? && declined.empty? && !sheet_declined.value?(true)
+      #
+      # The keys are still worked out on the way out: every candidate's page
+      # draws chips from what is left, and its key has to match them.
+      if results.empty? && declined.empty? && !sheet_declined.value?(true)
+        site.data["legend_states"] = legend_states(site, candidates)
+        return
+      end
 
       attach_questions(site, results)
 
@@ -258,21 +264,13 @@ module LivableCrd
     end
 
     # {"na" =>, "answers" =>, "declined" =>, "declined_matrix" =>}: whether any
-    # page draws that chip. `declined_matrix` is the scorecard grid's own
-    # answer: it draws the X only for a decline with no statement, and gives one
-    # with a statement a link across the row instead.
+    # page draws that chip, which is what the scorecard matrix's key names.
+    # `declined_matrix` is the grid's own answer: it draws the X only for a
+    # decline with no statement, and gives one with a statement a link across
+    # the row instead.
     #
-    # The rule has to be the one the templates use, or the key will name a chip
-    # nothing draws or miss one something does. A subject with a letter shows
-    # that letter; a subject without one shows the speech bubble where the topic
-    # is ungraded, or the candidate submitted late, and their answers are
-    # published, the hourglass where
-    # the candidate replied, and the dash otherwise. See the cell blocks in
-    # scorecard/index.md and _layouts/candidate.html.
-    #
-    # The hourglass is not among these. It is still drawn by those cell blocks,
-    # and the key deliberately does not name it, so there is nothing here to
-    # decide about it.
+    # Also hangs `legend_marks` on every candidate, the key their own page
+    # carries; see legend_marks below.
     #
     # The declined X is drawn on a declined candidate and nowhere else, so
     # nobody declining takes it out of the key - as does a build before the
@@ -289,33 +287,111 @@ module LivableCrd
         next unless candidate.is_a?(Hash)
 
         if candidate["declined"] == true
-          states["declined"] = true
           states["declined_matrix"] ||= candidate["declined_statement"].to_s.strip.empty?
         end
 
-        scores = candidate["scores"].is_a?(Hash) ? candidate["scores"] : {}
-        detail = candidate["published_subjects"].is_a?(Hash) ? candidate["published_subjects"] : {}
-
-        # Per topic, and per question inside a published topic: the same chip
-        # is rendered in both places by the same include.
-        states["na"] ||= scores.any? { |_, letter| not_applicable?(letter) }
-        states["na"] ||= detail.any? do |_, subject|
-          rows = subject["questions"]
-          rows.is_a?(Array) && rows.any? { |row| not_applicable?(row["grade"]) }
-        end
-
-        subjects.each do |subject|
-          id = subject["id"]
-          next unless scores[id].to_s.strip.empty?
-
-          unscored = detail.dig(id, "unscored")
-          ungraded = !graded.include?(id) || candidate["late_submission"] == true
-          if ungraded && unscored.is_a?(Array) && !unscored.empty?
-            states["answers"] = true
-          end
-        end
+        drawn = chips_drawn(candidate, subjects, graded)
+        candidate["legend_marks"] = legend_marks(candidate, drawn)
+        %w[na answers declined].each { |key| states[key] ||= drawn[key] }
       end
       states
+    end
+
+    # {"letters" =>, "answers" =>, "declined" =>, "pending" =>}: what the key
+    # on this candidate's own page names, decided by which of three kinds of
+    # candidate they are rather than chip by chip.
+    #
+    #   replied    the letters and the speech bubble, and nothing else
+    #   declined   the X, plus the letters if anything of theirs is graded
+    #   no reply   the dash, plus the letters if anything of theirs is graded
+    #
+    # The dash is for a candidate who sent nothing. A returned questionnaire
+    # can still draw one, on a question nobody has graded, and a decline on a
+    # topic the X does not reach; in both a "No Response" line at the top of
+    # the page says something untrue about the person on it, and the key
+    # leaves it out. The letters reach the second two through a sitting
+    # incumbent's housing record, scored from council votes whatever they did
+    # with the questionnaire.
+    #
+    # `letters` is one switch for the whole set rather than one per letter: a
+    # key that names B and F because those are the two this candidate got reads
+    # as a scale with two steps on it, and a reader comparing two candidates
+    # would be reading two different scales.
+    def legend_marks(candidate, drawn)
+      if candidate["questionnaire_returned"] == true
+        { "letters" => true, "answers" => true, "declined" => false, "pending" => false }
+      elsif candidate["declined"] == true
+        { "letters" => drawn["letters"], "answers" => false, "declined" => true, "pending" => false }
+      else
+        { "letters" => drawn["letters"], "answers" => false, "declined" => false, "pending" => true }
+      end
+    end
+
+    # {"letters" =>, "na" =>, "answers" =>, "declined" =>, "pending" =>}: which
+    # chips this candidate's page draws.
+    #
+    # The rule has to be the one the templates use, or the key will name a chip
+    # nothing draws or miss one something does. A topic with a letter or N/A
+    # shows it. A topic without one shows the speech bubble where the topic is
+    # ungraded, or the candidate submitted late, and their answers are
+    # published; the X where the candidate declined and nothing is published;
+    # the hourglass where the candidate replied; and the dash otherwise. Inside
+    # a published topic each question without points shows its own grade
+    # through the same include, a blank one as the dash. See the cell blocks in
+    # scorecard/index.md and _layouts/candidate.html.
+    #
+    # The hourglass is not among these. It is still drawn by those cell blocks,
+    # and the key deliberately does not name it, so there is nothing here to
+    # decide about it.
+    def chips_drawn(candidate, subjects, graded)
+      marks = { "letters" => false, "na" => false, "answers" => false, "declined" => false, "pending" => false }
+      scores = candidate["scores"].is_a?(Hash) ? candidate["scores"] : {}
+      detail = candidate["published_subjects"].is_a?(Hash) ? candidate["published_subjects"] : {}
+      late = candidate["late_submission"] == true
+      returned = candidate["questionnaire_returned"] == true
+      declined = candidate["declined"] == true
+
+      note = lambda do |grade|
+        if no_grade?(grade) then marks["pending"] = true
+        elsif not_applicable?(grade) then marks["na"] = true
+        else marks["letters"] = true
+        end
+      end
+
+      subjects.each do |subject|
+        id = subject["id"]
+        published = detail[id].is_a?(Hash) ? detail[id] : nil
+        cell = scores[id]
+
+        if !no_grade?(cell)
+          note.call(cell)
+        elsif (!graded.include?(id) || late) && published && rows?(published["unscored"])
+          marks["answers"] = true
+        elsif declined && published.nil?
+          marks["declined"] = true
+        elsif !(returned && !late)
+          marks["pending"] = true
+        end
+
+        next unless published && rows?(published["questions"])
+
+        published["questions"].each do |row|
+          note.call(row["grade"]) if row.is_a?(Hash) && row["max_points"].nil?
+        end
+      end
+
+      marks
+    end
+
+    # A grade grade-badge.html draws as the dash, or as one of the states the
+    # caller picks, rather than as a letter or N/A. Mirrors its `no_grade`.
+    def no_grade?(grade)
+      text = grade.to_s.strip
+      text.empty? || %w[NULL PENDING].include?(text.upcase) || text == "\u2014"
+    end
+
+    def rows?(rows)
+      rows.is_a?(Array) && !rows.empty?
     end
 
     # Copy each question's wording, answer shape and owner from

@@ -7,9 +7,16 @@
   `legend_states` in _plugins/questionnaire_scores.rb walks the published data
   with the templates' own rule and says which chips the pages draw; the key
   names those and no others, so it cannot explain a mark a reader will not find.
-  The dash is unconditional: somebody has always failed to reply. The hourglass
-  is the exception in the other direction — it is drawn on the page and
-  deliberately left out of the key; see below.
+  On the scorecard the dash and the letters are unconditional: somebody has
+  always failed to reply, and somebody has a grade. The hourglass is the
+  exception in the other direction — it is drawn on the page and deliberately
+  left out of the key; see below.
+
+  A candidate page passes marks=c.legend_marks and gets a key for that
+  candidate: the letters and the speech bubble for somebody who replied, the X
+  for somebody who declined, the dash only for somebody who sent nothing, and
+  the letters on either of those two only once something of theirs is graded.
+  See legend_marks in the plugin.
 
   A shared include rather than the same markup in two places. The two empty
   states are the ones a reader most easily misreads — a returned questionnaire
@@ -44,12 +51,21 @@
   too.
 {%- endcomment -%}
 {%- assign legend_grades = site.data.grades | where_exp: "grade", "grade.letter != 'C-'" -%}
+{%- assign marks = include.marks | default: site.data.legend_states -%}
+{%- assign show_letters = true -%}
+{%- assign show_pending = true -%}
+{%- if include.marks -%}
+  {%- assign show_letters = include.marks.letters -%}
+  {%- assign show_pending = include.marks.pending -%}
+{%- endif -%}
 <div class="scorecard-legend" aria-label="Grading key">
+  {%- if show_letters %}
   {% for grade in legend_grades %}
   <span class="scorecard-legend__item">
     <span class="grade grade-{{ grade.letter | downcase }}">{{ grade.letter }}</span>{{ grade.label }}
   </span>
   {% endfor %}
+  {%- endif %}
   {%- comment -%}
     "Not Applicable" names the N/A chip: graded, and the answer is that the
     question does not apply to this candidate - ROL-05 asks what somebody did in
@@ -59,7 +75,7 @@
     incumbents published on their housing record alone were changed to the dash
     below, which says the true thing about them: no questionnaire came back.
   {%- endcomment -%}
-  {%- if site.data.legend_states.na %}
+  {%- if marks.na %}
   <span class="scorecard-legend__item scorecard-legend__item--na">
     {% include grade-badge.html grade="N/A" %}Not Applicable
   </span>
@@ -73,7 +89,7 @@
     defines it under "Submitted, Grading In-Progress"; what is gone is the key
     entry for it.
   {%- endcomment -%}
-  {%- if site.data.legend_states.answers %}
+  {%- if marks.answers %}
   <span class="scorecard-legend__item scorecard-legend__item--answers">
     {% include grade-badge.html grade="" state="answers" %}Answered
   </span>
@@ -91,7 +107,7 @@
     decline carries a statement: it gives those a link to the statement across
     the row, not the X.
   {%- endcomment -%}
-  {%- if site.data.legend_states.declined and include.omit != "declined" %}
+  {%- if marks.declined and include.omit != "declined" %}
   <span class="scorecard-legend__item scorecard-legend__item--declined">
     {% include grade-badge.html grade="" state="declined" %}Declined to take part
   </span>
@@ -105,7 +121,9 @@
     nobody grades, where that label does not hold; /faq/#methodology separates
     the two cases.
   {%- endcomment -%}
+  {%- if show_pending %}
   <span class="scorecard-legend__item scorecard-legend__item--pending">
     {% include grade-badge.html grade="" %}No Response
   </span>
+  {%- endif %}
 </div>
