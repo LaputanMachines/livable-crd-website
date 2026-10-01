@@ -57,6 +57,13 @@
 }
 
 .responses-prompt__table {
+  // A picture of the scorecard, not a working one: nothing in it opens, links
+  // or folds, so no part of it reacts to the pointer. Switching hover off at
+  // the source rather than countering each of the matrix's hover rules in
+  // turn, which is how the header row once lost its fill under the cursor and
+  // left white labels on a white dialog.
+  pointer-events: none;
+
   // The matrix takes a 50rem floor on wide screens, sized for nine topics.
   // Three fit the dialog, and the frame above would clip the rest. Topic names
   // follow the matrix's own breakpoint: icons alone on a phone, as on the page.
@@ -68,15 +75,6 @@
   .scorecard-matrix__group-head {
     position: static;
   }
-
-  .scorecard-matrix__more {
-    cursor: default;
-
-    &:hover { color: $color-accent; }
-  }
-
-  tr:hover td,
-  tr:hover th { background: inherit; }
 }
 
 .responses-prompt__choices {
