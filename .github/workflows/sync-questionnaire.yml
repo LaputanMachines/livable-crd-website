@@ -30,8 +30,8 @@ name: Sync questionnaire and grades from Google Sheet
 # the submission sheet names in its own column headers.
 
 on:
-  schedule:
-    - cron: "47 13 * * *" # daily ~06:47 America/Vancouver (13:47 UTC)
+  # schedule:
+    # - cron: "47 13 * * *" # daily ~06:47 America/Vancouver (13:47 UTC)
   workflow_dispatch:
 
 permissions:
