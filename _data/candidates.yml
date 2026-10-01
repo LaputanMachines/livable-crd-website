@@ -205,14 +205,6 @@
   slate: Save Our Saanich
   website: "https://www.matt4council.ca"
 
-- name: NicRenaoud
-  display_name: NicRenaoud
-  municipality: saanich
-  office: Councillor
-  standing: challenger
-  slate: null
-  website: null
-
 - name: Teale Phelps Bondaroff
   display_name: "Phelps Bondaroff, Teale"
   municipality: saanich
@@ -239,6 +231,14 @@
 
 - name: Brendan Ralfs
   display_name: "Ralfs, Brendan"
+  municipality: saanich
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Nic Renaoud
+  display_name: "Renaoud, Nic"
   municipality: saanich
   office: Councillor
   standing: challenger
@@ -591,8 +591,8 @@
   slate: null
   website: "https://www.facebook.com/groups/34953210528/user/61591412316974/"
 
-- name: Bruce McIldon
-  display_name: "McIldon, Bruce"
+- name: Bruce McIldoon
+  display_name: "McIldoon, Bruce"
   municipality: esquimalt
   office: Councillor
   standing: ex-incumbent-councillor
@@ -916,6 +916,14 @@
   slate: null
   website: null
 
+- name: Deborah Law
+  display_name: "Law, Deborah"
+  municipality: colwood
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: "https://www.deborahlaw.ca/"
+
 - name: Rob Martin
   display_name: "Martin, Rob"
   municipality: colwood
@@ -973,8 +981,8 @@
   slate: null
   website: "https://www.jenniferdunnettlangford.ca"
 
-- name: Lisa Foxhall
-  display_name: "Foxhall, Lisa"
+- name: Lisa Foxall
+  display_name: "Foxall, Lisa"
   municipality: langford
   office: Councillor
   standing: challenger
@@ -1546,8 +1554,8 @@
   slate: null
   website: null
 
-- name: Harninder Jarquot
-  display_name: "Jarquot, Harninder"
+- name: Harninder Jacquot
+  display_name: "Jacquot, Harninder"
   municipality: sidney
   office: Councillor
   standing: challenger
@@ -1676,8 +1684,16 @@
   slate: Sooke First
   website: "https://electherbhaldane.ca/"
 
-- name: Elliot Lifton
-  display_name: "Lifton, Elliot"
+- name: Kyra Juliana Lazzar
+  display_name: "Lazzar, Kyra Juliana"
+  municipality: sooke
+  office: Councillor
+  standing: challenger
+  slate: null
+  website: null
+
+- name: Elliott Lifton
+  display_name: "Lifton, Elliott"
   municipality: sooke
   office: Councillor
   standing: challenger
