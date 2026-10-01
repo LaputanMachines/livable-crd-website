@@ -718,7 +718,7 @@ description: >-
 {%- endcomment -%}
 <dialog class="responses-prompt" id="responses-prompt" aria-labelledby="responses-prompt-title" aria-describedby="responses-prompt-lede">
   <form method="dialog" class="responses-prompt__form">
-    <h2 class="responses-prompt__title" id="responses-prompt-title">Which candidates should we show?</h2>
+    <h2 class="responses-prompt__title" id="responses-prompt-title">Who do you want to see?</h2>
     <p class="responses-prompt__lede" id="responses-prompt-lede">Not every candidate returned the questionnaire. Choose how the scorecard lists the ones who didn't.</p>
 
     <div class="responses-prompt__example" aria-hidden="true">
