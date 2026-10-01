@@ -1,4 +1,4 @@
-// "Share to Facebook / X" and "Download this scorecard" on a
+// "Share to Facebook / X" and "Download scorecard" on a
 // candidate's page: draws a square card of that candidate's grades and either
 // hands it to the platform the reader chose or saves it to their device.
 //
@@ -81,8 +81,8 @@
         label: chip ? text(chip) : '',
         state: chip && chip.className.indexOf('grade--declined') > -1 ? 'declined'
           : chip && chip.className.indexOf('grade--answers') > -1 ? 'answers'
-          : chip && chip.className.indexOf('grade--review') > -1 ? 'review'
-          : chip && chip.className.indexOf('grade--pending') > -1 ? 'pending' : 'grade',
+            : chip && chip.className.indexOf('grade--review') > -1 ? 'review'
+              : chip && chip.className.indexOf('grade--pending') > -1 ? 'pending' : 'grade',
         svg: svg,
         fill: style ? style.backgroundColor : 'transparent',
         colour: style ? style.color : INK,
