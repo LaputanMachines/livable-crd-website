@@ -25,10 +25,12 @@
                statement about all ten.
     speech     the candidate answered and nobody grades this topic, so there is
                something to read and there will never be a letter. Passed in as
-               state="answers". Only General and Healthcare access can reach it,
-               and only once their answers are published; every other topic
-               carries a grade, and a written comment on a graded topic shows
-               inside that topic rather than in its cell.
+               state="answers". General and Healthcare access reach it once
+               their answers are published, and so does every topic of a
+               candidate who submitted after the grading deadline, whose
+               answers are published ungraded. Otherwise a topic carries a
+               grade, and a written comment on a graded topic shows inside that
+               topic rather than in its cell.
     declined   the candidate told the coalition they were not taking part, and
                their page carries what they said instead of grades, where they
                said anything. Passed in as state="declined" off `declined` (the

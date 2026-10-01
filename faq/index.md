@@ -183,8 +183,10 @@ description: >-
             how they would split a budget, and <strong>Healthcare access</strong>,
             which asks one question about primary care clinics. The coalition puts
             them to every candidate because the answers are worth reading, not
-            because we score them. Open the candidate's page to read what they
-            wrote.
+            because we score them. A candidate who returned the questionnaire
+            after the grading deadline shows this mark on every topic: their
+            answers are published, but not graded. Open the candidate's page to
+            read what they wrote.
           </dd>
         </div>
         {%- if site.data.legend_states.declined %}

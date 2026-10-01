@@ -86,6 +86,7 @@ RAW_TAB = "2026 Municipal Elections"
 # candidate's contact details and their graded answers, neither of which belongs
 # in a generated data file.
 RAW_SUBMISSION_ID = 0
+RAW_SUBMITTED_AT = 2
 RAW_FIRST_NAME = 3
 RAW_LAST_NAME = 4
 RAW_MUNICIPALITY = 7
@@ -152,6 +153,15 @@ PUBLISH_GRADES = True
 # on 2026-09-24, after the grades were released. PUBLISH_METHODOLOGY=0 in the
 # environment, or --no-publish-methodology, overrides it for a single run.
 PUBLISH_METHODOLOGY = True
+
+# Submissions on or after this date arrived after grading closed, and are
+# published as answers only: every topic they answered carries its answers and
+# no grade, score, rationale or incumbent record, whatever the grading tabs say
+# about them. Compared against the date part of the raw tab's "Submitted at",
+# which Tally writes in UTC as "YYYY-MM-DD H:MM:SS". A row with no timestamp - a
+# questionnaire that came in by email and was typed into the sheet by hand - is
+# treated as on time; it was entered before the deadline or it would carry one.
+GRADING_CUTOFF = "2026-09-22"
 
 # Those checkbox columns are gone from the sheet, but grading_tabs.py and
 # appsscript/Code.gs still know the suffix and would write them again if a tab
@@ -524,6 +534,12 @@ SCORES_HEADER = """\
 #   returned      Absent for the candidates who returned the questionnaire, and
 #                 `false` for a sitting incumbent who did not and is on the
 #                 sheet only because their housing record is scored.
+#   late          `true` where the questionnaire was submitted on or after
+#                 GRADING_CUTOFF in scripts/sync-questionnaire.py. Absent
+#                 otherwise. Such a candidate is published as answers only:
+#                 no `scores`, and every subject they answered carries `grade:
+#                 null`, no questions and every answer under `unscored`, graded
+#                 questions included.
 #   scores        {subject id: letter}. The top-level grade per published
 #                 subject, which is what the scorecard matrix renders. A subject
 #                 deployed with no top-level letter typed yet is absent here but
@@ -1226,6 +1242,40 @@ def raw_pronouns(sheet_id, header, warnings):
     return pronouns
 
 
+def late_submissions(sheet_id, header, warnings, errors):
+    """Submission ids sent on or after GRADING_CUTOFF.
+
+    Reads the submission id and the timestamp and nothing else. The column is
+    checked by header before it is trusted: a late candidate whose timestamp is
+    read from the wrong column would have their grades published, so a moved
+    column stops the run rather than publishing anyone as on time.
+    """
+    if RAW_SUBMITTED_AT >= len(header) or tidy(header[RAW_SUBMITTED_AT]) != "Submitted at":
+        errors.append(f"{RAW_TAB}: column {a1(RAW_SUBMITTED_AT)} is not headed "
+                      f"'Submitted at', so late submissions cannot be told apart. "
+                      f"Fix RAW_SUBMITTED_AT rather than publishing their grades.")
+        return set()
+    wanted = [RAW_SUBMISSION_ID, RAW_SUBMITTED_AT]
+    rows = fetch_tab(sheet_id, RAW_TAB, expect=TAB_FIRST_HEADER[RAW_TAB],
+                     select=", ".join(a1(c) for c in wanted))
+    if rows is None:
+        return set()
+
+    late = set()
+    for row in rows[1:]:
+        key = tidy(row[0]) if row else ""
+        stamp = tidy(row[1]) if len(row) > 1 else ""
+        if not key or not stamp:
+            continue
+        day = re.match(r"\d{4}-\d{2}-\d{2}", stamp)
+        if not day:
+            warnings.append(f"{RAW_TAB}: submission {key} has an unreadable "
+                            f"'Submitted at' ({stamp!r}), treated as on time")
+        elif day.group(0) >= GRADING_CUTOFF:
+            late.add(key)
+    return late
+
+
 def load_subject_order(path):
     """Subject ids in the order _data/subjects.yml lists them."""
     ids = []
@@ -1706,7 +1756,7 @@ def unscored_answers(answers, subject_id, ungraded, candidate, warnings):
 
 def build_scores(category, grade_rows, answers, ungraded, subject_order,
                  muni_lookup, candidates, question_labels, publish,
-                 pronouns, warnings, errors):
+                 pronouns, late_keys, warnings, errors):
     header = category[0]
     columns = subject_columns(header)
     if not columns:
@@ -1761,6 +1811,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
         # and who answered nothing. Read once here because it decides what the
         # other nine topics publish, not only the `returned` flag below.
         roster_only = key.startswith(ROSTER_KEY_PREFIX)
+        late = key in late_keys
 
         published = []
         for subject_id, subject_name, grade_col in (targets if publish else []):
@@ -1772,6 +1823,24 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             questions, record = subject_questions(
                 grade_rows.get((key, subject_name), []), name, subject_name,
                 subject_id, question_labels, warnings)
+
+            # Sent after grading closed: every answer they gave is published,
+            # graded questions included, and nothing a grader wrote is. The
+            # graded questions go into `unscored` alongside the comment box, so
+            # the site draws them the way it draws every answer nobody grades -
+            # and a letter, a score or a record typed onto the sheet for this
+            # row anyway goes nowhere.
+            if late:
+                unscored = [
+                    {"label": q["label"], "answer": q["answer"],
+                     "selected": q["selected"], "allocation": []}
+                    for q in questions if q["answer"] or q["selected"]
+                ] + unscored_answers(answers.get(key, {}), subject_id, ungraded,
+                                     name, warnings)
+                if unscored:
+                    published.append({"id": subject_id, "grade": None, "score": None,
+                                      "questions": [], "unscored": unscored})
+                continue
 
             # A topic graded N/A on a candidate with no rows at all on its
             # grading tab is not half-scored, it is out of scope: a sitting
@@ -1846,6 +1915,7 @@ def build_scores(category, grade_rows, answers, ungraded, subject_order,
             # row to because they are an incumbent, not because they replied.
             # Everything else on this tab got here by replying.
             "returned": not roster_only,
+            "late": late,
             "subjects": published,
         }
 
@@ -2241,6 +2311,8 @@ def render_scores(graded_subjects, records):
         # who did reply and the flag reads as the exception it is.
         if not record["returned"]:
             parts.append("    returned: false")
+        if record["late"]:
+            parts.append("    late: true")
 
         # The flat map first, because it is what the scorecard matrix reads and
         # what `c.scores[subject.id]` has always meant. `subjects` below carries
@@ -2497,7 +2569,7 @@ def main(argv=None):
         # Not read at all while publication is off: no grade and no answer can
         # reach _data/scores.yml, and each tab is an API call against a quota
         # this job shares with everything else touching the spreadsheet.
-        grade_rows, answers = {}, {}
+        grade_rows, answers, late_keys = {}, {}, set()
         if args.publish:
             # Every tab this run reads for results must be read whole. A hidden
             # row is a row gviz leaves out, so the run stops rather than publish
@@ -2520,9 +2592,16 @@ def main(argv=None):
             grade_rows = load_grade_rows(
                 args.sheet_id, graded_tab_subjects(category), warnings)
             answers = raw_answers(args.sheet_id, ungraded, warnings) if ungraded else {}
+            if raw_header is None:
+                errors.append(f"{RAW_TAB}: tab missing, so late submissions cannot "
+                              f"be told apart from on-time ones")
+            else:
+                late_keys = late_submissions(args.sheet_id, raw_header[0],
+                                             warnings, errors)
         records = build_scores(
             category, grade_rows, answers, ungraded, subject_order, muni_lookup,
-            candidates, question_labels, args.publish, pronouns, warnings, errors)
+            candidates, question_labels, args.publish, pronouns, late_keys,
+            warnings, errors)
 
     for warning in warnings:
         print(f"warning: {warning}", file=sys.stderr)
@@ -2535,11 +2614,13 @@ def main(argv=None):
     published = sum(len(r["subjects"]) for r in records)
     awaiting = sum(1 for r in records if not r["subjects"])
     returned = sum(1 for r in records if r["returned"])
+    late = sum(1 for r in records if r["late"])
     print(f"{len(questions)} question(s) across {len(set(q['subject'] for q in questions))} subject(s); "
           f"{returned} candidate(s) returned the questionnaire, "
           f"{len(records) - returned} sitting incumbent(s) on the sheet for their "
           f"housing record alone; "
-          f"{published} published subject grade(s), {awaiting} candidate(s) with none yet")
+          f"{published} published subject grade(s), {awaiting} candidate(s) with none yet; "
+          f"{late} late submission(s) published as answers only")
     if not args.publish:
         print("publication is off (PUBLISH_GRADES is False): every candidate is "
               "listed as returned, and no result is published")

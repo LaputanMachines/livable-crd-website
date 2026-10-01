@@ -54,6 +54,12 @@
 #   returned      Absent for the candidates who returned the questionnaire, and
 #                 `false` for a sitting incumbent who did not and is on the
 #                 sheet only because their housing record is scored.
+#   late          `true` where the questionnaire was submitted on or after
+#                 GRADING_CUTOFF in scripts/sync-questionnaire.py. Absent
+#                 otherwise. Such a candidate is published as answers only:
+#                 no `scores`, and every subject they answered carries `grade:
+#                 null`, no questions and every answer under `unscored`, graded
+#                 questions included.
 #   scores        {subject id: letter}. The top-level grade per published
 #                 subject, which is what the scorecard matrix renders. A subject
 #                 deployed with no top-level letter typed yet is absent here but
@@ -15061,6 +15067,7 @@ candidates:
   - name: Scott Goodmanson
     municipality: langford
     pronouns: he/him
+    late: true
     subjects:
       - id: general
         grade: null
@@ -15153,10 +15160,9 @@ candidates:
               We have opened up a new clinic with ten doctors which will serve 12 500 - 15 000 patients and recently closed a RFP for a housing, drs office, and commercial/ retail building on City owned land.
       - id: transit
         grade: null
-        questions:
+        questions: []
+        unscored:
           - label: TRN-01
-            grade: null
-            weight: "20%"
             selected:
               - Free transit for everyone under 19 years of age.
               - "Free or half-priced fares for seniors, 65+ years of age."
@@ -15165,22 +15171,13 @@ candidates:
                 disability assistance.
               - Lower-cost regional monthly pass.
           - label: TRN-02
-            grade: null
-            weight: "30%"
             answer: "Kind of, only when a specific project requires it."
           - label: TRN-03
-            grade: null
-            weight: "30%"
             answer: "Yes, but not at the cost of a general-purpose travel lane."
           - label: TRN-04
-            grade: null
-            weight: "10%"
             answer: "Yes"
           - label: TRN-05
-            grade: null
-            weight: "10%"
             answer: "Yes, if no mature trees are lost during construction."
-        unscored:
           - label: TRN-GEN
             answer: |-
               Transit and transportation in the CRD have often been stewarded under multiple different groups that do not always talk together.
@@ -15188,59 +15185,119 @@ candidates:
               Transit under BC Transit and the Victoria Transit Commission, and general transportation falling under the municipal governments, each on their own.
 
               Today, in the CRD we find ourselves working into a new setting with the creation of the CRD’s Regional Transportation Service that will allow transit and transportation to work  hand in hand all across the CRD.
+      - id: housing
+        grade: null
+        questions: []
+        unscored:
+          - label: HFL-01
+            selected:
+              - >-
+                Supportive housing for those who need mental health and
+                substance use support.
+              - >-
+                Publicly funded accessible housing for elderly and/or disabled
+                people.
+              - Non-market affordable housing.
+              - Market rate rental housing.
+              - >-
+                Family-suitable housing (i.e., 3 or more bedrooms and more
+                than 1200 sq. ft.).
+              - "Market ownership housing (e.g. condos, townhouses)."
+          - label: HFL-02
+            selected:
+              - Award bonus density to affordable housing developments.
+              - >-
+                Working with the province to create province-wide tenant
+                assistance policies.
+              - >-
+                Identify and acquire new land for the development of
+                non-market housing.
+              - >-
+                Exempt all below-market housing from any fees or levies
+                charged by the municipality to developers.
+              - Target a higher rental vacancy rate.
+          - label: HFL-03
+            answer: >-
+              Yes - Under 60 days for small projects under six units, 365 days
+              for large projects over six units.
+          - label: HFL-04
+            selected:
+              - Pre-zoning.
+              - Bonus density.
+              - Tax / DCC exemptions.
+              - Mandated requirements.
+              - Expedited reviews.
+              - Remove zoning/procedural barriers.
+          - label: HFL-05
+            answer: "Yes"
+          - label: HFL-06
+            answer: Nothing beyond the Provincial minimum.
+          - label: HFL-07
+            answer: >-
+              Decide case by case, with neighbourhood opposition being an
+              important consideration.
+          - label: HFL-08
+            answer: >-
+              Yes, but only if alternatives are provided for residents, e.g.,
+              secured bike storage, car share, e-bike charging plugs, bus
+              passes, etc.
+          - label: HFL-09
+            selected:
+              - Offering bonus height or density.
+              - Removing fees or levies charged by the municipality.
+              - >-
+                Mandating that affordable housing be built by developers
+                (inclusionary zoning).
+              - Donating municipal land.
+              - >-
+                Directly building or partnering with below-market developers
+                to build affordable housing.
+              - Upzoning for affordable housing (no rezoning required).
+          - label: HFL-10
+            answer: |-
+              I would like the city to have achieved some of the direct actions that were identified in our recently passed official housing strategy.
+
+              We were close to having a nonprofit housing development started but the funding was lost at the last minute, during the last provincial budget.
+
+              I would like to achieve something similar in the next four years.
+          - label: HFL-11
+            answer: About that many homes (the target is approximately right).
       - id: climate
         grade: null
-        questions:
+        questions: []
+        unscored:
           - label: CLI-01
-            grade: null
-            weight: "8%"
             answer: |-
               Yes, advertising only.
               Follow-up: Yes
           - label: CLI-02
-            grade: null
-            weight: "8%"
             answer: "One of the top three priorities, with a dedicated budget."
           - label: CLI-03
-            grade: null
-            weight: "8%"
             answer: "No"
           - label: CLI-04
-            grade: null
-            weight: "8%"
             answer: "Yes, if municipal costs are capped."
           - label: CLI-05
-            grade: null
-            weight: "8%"
             answer: "No"
           - label: CLI-06
-            grade: null
-            weight: "8%"
             selected:
-              - A public information campaign.
-              - >-
-                Designated cooling and clean-air centres with guaranteed
-                opening hours.
-              - >-
-                Bylaw requirements on vegetation management and exterior
-                cladding in wildfire-exposed areas.
               - >-
                 Subsidized home assessments for heat, air quality and wildfire
                 risk.
               - >-
                 Grants or financing for cooling, filtration and building
                 retrofits.
+              - >-
+                Bylaw requirements on vegetation management and exterior
+                cladding in wildfire-exposed areas.
+              - >-
+                Designated cooling and clean-air centres with guaranteed
+                opening hours.
+              - A public information campaign.
           - label: CLI-07
-            grade: null
-            weight: "8%"
             answer: "No"
           - label: CLI-08
-            grade: null
-            weight: "8%"
             answer: Oppose all new data centres.
           - label: CLI-09
-            grade: null
-            weight: "8%"
             answer: |-
               The primary climate risks facing the City of Langford are mainly related to heat.
 
@@ -15252,8 +15309,6 @@ candidates:
 
               The city has also just adopted our first ever Climate Action Plan which is a roadmap for ways the city can improve our responses to climate change and how we can mitigate our own affects on the climate.
           - label: CLI-10
-            grade: null
-            weight: "8%"
             answer: |-
               The City passed its first ever Parks and Trails master plan in December of 2025 that outlines  the vision for the City’s parks and trail system.  It also identifies gaps in parks, trails, unstructured outdoor recreation opportunities in the city.
 
@@ -15261,8 +15316,6 @@ candidates:
 
               I encourage everyone to go to Langford.ca and read up on this formidable plan.
           - label: CLI-11
-            grade: null
-            weight: "8%"
             answer: |-
               Yes.
               Responsible  development is an essential way we can increase our resilience to climate change effects.
@@ -15275,22 +15328,97 @@ candidates:
 
               We have done the hard work to see these plans passed and now it is our job to ensure they are implemented into the operations  of the City over the next term.
           - label: CLI-12
-            grade: null
-            weight: "8%"
             answer: "Yes"
-        unscored:
           - label: CLI-GEN
             answer: |-
               By focussing on a series of nine master, and sub-master plans over the previous four years, the City has created an environment where were can now plan for our future in a wholesome fashion that incorporates information from a variety of City resources all at once.
               No longer will needed information be absent when we are looking at the complete-city scale of Langford.
 
               Now we can plan our housing, roads and trails, parks, arts and cultural spaces, together, instead of a piecemeal - add hoc fashion of past years.
+      - id: arts
+        grade: null
+        questions: []
+        unscored:
+          - label: ART-01
+            answer: |-
+              Yes
+              Follow-up: The creation and advocacy for arts and cultural spaces is just as important for city as the creation and advocacy for sports and leisure spaces.
+
+              While few municipalities can provide these amenities on their own, by working with public and private partnerships we can leverage municipal plans and resources with the resources of outside organizations.
+          - label: ART-02
+            answer: |-
+              Langford passed its first ever Arts and Cultural Development Strategy this year planning the way forward for the future of these needed amenities in our city.
+
+              This 50+ page document is the high level blueprint for our way forward that can be incorporated into a variety of of other master plans to ensure that the arts and cultural aspect of the city is viewed in a lens of that specific master plan.
+
+              I will continue to advocate that this document is implemented into the running of their city and continue to advocate for the Arts at the CRD with its new Arts service.
+          - label: ART-03
+            selected:
+              - >-
+                A regularly updated inventory of cultural spaces and
+                vulnerable venues.
+              - >-
+                Partnerships with non-profits to secure permanent cultural
+                assets.
+              - >-
+                Reviewing zoning, permitting and regulatory barriers affecting
+                cultural uses.
+          - label: ART-04
+            selected:
+              - "Clear, published service standards for permit decisions."
+              - >-
+                Published decision-making criteria, so requirements are not
+                interpreted inconsistently.
+              - Simplified requirements for small-scale events.
+              - Better coordination between municipal departments.
+              - A single point of coordination for cultural and event permits.
+              - Reviewing zoning barriers for cultural uses.
+              - >-
+                Reviewing requirements that impose disproportionate costs on
+                non-profits.
+          - label: ART-05
+            selected:
+              - >-
+                Increase funding for existing municipal cultural
+                infrastructure programs
+              - >-
+                Create a regional cultural infrastructure funding program
+                through municipalities/CRD.
+              - >-
+                Use municipal funding to leverage additional capital from
+                other sources.
+              - Partnerships with nonprofits to acquire cultural properties.
+              - Long-term municipal leases.
+          - label: ART-06
+            answer: >-
+              Yes, arts and culture should maintain or grow alongside other
+              core services.
+          - label: ART-07
+            answer: Preserve the existing cultural space where feasible.
+          - label: ART-08
+            selected:
+              - >-
+                Require or incentivize cultural space in major development
+                projects.
+              - Reduce or waive municipal fees for eligible cultural spaces.
+              - >-
+                Offer property tax incentives for property owners providing
+                long-term affordable cultural space.
+              - >-
+                Provide property tax relief for eligible nonprofit-owned
+                cultural properties.
+          - label: ART-GEN
+            answer: |-
+              The Arts are a needed and vital part of any city, and stand on equal footing with sports and leisure.  Municipalities need both to help ensure we are representing the full breadth of interests, activities, passions and wonders that can exist across a municipality.  Arts access done not always have to be loud and flashy.  The number of venues for a variety of arts spaces is just as important as the size and scale of those spaces.
+
+              I often refer to the City of Saskatoon, which around 2010, was voted the number one city in Canada for Arts access.  That doesn’t mean it had all of the largest shows or the biggest crowds.  But across the City the accessibility for the number and arts venues, shows, programs, was the top in Canada.
+
+              I would love to see the CRD working together to create such an environment here.
       - id: rolling-cycling
         grade: null
-        questions:
+        questions: []
+        unscored:
           - label: ROL-01
-            grade: null
-            weight: "15%"
             answer: |-
               Yes
               Follow-up: While there are a number of worthy and needed projects in our list for the City of Langford, and some I personally am more biased towards due to my own interests,  no single Mayor or Councillor can state that this is the project that the city will work on
@@ -15301,16 +15429,10 @@ candidates:
 
               While it is not the top priority of the city, I believe finishing the E&N rail trail to Humpback Rd is attainable and much needed to allow easy access to Langford Lake, the Langford Aquatic Centre and beyond
           - label: ROL-02
-            grade: null
-            weight: "15%"
             answer: "Yes, except where physically impossible."
           - label: ROL-03
-            grade: null
-            weight: "15%"
             answer: "Yes"
           - label: ROL-04
-            grade: null
-            weight: "20%"
             answer: |-
               Technically a pedestrian overpass across the TCH would be the City’s number one priority as it would serve both commuters and students alike, needing to cross the TCH.
 
@@ -15324,8 +15446,6 @@ candidates:
 
               Now is the opportunity to advocate with the Province for planning purposes.
           - label: ROL-05
-            grade: null
-            weight: "35%"
             answer: |-
               Over the last four years I have continually advocated for all forms of walking, rolling, cycling and transit.
 
@@ -15336,14 +15456,11 @@ candidates:
               Municipally I have advocated for  and voted with the creation of multiple sidewalk infill projects and an off the road multi-use path.  None of these would have been brought forward in any nears future if we had continued to rely on direct-location development to advance these projects and/or applied for and received funding grants to complete the project.
       - id: walking
         grade: null
-        questions:
+        questions: []
+        unscored:
           - label: WLK-01
-            grade: null
-            weight: "10%"
             answer: "Yes, but not when it takes away road space from drivers."
           - label: WLK-02
-            grade: null
-            weight: "20%"
             answer: >-
               Our patchwork network of sidewalks is a chief concern for me.
               While there are larger projects needing addressing, this is one
@@ -15352,18 +15469,12 @@ candidates:
               of sidewalk, we are permanently addressing the barrier to
               walking that effects the safety of so many.
           - label: WLK-03
-            grade: null
-            weight: "10%"
             answer: >-
               Yes, a substantial increase (i.e. more than double what's
               currently spent).
           - label: WLK-04
-            grade: null
-            weight: "20%"
             answer: "Yes, but only temporary, seasonal or pilot closures."
           - label: WLK-05
-            grade: null
-            weight: "20%"
             answer: |-
               The City of Langford already has a strong track record for working with Sooke School District 62, and individual schools alike.
 
@@ -15371,8 +15482,6 @@ candidates:
 
               I have met numerous times with school PAC members in my office, attended their public events and continued the conversations to foster an even stronger partnership between the Municipality and school district.
           - label: WLK-06
-            grade: null
-            weight: "20%"
             answer: |-
               Once again the question is asking us to identify, and prioritize items in a timeframe that a Mayor or single Councillor legislatively cannot achieve on their own.
 
@@ -15381,7 +15490,6 @@ candidates:
               This has been achieved not by individual councillors working in silos, but by Council as a whole, working with staff on projects that meet the up to date criteria the City is working with.
 
               This has worked well over the previous four years and I see no reason to alter from a proven course.
-        unscored:
           - label: WLK-GEN
             answer: |-
               For most of its’ history, the City of Langford has relied on development to create sidewalks as part of required frontage improvements.
@@ -15393,18 +15501,13 @@ candidates:
               The City will have to regularly continue with the sidewalk infill and addressing areas still lacking sidewalks completely.
       - id: governance
         grade: null
-        questions:
+        questions: []
+        unscored:
           - label: GOV-01
-            grade: null
-            weight: "17%"
             answer: "Yes"
           - label: GOV-02
-            grade: null
-            weight: "17%"
             answer: "Yes"
           - label: GOV-03
-            grade: null
-            weight: "17%"
             answer: |-
               I would continue with the work that we have already started in this last term.
 
@@ -15414,18 +15517,11 @@ candidates:
 
               #3 Further the work of the city’s first official economic development plan to increase our economic diversity and build upon last years record setting business licence applications.
           - label: GOV-04
-            grade: null
-            weight: "17%"
             answer: "No"
           - label: REC-01
-            grade: null
-            weight: "17%"
             answer: "Yes"
           - label: REC-02
-            grade: null
-            weight: "17%"
             answer: Significantly more consultation practices.
-        unscored:
           - label: GOV-GEN
             answer: |-
               We are used to the CRD supplying us with regional and subregional services that are traditionally provided across the CRD, such as sewer, water, solid waste, etc.

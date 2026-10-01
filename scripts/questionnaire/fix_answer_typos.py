@@ -138,17 +138,17 @@ def fetch_raw(sheet_id, timeout=120):
     return rows
 
 
-def locate(rows):
+def locate(rows, submission_id=SUBMISSION_ID, candidate=CANDIDATE):
     """(sheet row number, the row) for the one submission this is written for."""
     found = [(i, r) for i, r in enumerate(rows[1:], start=2)
-             if r and r[RAW_SUBMISSION_ID].strip() == SUBMISSION_ID]
+             if r and r[RAW_SUBMISSION_ID].strip() == submission_id]
     if len(found) != 1:
-        sys.exit(f"{len(found)} rows carry submission {SUBMISSION_ID}, expected "
+        sys.exit(f"{len(found)} rows carry submission {submission_id}, expected "
                  f"1. Nothing written.")
     number, row = found[0]
     name = " ".join(x.strip() for x in (row[RAW_FIRST_NAME], row[RAW_LAST_NAME]))
-    if name != CANDIDATE:
-        sys.exit(f"submission {SUBMISSION_ID} is {name!r}, not {CANDIDATE!r}. "
+    if name != candidate:
+        sys.exit(f"submission {submission_id} is {name!r}, not {candidate!r}. "
                  f"Nothing written.")
     return number, row
 
@@ -167,15 +167,20 @@ def columns_for(header):
     return out
 
 
-def plan(rows):
+def plan(rows, submission_id=SUBMISSION_ID, candidate=CANDIDATE, edits=None):
     """The cells to rewrite: [(label, sheet row, column index, old text, new
-    text, [(old, new) applied])]. Exits on any surprise."""
+    text, [(old, new) applied])]. Exits on any surprise.
+
+    The submission and the edit list default to this script's own, and are
+    parameters so a later correction (amend_collins_answer.py) can reuse the
+    same checks rather than copy them.
+    """
     header = rows[0]
-    number, row = locate(rows)
+    number, row = locate(rows, submission_id, candidate)
     by_label = columns_for(header)
 
     out, skipped = [], []
-    for label, pairs in EDITS.items():
+    for label, pairs in (EDITS if edits is None else edits).items():
         if label not in by_label:
             sys.exit(f"no column headed {label} on {RAW_TAB!r}. Nothing written.")
         cells = {i: row[i] if i < len(row) else "" for i in by_label[label]}
@@ -244,9 +249,10 @@ def write(sheet_id, edits):
           "the corrected text up")
 
 
-def main():
+def main(submission_id=SUBMISSION_ID, candidate=CANDIDATE, corrections=None,
+         doc=__doc__):
     p = argparse.ArgumentParser(
-        description=__doc__,
+        description=doc,
         formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--sheet-id", default=ar.default_sheet_id())
     p.add_argument("--apply", action="store_true", help="write to the sheet")
@@ -255,7 +261,8 @@ def main():
     if not args.sheet_id:
         sys.exit("no sheet id: set QUESTIONNAIRE_SUBMISSIONS_SHEET_ID")
 
-    edits, skipped = plan(fetch_raw(args.sheet_id))
+    edits, skipped = plan(fetch_raw(args.sheet_id), submission_id, candidate,
+                          corrections)
     for label, done in skipped:
         for old, new in done:
             print(f"  {label}: {old!r} -> {new!r} already applied, left alone")
@@ -267,7 +274,7 @@ def main():
 
     changes = sum(len(applied) for *_, applied in edits)
     print(f"{changes} correction(s) in {len(edits)} answer cell(s), "
-          f"{CANDIDATE} ({SUBMISSION_ID})")
+          f"{candidate} ({submission_id})")
     if not edits:
         return
     if not args.apply:

@@ -177,12 +177,18 @@ That gives the scorecard five states rather than two, on the matrix and on each 
 |---|---|
 | `A`–`F` | Published. The candidate's page also carries every graded question behind it. |
 | hourglass | The candidate returned the questionnaire and this topic has not been published yet. The default for every topic a returned candidate is waiting on, graded or not. Says nothing about how it is going. |
-| speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. |
+| speech bubble | The candidate answered, nobody grades this topic, and their answers are published: there is something to read and no letter is coming. Also every answered topic of a [late submission](#late-submissions-are-published-ungraded). |
 | red X | The candidate declined to take part, and their page carries their statement in place of the grades. Nearly whole-candidate: every topic carries it except a housing grade scored from an `HFL-INC` record alone, which survives the decline. From `_data/declined.yml`. On the scorecard matrix the row carries no marks at all: one cell spans every topic and links to the statement, and the "Only show participating candidates" filter keeps the row in view. |
 | `N/A` | Graded, and the answer is that it does not apply — `ROL-05` asks about a previous term in office. Per question only: a whole topic no longer carries it. |
 | `—` | No completed questionnaire has come back. Including every topic but housing on a sitting incumbent published for their record alone. |
 
-The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.
+The arrow is scoped to the topics that carry a graded question at all — `graded_subjects` at the top of `scores.yml`, derived from the registry rather than from which columns the sheet happens to have. Only `general` and `healthcare-access` fall outside it, so only they can show the bubble, except on a late submission. A written comment on a *graded* topic (`TRN-GEN` and friends) shows inside that topic on the candidate's page, not in a matrix cell with no room for it.
+
+### Late submissions are published ungraded
+
+A questionnaire submitted on or after `GRADING_CUTOFF` (2026-09-22) in [`scripts/sync-questionnaire.py`](scripts/sync-questionnaire.py) arrived after grading closed. The sync reads each submission's `Submitted at` from the raw Tally tab and publishes those candidates with `late: true` and **answers only**: every answer they gave, graded questions included, goes under `unscored`, and no letter, score, rationale or incumbent record is written, whatever the grading tabs carry for them. On the site every topic they answered shows the speech bubble, the candidate page explains why, and nothing shows the hourglass, because no letter is coming.
+
+The timestamp is compared by date, in UTC as Tally writes it. A row with no timestamp, a questionnaire typed in by hand from an email, counts as on time. If column C of the raw tab stops being `Submitted at`, a publishing run stops rather than risk publishing a late candidate's grades.
 
 ### The questions nobody grades
 

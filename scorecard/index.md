@@ -605,11 +605,18 @@ description: >-
             {% for subject in site.data.subjects %}
             {% assign cell = c.scores[subject.id] %}
             {% assign cell_state = "" %}
-            {% unless site.data.scores.graded_subjects contains subject.id %}
+            {%- comment -%}
+              A late submission is answers only on every topic: graded topics
+              included, so the bubble rather than an hourglass promising a
+              letter that is not coming, and a dash on a topic they left blank.
+            {%- endcomment -%}
+            {% assign ungraded_here = c.late_submission %}
+            {% unless site.data.scores.graded_subjects contains subject.id %}{% assign ungraded_here = true %}{% endunless %}
+            {% if ungraded_here %}
               {% assign published = c.published_subjects[subject.id] %}
               {% if published.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
-            {% endunless %}
-            {% if cell_state == "" and c.questionnaire_returned %}{% assign cell_state = "review" %}{% endif %}
+            {% endif %}
+            {% if cell_state == "" and c.questionnaire_returned and c.late_submission != true %}{% assign cell_state = "review" %}{% endif %}
             {%- comment -%}
               A decline with no statement: the X on every topic with nothing
               published, which is all of them but an incumbent's housing

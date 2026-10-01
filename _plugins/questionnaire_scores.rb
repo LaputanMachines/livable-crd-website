@@ -33,6 +33,13 @@
 #   pronouns         as the candidate gave them on the form, lowercased by the
 #                    sync. Absent where they gave none; the candidate page shows
 #                    them beside the name.
+#   late_submission  true where the questionnaire came back after grading
+#                    closed (`late: true`, see GRADING_CUTOFF in the sync). Their
+#                    answers are published and nothing is graded: the sync has
+#                    already put every answer under `unscored`, and the
+#                    templates draw the speech bubble on every topic of theirs
+#                    rather than an hourglass promising a letter that is not
+#                    coming.
 #
 # A fifth thing is attached from two other sources. A candidate who told the
 # coalition they were not taking part is ticked "Declined To Participate" on the
@@ -145,6 +152,7 @@ module LivableCrd
         candidate["scores"] = (scores.is_a?(Hash) ? scores : {}).merge(result["scores"] || {})
         candidate["published_subjects"] = index_by(result["subjects"], "id")
         candidate["pronouns"] = result["pronouns"] if result["pronouns"]
+        candidate["late_submission"] = true if result["late"] == true
         published += 1 unless candidate["published_subjects"].empty?
       end
 
@@ -257,7 +265,8 @@ module LivableCrd
     # The rule has to be the one the templates use, or the key will name a chip
     # nothing draws or miss one something does. A subject with a letter shows
     # that letter; a subject without one shows the speech bubble where the topic
-    # is ungraded and the candidate's answers are published, the hourglass where
+    # is ungraded, or the candidate submitted late, and their answers are
+    # published, the hourglass where
     # the candidate replied, and the dash otherwise. See the cell blocks in
     # scorecard/index.md and _layouts/candidate.html.
     #
@@ -300,7 +309,8 @@ module LivableCrd
           next unless scores[id].to_s.strip.empty?
 
           unscored = detail.dig(id, "unscored")
-          if !graded.include?(id) && unscored.is_a?(Array) && !unscored.empty?
+          ungraded = !graded.include?(id) || candidate["late_submission"] == true
+          if ungraded && unscored.is_a?(Array) && !unscored.empty?
             states["answers"] = true
           end
         end

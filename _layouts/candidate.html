@@ -34,6 +34,7 @@ layout: default
   questions before anyone types its top-level grade.
 {%- endcomment -%}
 {%- assign returned = c.questionnaire_returned -%}
+{%- assign late = c.late_submission -%}
 {%- assign gradable = site.data.scores.graded_subjects -%}
 {%- comment -%}
   Whether this candidate told the coalition they were not taking part - ticked
@@ -193,7 +194,8 @@ layout: default
     <strong>How to read this page.</strong> Each row below is one policy area,
     with {{ c.name }}'s mark for it on the right; the key underneath says what
     each mark means.
-    {%- if answered_count > 0 %} Open a row for the questions behind that mark,
+    {%- if late and answered_count > 0 %} Open a row to read what they answered.
+    {%- elsif answered_count > 0 %} Open a row for the questions behind that mark,
     what they answered, and why each answer scored as it did.
     {%- elsif openable_count > 0 %} Open a row to see what its mark was scored
     on.
@@ -240,7 +242,19 @@ layout: default
     one: the state it described is still drawn, in the chips, where every other
     state on this page is drawn too.
   {%- endcomment -%}
-  {%- if returned and published == 0 %}
+  {%- comment -%}
+    A questionnaire that came back after grading closed. Their answers are
+    published and nothing is graded, and every row below carries the speech
+    bubble, so the page says why before a reader goes looking for letters.
+  {%- endcomment -%}
+  {%- if late %}
+  <div class="callout candidate-returned">
+    <p>
+      <strong>{{ c.name }} returned the questionnaire after the grading
+      deadline.</strong> Their answers are published without grades.
+    </p>
+  </div>
+  {%- elsif returned and published == 0 %}
   <div class="callout candidate-returned">
     <p>
       <strong>{{ c.name }} returned the questionnaire.</strong> Grading is under
@@ -350,11 +364,18 @@ layout: default
       there is then something to read and nothing to wait for; everything else
       stays a dash.
     {%- endcomment -%}
+    {%- comment -%}
+      A late submission is answers only on every topic, graded ones included:
+      the bubble where they answered, a dash where they did not, and never the
+      hourglass, since no letter is coming for them.
+    {%- endcomment -%}
     {%- assign cell_state = "" %}
-    {%- unless gradable contains subject.id %}
+    {%- assign ungraded_here = late %}
+    {%- unless gradable contains subject.id %}{% assign ungraded_here = true %}{% endunless %}
+    {%- if ungraded_here %}
       {%- if detail.unscored.size > 0 %}{% assign cell_state = "answers" %}{% endif %}
-    {%- endunless %}
-    {%- if cell_state == "" and returned %}{% assign cell_state = "review" %}{% endif %}
+    {%- endif %}
+    {%- if cell_state == "" and returned and late != true %}{% assign cell_state = "review" %}{% endif %}
     {%- comment -%}
       A decline replaces all of it on every topic that has nothing published,
       the two nobody grades included: there is no letter coming, no answers to
@@ -739,7 +760,7 @@ layout: default
                 {%- endcomment -%}
                 {%- if asked.methodology %}
                 <details class="candidate-answer__method">
-                  <summary>Why we ask this</summary>
+                  <summary>{% if asked.graded %}How this question is graded{% else %}Why we ask this{% endif %}</summary>
                   <p>{{ asked.methodology | autolink | newline_to_br }}</p>
                 </details>
                 {%- endif %}
