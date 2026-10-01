@@ -243,6 +243,15 @@
   border-left-color: $color-accent;
 }
 
+// The coalition's note over a declined candidate's page. Same box and the same
+// closed gap under the hero, but solid: a decline is settled, not a state the
+// page is passing through. Accent rather than $color-declined on the edge, so
+// it reads as the coalition's own voice and not as one more red mark.
+.candidate-page .candidate-declined-note {
+  margin: 0 0 $space-md;
+  border-left-color: $color-accent;
+}
+
 // What a candidate who declined to take part said, in place of their grades.
 //
 // Not a .callout, which is this page's treatment for an aside about a state the
@@ -1151,7 +1160,8 @@ summary.candidate-grade {
     .container { max-width: none; padding: 0; }
     .page-content { padding: 0; }
 
-    .candidate-returned {
+    .candidate-returned,
+    .candidate-declined-note {
       margin: 4mm 0 0;
       padding: 2mm 3mm;
       background: $color-bg-warm;

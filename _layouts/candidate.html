@@ -225,6 +225,38 @@ layout: default
     Not a .callout like the "grading is under way" note below it. That one is a
     process aside on a page whose subject is elsewhere; this is the subject.
   {%- endcomment -%}
+  {%- comment -%}
+    A short note from the coalition over a declined candidate's page, said
+    plainly and without judgement: the coalition is non-partisan, taking part
+    was always voluntary, and a candidate who said no is not being marked down
+    for it here. It points the reader at what the candidate has put out
+    themselves rather than leaving the page at a row of X.
+
+    It says nothing about why they declined. Where there is a reason to give,
+    the statement under it gives it, and a note of ours restating that would be
+    the coalition summarizing them on their own page.
+
+    The last sentence is there only when a row can be opened, which on a
+    declined page means a record scored from council votes: the one grade on
+    the page did not come from a questionnaire, and a reader who has just been
+    told the candidate took no part would otherwise wonder where it came from.
+  {%- endcomment -%}
+  {%- if declined %}
+  <div class="callout candidate-declined-note">
+    <p>
+      <strong>{{ c.name }} chose not to take part in the questionnaire.</strong>
+      Every candidate in the region was sent the same questions, and taking part
+      was always voluntary. We respect that choice, and we encourage voters to
+      look to {% if page.website %}<a href="{{ page.website }}" target="_blank" rel="noopener nofollow">their campaign</a>{% else %}their campaign{% endif %}
+      and public statements to learn where they stand. You can also
+      <a href="{{ '/questionnaire/' | relative_url }}">read the questions every candidate was asked</a>.
+      {%- if openable_count > 0 %} The grade below comes from their record in
+      office, which is scored for every sitting incumbent whether or not they
+      took part.{% endif %}
+    </p>
+  </div>
+  {%- endif %}
+
   {%- if statement %}
   <div class="candidate-declined">
     {{ statement | escape | newline_to_br }}
