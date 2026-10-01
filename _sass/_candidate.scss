@@ -310,9 +310,8 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 2.5rem;
   height: $space-md;
-  padding: 0;
+  padding: 0 0.75rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -321,8 +320,10 @@
   color: $color-surface;
   font-family: $font-display;
   font-weight: 700;
-  font-size: 1.25rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
   line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
 
   &:hover { background: $color-accent; }

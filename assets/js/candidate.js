@@ -35,8 +35,8 @@
   // this script have come apart. Leaving it hidden is the safe half of that.
   if (topics.length === 0) return;
 
-  var expandLabel = toggle.getAttribute('data-label-expand') || 'Expand all topics';
-  var collapseLabel = toggle.getAttribute('data-label-collapse') || 'Collapse all topics';
+  var expandLabel = toggle.getAttribute('data-label-expand') || 'Expand All';
+  var collapseLabel = toggle.getAttribute('data-label-collapse') || 'Collapse All';
 
   function allOpen() {
     return topics.every(function (topic) {
@@ -44,19 +44,14 @@
     });
   }
 
-  // The mark is the state: it shows what pressing the button will do next, so
-  // it is a minus exactly when everything is already open. The words it stands
-  // for go to screen readers and the hover tooltip.
+  // The label is the state: it names what pressing the button will do next, so
+  // it reads "Collapse All" exactly when everything is already open.
   function sync() {
-    var open = allOpen();
-    var label = open ? collapseLabel : expandLabel;
-    toggle.textContent = open ? '\u2212' : '+';
-    toggle.setAttribute('aria-label', label);
-    toggle.title = label;
+    toggle.textContent = allOpen() ? collapseLabel : expandLabel;
   }
 
   // Opening one row by hand is the common way for the page to stop matching the
-  // button, and a "Expand all topics" that expands eight of nine and then has to
+  // button, and an "Expand All" that expands eight of nine and then has to
   // be pressed again to collapse them is worse than no button. Each row reports
   // its own state change, including the ones this script causes.
   topics.forEach(function (topic) {

@@ -356,9 +356,10 @@ masthead's height it came out tiny and sat awkwardly beside the URL.
   what is inside a closed <details> in every browser either, so "expand all"
     is also what makes the page searchable.
 
-    One button rather than two, a + tab on the block's top edge. It shows the
-    action it will take next and swaps to a minus when the rows are all open,
-    so there is never a control on the page that would do nothing if pressed.
+    One button rather than two, a tab on the block's top edge. It names the
+    action it will take next and reads "Collapse All" when the rows are all
+    open, so there is never a control on the page that would do nothing if
+    pressed.
     assets/js/candidate.js keeps it in step when rows are opened one at a time.
 
     Rendered only where there is more than one row to open: with one, the row's
@@ -370,8 +371,7 @@ masthead's height it came out tiny and sat awkwardly beside the URL.
       {%- if openable_count > 1 %}
       <div class="candidate-grades-controls">
         <button type="button" class="candidate-grades-controls__toggle" id="toggle-all-topics"
-          data-label-expand="Expand all topics" data-label-collapse="Collapse all topics" aria-label="Expand all topics"
-          title="Expand all topics" hidden>+</button>
+          data-label-expand="Expand All" data-label-collapse="Collapse All" hidden>Expand All</button>
       </div>
       {%- endif %}
 
