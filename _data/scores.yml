@@ -22051,6 +22051,362 @@ candidates:
               I am so proud of my work at the CRD and Saanich to create Memorandums of Understanding with Local First Nations and local governments.  This is a real way to move from talking about reconciliation and turning it into "reconcili-action."
 
               I consider it a privilege to do the important work of reconciliation and consider it a priority for Saanich and the CRD.
+  - name: Don Cameron
+    municipality: saanich
+    late: true
+    subjects:
+      - id: general
+        grade: null
+        questions: []
+        unscored:
+          - label: GEN-01
+            answer: Instigate term limits 2 years maximum.
+          - label: GEN-02
+            allocation:
+              - area: Housing
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Transit
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Walking Infrastructure
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: "Rolling & Cycling Infrastructure"
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: Roadway Infrastructure
+                amount: 1000000
+                display: "$1,000,000"
+                share: 10
+              - area: Policing
+                amount: 2500000
+                display: "$2,500,000"
+                share: 25
+              - area: "Fire & Emergency Services"
+                amount: 2200000
+                display: "$2,200,000"
+                share: 22
+              - area: "Parks & Recreation"
+                amount: 800000
+                display: "$800,000"
+                share: 8
+              - area: "Arts & Culture"
+                amount: 400000
+                display: "$400,000"
+                share: 4
+              - area: "Climate Action & Environment"
+                amount: 500000
+                display: "$500,000"
+                share: 5
+              - area: Unhoused Resident Services
+                amount: 100000
+                display: "$100,000"
+                share: 1
+              - area: Community-Based Clinics
+                amount: 800000
+                display: "$800,000"
+                share: 8
+          - label: GEN-GEN
+            answer: >-
+              Housing policies and priorities need review as does the latest
+              zoning issues relating to ridiculous property tax increases.
+              Several budget items above are senior government driven and
+              beyond the Districts funding resp.
+      - id: healthcare-access
+        grade: null
+        questions: []
+        unscored:
+          - label: HLT-01
+            answer: >-
+              No role. Medical care is the sole responsibility of Province of
+              BC.
+          - label: HLT-GEN
+            answer: >-
+              Let’s monitor the Colwood model as it enters its second year of
+              operation before discussing what model we want
+      - id: transit
+        grade: null
+        questions: []
+        unscored:
+          - label: TRN-01
+            selected:
+              - Lower-cost regional monthly pass.
+          - label: TRN-03
+            answer: "Yes, but not at the cost of a general-purpose travel lane."
+          - label: TRN-04
+            answer: "Yes"
+          - label: TRN-05
+            answer: "No"
+          - label: TRN-GEN
+            answer: >-
+              Transit is a regional issue that needs to be addressed
+              immediately to vastly improve the current situation.
+      - id: housing
+        grade: null
+        questions: []
+        unscored:
+          - label: HFL-01
+            selected:
+              - >-
+                Publicly funded accessible housing for elderly and/or disabled
+                people.
+              - Non-market affordable housing.
+              - Small homes (< 500 sq. ft.).
+              - >-
+                Family-suitable housing (i.e., 3 or more bedrooms and more
+                than 1200 sq. ft.).
+          - label: HFL-02
+            selected:
+              - >-
+                Redirect development pressure away from existing older
+                multifamily by allowing new multifamily in more low-density
+                areas.
+              - >-
+                Working with the province to create province-wide tenant
+                assistance policies.
+              - >-
+                Identify and acquire new land for the development of
+                non-market housing.
+          - label: HFL-03
+            answer: >-
+              Yes - Under 30 days for small projects under six units, 180 days
+              for large projects over six units.
+          - label: HFL-04
+            selected:
+              - Pre-zoning.
+              - Mandated requirements.
+              - Expedited reviews.
+          - label: HFL-05
+            answer: "Yes"
+          - label: HFL-06
+            answer: Nothing beyond the Provincial minimum.
+          - label: HFL-07
+            answer: >-
+              Decide case by case, with neighbourhood opposition being an
+              important consideration.
+          - label: HFL-08
+            answer: >-
+              Yes, but only if alternatives are provided for residents, e.g.,
+              secured bike storage, car share, e-bike charging plugs, bus
+              passes, etc.
+          - label: HFL-09
+            selected:
+              - Removing fees or levies charged by the municipality.
+              - Donating municipal land.
+          - label: HFL-10
+            answer: >-
+              A complete review of current market conditions unsold units
+              unrented or vacant apartments then move forward cautiously. At
+              the end of four years we have gotten back on track and true
+              affordable housing can be and is being constructed as needed
+          - label: HFL-11
+            answer: Fewer homes than the target (the target is too high).
+          - label: HFL-12
+            selected:
+              - >-
+                Increase development cost charges, amenity contributions, or
+                other fees imposed on new housing and development.
+              - Seek additional provincial or federal funding.
+      - id: climate
+        grade: null
+        questions: []
+        unscored:
+          - label: CLI-01
+            answer: "No"
+          - label: CLI-02
+            answer: "One priority among many, addressed where affordable."
+          - label: CLI-03
+            answer: "No"
+          - label: CLI-04
+            answer: "No"
+          - label: CLI-05
+            answer: "No"
+          - label: CLI-06
+            selected:
+              - >-
+                Bylaw requirements on vegetation management and exterior
+                cladding in wildfire-exposed areas.
+              - A public information campaign.
+          - label: CLI-07
+            answer: "No"
+          - label: CLI-08
+            answer: >-
+              Support only with waste-heat recovery and no net increase in
+              potable water use.
+          - label: CLI-09
+            answer: >-
+              Flooding or wildfires come to mind. Public education and being
+              diligent in maintaining appropriate vegetation in and around
+              municipal and private properties
+          - label: CLI-10
+            answer: >-
+              Saanich has completed a tree inventory and areal mapping of our
+              green areas. Existing connectivity must be identified and
+              protected. Where possible infill corridors or elevated road
+              crossing for wildlife's protection
+          - label: CLI-11
+            answer: >-
+              Yes I do. Improved building materials. Storm water storage
+              wetlands. Water resistant plantings and tree canopies and roof
+              top gardens are all positive
+          - label: CLI-12
+            answer: "No"
+          - label: CLI-GEN
+            answer: >-
+              Our impact one way or the other in the global picture is
+              negligible. Large sums of money being thrown at a problem we
+              can’t solve or even influence doesn’t seem to be money well
+              spent. It does make us feel good but so does lower taxes
+      - id: arts
+        grade: null
+        questions: []
+        unscored:
+          - label: ART-01
+            answer: |-
+              Yes
+              Follow-up: It should provide venues for the performing arts
+          - label: ART-02
+            answer: >-
+              I see summer music in the parks with food vendors and revolving
+              performers at 4or 5 parks throughout the summer, with the
+              community coming together and interacting like communities are
+              expected to do. Do you know your neighbours? You should we are
+              supposed to be a community to
+          - label: ART-03
+            selected:
+              - >-
+                Identifying priority cultural spaces requiring protection or
+                intervention.
+              - >-
+                Reviewing zoning, permitting and regulatory barriers affecting
+                cultural uses.
+              - Develop or update a municipal-focused cultural-space strategy.
+          - label: ART-04
+            selected:
+              - "Clear, published service standards for permit decisions."
+              - >-
+                Published decision-making criteria, so requirements are not
+                interpreted inconsistently.
+              - Simplified requirements for small-scale events.
+              - Better coordination between municipal departments.
+              - A single point of coordination for cultural and event permits.
+              - >-
+                Reviewing requirements that impose disproportionate costs on
+                non-profits.
+          - label: ART-05
+            selected:
+              - >-
+                Create a regional cultural infrastructure funding program
+                through municipalities/CRD.
+              - >-
+                Dedicate a defined portion of development or amenity
+                contributions to cultural infrastructure.
+              - >-
+                Use municipal funding to leverage additional capital from
+                other sources.
+              - Long-term municipal leases.
+          - label: ART-06
+            answer: >-
+              Yes, arts and culture should maintain or grow alongside other
+              core services.
+          - label: ART-07
+            answer: Evaluate proposals based on overall community benefit.
+          - label: ART-08
+            selected:
+              - Reduce or waive municipal fees for eligible cultural spaces.
+              - >-
+                Offer property tax incentives for property owners providing
+                long-term affordable cultural space.
+              - >-
+                Provide property tax relief for eligible nonprofit-owned
+                cultural properties.
+      - id: rolling-cycling
+        grade: null
+        questions: []
+        unscored:
+          - label: ROL-01
+            answer: "No"
+          - label: ROL-02
+            answer: "No"
+          - label: ROL-03
+            answer: "No"
+          - label: ROL-04
+            answer: >-
+              Recognize traffic volumes and patterns ensuring that disaster
+              routes remain unencumbered by bike lanes. Licences registration
+              and insurance for all motorized vehicles
+          - label: ROL-GEN
+            answer: >-
+              We have a road system and a bike network. Two distinctly
+              different animals that can coexist where and when necessary but
+              not at any cost
+      - id: walking
+        grade: null
+        questions: []
+        unscored:
+          - label: WLK-01
+            answer: "No, I don't think so."
+          - label: WLK-02
+            answer: >-
+              Pedestrians that are in daily near miss situations at the
+              crosswalk bike lane interfaceMore advanced left turn signals to
+              avoid pedestrian vehicle interaction. Fine any cyclist using a
+              sidewalk or roadway when a bike lane is available. Enforce the
+              rules of the road on everyone
+          - label: WLK-03
+            answer: >-
+              Yes, a modest increase (i.e. more, but less than double of
+              what's currently spent)
+          - label: WLK-04
+            answer: N/A
+          - label: WLK-05
+            answer: >-
+              Lack of appropriate signage as mentioned above would be my first
+              step
+          - label: WLK-06
+            answer: >-
+              Routine review of sidewalk surfaces around senior housing sites
+              to ensure smooth surfaces would be a good start
+          - label: WLK-GEN
+            answer: >-
+              Walking for the sake of walking is available in all areas of the
+              municipality. Walking with a destination in mind is difficult
+              within a sprawling municipality like Saanich based on distance
+              and topography
+      - id: governance
+        grade: null
+        questions: []
+        unscored:
+          - label: GOV-01
+            answer: "Yes"
+          - label: GOV-02
+            answer: "Yes"
+          - label: GOV-03
+            answer: >-
+              Undertake a total review of administration and public works org
+              charts with a look at streamlining operations and employee
+              numbers in all operating areas. Implement equipment leasing
+              versus outright purchase. If equipment isn’t being used or
+              needed it isn’t parked but returned to the leasing company.
+              Better material inventory management. Tour Saanich’s public
+              works yard and look for yourselves. The excess equipment and
+              materials is unacceptable
+          - label: GOV-04
+            answer: Decline to answer
+          - label: REC-01
+            answer: "No"
+          - label: REC-02
+            answer: Somewhat more consultation practices.
+          - label: GOV-GEN
+            answer: >-
+              Developers must pick up the costs of required downstream
+              upgrades to handle the increased densities they say they require
+              to reach profitability
   - name: Finn Fairbairn
     municipality: saanich
     scores:
