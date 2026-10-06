@@ -45,19 +45,19 @@
 #
 # One organization may hold more than one entry, and an entry lives only as long
 # as the thing it points at. The Victoria Urban Food Table's question intake
-# closed on September 3 and its entry was pulled then; the October 5 forum
-# entry is untouched, which is the point of keeping them separate.
+# closed on September 3 and its entry was pulled then. Its October 5 forum
+# entry was pulled once the forum had passed, and replaced by the entry below
+# linking the questionnaire results.
 
-- id: uft-forum
+- id: uft-results
   org: Victoria Urban Food Table
-  topic: All-candidates forum
-  headline: Victoria Urban Food Table is hosting a food systems all-candidates forum
+  topic: Food systems questionnaire
+  headline: Victoria Urban Food Table has published its candidate questionnaire results
   note: >-
-    An in-person forum with City of Victoria council candidates on food systems
-    and community health and safety, co-hosted with the Fernwood Community
-    Association. October 5 at 7pm, Fernwood Community Centre.
-  url: "https://calendarlink.com/event/B7wHI"
-  action_label: "Add the October 5 forum to your calendar"
+    City of Victoria council candidates' answers to the Victoria Urban Food
+    Table's questions on food systems and community health and safety.
+  url: "https://drive.google.com/file/d/1KleLyeyQaThzRRhwl1RUbU0h3MFqTg46/view"
+  action_label: "Read the food systems questionnaire results"
   org_url: "https://www.victoriaurbanfoodtable.com/"
 
 - id: dogwood-triple-the-vote
