@@ -11975,7 +11975,7 @@ candidates:
     pronouns: she/her
     scores:
       transit: B
-      housing: C
+      housing: B
       climate: B
       arts: A
       rolling-cycling: A
@@ -12129,12 +12129,12 @@ candidates:
 
               Greater regional coordination and regional equity is also needed. Despite a full term of advocacy, Langford still lacks a voice at the region’s transit decision making table. I believe this needs to change so that Langford can play a bigger role in the regional conversation.
       - id: housing
-        grade: C
+        grade: B
         score:
-          points: 34
+          points: 35
           max: 60
-          percent: 57
-          overall: 70
+          percent: 58
+          overall: 71
           record:
             points: 29
             max: 29
@@ -12144,7 +12144,7 @@ candidates:
             rationale: "100%"
         questions:
           - label: HFL-01
-            points: 7
+            points: 8
             max_points: 8
             selected:
               - >-
