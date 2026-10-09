@@ -1,6 +1,21 @@
 <!DOCTYPE html>
 <html lang="en-CA">
 <head>
+  {%- comment -%}
+    Google Ads tag. Production builds only (deploy.yml sets JEKYLL_ENV), so
+    local `jekyll serve` previews don't register as site visits.
+  {%- endcomment -%}
+  {%- if jekyll.environment == "production" %}
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18502179414"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'AW-18502179414');
+  </script>
+  {%- endif %}
   {% include head.html %}
   {%- comment -%}
     Measures the sticky site header and publishes its height as --site-header-h,
