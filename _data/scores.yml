@@ -4472,7 +4472,7 @@ candidates:
       transit: C-
       housing: F
       climate: C
-      arts: F
+      arts: A
       rolling-cycling: A
       walking: C
       governance: B
@@ -4843,42 +4843,57 @@ candidates:
               For example, gas-powered leaf blowers are already on their way out. I would rather focus municipal effort on areas where we can make a much larger difference, such as retrofitting existing buildings, reducing vehicle kilometres travelled, improving transportation options, and preparing our infrastructure and neighbourhoods for the effects of climate change.
               I support climate action that is practical, measurable and focused on outcomes rather than symbolic measures.
       - id: arts
-        grade: F
+        grade: A
         score:
-          percent: 57
+          percent: 94
         questions:
           - label: ART-01
-            points: 2
+            points: 3
             max_points: 3
             weight: "6.67%"
-            rationale: >-
-              Identifies municipal support through CRD Arts participation and
-              local grants, but the response does not provide enough strategic
-              specificity regarding economic-development rationale, impact or
-              execution.
+            rationale: |-
+              *Amended Oct 12: Explicitly supports arts/culture as part of economic development and identifies municipal actions through Local Grants, OCP/town-centre planning and economic-development priorities.
+
+              Original: Identifies municipal support through CRD Arts participation and local grants, but the response does not provide enough strategic specificity regarding economic-development rationale, impact or execution.
             answer: |-
               Yes
-              Follow-up: Municipalities should support the arts, as Esquimalt already does through its contributions as a full member of the CRD Arts Commission and via its Local Grants program to local groups that provide arts and cultural events in the township.
+              *Amended/Clarification Oct 12th: I believe arts and culture should be part of Esquimalt's economic development strategy. Arts, festivals and cultural programming are really important to Esquimalt. They make this a more interesting place to live, and they bring people into the community. Our existing Economic Development Strategy already recognizes arts and culture as part of quality of life and economic development, but I think we could make that connection much clearer.
+
+              At the municipal level, I support creating a specific arts and culture category within our Local Grants program, with a particular focus on organizations that provide public arts and cultural programming in Esquimalt.
+
+              I would also continue to strongly support Esquimalt's participation in the CRD Arts Commission. I don't see the municipal and regional approaches as alternatives. We should be doing both.
+
+              Original Follow-up: Municipalities should support the arts, as Esquimalt already does through its contributions as a full member of the CRD Arts Commission and via its Local Grants program to local groups that provide arts and cultural events in the township.
           - label: ART-02
-            points: 1
+            points: 3
             max_points: 3
             weight: "16.67%"
-            rationale: >-
-              Commits to reviewing the Local Grants program to
-              maintain/increase support against inflation, does little to
-              'strengthen the sector' and is more protectionist of existing
-              programs. Support is general but provides no specific four-year
-              measurable outcome.
-            answer: >-
-              I want to review our Local Grants program to ensure that we are
-              maintaining and increasing our support for local events and
-              festivals such that they are not effectively losing funding due
-              to inflationary increases.
+            rationale: |-
+              *Amended Oct 12: Commits to establishing a dedicated annual arts and culture grant stream, doubling arts/cultural Local Grants funding in the first post-election budget, and substantially increasing municipal funding for public arts and cultural programming over the four-year term.
+
+              Original: Commits to reviewing the Local Grants program to maintain/increase support against inflation, does little to 'strengthen the sector' and is more protectionist of existing programs. Support is general but provides no specific four-year measurable outcome.
+            answer: |-
+              *Amended/Clarification Oct 12th: My first-year commitment would be to review the Local Grants program as it moves beyond its current agreements and establish a distinct arts and culture funding category.
+
+              I would also like to increase Local Grants funding overall. Right now arts organizations are competing within one fairly broad community grants program. I think a dedicated category would make it much clearer that public arts and cultural programming is something the municipality actually intends to support.
+
+              In the first budget after the election, I would push to double the amount of Local Grants funding going specifically to arts and cultural programming. By the end of the four-year term, I would like Esquimalt to have an established annual arts and culture grant stream, with substantially more municipal funding going toward public arts and cultural programming than there is today.
+
+              Original: I want to review our Local Grants program to ensure that we are maintaining and increasing our support for local events and festivals such that they are not effectively losing funding due to inflationary increases.
           - label: ART-03
-            points: 0
+            points: 3
             max_points: 3
             weight: "13.33%"
-            rationale: Declines to answer the implementation-framework question.
+            rationale: |-
+              *Amended Oct 12: Selects an inventory, zoning/permitting review, and measurable implementation targets/timelines, with public reporting; directly addresses implementation rather than declining municipal action.
+
+              Original: Declines to answer the implementation-framework question.
+            answer: |-
+              *Amended Oct 12th: A regularly updated inventory of cultural spaces and vulnerable venues. Reviewing zoning, permitting and regulatory barriers affecting cultural uses. Measurable implementation targets and timelines.
+
+              "My decision to decline this question wasn't intended to mean that I oppose municipal action on cultural space. I hesitated because a lot of the options seemed to assume that the municipality already had a cultural-space strategy, dedicated staff and programs in place. Esquimalt doesn't. We also don't have a lot of venues that would traditionally be considered cultural spaces.   I would support something scaled to a municipality our size." ... "I don't think we need to create a new administrative structure just to do this. Progress could be reported publicly through the normal Council and strategic-plan reporting process. For me, the first step is fairly basic: understand what cultural spaces we actually have, where the gaps and risks are, and which municipal tools could realistically make a difference."
+
+              Orginal: Decline to answer.
             selected:
               - Decline to answer.
           - label: ART-04
@@ -4898,13 +4913,20 @@ candidates:
                 Reviewing requirements that impose disproportionate costs on
                 non-profits.
           - label: ART-05
-            points: 1
+            points: 3
             max_points: 3
             weight: "16.67%"
-            rationale: >-
-              Supports a regional cultural infrastructure funding program, a
-              potentially high-impact regional mechanism, but identifies no
-              additional direct municipal cultural-space intervention.
+            rationale: |-
+              *Amended Oct 12th: Identifies multiple municipal infrastructure tools: capital-leverage funding, nonprofit partnerships, long-term leases, development tools, and potential taxes/fees; commits to planning for municipal infrastructure needs.
+
+              Orginal: Supports a regional cultural infrastructure funding program, a potentially high-impact regional mechanism, but identifies no additional direct municipal cultural-space intervention.
+            answer: |-
+              *Amended/Clarification Oct 12: "Yes. In addition to supporting a regional approach through the CRD, I would support using municipal resources and municipal policy tools where there is a demonstrated need in Esquimalt.
+              From the approaches listed, I would support using municipal funding to help leverage capital funding from senior governments and other sources, partnerships with non-profits where that could help secure an important cultural space, and long-term municipal leases where the Township has suitable property.
+              I would also support using development tools on a case-by-case basis to secure, replace or improve cultural space as part of major developments.
+              I would also, in principle, support increasing taxes or fees to support arts and cultural infrastructure. But without a specific project, plan or amount in front of me, I don't think it's responsible to make a blanket commitment to a particular tax increase.
+
+              Original: Create a regional cultural infrastructure funding program through municipalities/CRD.
             selected:
               - >-
                 Create a regional cultural infrastructure funding program
@@ -27179,68 +27201,39 @@ candidates:
             points: 2
             max_points: 3
             weight: "6.67%"
-            rationale: >-
-              Amended Sept 25th: Clarifies that “Unsure” reflects the ongoing
-              development of Saanich’s economic strategy and a reluctance to
-              predetermine its outcome, rather than a lack of support for arts
-              and culture. She states she is “totally supportive” of using a
-              variety of tools to support and incentivize the arts and
-              identifies a potential library exploratorium as a significant
-              arts/culture space. This establishes a meaningful municipal
-              role, but does not yet specify how arts and culture would be
-              strategically integrated into economic development sufficiently
-              for a 3. // Original: Does not establish arts and culture as a
-              core economic-development strategy at a regional level, cites
-              CRD as proponent.
+            rationale: |-
+              Amended Sept 25th: Clarifies that “Unsure” reflects the ongoing development of Saanich’s economic strategy and a reluctance to predetermine its outcome, rather than a lack of support for arts and culture. She states she is “totally supportive” of using a variety of tools to support and incentivize the arts and identifies a potential library exploratorium as a significant arts/culture space. This establishes a meaningful municipal role, but does not yet specify how arts and culture would be strategically integrated into economic development sufficiently for a 3. /
+
+              Original: Does not establish arts and culture as a core economic-development strategy at a regional level, cites CRD as proponent.
             answer: |-
-              *Amended/Clarification Sept.24: Unsure is an indication of the major work that is currently underway  on the economic strategy - and once it is completed what direction it will take -  I am totally supportive of using a variety of tools available to support and incentivize the arts,  but am not comfortable pre-determining what the outcome of this extensive process will be, hence the unsure.  One major initiative that is likely to come out of the process is an 'exploratorium' space at the new library that would be a significant area available to arts, culture and other groups. // Original Response: Unsure
+              *Amended/Clarification Sept.24: Unsure is an indication of the major work that is currently underway  on the economic strategy - and once it is completed what direction it will take -  I am totally supportive of using a variety of tools available to support and incentivize the arts,  but am not comfortable pre-determining what the outcome of this extensive process will be, hence the unsure.  One major initiative that is likely to come out of the process is an 'exploratorium' space at the new library that would be a significant area available to arts, culture and other groups.
+
+               Original Response: Unsure
               Follow-up: This should be focussed on at the regional level - through the CRD.
           - label: ART-02
             points: 3
             max_points: 3
             weight: "16.67%"
-            rationale: >-
-              *Amended Sept 25th: Commits to continuing existing programs,
-              increasing funding by cost of living in each budget year, and
-              recommending an arts-community representative to the municipal
-              Arts, Culture and Community Wellbeing Committee. These are
-              concrete municipal actions, both in funding and engagement //
-              Original: Provides limited/general support via CRD coordination
-              without both a concrete first-year or four-year outcomes,
-              commitments, tools, and/or policies
-            answer: >-
-              *Amended/Clarification Sept. 24: "I would ensure that we
-              continue to support the programs currently in place, and
-              increase funding by cost of living in each budget year, and
-              would recommend appointing a representative from to arts
-              community onto our Arts, Culture and Community Wellbing
-              committee." // Original: I will work through the CRD to
-              strengthen its programs and funding for the arts.
+            rationale: |-
+              *Amended Sept 25th: Commits to continuing existing programs, increasing funding by cost of living in each budget year, and recommending an arts-community representative to the municipal Arts, Culture and Community Wellbeing Committee. These are concrete municipal actions, both in funding and engagement
+
+              Original: Provides limited/general support via CRD coordination without both a concrete first-year or four-year outcomes, commitments, tools, and/or policies
+            answer: |-
+              *Amended/Clarification Sept. 24: "I would ensure that we continue to support the programs currently in place, and increase funding by cost of living in each budget year, and would recommend appointing a representative from to arts community onto our Arts, Culture and Community Wellbing committee."
+
+              Original: I will work through the CRD to strengthen its programs and funding for the arts.
           - label: ART-03
             points: 2
             max_points: 3
             weight: "13.33%"
-            rationale: >-
-              Amended Sept 25: Maintains that cultural-space strategy should
-              be coordinated through the CRD, with Saanich using its five CRD
-              representatives to influence regional decisions. She also
-              identifies a specific municipal mechanism: incentivizing local
-              cultural facilities through community amenity contributions.
-              This establishes a meaningful municipal role, but does not
-              constitute a complete municipal implementation framework with
-              defined tools, timelines and reporting. // Original: Supports a
-              moderate-high impact solution of a 'cross-coordinated regional
-              cultural-space strategy', but does not denote any further
-              regional support lacking a substantive framework.
-            answer: >-
-              *Amended/Clarification Sept. 24: "This needs to be done through
-              the CRD - Saanich has five representatives at CRD, so can be
-              instrumental in any decisions that are reached. Such a strategy
-              can ensure significance funding across the region in programs
-              and areas that need support. This regional approach I believe
-              has greater potential to support the arts than a splintered
-              municipal approach. " // Original: Develop a cross-coordinated
-              regional cultural-space strategy.
+            rationale: |-
+              Amended Sept 25: Maintains that cultural-space strategy should be coordinated through the CRD, with Saanich using its five CRD representatives to influence regional decisions. She also identifies a specific municipal mechanism: incentivizing local cultural facilities through community amenity contributions. This establishes a meaningful municipal role, but does not constitute a complete municipal implementation framework with defined tools, timelines and reporting.
+
+              Original: Supports a moderate-high impact solution of a 'cross-coordinated regional cultural-space strategy', but does not denote any further regional support lacking a substantive framework.
+            answer: |-
+              *Amended/Clarification Sept. 24: "This needs to be done through the CRD - Saanich has five representatives at CRD, so can be instrumental in any decisions that are reached.  Such a strategy can ensure significance funding across the region in programs and areas that need support.  This regional approach I believe has greater potential to support the arts than a splintered municipal approach.  "
+
+              Original: Develop a cross-coordinated regional cultural-space strategy.
             selected:
               - Develop a cross-coordinated regional cultural-space strategy.
           - label: ART-04
@@ -27266,29 +27259,14 @@ candidates:
             points: 3
             max_points: 3
             weight: "16.67%"
-            rationale: >-
-              Amended Sept 25: Clarifies support for increasing local arts
-              funding by cost of living, maintaining existing initiatives with
-              appropriate increases, and including arts as a component of
-              community amenity contributions. She also clarifies that a
-              regional infrastructure program would involve Saanich funding.
-              The combination establishes direct municipal funding support and
-              a development/amenity-based mechanism relevant to securing
-              cultural infrastructure. /// Original: Supports a regional
-              cultural infrastructure funding program, but this does not
-              establish direct municipal intervention sufficient for 3.
-            answer: >-
-              *Amended/Clarification Sept. 24: "Local facilities can be
-              incentivized through community amenity contributions for new
-              housing projects." ... "I would also support increasing local
-              funding by the cost of living each budget year, ensuring that
-              our current initiatives (such as music in the park, public mural
-              development) remain fully funded with appropriate increases each
-              year,and include the arts as a component of community amenity
-              contributions. For greater clarity a regional program would
-              involve Saanich funding." // Original: Create a regional
-              cultural infrastructure funding program through
-              municipalities/CRD.
+            rationale: |-
+              Amended Sept 25: Clarifies support for increasing local arts funding by cost of living, maintaining existing initiatives with appropriate increases, and including arts as a component of community amenity contributions. She also clarifies that a regional infrastructure program would involve Saanich funding. The combination establishes direct municipal funding support and a development/amenity-based mechanism relevant to securing cultural infrastructure.
+
+               Original: Supports a regional cultural infrastructure funding program, but this does not establish direct municipal intervention sufficient for 3.
+            answer: |-
+              *Amended/Clarification Sept. 24: "Local facilities can be incentivized through community amenity contributions for new housing projects." ... "I would also support increasing local  funding by the cost of living each budget year, ensuring that our current initiatives (such as music in the park, public mural development) remain fully funded with appropriate increases each year,and  include the arts as a component of community amenity contributions.  For greater clarity a regional program would involve Saanich funding."    /
+
+              Original: Create a regional cultural infrastructure funding program through municipalities/CRD.
             selected:
               - >-
                 Create a regional cultural infrastructure funding program
@@ -27297,12 +27275,10 @@ candidates:
             points: 3
             max_points: 3
             weight: "10.00%"
-            rationale: >-
-              Supports arts and culture maintaining or growing alongside core
-              services. // Sept 25: Explicitly supports maintaining existing
-              arts programs and increasing funding by cost of living each
-              budget year, consistent with maintaining/growing arts investment
-              alongside core services.
+            rationale: |-
+              *Amended Sept 25: Explicitly supports maintaining existing arts programs and increasing funding by cost of living each budget year, consistent with maintaining/growing arts investment alongside core services.
+
+              Original: Supports arts and culture maintaining or growing alongside core services.
             answer: >-
               Yes, arts and culture should maintain or grow alongside other
               core services.
@@ -27318,26 +27294,13 @@ candidates:
             points: 2
             max_points: 3
             weight: "16.67%"
-            rationale: >-
-              Amended Sept 25: Clarifies that she supports waiving fees,
-              incentives and property-tax relief as municipal approaches, and
-              considers these local tools useful alongside regional
-              collaboration. This establishes meaningful municipal support,
-              but she does not specify the particular private-owner/developer
-              mechanism or long-term affordability condition needed for the
-              structural 3. // Orginal: Does not select the proposed municipal
-              incentive mechanisms. Selects I have another idea, details
-              unknown.
-            answer: >-
-              *Amended/Clarification Sept. 24: " I support waiving fees,
-              incentives or property tax relief, but also indicated that I
-              think the CRD is a very important part of cultural strategy
-              [...] I think we can achieve more by working in a larger
-              collective, although the options I can support are certainly
-              helpful at the local level. That could also include partnerships
-              with schools which have theatres and other facilities that could
-              be utilized. [...] Local facilities can be incentivized through
-              community amenity contributions for new housing projects. ///
+            rationale: |-
+              Amended Sept 25: Clarifies that she supports waiving fees, incentives and property-tax relief as municipal approaches, and considers these local tools useful alongside regional collaboration. This establishes meaningful municipal support, but she does not specify the particular private-owner/developer mechanism or long-term affordability condition needed for the structural 3.
+
+              Orginal: Does not select the proposed municipal incentive mechanisms. Selects I have another idea, details unknown.
+            answer: |-
+              *Amended/Clarification Sept. 24: " I support waiving fees, incentives  or property tax relief, but also indicated that I think the CRD is a very important part of cultural strategy [...] I think we can achieve more by working in a larger collective, although the options I can support are certainly helpful at the local level.  That could also include partnerships with schools which have theatres and other facilities that could be utilized. [...] Local facilities can be incentivized through community amenity contributions for new housing projects.     /
+
               Original: Other, I have another idea!
             selected:
               - "Other: Other, I have another idea!"
