@@ -52,8 +52,12 @@
         the whole alias table: the geocoder returns "Saltspring Island" for what
         this file calls "Salt Spring Island", and resolves "Saanichton" to
         "Central Saanich" before we ever see it.
+
+        data-elections-url is read only for the reserve caveat, which sends the
+        reader to the municipality's election office to confirm.
       {%- endcomment -%}
-      <li class="muni-index__item" data-muni-name="{{ muni.name }}">
+      <li class="muni-index__item" data-muni-name="{{ muni.name }}"
+          {%- if muni.elections_url %} data-elections-url="{{ muni.elections_url }}"{% endif %}>
         {%- if mc.size > 0 %}
         <a class="muni-index__link" href="{{ '/scorecard/' | append: muni.slug | append: '/' | relative_url }}">
           <span class="muni-index__name">{{ muni.name }}</span>

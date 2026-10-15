@@ -398,6 +398,15 @@ a.muni-index__link:hover {
 .muni-finder__status--ok { font-weight: 700; }
 .muni-finder__status--warn { color: $color-muted; }
 
+// Rides inside the status line so the live region reads it with the answer, but
+// sits on its own line at normal weight: it qualifies the bold answer above it.
+.muni-finder__caveat {
+  display: block;
+  margin-top: 0.35rem;
+  font-weight: 400;
+  color: $color-muted;
+}
+
 .muni-finder__note {
   margin: 0;
   font-size: 0.8rem;
