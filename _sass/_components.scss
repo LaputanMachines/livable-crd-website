@@ -1168,6 +1168,49 @@ tr:hover td { background: $color-bg-warm; }
   // row sizes the columns, so the name width lives on .scorecard-matrix__name-h.
   .scorecard-matrix__cand { font-size: 0.95rem; }
   .scorecard-matrix__meta { font-size: 0.75rem; }
+  .scorecard-matrix__result-text { font-size: 0.75rem; }
+}
+
+// A candidate's election result, under the meta line: the share of the vote as
+// text, and the same share as a bar the width of the name column. Winners carry
+// the brand purple on both; everyone else stays muted, so a municipality's
+// elected rows stand out from the rest without a second colour scale beside the
+// grade chips. Not green: green on this page means an A.
+.scorecard-matrix__result {
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.scorecard-matrix__result-text {
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: $color-muted;
+  font-variant-numeric: tabular-nums;
+}
+
+.scorecard-matrix__result-bar {
+  display: block;
+  height: 3px;
+  margin-top: 0.15rem;
+  border-radius: 2px;
+  background: linear-gradient(to right, $color-muted var(--share), rgba($color-muted, 0.15) var(--share));
+}
+
+.scorecard-matrix__result--elected {
+  .scorecard-matrix__result-text { color: $color-accent; font-weight: 700; }
+  .scorecard-matrix__result-bar {
+    background: linear-gradient(to right, $color-accent var(--share), rgba($color-accent, 0.15) var(--share));
+  }
+}
+
+// The note over the table saying the results are in. Set off from the
+// paragraphs around it by the light brand accent the homepage's announcement
+// uses, so it reads as news rather than as more instructions.
+.scorecard-results-note {
+  padding: $space-sm $space-md;
+  border-left: $border-weight-heavy solid $color-warm;
+  background: $color-bg-warm;
 }
 
 // The scorecard's link down to /faq/, standing where the FAQ panels used to.

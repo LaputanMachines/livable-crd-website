@@ -13,16 +13,16 @@ description: >-
 <section class="hero hero--home">
   <div class="hero-inner animate-in">
     {%- comment -%}
-      The release announcement. Shown on the strength of what the build actually
-      has rather than on the date: published_candidate_count comes from
-      _plugins/questionnaire_scores.rb and is zero until PUBLISH_GRADES is
-      flipped, so the day's copy cannot go up ahead of the grades it announces.
+      The results announcement. Shown on the strength of what the build actually
+      has rather than on the date: results_status comes from
+      _plugins/election_results.rb and is only set once _data/results.yml
+      exists, so the copy cannot go up ahead of the results it announces.
       Plain text at the size of the badge under it, not a link: the button
       below is the way to the scorecard. The confetti is decoration and hidden
       from assistive tech; it bursts once on load and falls away, and a reader
       who asked for reduced motion never sees it at all.
     {%- endcomment -%}
-    {%- if site.data.published_candidate_count > 0 %}
+    {%- if site.data.results_status and site.data.results_status != "" %}
     <p class="hero-release">
       <span class="hero-release__confetti" aria-hidden="true">
       <i class="hero-release__bit hero-release__bit--a" style="--x: -105px; --y: -21px; --r: -40deg; --d: 0.00s"></i>
@@ -40,7 +40,7 @@ description: >-
       <i class="hero-release__bit hero-release__bit--b" style="--x: 120px; --y: -14px; --r: 55deg; --d: 0.36s"></i>
       <i class="hero-release__bit hero-release__bit--c" style="--x: -120px; --y: 14px; --r: -25deg; --d: 0.39s"></i>
       </span>
-      Grades are released!
+      The results are in!
     </p>
     {%- endif %}
     <p class="badge">Easy, Informed Election Decisions</p>

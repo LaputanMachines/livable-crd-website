@@ -1,0 +1,624 @@
+# 2026 general local election results, by municipality.
+#
+# Hand-kept, not synced. Vote counts are copied from CivicInfo BC's results
+# dashboard (each municipality's `source` below), which the municipalities'
+# own election pages link to. Only vote counts and who was elected are stored;
+# every percentage the site prints is worked out from them in
+# _plugins/election_results.rb, so a figure here and a figure on the page can
+# never disagree, and a correction is one number rather than three.
+#
+# status: "preliminary" until chief election officers declare official results
+#   (by 4pm, October 21, 2026). The scorecard says "Preliminary results" while
+#   it is set. Once each municipality's declaration is out, check its counts
+#   against it and change this to "official".
+#
+# municipalities, keyed by slug from _data/municipalities.yml:
+#   ballots    Total ballots cast. The denominator for councillors: a voter
+#              marks up to as many councillors as there are seats, so a share of
+#              all council votes undersells every candidate; a share of ballots
+#              reads as "this share of voters backed them".
+#   source     Where the counts came from.
+#   mayor / councillor
+#              Every candidate on that ballot, in the order the source lists
+#              them (most votes first). `name` is spelled as in
+#              _data/candidates.yml, which is what the plugin joins on; where
+#              the ballot spells it differently the ballot's spelling is in a
+#              comment. A candidate in candidates.yml with no entry here was not
+#              on the ballot and shows no result.
+#              votes      Votes received.
+#              elected    true for a winner.
+#              acclaimed  true for a candidate elected without a vote.
+#
+# Mayor percentages are a share of all votes cast for mayor, which is what the
+# municipalities' own results pages print.
+
+status: preliminary
+as_of: 2026-10-18
+
+municipalities:
+  central-saanich:
+    ballots: 6933
+    source: "https://www.localelections.ca/election_results/12_2026_results.html"
+    mayor:
+      - name: "Zeb King"
+        votes: 3616
+        elected: true
+      - name: "Pat Bryant"  # ballot: Pat Bryant (Patrick Bryant)
+        votes: 3257
+    councillor:
+      - name: "Susan Zedel"
+        votes: 4159
+        elected: true
+      - name: "Sarah Riddell"
+        votes: 4157
+        elected: true
+      - name: "Kathleen Zimmerman"
+        votes: 3976
+        elected: true
+      - name: "Ben Michell"
+        votes: 3893
+        elected: true
+      - name: "Anny Scoones"  # ballot: Anny M Scoones
+        votes: 3605
+        elected: true
+      - name: "David Lawson"
+        votes: 3379
+        elected: true
+      - name: "Robert (Bob) Thompson"  # ballot: Bob Thompson
+        votes: 2983
+      - name: "Chris Graham"  # ballot: Christopher Graham
+        votes: 2049
+      - name: "Lori A Shaw"
+        votes: 1468
+      - name: "Rafael R Fuentes"
+        votes: 1016
+
+  colwood:
+    ballots: 5502
+    source: "https://www.localelections.ca/election_results/18_2026_results.html"
+    mayor:
+      - name: "Doug Kobayashi"
+        votes: 4250
+        elected: true
+      - name: "Rob Martin"  # ballot: Rob Martin (Robert Martin)
+        votes: 626
+      - name: "Cynthia Day"
+        votes: 537
+    councillor:
+      - name: "Misty Olsen"
+        votes: 3864
+        elected: true
+      - name: "Eugene Tseng"
+        votes: 3615
+        elected: true
+      - name: "Ian Ward"
+        votes: 3264
+        elected: true
+      - name: "David Grove"
+        votes: 3232
+        elected: true
+      - name: "Deborah Law"
+        votes: 3146
+        elected: true
+      - name: "Harold Bloomenthal"
+        votes: 2624
+        elected: true
+      - name: "Jennifer Parlee"
+        votes: 2366
+      - name: "Terrilynn Gee"  # ballot: Terrilynn Gee (Terri Lynn Freedman)
+        votes: 1502
+      - name: "Kim Jordison"
+        votes: 1416
+
+  esquimalt:
+    ballots: 4937
+    source: "https://www.localelections.ca/election_results/30_2026_results.html"
+    mayor:
+      - name: "Duncan Cavens"
+        votes: 4407
+        elected: true
+      - name: "David Gauthier"
+        votes: 434
+    councillor:
+      - name: "Tim Morrison"
+        votes: 3294
+        elected: true
+      - name: "Tara Todesco"
+        votes: 2873
+        elected: true
+      - name: "Meagan Brame"
+        votes: 2556
+        elected: true
+      - name: "Andrea Boardman"
+        votes: 2480
+        elected: true
+      - name: "Holly Courtright"
+        votes: 2385
+        elected: true
+      - name: "Meredith James"  # ballot: Meredith James (Kathryn Meredith James)
+        votes: 2384
+        elected: true
+      - name: "Kody Thomson"
+        votes: 2095
+      - name: "Dan Igaz"
+        votes: 1718
+      - name: "Bruce McIldoon"
+        votes: 1384
+      - name: "Robb Johnstone"  # ballot: Robb Johnstone (Robert Johnstone)
+        votes: 1347
+      - name: "Tyler Russell"
+        votes: 1240
+      - name: "Zachary Mulder"  # ballot: Zach Mulder (Zachary Mulder)
+        votes: 1158
+
+  highlands:
+    ballots: 982
+    source: "https://www.localelections.ca/election_results/45_2026_results.html"
+    mayor:
+      - name: "Gord Baird"
+        votes: 500
+        elected: true
+      - name: "Ken Williams"
+        votes: 471
+    councillor:
+      - name: "Karel Roessingh"
+        votes: 555
+        elected: true
+      - name: "Justin Allen"
+        votes: 547
+        elected: true
+      - name: "Leslie Anderson"
+        votes: 534
+        elected: true
+      - name: "Rob Justice"
+        votes: 528
+        elected: true
+      - name: "Ann Baird"
+        votes: 515
+        elected: true
+      - name: "Patrick Harriot"  # ballot: Patrick Harriott
+        votes: 464
+        elected: true
+      - name: "Marcie McLean"
+        votes: 439
+      - name: "Marie Brotherston"
+        votes: 422
+      - name: "Ken Brotherston"
+        votes: 366
+
+  langford:
+    ballots: 15287
+    source: "https://www.localelections.ca/election_results/60_2026_results.html"
+    mayor:
+      - name: "Stew Young"
+        votes: 9801
+        elected: true
+      - name: "Scott Goodmanson"
+        votes: 5411
+    councillor:
+      - name: "Lisa Foxall"
+        votes: 8574
+        elected: true
+      - name: "Wendy Hobbs"
+        votes: 7720
+        elected: true
+      - name: "Bryson Hill"
+        votes: 7533
+        elected: true
+      - name: "Jennifer Dunnett"
+        votes: 7117
+        elected: true
+      - name: "Brandy Gordon"
+        votes: 6600
+        elected: true
+      - name: "Colby Harder"
+        votes: 6082
+        elected: true
+      - name: "Mary Wagner"
+        votes: 5981
+      - name: "Keith Yacucha"
+        votes: 5513
+      - name: "Kimberley Guiry"
+        votes: 5033
+      - name: "Tanya Sunshine"
+        votes: 4966
+      - name: "Matt Sahlstrom"
+        votes: 2843
+      - name: "Trevor Hinton"
+        votes: 2328
+      - name: "Shawn Blair"
+        votes: 1772
+      - name: "Michael Mortimore"
+        votes: 1386
+      - name: "Andrew Jackson"
+        votes: 1132
+      - name: "Alex Mcleod"  # ballot: Alex McLeod
+        votes: 772
+
+  metchosin:
+    ballots: 2239
+    source: "https://www.localelections.ca/election_results/73_2026_results.html"
+    mayor:
+      - name: "Steve Gray"
+        votes: 1724
+        elected: true
+      - name: "Marie-Térèse Little"
+        votes: 434
+      - name: "Shawn Melinchuk"
+        votes: 68
+    councillor:
+      - name: "Kyara Kahakauwila"
+        votes: 1563
+        elected: true
+      - name: "Jesse Pewarchuk"
+        votes: 1487
+        elected: true
+      - name: "Shelly Donaldson"
+        votes: 1384
+        elected: true
+      - name: "Mark Muldoon"
+        votes: 1294
+        elected: true
+      - name: "Eric White"
+        votes: 829
+      - name: "Ellen Frisch"
+        votes: 795
+      - name: "Mattie McMillan"
+        votes: 317
+
+  north-saanich:
+    ballots: 4446
+    source: "https://www.localelections.ca/election_results/84_2026_results.html"
+    mayor:
+      - name: "Jack McClintock"  # ballot: Jack J McClintock (John)
+        votes: 2907
+        elected: true
+      - name: "Felice B Mazzoni"
+        votes: 1295
+      - name: "Peter Jones"
+        votes: 244
+    councillor:
+      - name: "Jane Burnes"  # ballot: Jane J Burnes (Isabella)
+        votes: 2810
+        elected: true
+      - name: "Stuart Mackinnon"  # ballot: Stuart F Mackinnon (John)
+        votes: 2669
+        elected: true
+      - name: "Jim Woolford"  # ballot: Jim C Woolford (James)
+        votes: 2557
+        elected: true
+      - name: "Brian Robinson"
+        votes: 2372
+        elected: true
+      - name: "Phil DiBattista"  # ballot: Phillip J DiBattista
+        votes: 2308
+        elected: true
+      - name: "Walter Langer"
+        votes: 2271
+        elected: true
+      - name: "Kristine Marshall"
+        votes: 1770
+      - name: "Greg Warner"  # ballot: Greg R Warner
+        votes: 1762
+      - name: "Sanjiv Shrivastava"
+        votes: 1696
+      - name: "Irene McConkey"  # ballot: Irene L McConkey
+        votes: 1502
+      - name: "Gerald Hannig"  # ballot: Gerald W Hannig
+        votes: 1306
+
+  oak-bay:
+    ballots: 7066
+    source: "https://www.localelections.ca/election_results/87_2026_results.html"
+    mayor:
+      - name: "Kevin Murdoch"
+        votes: 5231
+        elected: true
+      - name: "Sam Holland"  # ballot: Sam Holland (Samuel Holland)
+        votes: 1725
+    councillor:
+      - name: "Hazel Braithwaite"  # ballot: Hazel S Braithwaite
+        votes: 5095
+        elected: true
+      - name: "Will Moore"  # ballot: Will Moore (William Moore)
+        votes: 4715
+        elected: true
+      - name: "Cairine Green"  # ballot: Cairine J Green
+        votes: 4357
+        elected: true
+      - name: "Roxanne Helme"  # ballot: Roxanne P Helme
+        votes: 4101
+        elected: true
+      - name: "Esther Paterson"  # ballot: Esther W Paterson
+        votes: 3928
+        elected: true
+      - name: "David Gleeson"
+        votes: 3399
+        elected: true
+      - name: "Karin Sweeney"  # ballot: Karin L Sweeney
+        votes: 2933
+      - name: "Sarah Starkweather"  # ballot: Sarah I Starkweather
+        votes: 2307
+      - name: "Katerina Weller"
+        votes: 1940
+
+  saanich:
+    ballots: 38299
+    source: "https://www.localelections.ca/election_results/114_2026_results.html"
+    mayor:
+      - name: "Rishi Sharma"
+        votes: 17157
+        elected: true
+      - name: "Zac De Vries"  # ballot: Zac de Vries
+        votes: 14785
+      - name: "Karen Harper"
+        votes: 5299
+      - name: "Robin M Stanbridge"  # ballot: Robin Morton Stanbridge
+        votes: 624
+    councillor:
+      - name: "Lorne DeLarge"
+        votes: 16615
+        elected: true
+      - name: "Nancy Di Castri"
+        votes: 16319
+        elected: true
+      - name: "Colin Plant"
+        votes: 16174
+        elected: true
+      - name: "Laurie Lidstone"
+        votes: 15389
+        elected: true
+      - name: "Graham Wright"
+        votes: 15101
+        elected: true
+      - name: "Matt McGeachie"
+        votes: 14591
+        elected: true
+      - name: "Nathalie Chambers"
+        votes: 13027
+        elected: true
+      - name: "Teale Phelps Bondaroff"
+        votes: 12735
+        elected: true
+      - name: "Mauricio Curbelo"
+        votes: 12631
+      - name: "Susan Brice"
+        votes: 11462
+      - name: "Judy Brownoff"
+        votes: 10473
+      - name: "Colette Baty"
+        votes: 9428
+      - name: "Harjas Popli"  # ballot: Harjas Singh Popli
+        votes: 9020
+      - name: "Kathleen Burton"
+        votes: 9015
+      - name: "Hollis Hodson"
+        votes: 7490
+      - name: "Sasha Izard"
+        votes: 7324
+      - name: "Don Cameron"
+        votes: 6766
+      - name: "Erin Elizabeth Booth"
+        votes: 6676
+      - name: "Garnett Humenick"
+        votes: 6405
+      - name: "Jordan Weaver"
+        votes: 6299
+      - name: "Finn Fairbairn"
+        votes: 5990
+      - name: "Alli Deelstra"
+        votes: 5005
+      - name: "Brendan Ralfs"
+        votes: 4172
+      - name: "Noah Fruttarol"
+        votes: 3771
+      - name: "Sierra Wicks-Irving"
+        votes: 3303
+      - name: "Tia Sibbald"
+        votes: 2613
+      - name: "Nic Renaoud"  # ballot: Nic Renaud
+        votes: 1545
+
+  sidney:
+    ballots: 3549
+    source: "https://www.localelections.ca/election_results/120_2026_results.html"
+    mayor:
+      - name: "Peter Wainwright"
+        acclaimed: true
+        elected: true
+    councillor:
+      - name: "Terri O’Keeffe"  # ballot: Terri O'Keeffe
+        votes: 2549
+        elected: true
+      - name: "Steve Duck"
+        votes: 2374
+        elected: true
+      - name: "Scott Garnett"
+        votes: 2215
+        elected: true
+      - name: "Richard Novek"
+        votes: 1974
+        elected: true
+      - name: "Eric Diller"
+        votes: 1896
+        elected: true
+      - name: "Rory Lambert"
+        votes: 1865
+        elected: true
+      - name: "Harninder Jacquot"  # ballot: Harninder (Hari) Jacquot
+        votes: 1758
+      - name: "Steve Price"
+        votes: 1202
+      - name: "Erin Fedotov"
+        votes: 1189
+      - name: "Jamie Wellbourn"
+        votes: 947
+
+  sooke:
+    ballots: 5436
+    source: "https://www.localelections.ca/election_results/181_2026_results.html"
+    mayor:
+      - name: "Kevin Pearson"
+        votes: 3140
+        elected: true
+      - name: "Al Beddows"
+        votes: 2307
+    councillor:
+      - name: "Herb Haldane"
+        votes: 2688
+        elected: true
+      - name: "Rob Pearce"
+        votes: 2321
+        elected: true
+      - name: "Katherine Strongwind"
+        votes: 2301
+        elected: true
+      - name: "Janet Evans"
+        votes: 2290
+        elected: true
+      - name: "Curtis Peterec"
+        votes: 2226
+        elected: true
+      - name: "Elliott Lifton"
+        votes: 2177
+        elected: true
+      - name: "Helen Ritts"
+        votes: 2172
+      - name: "Steve Sorensen"  # ballot: Steven Sorensen
+        votes: 2081
+      - name: "Christine Thomas"
+        votes: 2069
+      - name: "Susan Belford"
+        votes: 1830
+      - name: "Brian McHattie"
+        votes: 1787
+      - name: "Tony St-Pierre"
+        votes: 1487
+      - name: "Kyra Juliana Lazzar"  # ballot: Kyra J Lazzar
+        votes: 1405
+      - name: "Noah Dowhy"
+        votes: 1330
+      - name: "Nick Dickinson-Wilde"
+        votes: 982
+      - name: "Landon Grams"
+        votes: 891
+
+  victoria:
+    ballots: 31281
+    source: "https://www.localelections.ca/election_results/142_2026_results.html"
+    mayor:
+      - name: "Marianne Alto"
+        votes: 13505
+        elected: true
+      - name: "Bruce McGuigan"  # ballot: Bruce McGuigan (William Bruce McGuigan)
+        votes: 10531
+      - name: "Mike Harris"
+        votes: 3518
+      - name: "Darren Gervais-Harrison"
+        votes: 1530
+      - name: "Lyall Atkinson"  # ballot: Lyall G Atkinson
+        votes: 457
+      - name: "Gregoor Miller"  # ballot: Gregoor Miller (Gregory Miller)
+        votes: 403
+      - name: "Christopher Hanna"
+        votes: 388
+      - name: "David Johnston"
+        votes: 243
+    councillor:
+      - name: "Stephen Hammond"
+        votes: 15092
+        elected: true
+      - name: "Matt Dell"
+        votes: 14291
+        elected: true
+      - name: "Marg Gardiner"  # ballot: Marg N Gardiner (Margaret Norma Gardiner)
+        votes: 14208
+        elected: true
+      - name: "Jeremy Caradonna"
+        votes: 14132
+        elected: true
+      - name: "Melissa Cseszko"  # ballot: Melissa K Cseszko
+        votes: 13971
+        elected: true
+      - name: "Jack Sandor"  # ballot: Jack Sandor (John Sandor)
+        votes: 13777
+        elected: true
+      - name: "Wendy Bowkett"
+        votes: 13545
+        elected: true
+      - name: "Dave Thompson"
+        votes: 13103
+        elected: true
+      - name: "Krista Loughton"
+        votes: 13088
+      - name: "Bella Lee"  # ballot: Bella Lee (Isabella Lee)
+        votes: 12947
+      - name: "Arthur McInnis"  # ballot: Arthur McInnis (Joel Arthur McInnis)
+        votes: 12931
+      - name: "Karen Rothe"
+        votes: 12806
+      - name: "Susan Kim"
+        votes: 9890
+      - name: "Peter Rose Gibbs"  # ballot: Peter R Gibbs
+        votes: 8798
+      - name: "Jerry Garcia"  # ballot: Jerry Garcia (Javier Jerry Garcia)
+        votes: 7126
+      - name: "Jason Heit"
+        votes: 5695
+      - name: "Martin Girard"
+        votes: 2867
+      - name: "Shona Dion"
+        votes: 2378
+      - name: "Herbert Collins"  # ballot: Herb Collins (Herbert)
+        votes: 1968
+      - name: "Steve Filipovic"  # ballot: Steve Filipovic (Steven Filipovic)
+        votes: 1058
+      - name: "James Harasymow"
+        votes: 683
+
+  view-royal:
+    ballots: 3272
+    source: "https://www.localelections.ca/election_results/143_2026_results.html"
+    mayor:
+      - name: "Volker Dammann"
+        votes: 1131
+        elected: true
+      - name: "David Screech"
+        votes: 1058
+      - name: "Ryan Painter"
+        votes: 856
+      - name: "Anna Becker"
+        votes: 164
+      - name: "Teodora Kristof"
+        votes: 35
+    councillor:
+      - name: "Gery Lemon"
+        votes: 1833
+        elected: true
+      - name: "Amy McCooey"
+        votes: 1767
+        elected: true
+      - name: "Sacha Christensen"
+        votes: 1765
+        elected: true
+      - name: "Don Brown"
+        votes: 1472
+        elected: true
+      - name: "Carolynne Clark"
+        votes: 1402
+        elected: true
+      - name: "Cam Harris"
+        votes: 1347
+        elected: true
+      - name: "Ron Mattson"
+        votes: 1334
+      - name: "Sean Mackenzie"  # ballot: Sean MacKenzie
+        votes: 1203
+      - name: "Owen Marshall"
+        votes: 1194
+      - name: "Diane Fownes"
+        votes: 730
+      - name: "Spencer Dixon"
+        votes: 479
+      - name: "Jay Josh"
+        votes: 414

@@ -60,6 +60,27 @@ description: >-
   </p>
 
   {%- comment -%}
+    The election results, read off the `result` each candidate carries from
+    _plugins/election_results.rb. Says what the two percentages are divided by,
+    because they are not divided by the same thing and a councillor on 43% next
+    to a mayor on 45% would otherwise read as the councillor doing worse.
+    "Preliminary" comes from the status in _data/results.yml, not the date, so
+    the word goes when the counts are checked against the declarations.
+  {%- endcomment -%}
+  {%- if site.data.results_status and site.data.results_status != "" %}
+  <p class="scorecard-results-note">
+    <strong>The results are in.</strong> Under each candidate's name is their
+    share of the vote: for mayor, of every vote cast for mayor; for council, of
+    ballots cast, since each voter could back several councillors.
+    {%- if site.data.results_status == "preliminary" %}
+    These are preliminary, unofficial counts from
+    <a href="https://www.localelections.ca/results/index_m.html">CivicInfo BC</a>;
+    official results are declared by October 21.
+    {%- endif %}
+  </p>
+  {%- endif %}
+
+  {%- comment -%}
     How to use the page, in the order a reader meets the controls below it:
     search, then the filters, then the table, then a candidate's own page. The
     star is last and named plainly — it is the one control here whose icon does
@@ -503,6 +524,28 @@ description: >-
                   {%- endcapture -%}
                   {%- assign meta_parts = meta_raw | split: "|" -%}
                   {%- if meta_parts.size > 0 -%}<span class="scorecard-matrix__meta">{{ meta_parts | join: " · " }}</span>{%- endif -%}
+                  {%- comment -%}
+                    The election result, under the meta line. The bar is the
+                    same share drawn against the width of the name column, so a
+                    column of them reads as the race at a glance. An acclamation
+                    has no share to draw. Candidates who were not on the ballot
+                    carry no result and get nothing here.
+                  {%- endcomment -%}
+                  {%- if c.result -%}
+                  <span class="scorecard-matrix__result{% if c.result.elected %} scorecard-matrix__result--elected{% endif %}">
+                    <span class="scorecard-matrix__result-text">
+                      {%- if c.result.acclaimed -%}
+                      Acclaimed
+                      {%- else -%}
+                      {%- if c.result.elected %}Elected · {% endif -%}
+                      {{ c.result.percent }}%<span class="sr-only"> of the vote</span>
+                      {%- endif -%}
+                    </span>
+                    {%- unless c.result.acclaimed -%}
+                    <span class="scorecard-matrix__result-bar" style="--share: {{ c.result.percent }}%" aria-hidden="true"></span>
+                    {%- endunless -%}
+                  </span>
+                  {%- endif -%}
                 </span>
                 {%- comment -%}
                   The two row controls stack vertically rather than sitting side
