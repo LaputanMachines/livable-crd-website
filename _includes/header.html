@@ -13,7 +13,7 @@
       <nav aria-label="Main" class="site-nav-panel" id="site-nav">
         {% assign current = page.url %}
         {% assign in_more = false %}
-        {% if current == '/questionnaire/' or current == '/faq/' or current == '/about/' or current == '/coalition/' or current contains '/blog' or current == '/press/' or current == '/contact/' %}{% assign in_more = true %}{% endif %}
+        {% if current == '/questionnaire/' or current == '/faq/' or current == '/about/' or current == '/coalition/' or current contains '/blog' or current == '/press/' or current == '/contact/' or current == '/donate/' %}{% assign in_more = true %}{% endif %}
         {% assign in_resources = false %}
         {% if current contains '/resources/' %}{% assign in_resources = true %}{% endif %}
         <ul class="site-nav">
@@ -50,8 +50,9 @@
             results, join — plus Home, because every item added to it costs the ones that
             matter some of their weight. Everything else lives under "More":
             the questionnaire the grades are built from, the FAQ that explains
-            how the grading works, and the "who we are and how to reach us"
-            pages. The group was labelled "About", which could not honestly
+            how the grading works, the "who we are and how to reach us"
+            pages, and Donate, which left the top row once donations closed.
+            The group was labelled "About", which could not honestly
             cover the questionnaire; "More" can.
           {%- endcomment -%}
           <li class="nav-group">
@@ -64,6 +65,7 @@
               <li><a href="{{ '/blog/' | relative_url }}" {% if current contains '/blog' %}class="active"{% endif %}>Blog</a></li>
               <li><a href="{{ '/press/' | relative_url }}" {% if current == '/press/' %}class="active"{% endif %}>Press</a></li>
               <li><a href="{{ '/contact/' | relative_url }}" {% if current == '/contact/' %}class="active"{% endif %}>Contact</a></li>
+              <li><a href="{{ '/donate/' | relative_url }}" {% if current == '/donate/' %}class="active"{% endif %}>Donate</a></li>
             </ul>
           </li>
         </ul>
