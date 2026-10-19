@@ -9,18 +9,20 @@ description: >-
 ---
 
 <p>
-  <strong>Livable CRD</strong> is powered by community support. Contributions help
-  the coalition build and publish a transparent, non-partisan candidate scorecard
-  ahead of municipal elections in the Capital Regional District.
+  <strong>Donations have closed.</strong> The 2026 municipal election cycle has
+  concluded, and Livable CRD is no longer accepting contributions.
 </p>
 
 <p>
-  <a class="btn btn-donate" href="{{ site.donate_url }}" target="_blank" rel="noopener noreferrer">Donate through Action Network</a>
+  Thank you to everyone who gave. Your support paid for a transparent,
+  non-partisan candidate scorecard for every voter in the Capital Regional
+  District. The <a href="{{ '/scorecard/' | relative_url }}">scores and election
+  results</a> remain online.
 </p>
 
-<h2>Before you give</h2>
+<h2>How we fundraised</h2>
 <p>
-  To keep our fundraising transparent and compliant, a few rules apply to every
+  To keep our fundraising transparent and compliant, a few rules applied to every
   contribution. Elections BC sets them, and states them itself on
   <a href="https://elections.bc.ca/local-elections/making-a-sponsorship-contribution/" target="_blank" rel="noopener">Making a Local Sponsorship Contribution</a>:
 </p>
