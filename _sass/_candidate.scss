@@ -172,6 +172,52 @@
   color: $color-warm;
 }
 
+// The election result, under the meta line: a tag saying the outcome, then the
+// count. The tag is the one solid shape in the hero, in the light brand accent
+// the scorecard's results note is edged in, so it is the first thing read after
+// the name. A candidate who was not elected gets the same tag in outline: the
+// same word in the same place, without the fill that says "won". Purple family
+// throughout and never green, which on this site means an A.
+.candidate-hero__result {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.35rem $space-xs;
+  margin: $space-sm 0 0;
+  font-size: clamp(0.9rem, 2.5vw, 1.05rem);
+  color: #fff;
+  font-variant-numeric: tabular-nums;
+}
+
+.candidate-hero__result-tag {
+  flex: 0 0 auto;
+  padding: 0.15rem 0.55rem;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+  border-radius: $radius;
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.8em;
+  line-height: 1.3;
+}
+
+.candidate-hero__result--elected .candidate-hero__result-tag {
+  background: $color-warm;
+  border-color: $color-warm;
+  color: $inky-purple;
+}
+
+// Allowed to wrap under the tag on a phone rather than squeezing it.
+.candidate-hero__result-detail {
+  min-width: 0;
+}
+
+.candidate-hero__result-note {
+  color: $color-warm;
+  font-size: 0.9em;
+}
+
 // Slate line under the meta line. Deliberately not the uppercase display type
 // above it: the slate is a proper name, and upper-casing an organization's name
 // alongside the candidate's standing is what made the two indistinguishable
@@ -1139,6 +1185,27 @@ summary.candidate-grade {
       color: #000;
       font-size: 11pt;
     }
+
+    // On paper the hero is black text with no band behind it, so the tag keeps
+    // its shape as an outline in the accent, filled for a winner.
+    .candidate-hero__result {
+      margin-top: 2mm;
+      color: #000;
+      font-size: 11pt;
+    }
+
+    .candidate-hero__result-tag {
+      border: 0.75pt solid $color-accent;
+      color: $color-accent;
+    }
+
+    .candidate-hero__result--elected .candidate-hero__result-tag {
+      background: $color-accent;
+      border-color: $color-accent;
+      color: #fff;
+    }
+
+    .candidate-hero__result-note { color: #000; }
 
     .candidate-hero__site {
       margin-top: 1mm;

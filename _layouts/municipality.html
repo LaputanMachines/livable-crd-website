@@ -121,7 +121,34 @@ layout: default
     {%- endif %}
   </p>
 
+  {%- if page.results %}
+  <h2 class="muni-office__heading muni-office__heading--section" id="who-is-running">Who ran in {{ page.municipality_name }}</h2>
+  {%- comment -%}
+    The results go into the list of who ran rather than into a table of their
+    own above it, so each name appears once on the page: once the votes are in,
+    the plugin orders each office by where its candidates finished, and every
+    row gains the scorecard's "Elected" tag, its vote count and its share bar.
+
+    The note is the scorecard's, word for word where it can be, and wears the
+    scorecard's note box, so a reader who has seen one has seen both. Its
+    "Preliminary" sentence keys off the status in results.yml, not the date, and
+    links to this municipality's own count rather than CivicInfo BC's index.
+  {%- endcomment %}
+  <p class="scorecard-results-note">
+    <strong>The results are in.</strong>
+    {%- if page.results.ballots_label %} {{ page.results.ballots_label }} ballots were cast.{% endif %}
+    Beside each candidate is their share of the vote: for mayor, of every
+    vote cast for mayor; for council, of ballots cast, since each voter could
+    back several councillors.
+    {%- if site.data.results_status == "preliminary" %}
+    These are preliminary, unofficial counts from
+    <a href="{{ page.results.source | default: 'https://www.localelections.ca/results/index_m.html' }}" rel="noopener">CivicInfo BC</a>;
+    official results are declared by October 21.
+    {%- endif %}
+  </p>
+  {%- else %}
   <h2 class="muni-office__heading muni-office__heading--section" id="who-is-running">Who is running in {{ page.municipality_name }}</h2>
+  {%- endif %}
 
   {%- comment -%}
     What the column of ticks and dashes down the left of every list below
@@ -164,10 +191,21 @@ layout: default
 
   {%- for group in page.office_groups %}
   <section class="muni-office">
-    <h3 class="muni-office__heading">{{ group.heading }}</h3>
-    <ul class="muni-list">
+    {%- comment -%}
+      "8 elected from 27", from the plugin's count of who won rather than from
+      council_seats in _data/municipalities.yml: it should agree with the tags
+      under it even if the seat count was never filled in.
+    {%- endcomment %}
+    <h3 class="muni-office__heading">
+      {{ group.heading }}
+      {%- if group.seats %}
+      <span class="muni-office__count">{{ group.seats }} elected from {{ group.field }}</span>
+      {%- endif %}
+    </h3>
+    <ul class="muni-list{% if group.seats %} muni-list--results{% endif %}">
       {%- for candidate in group.candidates %}
-      <li class="muni-list__item">
+      {%- assign r = candidate.result %}
+      <li class="muni-list__item{% if r.elected %} muni-list__item--elected{% endif %}">
         {%- comment -%}
           A status column, on the left edge of every row and the same width on
           all of them, so the ticks line up into a column a reader can scan
@@ -222,7 +260,27 @@ layout: default
           </span>
           {%- endif %}
           <a class="muni-list__name" href="{{ candidate.url | relative_url }}">{{ candidate.display_name }}</a>
+          {%- if r.acclaimed %}
+          <span class="muni-list__tag">Acclaimed</span>
+          {%- elsif r.elected %}
+          <span class="muni-list__tag">Elected</span>
+          {%- endif %}
         </span>
+        {%- comment -%}
+          The count and share, hard right where the eye looks for a number, in
+          tabular figures so they line up down the race. The tag, the bar and the
+          colour are the scorecard's: winners in the brand purple, everyone else
+          muted. Not green, which on this site means an A.
+        {%- endcomment -%}
+        {%- if r %}
+        <span class="muni-list__votes">
+          {%- if r.acclaimed -%}
+          No vote held
+          {%- else -%}
+          {{ r.votes_label }} <span class="muni-list__votes-unit">votes</span> · {{ r.percent }}%
+          {%- endif -%}
+        </span>
+        {%- endif %}
         {%- comment -%}
           Standing and slate, in the one line and in that order, matching the
           meta line the scorecard's rows carry. Both are optional in the source
@@ -237,6 +295,9 @@ layout: default
           {%- if candidate.standing_label and candidate.slate %} · {% endif -%}
           {%- if candidate.slate %}{{ candidate.slate }}{% endif -%}
         </span>
+        {%- endif %}
+        {%- if r and r.acclaimed != true %}
+        <span class="muni-list__bar" style="--share: {{ r.percent }}%" aria-hidden="true"></span>
         {%- endif %}
       </li>
       {%- endfor %}

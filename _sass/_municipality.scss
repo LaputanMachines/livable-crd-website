@@ -219,6 +219,100 @@
   color: $color-muted;
 }
 
+// --- Results -----------------------------------------------------------------
+// Once the votes are in, the list of who ran carries them: each row gains a
+// vote count, a share bar and, for winners, the "Elected" tag. Drawn in the
+// scorecard's results language (_components.scss, .scorecard-matrix__result):
+// winners in the brand purple, everyone else muted. Not green: green on this
+// site means an A.
+
+// The scorecard's note box, between the section heading and the first office.
+.muni-office__heading--section + .scorecard-results-note {
+  margin: 0 0 $space-sm;
+}
+
+// "8 elected from 27" after the office heading, in the heading's own rule but
+// out of its capitals: it is a count about the race, not part of its name.
+.muni-office__count {
+  margin-left: $space-xs;
+  font-family: $font-sans;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.85rem;
+  color: $color-muted;
+  white-space: nowrap;
+}
+
+// The count takes the meta line's place hard right, and the meta line drops to
+// its own line under the name: a row of name, count, standing and slate side by
+// side does not fit anything narrower than a desktop.
+.muni-list--results {
+  .muni-list__meta {
+    order: 3;
+    flex-basis: 100%;
+  }
+}
+
+// The scorecard's "Elected" in the same weight and colour, as a word after the
+// name rather than a pill: a column of pills would be louder than the names.
+.muni-list__tag {
+  font-family: $font-display;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 0.7rem;
+  color: $color-accent;
+  white-space: nowrap;
+}
+
+// Never wrapped: "16,615" broken over two lines is two numbers.
+.muni-list__votes {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.9rem;
+  color: $color-muted;
+  white-space: nowrap;
+}
+
+.muni-list__item--elected .muni-list__votes {
+  color: $color-text;
+  font-weight: 700;
+}
+
+.muni-list__votes-unit { font-weight: 400; }
+
+// On a phone the name and the tag fill the line, so the count would drop under
+// it on some rows and sit beside it on others. Always under it there, so the
+// counts line up down the race at the left edge instead.
+@media (max-width: 480px) {
+  .muni-list__votes {
+    order: 2;
+    flex-basis: 100%;
+  }
+}
+
+// Same bar as .scorecard-matrix__result-bar, the full width of the row, so an
+// office's column of bars reads as the race at a glance.
+.muni-list__bar {
+  order: 4;
+  flex-basis: 100%;
+  height: 3px;
+  margin-top: 0.2rem;
+  border-radius: 2px;
+  background: linear-gradient(to right, $color-muted var(--share), rgba($color-muted, 0.15) var(--share));
+}
+
+.muni-list__item--elected .muni-list__bar {
+  background: linear-gradient(to right, $color-accent var(--share), rgba($color-accent, 0.15) var(--share));
+}
+
+// The line between the last winner and the first runner-up: where the seats
+// ran out. Dashed in the accent, so it reads as a cut-off rather than as one
+// more row rule.
+.muni-list__item--elected + .muni-list__item:not(.muni-list__item--elected) {
+  border-top: 2px dashed rgba($color-accent, 0.6);
+}
+
 .muni-siblings {
   margin-top: $space-xl;
 }

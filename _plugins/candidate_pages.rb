@@ -149,7 +149,8 @@ module LivableCrd
   class MunicipalityPage < Jekyll::PageWithoutAFile
     def initialize(site, dir, municipality_name:, municipality_slug:, office_groups:,
                    candidate_count:, siblings:, race_counts: {}, municipality: {},
-                   election_day: nil, election_year: nil, last_modified_at: nil)
+                   election_day: nil, election_year: nil, results: nil,
+                   last_modified_at: nil)
       super(site, site.source, dir, "index.html")
 
       # See the note on CandidatePage: no source file, so no mtime, so no
@@ -178,6 +179,11 @@ module LivableCrd
       data["mayor_seats"] = municipality["mayor_seats"]
       data["elections_url"] = municipality["elections_url"]
       data["summary"] = municipality["summary"]
+
+      # Ballots cast and where the count came from, once _data/results.yml has
+      # this municipality in it. nil until then, and the template draws no
+      # results note. Each candidate's own result rides on their list entry.
+      data["results"] = results
 
       # "Esquimalt Municipal Election 2026": the words in the order they get
       # typed. This page used to be titled "Esquimalt Candidates 2026", which
@@ -365,7 +371,11 @@ module LivableCrd
           # a statement; the statement only decides what the mark's title says.
           "declined" => candidate["declined"] == true,
           "declined_statement" => candidate["declined_statement"],
-          "slate" => slate.empty? ? nil : slate
+          "slate" => slate.empty? ? nil : slate,
+          # How their race went, from _plugins/election_results.rb, which runs
+          # at :high so it is already on the candidate. nil for anyone who was
+          # not on the ballot, and their row then carries no result.
+          "result" => candidate["result"]
         }
       end
 
@@ -411,6 +421,7 @@ module LivableCrd
           election_day: election_day,
           siblings: directory.reject { |m| m["url"] == "/scorecard/#{slug}/" },
           election_year: election_year,
+          results: site.data.dig("election_turnout", slug),
           last_modified_at: last_modified_at
         )
       end
@@ -519,7 +530,24 @@ module LivableCrd
       ordered << nil if by_office.key?(nil)
 
       ordered.map do |office|
-        { "office" => office, "heading" => heading_for(office), "candidates" => by_office[office] }
+        candidates = by_office[office]
+        counted = candidates.filter_map { |entry| entry["result"] }
+        group = { "office" => office, "heading" => heading_for(office), "candidates" => candidates }
+        next group if counted.empty?
+
+        # Once the votes are in, the list runs in the order they finished, which
+        # is the result, rather than the sheet's order. An acclamation has no
+        # place and sorts first; anyone with no result (not on the ballot) sorts
+        # last. sort_by is not stable, so the index breaks ties the way the
+        # sheet had them.
+        group.merge(
+          "candidates" => candidates.each_with_index.sort_by do |entry, index|
+            place = entry.dig("result", "acclaimed") ? 0 : entry.dig("result", "place")
+            [place ? 0 : 1, place.to_i, index]
+          end.map(&:first),
+          "seats" => counted.first["seats"],
+          "field" => counted.first["field"]
+        )
       end
     end
 

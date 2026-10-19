@@ -101,6 +101,42 @@ masthead's height it came out tiny and sat awkwardly beside the URL.
       endif %}{{ page.subtitle }}</p>
     {%- endif %}
     {%- comment -%}
+    How their race went, straight under the line saying which race it was. The
+    `result` comes from _plugins/election_results.rb, the same hash the
+    scorecard's "Elected · 43.4%" is printed from, and only a candidate who was
+    on the ballot has one: somebody confirmed in the tracking sheet who never
+    made it onto the ballot gets no line here at all, not a "0 votes".
+
+    The tag says the outcome in a word, the scorecard's word ("Elected",
+    "Acclaimed"), and "Not elected" for everyone else rather than nothing:
+    on a page about one person, a missing tag would leave the reader to infer
+    the result from a placing. The detail spells out what the share is a share
+    of, because the two offices divide by different things (see the note on
+    the scorecard), and the seats a councillor was competing for, because
+    "9th of 27" means one thing for eight seats and another for six.
+
+    "Preliminary" from the status in results.yml, not the date, so it goes
+    when the counts are checked against the official declarations. Not on an
+    acclamation, which had no count to be preliminary about.
+    {%- endcomment -%}
+    {%- if c.result %}
+    {%- assign r = c.result %}
+    <p class="candidate-hero__result{% if r.elected %} candidate-hero__result--elected{% endif %}">
+      <span class="candidate-hero__result-tag">
+        {%- if r.acclaimed %}Acclaimed{% elsif r.elected %}Elected{% else %}Not elected{% endif -%}
+      </span>
+      <span class="candidate-hero__result-detail">
+        {%- if r.acclaimed -%}
+        Elected without a vote, as the only candidate for {% if r.office == "Mayor" %}mayor{% else %}council{% endif %}
+        {%- else -%}
+        {{ r.votes_label }} votes · {{ r.percent }}% of {% if r.office == "Mayor" %}votes cast for mayor{% else %}ballots cast{% endif %}
+        · {{ r.place_label }} of {{ r.field }}{% if r.seats > 1 %} for {{ r.seats }} seats{% endif %}
+        {%- endif -%}
+        {%- if site.data.results_status == "preliminary" and r.acclaimed != true %} <span class="candidate-hero__result-note">(preliminary count)</span>{% endif -%}
+      </span>
+    </p>
+    {%- endif %}
+    {%- comment -%}
     Slate on its own labelled line rather than appended to the meta line
     above: "Running with" is what tells a reader the name is an electoral
     organization and not another attribute like the standing. Absent entirely

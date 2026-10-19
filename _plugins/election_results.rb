@@ -3,10 +3,16 @@
 # Joins _data/results.yml onto the candidates, as a `result` hash on each one
 # who was on the ballot:
 #
-#   votes      votes received, or nil for an acclamation
-#   percent    one decimal place, or nil for an acclamation
-#   elected    true for a winner
-#   acclaimed  true for a candidate elected without a vote
+#   office       "Mayor" or "Councillor": the race this result is from
+#   votes        votes received, or nil for an acclamation
+#   votes_label  the same with thousands separators ("16,615"), or nil
+#   percent      one decimal place, or nil for an acclamation
+#   elected      true for a winner
+#   acclaimed    true for a candidate elected without a vote
+#   place        where they finished in their race, or nil for an acclamation
+#   place_label  the same as an ordinal ("3rd"), or nil
+#   field        how many were on that ballot
+#   seats        how many that ballot elected
 #
 # A candidate with no entry in results.yml gets no `result` at all, and the
 # scorecard prints nothing for them: they are confirmed in the tracking sheet
@@ -18,6 +24,10 @@
 # every vote cast for mayor, and a councillor's is of ballots cast, because a
 # voter marks up to as many councillors as there are seats.
 #
+# Each municipality's ballots cast and source link are published as
+# `site.data.election_turnout[<slug>]`, for the note above the municipality
+# index's candidate list.
+#
 # Joined on municipality and name together, because the same name could stand in
 # two places. Runs at :high so candidate_pages.rb, at :normal, builds its pages
 # from candidates that already carry their result.
@@ -26,6 +36,10 @@ module LivableCrd
     safe true
     priority :high
 
+    # The ballot's two races, in the order a ballot puts them, and what each is
+    # called in _data/candidates.yml's `office`.
+    RACES = { "mayor" => "Mayor", "councillor" => "Councillor" }.freeze
+
     def generate(site)
       data = site.data["results"]
       return unless data.is_a?(Hash) && data["municipalities"].is_a?(Hash)
@@ -33,13 +47,26 @@ module LivableCrd
       site.data["results_status"] = data["status"].to_s
 
       index = {}
+      turnout = {}
       data["municipalities"].each do |slug, muni|
         next unless muni.is_a?(Hash)
 
         mayor = array(muni["mayor"])
-        index_race(index, slug, mayor, mayor.sum { |row| row["votes"].to_i })
-        index_race(index, slug, array(muni["councillor"]), muni["ballots"].to_i)
+        denominators = {
+          "mayor" => mayor.sum { |row| row["votes"].to_i },
+          "councillor" => muni["ballots"].to_i
+        }
+
+        RACES.each do |key, office|
+          index_race(index, slug, office, array(muni[key]), denominators[key])
+        end
+
+        turnout[slug.to_s] = {
+          "ballots_label" => muni["ballots"] ? delimit(muni["ballots"].to_i) : nil,
+          "source" => muni["source"]
+        }
       end
+      site.data["election_turnout"] = turnout
 
       unmatched = index.keys
       array(site.data["candidates"]).each do |candidate|
@@ -62,18 +89,34 @@ module LivableCrd
 
     private
 
-    def index_race(index, slug, rows, denominator)
-      rows.each do |row|
-        next unless row.is_a?(Hash)
+    # Indexes one race's rows by [slug, name].
+    def index_race(index, slug, office, rows, denominator)
+      rows = rows.select { |row| row.is_a?(Hash) }
+      field = rows.size
+      seats = rows.count { |row| row["elected"] == true }
+      counted = rows.reject { |row| row["acclaimed"] == true }.map { |row| row["votes"].to_i }
 
+      rows.each do |row|
         acclaimed = row["acclaimed"] == true
         votes = acclaimed ? nil : row["votes"].to_i
-        index[[slug.to_s, row["name"].to_s.strip]] = {
+        # Competition ranking, as municipality_stats.rb ranks reply rates: two
+        # candidates on the same count share a place and the next one down
+        # skips it, rather than a tie being broken by the order the source
+        # happened to list them in.
+        place = acclaimed ? nil : counted.count { |other| other > votes } + 1
+        result = {
+          "office" => office,
           "votes" => votes,
+          "votes_label" => acclaimed ? nil : delimit(votes),
           "percent" => acclaimed ? nil : percent(votes, denominator),
           "elected" => row["elected"] == true,
-          "acclaimed" => acclaimed
+          "acclaimed" => acclaimed,
+          "place" => place,
+          "place_label" => place ? ordinal(place) : nil,
+          "field" => field,
+          "seats" => seats
         }
+        index[[slug.to_s, row["name"].to_s.strip]] = result
       end
     end
 
@@ -82,6 +125,24 @@ module LivableCrd
       return 0.0 if total.nil? || total.zero?
 
       ((count.to_f / total) * 1000).round / 10.0
+    end
+
+    # "16,615". Liquid has no number formatting, and a five-digit count with no
+    # separator is hard to read against the one beside it.
+    def delimit(number)
+      number.to_s.reverse.scan(/\d{1,3}/).join(",").reverse
+    end
+
+    # "1st", "2nd", "13th", as in municipality_stats.rb.
+    def ordinal(number)
+      return "#{number}th" if (11..13).cover?(number % 100)
+
+      case number % 10
+      when 1 then "#{number}st"
+      when 2 then "#{number}nd"
+      when 3 then "#{number}rd"
+      else "#{number}th"
+      end
     end
 
     def array(value)
