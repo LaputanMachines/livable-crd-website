@@ -46,7 +46,7 @@ description: >-
     <p class="badge">Easy, Informed Election Decisions</p>
     <h1>Get Ready For The Election</h1>
     <p class="lead">
-      <strong>Livable CRD</strong> has all the information you need before you vote on October 17th. Candidates, their views, and their scores.
+      See the candidates, responses, viewpoints, and results of the 2026 municipal elections in the Capital Regional District.
     </p>
     {%- comment -%}
       One call to action, not four. The hero's job is to send a visitor to the
