@@ -67,7 +67,7 @@ module LivableCrd
     # candidates returned the questionnaire, most first. Read by the scorecard's
     # matrix and its municipality filter pills, and by nothing else: everywhere
     # a municipality list is something a reader scans for a place they already
-    # have in mind - the footer, the finder, the election-day links - it stays
+    # have in mind - the footer, the finder - it stays
     # in the file's own order, which puts the biggest councils first and is
     # stable between builds.
     #
