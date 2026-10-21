@@ -1,5 +1,5 @@
 // Scorecard matrix: client-side search (by name or slate) + filters (minimum
-// grade, office, municipality). Every filter is mirrored into the query string
+// grade, office, municipality, elected). Every filter is mirrored into the query string
 // so the address bar is always a shareable link to the current view, and a link
 // that carries those params opens already filtered. Progressive enhancement:
 // without JS, all candidate rows remain visible.
@@ -46,6 +46,7 @@
   var officePills = Array.prototype.slice.call(document.querySelectorAll('#office-filters [data-office]'));
   var total = rows.length;
   var participatingButton = document.getElementById('participating-only');
+  var electedButton = document.getElementById('elected-only');
 
   var activeMuni = 'all';
   var activeGrade = 'all'; // 'all' or a minimum rank as a string ('2' = C or better)
@@ -56,6 +57,9 @@
   // reader's own answer, saved by the first-visit prompt or the pill, replaces
   // that default; a link that says ?responded=all still wins over both.
   var participatingOnly = true;
+  // Show only the candidates who won in 2026. Off by default, not saved: it is
+  // a way of looking at the table, not a standing preference.
+  var electedOnly = false;
   var query = '';
 
   // --- Saved response preference ---------------------------------------------
@@ -221,7 +225,8 @@
       // whether or not the candidate took part.
       var folded = participatingOnly && !participated(row) &&
         !(row.parentNode && row.parentNode.id === 'favourites-group');
-      var otherOk = muniOk && officeOk && nameOk && gradeOk;
+      var electedOk = !electedOnly || row.hasAttribute('data-elected');
+      var otherOk = muniOk && officeOk && nameOk && gradeOk && electedOk;
       row.setAttribute('data-folded', otherOk && folded ? 'true' : 'false');
       var show = otherOk && (!folded || expandedMunis[row.getAttribute('data-municipality')] === true);
       row.hidden = !show;
@@ -248,10 +253,10 @@
 
     // Empty municipalities exist to show the region is fully covered, so they
     // stay put in the default view. Once the reader narrows by name, grade,
-    // office or response they are only noise (nothing in them could ever match) so drop
+    // office, response or result they are only noise (nothing in them could ever match) so drop
     // them. The municipality filter still applies: picking one keeps only it.
     // Topic is excluded because it does nothing on its own, only alongside grade.
-    var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all' || participatingOnly;
+    var narrowed = query !== '' || activeGrade !== 'all' || activeOffice !== 'all' || participatingOnly || electedOnly;
     var emptyShown = 0;
     emptyGroups.forEach(function (group) {
       var muniOk = activeMuni === 'all' || group.getAttribute('data-municipality') === activeMuni;
@@ -332,6 +337,7 @@
     }
 
     if (params.get('responded') === 'all') participatingOnly = false;
+    electedOnly = params.get('elected') === 'only';
 
     var q = (params.get('q') || '').trim();
     if (search) search.value = q;
@@ -352,6 +358,7 @@
     put('topic', activeTopic, 'all');
     put('office', activeOffice, 'all');
     put('responded', participatingOnly ? '' : 'all', '');
+    put('elected', electedOnly ? 'only' : '', '');
     // The reader's own casing, not the lowercased copy the filter matches on.
     put('q', search ? search.value.trim() : '', '');
     var qs = params.toString();
@@ -390,6 +397,20 @@
       participatingOnly = !participatingOnly;
       writePref(participatingOnly);
       paintParticipating();
+      apply();
+    });
+  }
+
+  function paintElected() {
+    if (!electedButton) return;
+    electedButton.setAttribute('aria-pressed', String(electedOnly));
+    electedButton.classList.toggle('is-active', electedOnly);
+  }
+
+  if (electedButton) {
+    electedButton.addEventListener('click', function () {
+      electedOnly = !electedOnly;
+      paintElected();
       apply();
     });
   }
@@ -519,6 +540,7 @@
   // Painted here, not in readUrlFilters(): the toggle starts pressed, so its
   // state must reach the button even where that function returns early.
   paintParticipating();
+  paintElected();
   apply();
 
   // --- First-visit prompt -----------------------------------------------------

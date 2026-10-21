@@ -158,6 +158,19 @@ description: >-
     </div>
 
     {%- comment -%}
+      Narrows the table to the 2026 winners, acclaimed ones included: the
+      data-elected flag on each row comes from the same c.result.elected the
+      "Elected" tag under the name is drawn from, so the two cannot disagree.
+      Off by default; ?elected=only is the link to it.
+    {%- endcomment -%}
+    <div class="scorecard-filtergroup">
+      <span class="scorecard-filtergroup__label" id="elected-filter-label">Results</span>
+      <div class="scorecard-filters" role="group" aria-labelledby="elected-filter-label">
+        <button type="button" class="filter-pill" id="elected-only" aria-pressed="false">Only show elected candidates</button>
+      </div>
+    </div>
+
+    {%- comment -%}
       Colours every slated candidate's row by slate, across all municipalities
       at once; each municipality's band carries the key. A highlight, not a
       filter: it hides nothing. Ships `hidden` and is revealed by
@@ -459,7 +472,7 @@ description: >-
             marks the row .is-slate-lit.
           {%- endcomment -%}
           {%- assign slate_class = site.data.slate_classes[c.slate] -%}
-          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}{% if c.declined %} data-declined{% endif %}>
+          <tr class="scorecard-row{% if slate_class %} {{ slate_class }}{% endif %}" data-candidate="{{ muni.slug }}/{{ cand_slug }}" data-name="{{ c.name | downcase }}" data-municipality="{{ muni.slug }}" data-office="{{ c.office | downcase }}" data-slate="{{ c.slate | downcase }}"{% if c.questionnaire_returned %} data-returned{% endif %}{% if c.declined %} data-declined{% endif %}{% if c.result.elected %} data-elected{% endif %}>
             <th scope="row" class="scorecard-matrix__name">
               {%- comment -%}
                 The name cell holds a link, a meta line and (with JS) up to two
