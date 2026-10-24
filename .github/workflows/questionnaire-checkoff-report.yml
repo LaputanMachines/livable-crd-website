@@ -26,8 +26,6 @@ name: Questionnaires to check off in the candidate sheet
 # secrets the sync jobs already use. This job holds no write credential.
 
 on:
-  schedule:
-    - cron: "17 14 * * *" # daily ~07:17 America/Vancouver (14:17 UTC)
   workflow_dispatch:
 
 permissions:
