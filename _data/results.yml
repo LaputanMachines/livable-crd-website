@@ -1,16 +1,19 @@
 # 2026 general local election results, by municipality.
 #
-# Hand-kept, not synced. Vote counts are copied from CivicInfo BC's results
-# dashboard (each municipality's `source` below), which the municipalities'
-# own election pages link to. Only vote counts and who was elected are stored;
+# Hand-kept, not synced. Checked on 2026-11-07 against each municipality's
+# declaration of official results. Some publish no counts (Esquimalt, Metchosin)
+# or only the winners' (Central Saanich, Langford, Oak Bay), so the rest of those
+# counts, and ballots cast where a declaration omits them, are CivicInfo BC's.
+# `source` is CivicInfo's page, except where it disagrees with the declaration
+# (Colwood, Sooke, Victoria): CivicInfo calls itself unofficial and has not
+# picked those up. Only vote counts and who was elected are stored;
 # every percentage the site prints is worked out from them in
 # _plugins/election_results.rb, so a figure here and a figure on the page can
 # never disagree, and a correction is one number rather than three.
 #
-# status: "preliminary" until chief election officers declare official results
-#   (by 4pm, October 21, 2026). The scorecard says "Preliminary results" while
-#   it is set. Once each municipality's declaration is out, check its counts
-#   against it and change this to "official".
+# status: "official" since the chief election officers declared their results
+#   (by 4pm, October 21, 2026). The site says "preliminary" only while this is
+#   set to "preliminary".
 #
 # municipalities, keyed by slug from _data/municipalities.yml:
 #   ballots    Total ballots cast. The denominator for councillors: a voter
@@ -32,8 +35,8 @@
 # Mayor percentages are a share of all votes cast for mayor, which is what the
 # municipalities' own results pages print.
 
-status: preliminary
-as_of: 2026-10-18
+status: official
+as_of: 2026-10-21
 
 municipalities:
   central-saanich:
@@ -74,8 +77,8 @@ municipalities:
         votes: 1016
 
   colwood:
-    ballots: 5502
-    source: "https://www.localelections.ca/election_results/18_2026_results.html"
+    ballots: 5432
+    source: "https://www.colwood.ca/media/file/official-election-results-finalpdf"
     mayor:
       - name: "Doug Kobayashi"
         votes: 4250
@@ -455,17 +458,17 @@ municipalities:
         votes: 947
 
   sooke:
-    ballots: 5436
-    source: "https://www.localelections.ca/election_results/181_2026_results.html"
+    ballots: 5498
+    source: "https://www.sooke.ca/news-and-public-notices/posts/district-of-sooke-declares-official-2026-general-local-election-results-following-recount/"
     mayor:
       - name: "Kevin Pearson"
-        votes: 3140
+        votes: 3141
         elected: true
       - name: "Al Beddows"
         votes: 2307
     councillor:
       - name: "Herb Haldane"
-        votes: 2688
+        votes: 2689
         elected: true
       - name: "Rob Pearce"
         votes: 2321
@@ -485,9 +488,9 @@ municipalities:
       - name: "Helen Ritts"
         votes: 2172
       - name: "Steve Sorensen"  # ballot: Steven Sorensen
-        votes: 2081
+        votes: 2082
       - name: "Christine Thomas"
-        votes: 2069
+        votes: 2070
       - name: "Susan Belford"
         votes: 1830
       - name: "Brian McHattie"
@@ -501,11 +504,11 @@ municipalities:
       - name: "Nick Dickinson-Wilde"
         votes: 982
       - name: "Landon Grams"
-        votes: 891
+        votes: 893
 
   victoria:
     ballots: 31281
-    source: "https://www.localelections.ca/election_results/142_2026_results.html"
+    source: "https://www.victoria.ca/media/file/declaration-official-results-2026-municipal-election"
     mayor:
       - name: "Marianne Alto"
         votes: 13505
@@ -566,7 +569,7 @@ municipalities:
       - name: "Jason Heit"
         votes: 5695
       - name: "Martin Girard"
-        votes: 2867
+        votes: 2857
       - name: "Shona Dion"
         votes: 2378
       - name: "Herbert Collins"  # ballot: Herb Collins (Herbert)
@@ -577,7 +580,7 @@ municipalities:
         votes: 683
 
   view-royal:
-    ballots: 3272
+    ballots: 3277
     source: "https://www.localelections.ca/election_results/143_2026_results.html"
     mayor:
       - name: "Volker Dammann"
@@ -586,26 +589,26 @@ municipalities:
       - name: "David Screech"
         votes: 1058
       - name: "Ryan Painter"
-        votes: 856
+        votes: 855
       - name: "Anna Becker"
         votes: 164
       - name: "Teodora Kristof"
         votes: 35
     councillor:
       - name: "Gery Lemon"
-        votes: 1833
+        votes: 1832
         elected: true
       - name: "Amy McCooey"
-        votes: 1767
+        votes: 1766
         elected: true
       - name: "Sacha Christensen"
-        votes: 1765
+        votes: 1764
         elected: true
       - name: "Don Brown"
-        votes: 1472
+        votes: 1471
         elected: true
       - name: "Carolynne Clark"
-        votes: 1402
+        votes: 1401
         elected: true
       - name: "Cam Harris"
         votes: 1347
@@ -617,7 +620,7 @@ municipalities:
       - name: "Owen Marshall"
         votes: 1194
       - name: "Diane Fownes"
-        votes: 730
+        votes: 729
       - name: "Spencer Dixon"
         votes: 479
       - name: "Jay Josh"
